@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { MapPin, Calendar, TrendingUp, User as UserIcon } from 'lucide-react'; // Added UserIcon
+import { MapPin, Calendar, TrendingUp, User as UserIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { formatDateRange } from '../components/helpers/dateHelpers';
@@ -52,14 +52,37 @@ export default function HomePage() {
     queryKey: ['featured-trips'],
     queryFn: async () => {
       // Fetch more trips initially to allow for filtering
-      const trips = await base44.entities.HikingTrip.filter({ status: 'upcoming' }, '-created_date', 10);
+      const trips = await base44.entities.HikingTrip.filter({ status: 'upcoming' }, 'start_date', 20);
+      
       // Filter to only show truly upcoming trips based on computed status
       const upcomingTrips = trips.filter(trip => {
         const computedStatus = getComputedTripStatus(trip);
         return computedStatus === 'upcoming' || computedStatus === 'happening now';
       });
-      // Then slice to the desired number of featured trips
-      return upcomingTrips.slice(0, 3);
+      
+      // Select 3 trips from different organizers
+      const selectedTrips = [];
+      const usedOrganizers = new Set();
+      
+      for (const trip of upcomingTrips) {
+        if (!usedOrganizers.has(trip.organizer_code) && selectedTrips.length < 3) {
+          selectedTrips.push(trip);
+          usedOrganizers.add(trip.organizer_code);
+        }
+        if (selectedTrips.length === 3) break;
+      }
+      
+      // If we have less than 3 trips from different organizers, fill up to 3 with any remaining trips
+      if (selectedTrips.length < 3) {
+        for (const trip of upcomingTrips) {
+          if (!selectedTrips.find(t => t.id === trip.id) && selectedTrips.length < 3) {
+            selectedTrips.push(trip);
+          }
+          if (selectedTrips.length === 3) break;
+        }
+      }
+      
+      return selectedTrips;
     },
     initialData: [],
   });
