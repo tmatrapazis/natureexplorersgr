@@ -52,7 +52,14 @@ export default function CalendarPage() {
     return status === 'upcoming' || status === 'happening now';
   });
 
-  const filteredTrips = activeTrips.filter(trip => {
+  // Filter trips by the currently displayed month
+  const tripsInCurrentMonth = activeTrips.filter(trip => {
+    const tripDate = new Date(trip.start_date);
+    return tripDate.getMonth() === currentDate.getMonth() &&
+           tripDate.getFullYear() === currentDate.getFullYear();
+  });
+
+  const filteredTrips = tripsInCurrentMonth.filter(trip => {
     if (filters.difficulty !== "all" && trip.difficulty !== filters.difficulty) {
       return false;
     }
@@ -124,7 +131,7 @@ export default function CalendarPage() {
             {language === 'el' ? 'Ημερολόγιο Πεζοπορικών Εκδρομών' : t('calendar.title')}
           </h1>
           <p className="text-stone-600">
-            {language === 'el' 
+            {language === 'el'
               ? 'Ανακαλύψτε επερχόμενες εκδρομές trekking, ορειβασία και hiking events σε όλη την Ελλάδα. Οργανωμένες εκδρομές βουνό και weekend adventures.'
               : 'Discover upcoming hiking trips Greece, trekking expeditions and outdoor adventures. Weekend hiking ideas and one day hikes across Greek nature trails.'}
           </p>
