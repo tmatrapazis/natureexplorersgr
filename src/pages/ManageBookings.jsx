@@ -14,9 +14,9 @@ import { Label } from '@/components/ui/label';
 import DeclineBookingDialog from '../components/bookings/DeclineBookingDialog';
 import BookingStatusBadge from '../components/bookings/BookingStatusBadge';
 import { useToast } from '@/components/ui/use-toast';
-import useSEO from '../components/seo/useSEO'; // New import
-import { useLanguage } from '../components/language/LanguageProvider'; // New import
-import { useTranslation } from 'react-i18next'; // New import
+import useSEO from '../components/seo/useSEO';
+import { useLanguage } from '../components/contexts/LanguageContext';
+import { useTranslation } from '../components/translations/useTranslations';
 
 const BookingCard = ({ booking, tripId, trip, onConfirm, onDecline, onMarkPaid, onUpdatePayment, isProcessing }) => {
   const [paymentInstructions, setPaymentInstructions] = useState(booking.payment_instructions || '');

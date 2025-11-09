@@ -13,8 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Plus, X, Loader2, MapPin, Clock } from "lucide-react";
 
 import useSEO from '../components/seo/useSEO';
-import { useLanguage } from "@/providers/language-provider";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from '../components/contexts/LanguageContext';
+import { useTranslation } from '../components/translations/useTranslations';
 
 export default function EditTripPage() {
   const navigate = useNavigate();

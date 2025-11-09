@@ -13,8 +13,8 @@ import { ArrowLeft, CheckCircle2, Shield, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 import useSEO from '../components/seo/useSEO';
-import { useLanguage } from '@/hooks/useLanguage'; // Assuming this import path based on common project structure
-import { useTranslation } from '@/hooks/useTranslation'; // Assuming this import path based on common project structure
+import { useLanguage } from '../components/contexts/LanguageContext'; // Updated import path
+import { useTranslation } from '../components/translations/useTranslations'; // Updated import path
 
 export default function RequestVerificationPage() {
   const queryClient = useQueryClient();

@@ -13,9 +13,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getComputedTripStatus, statusColors } from "../components/helpers/tripHelpers";
 import { formatDateRange } from "../components/helpers/dateHelpers";
 import { getTripInsights } from "../components/helpers/bookingHelpers";
-import useSEO from '../components/seo/useSEO'; // New import
-import { useTranslation } from 'react-i18next'; // New import (assuming react-i18next)
-import { useLanguage } from '@/hooks/useLanguage'; // New import (assuming a custom useLanguage hook)
+import useSEO from '../components/seo/useSEO';
+import { useLanguage } from '../components/contexts/LanguageContext';
+import { useTranslation } from '../components/translations/useTranslations';
 
 export default function MyTripsPage() {
   const queryClient = useQueryClient();

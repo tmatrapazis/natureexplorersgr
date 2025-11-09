@@ -14,8 +14,8 @@ import { ArrowLeft, Plus, X, Loader2, MapPin, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import useSEO from '../components/seo/useSEO';
-import { useLanguage } from '../components/language-provider';
-import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../components/contexts/LanguageContext';
+import { useTranslation } from '../components/translations/useTranslations';
 
 export default function CreateTripPage() {
   const navigate = useNavigate();

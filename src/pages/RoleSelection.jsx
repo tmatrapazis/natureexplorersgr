@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Loader2, UserCircle2, Mountain } from 'lucide-react';
 
 import useSEO from '../components/seo/useSEO';
-import { useLanguage } from '@/hooks/useLanguage'; // Assuming a custom hook for language context
-import { useTranslation } from '@/hooks/useTranslation'; // Assuming a custom hook for translation
+import { useLanguage } from '../components/contexts/LanguageContext'; // Assuming a custom hook for language context
+import { useTranslation } from '../components/translations/useTranslations'; // Assuming a custom hook for translation
 
 export default function RoleSelectionPage() {
   const navigate = useNavigate();

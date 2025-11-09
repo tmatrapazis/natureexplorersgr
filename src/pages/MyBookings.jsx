@@ -22,10 +22,8 @@ import { Label } from "@/components/ui/label";
 import ReactMarkdown from "react-markdown";
 
 import useSEO from '../components/seo/useSEO';
-// Assuming useLanguage and useTranslation are from common i18n setup or custom hooks
-import { useTranslation } from 'react-i18next';
-// Assuming useLanguage is a custom hook that provides the current language
-import { useLanguage } from '@/hooks/useLanguage'; 
+import { useLanguage } from '../components/contexts/LanguageContext';
+import { useTranslation } from '../components/translations/useTranslations';
 
 // Status badge configuration (exact mapping)
 const STATUS_CONFIG = {

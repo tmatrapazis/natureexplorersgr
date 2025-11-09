@@ -12,9 +12,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription }
 import { User, Upload, ArrowLeft, CheckCircle, Loader2, ShieldCheck, UserCog, Shield, Plus, X } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useTranslation } from 'react-i18next'; // Assuming useTranslation comes from react-i18next
-import useLanguage from '@/hooks/useLanguage'; // Assuming useLanguage is a custom hook in hooks folder
 import useSEO from '../components/seo/useSEO';
+import { useLanguage } from '../components/contexts/LanguageContext';
+import { useTranslation } from '../components/translations/useTranslations';
 
 export default function EditProfilePage() {
   const queryClient = useQueryClient();

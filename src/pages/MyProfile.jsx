@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Calendar, Users, CheckCircle, MapPin, Loader2 } from 'lucide-react';
 import useSEO from '../components/seo/useSEO';
-import { useTranslation } from 'react-i18next';
-import { useLanguage } from '@/hooks/useLanguage'; // Assuming useLanguage is defined here or similar
+import { useLanguage } from '../components/contexts/LanguageContext';
+import { useTranslation } from '../components/translations/useTranslations';
 
 export default function MyProfilePage() {
   const { language } = useLanguage();

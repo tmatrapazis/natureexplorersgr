@@ -9,8 +9,8 @@ import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/com
 import { User, Mail, Phone, HeartPulse, ShieldAlert, AlertTriangle, ArrowLeft, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import useSEO from '../components/seo/useSEO';
-import { useLanguage } from '@/context/languageContext'; // Assuming this path for useLanguage
-import { useTranslation } from 'react-i18next'; // Assuming this path for useTranslation
+import { useLanguage } from '../components/contexts/LanguageContext';
+import { useTranslation } from '../components/translations/useTranslations';
 
 const InfoField = ({ icon, label, value }) => {
   if (!value) return null;
