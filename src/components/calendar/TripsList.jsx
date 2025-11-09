@@ -12,6 +12,7 @@ import { base44 } from "@/api/base44Client";
 import { trackEvent } from "../analytics/GoogleAnalytics";
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
+import { getTripImage, handleImageError } from '../helpers/imageHelpers';
 
 const difficultyColors = {
   easy: "bg-green-100 text-green-800 border-green-200",
@@ -89,17 +90,16 @@ export default function TripsList({ trips, selectedDate }) {
         
         return (
           <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 border-stone-200">
-            {trip.image_url && (
-              <div className="w-full h-40 bg-stone-200">
-                <img 
-                  src={trip.image_url} 
-                  alt={language === 'el'
-                    ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} - ορειβασία trekking outdoor adventure Ελλάδα`
-                    : `${trip.title} - hiking trip ${trip.location} - mountain trekking outdoor activity Greece`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+            <div className="w-full h-40 bg-stone-200">
+              <img 
+                src={getTripImage(trip.image_url, trip.id)} 
+                alt={language === 'el'
+                  ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} - ορειβασία trekking outdoor adventure Ελλάδα`
+                  : `${trip.title} - hiking trip ${trip.location} - mountain trekking outdoor activity Greece`}
+                className="w-full h-full object-cover"
+                onError={(e) => handleImageError(e, trip.id)}
+              />
+            </div>
             
             <div className="p-4">
               <div className="flex items-start justify-between mb-2">

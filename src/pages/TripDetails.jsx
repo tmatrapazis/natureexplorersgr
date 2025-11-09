@@ -17,6 +17,7 @@ import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 // NEW IMPORTS FOR SEO
 import StructuredData from "../components/seo/StructuredData";
+import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
@@ -115,7 +116,7 @@ export default function TripDetailsPage() {
       const description = trip.description 
         ? trip.description.substring(0, 150) + (trip.description.length > 150 ? '...' : '')
         : language === 'el'
-          ? `Συμμετέχετε σε αυτή την ${trip.difficulty} πεζοπορική εκδρομή στο ${trip.location}. ${trip.distance_km ? `Διαδρομή ${trip.distance_km}km.` : ''} Outdoor περιπέτεια ορειβασίας με έμπειρο οδηγό. Οργανωμένες εκδρομές βουνό και hiking adventures Greece.`
+          ? `Συμμετάσχετε σε αυτή την ${trip.difficulty} πεζοπορική εκδρομή στο ${trip.location}. ${trip.distance_km ? `Διαδρομή ${trip.distance_km}km.` : ''} Outdoor περιπέτεια ορειβασίας με έμπειρο οδηγό. Οργανωμένες εκδρομές βουνό και hiking adventures Greece.`
           : `Join this ${trip.difficulty} hiking trip in ${trip.location}. ${trip.distance_km ? `${trip.distance_km}km mountain trekking route.` : ''} Outdoor adventure with experienced guide. Hiking tours Greece and weekend hiking trips.`;
 
       updateMetaTag('description', description);
@@ -249,11 +250,12 @@ export default function TripDetailsPage() {
                 {trip.image_url && (
                   <div className="relative w-full h-64 md:h-96 rounded-2xl overflow-hidden shadow-lg">
                     <img
-                      src={trip.image_url}
+                      src={getTripImage(trip.image_url, trip.id)}
                       alt={language === 'el'
                         ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} Ελλάδα, outdoor ορειβασία trekking`
                         : `${trip.title} - hiking trekking expedition in ${trip.location} Greece, outdoor mountain adventure`}
                       className="w-full h-full object-cover"
+                      onError={(e) => handleImageError(e, trip.id)}
                     />
                     <Badge className={`absolute top-4 right-4 text-base px-3 py-1 ${statusColors[computedStatus]}`}>
                       {computedStatus}
@@ -371,11 +373,12 @@ export default function TripDetailsPage() {
               {trip.image_url && (
                 <div className="relative w-full h-64 md:h-96 rounded-2xl overflow-hidden shadow-lg flex items-center justify-center bg-stone-100">
                   <img
-                    src={trip.image_url}
+                    src={getTripImage(trip.image_url, trip.id)}
                     alt={language === 'el'
                       ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} Ελλάδα, outdoor ορειβασία trekking`
                       : `${trip.title} - hiking trekking expedition in ${trip.location} Greece, outdoor mountain adventure`}
                     className="w-full h-full object-cover"
+                    onError={(e) => handleImageError(e, trip.id)}
                   />
                   <Badge className={`absolute top-4 right-4 text-base px-3 py-1 ${statusColors[computedStatus]}`}>
                     {computedStatus}

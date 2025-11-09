@@ -15,6 +15,7 @@ import { useTranslation } from '../components/translations/useTranslations';
 import useSEO from '../components/seo/useSEO';
 import StructuredData from '../components/seo/StructuredData';
 import { getComputedTripStatus } from '../components/helpers/tripHelpers';
+import { getTripImage, handleImageError } from '../components/helpers/imageHelpers';
 
 const difficultyColors = {
   easy: "bg-green-100 text-green-800",
@@ -189,11 +190,12 @@ export default function HomePage() {
                     <Card key={trip.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                       <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`}>
                         <img 
-                          src={trip.image_url} 
+                          src={getTripImage(trip.image_url, trip.id)} 
                           alt={language === 'el'
                             ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} Ελλάδα - ορειβασία και trekking adventure`
                             : `${trip.title} - hiking trip ${trip.location} Greece - mountain trekking and outdoor adventure`}
-                          className="w-full h-48 object-cover" 
+                          className="w-full h-48 object-cover"
+                          onError={(e) => handleImageError(e, trip.id)}
                         />
                         <CardContent className="p-4">
                           <div className="flex justify-between items-center mb-2">

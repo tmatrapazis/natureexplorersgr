@@ -16,6 +16,7 @@ import { getTripInsights } from "../components/helpers/bookingHelpers";
 import useSEO from '../components/seo/useSEO';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
+import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 
 export default function MyTripsPage() {
   const queryClient = useQueryClient();
@@ -175,11 +176,14 @@ export default function MyTripsPage() {
                       return (
                         <Card key={trip.id} className="p-6 hover:shadow-lg transition-shadow">
                           <div className="flex flex-col md:flex-row gap-6">
-                            {trip.image_url && (
-                              <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
-                                <img src={trip.image_url} alt={trip.title} className="w-full h-full object-cover" />
-                              </div>
-                            )}
+                            <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
+                              <img 
+                                src={getTripImage(trip.image_url, trip.id)} 
+                                alt={trip.title} 
+                                className="w-full h-full object-cover"
+                                onError={(e) => handleImageError(e, trip.id)}
+                              />
+                            </div>
                             <div className="flex-1">
                               <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
                                 <div>
