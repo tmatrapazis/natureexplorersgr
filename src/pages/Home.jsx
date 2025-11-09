@@ -177,11 +177,11 @@ export default function HomePage() {
           </section>
 
           <section className="py-12 md:py-20 bg-stone-50">
-            <div className="container">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="text-3xl font-bold text-center mb-10">
                 {language === 'el' ? 'Επιλεγμένες Πεζοπορικές Εκδρομές' : t('home.featured_expeditions')}
               </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 {featuredTrips.map(trip => {
                   const organizer = organizerMap[trip.organizer_code];
                   
