@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -65,100 +64,102 @@ export default function OrganizersListPage() {
   const isLoading = organizersLoading || tripsLoading;
 
   return (
-    <div className="container py-10">
-      <header className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-3">
-          {language === 'el' ? 'Γνωρίστε τους Οδηγούς Πεζοπορίας' : t('organizer.meet_organizers')}
-        </h1>
-        <p className="text-stone-600 max-w-2xl mx-auto">
-          {t('organizer.new_organizer_cta')}
-          {' '}
-          <a
-            href="mailto:natureexplorersgr@gmail.com"
-            className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
-          >
-            <Mail className="w-4 h-4" aria-hidden="true" />
-            Email
-          </a>
-          {' '}
-          <span className="text-stone-400">or</span>
-          {' '}
-          <a
-            href="https://www.instagram.com/natureexplorers.gr/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
-          >
-            <Instagram className="w-4 h-4" aria-hidden="true" />
-            Instagram
-          </a>
-        </p>
-      </header>
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <header className="text-center mb-8">
+          <h1 className="text-4xl font-bold mb-3">
+            {language === 'el' ? 'Γνωρίστε τους Οδηγούς Πεζοπορίας' : t('organizer.meet_organizers')}
+          </h1>
+          <p className="text-stone-600 max-w-2xl mx-auto">
+            {t('organizer.new_organizer_cta')}
+            {' '}
+            <a
+              href="mailto:natureexplorersgr@gmail.com"
+              className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+            >
+              <Mail className="w-4 h-4" aria-hidden="true" />
+              Email
+            </a>
+            {' '}
+            <span className="text-stone-400">or</span>
+            {' '}
+            <a
+              href="https://www.instagram.com/natureexplorers.gr/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
+            >
+              <Instagram className="w-4 h-4" aria-hidden="true" />
+              Instagram
+            </a>
+          </p>
+        </header>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
-        </div>
-      ) : sortedOrganizers.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-stone-600 mb-4">{t('organizer.no_organizers')}</p>
-          <Link to={createPageUrl("Calendar")}>
-            <Button>{t('booking.browse_trips')}</Button>
-          </Link>
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {sortedOrganizers.map(organizer => {
-            const tripCount = tripCountMap[organizer.organizer_code] || 0;
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
+          </div>
+        ) : sortedOrganizers.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-stone-600 mb-4">{t('organizer.no_organizers')}</p>
+            <Link to={createPageUrl("Calendar")}>
+              <Button>{t('booking.browse_trips')}</Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {sortedOrganizers.map(organizer => {
+              const tripCount = tripCountMap[organizer.organizer_code] || 0;
 
-            return (
-              <Card key={organizer.id} className="text-center shadow-lg hover:shadow-xl transition-shadow">
-                <CardHeader className="p-0">
-                  <div className="w-full h-40 bg-gradient-to-br from-emerald-100 to-teal-200" />
-                  <div className="mx-auto w-24 h-24 -mt-12 border-4 border-white rounded-full overflow-hidden bg-stone-200 flex items-center justify-center">
-                    {organizer.profile_picture_url ? (
-                      <img
-                        src={organizer.profile_picture_url}
-                        alt={language === 'el'
-                          ? `${organizer.username || organizer.full_name} - οδηγός πεζοπορίας Ελλάδα`
-                          : `${organizer.username || organizer.full_name} - hiking trekking guide Greece`}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <User className="w-12 h-12 text-stone-400" aria-hidden="true" />
+              return (
+                <Card key={organizer.id} className="text-center shadow-lg hover:shadow-xl transition-shadow">
+                  <CardHeader className="p-0">
+                    <div className="w-full h-40 bg-gradient-to-br from-emerald-100 to-teal-200" />
+                    <div className="mx-auto w-24 h-24 -mt-12 border-4 border-white rounded-full overflow-hidden bg-stone-200 flex items-center justify-center">
+                      {organizer.profile_picture_url ? (
+                        <img
+                          src={organizer.profile_picture_url}
+                          alt={language === 'el'
+                            ? `${organizer.username || organizer.full_name} - οδηγός πεζοπορίας Ελλάδα`
+                            : `${organizer.username || organizer.full_name} - hiking trekking guide Greece`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-12 h-12 text-stone-400" aria-hidden="true" />
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <h2 className="text-xl font-bold">{organizer.username || organizer.full_name}</h2>
+                      {organizer.is_verified && <VerifiedBadge showText={false} />}
+                    </div>
+                    {organizer.years_of_experience && (
+                      <p className="text-sm text-stone-500 mb-2">
+                        {organizer.years_of_experience} {t('organizer.years_experience')}
+                      </p>
                     )}
-                  </div>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <h2 className="text-xl font-bold">{organizer.username || organizer.full_name}</h2>
-                    {organizer.is_verified && <VerifiedBadge showText={false} />}
-                  </div>
-                  {organizer.years_of_experience && (
-                    <p className="text-sm text-stone-500 mb-2">
-                      {organizer.years_of_experience} {t('organizer.years_experience')}
+
+                    <div className="flex items-center justify-center gap-2 mb-3">
+                      <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                        <Calendar className="w-3 h-3 mr-1" aria-hidden="true" />
+                        {tripCount} {tripCount === 1 ? t('organizer.upcoming_trip') : t('organizer.upcoming_trips_plural')}
+                      </Badge>
+                    </div>
+
+                    <p className="text-muted-foreground mt-2 min-h-[60px]">
+                      {organizer.bio ? `${organizer.bio.substring(0, 100)}...` : t('organizer.passionate_guide')}
                     </p>
-                  )}
-
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-                      <Calendar className="w-3 h-3 mr-1" aria-hidden="true" />
-                      {tripCount} {tripCount === 1 ? t('organizer.upcoming_trip') : t('organizer.upcoming_trips_plural')}
-                    </Badge>
-                  </div>
-
-                  <p className="text-muted-foreground mt-2 min-h-[60px]">
-                    {organizer.bio ? `${organizer.bio.substring(0, 100)}...` : t('organizer.passionate_guide')}
-                  </p>
-                  <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`} className="mt-4 inline-block">
-                    <Button className="bg-emerald-600 hover:bg-emerald-700">{t('organizer.view_profile_trips')}</Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+                    <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`} className="mt-4 inline-block">
+                      <Button className="bg-emerald-600 hover:bg-emerald-700">{t('organizer.view_profile_trips')}</Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
