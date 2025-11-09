@@ -20,7 +20,6 @@ import { useTranslation } from '../components/translations/useTranslations';
 export default function MyTripsPage() {
   const queryClient = useQueryClient();
 
-  // New code for localization and SEO
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 

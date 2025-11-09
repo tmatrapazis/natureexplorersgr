@@ -7,10 +7,9 @@ import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, UserCircle2, Mountain } from 'lucide-react';
-
 import useSEO from '../components/seo/useSEO';
-import { useLanguage } from '../components/contexts/LanguageContext'; // Assuming a custom hook for language context
-import { useTranslation } from '../components/translations/useTranslations'; // Assuming a custom hook for translation
+import { useLanguage } from '../components/contexts/LanguageContext';
+import { useTranslation } from '../components/translations/useTranslations';
 
 export default function RoleSelectionPage() {
   const navigate = useNavigate();
