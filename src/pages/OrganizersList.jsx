@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -24,7 +25,7 @@ export default function OrganizersListPage() {
     description: language === 'el'
       ? 'Ανακαλύψτε έμπειρους και πιστοποιημένους οδηγούς πεζοπορίας σε όλη την Ελλάδα. Ομάδες πεζοπορίας, οργανωμένες εκδρομές βουνό, hiking teams Greece. Περιηγηθείτε σε προφίλ και βρείτε τον ιδανικό οδηγό για την επόμενη ορειβατική σας περιπέτεια.'
       : 'Discover experienced and verified hiking guides across Greece. Browse hiking teams Greece, trekking organizers, outdoor activity leaders. Find the perfect guide for your next mountain adventure, hiking trips and weekend expeditions.',
-    image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png',
+    image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb4/01040e5a0_logo.png',
     url: window.location.href,
     type: 'website'
   });
@@ -114,8 +115,7 @@ export default function OrganizersListPage() {
               return (
                 <Card key={organizer.id} className="text-center shadow-lg hover:shadow-xl transition-shadow">
                   <CardHeader className="p-0">
-                    <div className="w-full h-40 bg-gradient-to-br from-emerald-100 to-teal-200" />
-                    <div className="mx-auto w-24 h-24 -mt-12 border-4 border-white rounded-full overflow-hidden bg-stone-200 flex items-center justify-center">
+                    <div className="mx-auto w-24 h-24 mt-6 border-4 border-white rounded-full overflow-hidden bg-stone-200 flex items-center justify-center">
                       {organizer.profile_picture_url ? (
                         <img
                           src={organizer.profile_picture_url}
