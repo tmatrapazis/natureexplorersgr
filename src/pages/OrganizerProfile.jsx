@@ -44,12 +44,23 @@ export default function OrganizerProfilePage() {
     enabled: !!organizerCode,
   });
 
-  const { data: trips = [], isLoading: tripsLoading } = useQuery({
+  const { data: allTrips = [], isLoading: tripsLoading } = useQuery({
     queryKey: ['organizer-trips', organizerCode],
     queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: organizerCode, status: "upcoming" }, "start_date"),
     enabled: !!organizerCode,
     initialData: [],
   });
+
+  // Filter trips to only show future events (start_date > today)
+  const trips = React.useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    
+    return allTrips.filter(trip => {
+      const tripStartDate = new Date(trip.start_date);
+      return tripStartDate >= today;
+    });
+  }, [allTrips]);
   
   // Track organizer profile view
   React.useEffect(() => {
