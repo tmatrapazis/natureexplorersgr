@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -16,10 +15,19 @@ import PublicFooter from "./components/layout/PublicFooter";
 import { LanguageProvider, useLanguage } from "./components/contexts/LanguageContext";
 import { useTranslation } from "./components/translations/useTranslations";
 import GoogleAnalytics from "./components/analytics/GoogleAnalytics";
+import WelcomeModal from "./components/welcome/WelcomeModal";
 
 const LoggedInLayout = ({ children, user }) => {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
+  const [showWelcome, setShowWelcome] = React.useState(false);
+
+  React.useEffect(() => {
+    // Show welcome modal if user hasn't accepted terms
+    if (user && !user.has_accepted_terms) {
+      setShowWelcome(true);
+    }
+  }, [user]);
 
   const handleLogout = () => {
     base44.auth.logout(createPageUrl("Home"));
@@ -27,6 +35,13 @@ const LoggedInLayout = ({ children, user }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50">
+      {showWelcome && user && (
+        <WelcomeModal 
+          user={user} 
+          onClose={() => setShowWelcome(false)} 
+        />
+      )}
+      
       <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to={createPageUrl("Home")} className="flex items-center gap-3">
@@ -115,7 +130,7 @@ function LayoutContent({ children, currentPageName }) {
     fetchUser();
   }, []);
 
-  const publicPages = ['Home', 'OrganizersList', 'Calendar', 'TripDetails', 'OrganizerProfile'];
+  const publicPages = ['Home', 'OrganizersList', 'Calendar', 'TripDetails', 'OrganizerProfile', 'TermsOfUse'];
 
   if (currentPageName === 'Home') {
     return <PublicLayout>{children}</PublicLayout>;
