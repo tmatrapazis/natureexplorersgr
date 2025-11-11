@@ -14,6 +14,7 @@ import RequestVerification from './pages/RequestVerification';
 import RoleSelection from './pages/RoleSelection';
 import MyProfile from './pages/MyProfile';
 import TempImageUploader from './pages/TempImageUploader';
+import TermsOfUse from './pages/TermsOfUse';
 import Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "RoleSelection": RoleSelection,
     "MyProfile": MyProfile,
     "TempImageUploader": TempImageUploader,
+    "TermsOfUse": TermsOfUse,
 }
 
 export const pagesConfig = {
