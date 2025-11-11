@@ -1,10 +1,12 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Instagram, Facebook, Mail } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function PublicFooter() {
+  const { language } = useLanguage();
+
   return (
     <footer className="border-t">
       <div className="container py-8">
@@ -52,10 +54,13 @@ export default function PublicFooter() {
           
           <nav className="flex items-center gap-4 text-sm font-medium">
             <Link to={createPageUrl("Calendar")} className="text-muted-foreground hover:text-primary">
-              Expeditions
+              {language === 'el' ? 'Εκδρομές' : 'Expeditions'}
             </Link>
             <Link to={createPageUrl("OrganizersList")} className="text-muted-foreground hover:text-primary">
-              Organizers
+              {language === 'el' ? 'Οδηγοί' : 'Organizers'}
+            </Link>
+            <Link to={createPageUrl("TermsOfUse")} className="text-muted-foreground hover:text-primary">
+              {language === 'el' ? 'Όροι Χρήσης' : 'Terms of Use'}
             </Link>
           </nav>
         </div>
