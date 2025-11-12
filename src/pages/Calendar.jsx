@@ -160,7 +160,7 @@ export default function CalendarPage() {
           )}
         </div>
 
-        <div className="grid lg:grid-cols-4 gap-6">
+        <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
             <CalendarGrid
               currentDate={currentDate}
@@ -170,7 +170,7 @@ export default function CalendarPage() {
             />
           </div>
 
-          <div ref={tripsListRef} className="lg:col-span-3 bg-white rounded-2xl shadow-lg p-6 max-h-[600px] overflow-y-auto">
+          <div ref={tripsListRef} className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6 max-h-[600px] overflow-y-auto">
             {isLoading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
