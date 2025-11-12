@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import useSEO from "../components/seo/useSEO";
 export default function CalendarPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const tripsListRef = useRef(null);
 
   // SEO Configuration with keywords
   useSEO({
@@ -46,6 +47,13 @@ export default function CalendarPage() {
     queryFn: () => base44.entities.HikingTrip.list("start_date"),
     initialData: [],
   });
+
+  // Scroll trips list to top whenever displayTrips changes
+  useEffect(() => {
+    if (tripsListRef.current) {
+      tripsListRef.current.scrollTop = 0;
+    }
+  }, [selectedDate, filters, currentDate]);
 
   const activeTrips = trips.filter(trip => {
     const status = getComputedTripStatus(trip);
@@ -152,8 +160,8 @@ export default function CalendarPage() {
           )}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
-          <div>
+        <div className="grid lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-1">
             <CalendarGrid
               currentDate={currentDate}
               onDateChange={setCurrentDate}
@@ -162,7 +170,7 @@ export default function CalendarPage() {
             />
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6 max-h-[600px] overflow-y-auto">
+          <div ref={tripsListRef} className="lg:col-span-3 bg-white rounded-2xl shadow-lg p-6 max-h-[600px] overflow-y-auto">
             {isLoading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
