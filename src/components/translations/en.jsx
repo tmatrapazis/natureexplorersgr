@@ -60,7 +60,7 @@ export const en = {
     "featured_expeditions": "Featured Expeditions"
   },
   "calendar": {
-    "title": "Hiking Expeditions Calendar",
+    "title": "Hiking Events Calendar",
     "subtitle": "Browse upcoming hiking trips and book your adventure",
     "no_trips": "No trips found",
     "select_date": "Select a date to see trips",
