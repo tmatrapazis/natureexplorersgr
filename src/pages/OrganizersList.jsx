@@ -118,7 +118,7 @@ export default function OrganizersListPage() {
               const tripCount = tripCountMap[organizer.organizer_code] || 0;
 
               return (
-                <Card key={organizer.id} className="text-center shadow-lg hover:shadow-xl transition-shadow">
+                <Card key={organizer.id} className="text-center shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full">
                   <CardHeader className="p-0">
                     <div className="mx-auto w-24 h-24 mt-6 border-4 border-white rounded-full overflow-hidden bg-stone-200 flex items-center justify-center">
                       {organizer.profile_picture_url ? (
@@ -134,7 +134,7 @@ export default function OrganizersListPage() {
                       )}
                     </div>
                   </CardHeader>
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 flex flex-col flex-grow">
                     <div className="flex items-center justify-center gap-2 mb-2">
                       <h2 className="text-xl font-bold">{organizer.username || organizer.full_name}</h2>
                       {organizer.is_verified && <VerifiedBadge showText={false} />}
@@ -152,11 +152,11 @@ export default function OrganizersListPage() {
                       </Badge>
                     </div>
 
-                    <p className="text-muted-foreground mt-2 min-h-[60px]">
+                    <p className="text-muted-foreground mt-2 min-h-[60px] mb-4">
                       {organizer.bio ? `${organizer.bio.substring(0, 100)}...` : t('organizer.passionate_guide')}
                     </p>
-                    <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`} className="mt-4 inline-block">
-                      <Button className="bg-emerald-600 hover:bg-emerald-700">{t('organizer.view_profile_trips')}</Button>
+                    <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`} className="mt-auto">
+                      <Button className="bg-emerald-600 hover:bg-emerald-700 w-full">{t('organizer.view_profile_trips')}</Button>
                     </Link>
                   </CardContent>
                 </Card>
