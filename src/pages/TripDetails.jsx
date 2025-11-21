@@ -1,4 +1,3 @@
-
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -320,7 +319,7 @@ export default function TripDetailsPage() {
                       {t('trip.login_message')}
                     </p>
                     <Button 
-                      onClick={() => base44.auth.redirectToLogin(window.location.pathname)}
+                      onClick={() => base44.auth.redirectToLogin(window.location.href)}
                       className="bg-emerald-600 hover:bg-emerald-700"
                     >
                       <LogIn className="w-4 h-4 mr-2" />
@@ -339,7 +338,7 @@ export default function TripDetailsPage() {
                       {t('trip.login_message')}
                     </p>
                     <Button 
-                      onClick={() => base44.auth.redirectToLogin(window.location.pathname)}
+                      onClick={() => base44.auth.redirectToLogin(window.location.href)}
                       className="w-full bg-emerald-600 hover:bg-emerald-700"
                     >
                       <LogIn className="w-4 h-4 mr-2" />
