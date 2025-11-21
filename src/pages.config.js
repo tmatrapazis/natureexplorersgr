@@ -15,7 +15,7 @@ import RoleSelection from './pages/RoleSelection';
 import MyProfile from './pages/MyProfile';
 import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
-import Layout from './Layout.jsx';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -41,5 +41,5 @@ export const PAGES = {
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
-    Layout: Layout,
+    Layout: __Layout,
 };

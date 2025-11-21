@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -36,22 +35,28 @@ export default function OrganizersListPage() {
     initialData: [],
   });
 
-  const { data: upcomingTrips = [], isLoading: tripsLoading } = useQuery({
+  const { data: allTrips = [], isLoading: tripsLoading } = useQuery({
     queryKey: ['all-upcoming-trips'],
-    queryFn: () => base44.entities.HikingTrip.filter({ status: 'upcoming' }),
+    queryFn: () => base44.entities.HikingTrip.list(),
     initialData: [],
   });
 
-  // Create a map of organizer_code -> trip count
+  // Create a map of organizer_code -> trip count (only trips with start_date >= today)
   const tripCountMap = React.useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const map = {};
-    upcomingTrips.forEach(trip => {
-      if (trip.organizer_code) {
-        map[trip.organizer_code] = (map[trip.organizer_code] || 0) + 1;
+    allTrips.forEach(trip => {
+      if (trip.organizer_code && trip.start_date) {
+        const tripDate = new Date(trip.start_date);
+        tripDate.setHours(0, 0, 0, 0);
+        if (tripDate >= today) {
+          map[trip.organizer_code] = (map[trip.organizer_code] || 0) + 1;
+        }
       }
     });
     return map;
-  }, [upcomingTrips]);
+  }, [allTrips]);
 
   // Sort organizers by number of upcoming trips (descending)
   const sortedOrganizers = React.useMemo(() => {
