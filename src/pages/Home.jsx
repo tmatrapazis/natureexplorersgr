@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -51,8 +50,8 @@ export default function HomePage() {
   const { data: featuredTrips } = useQuery({
     queryKey: ['featured-trips'],
     queryFn: async () => {
-      // Fetch more trips initially to allow for filtering
-      const trips = await base44.entities.HikingTrip.filter({ status: 'upcoming' }, 'start_date', 20);
+      // Fetch all trips sorted by start date
+      const trips = await base44.entities.HikingTrip.list('start_date', 50);
       
       // Filter to only show truly upcoming trips based on computed status
       const upcomingTrips = trips.filter(trip => {
