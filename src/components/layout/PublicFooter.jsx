@@ -20,6 +20,10 @@ export default function PublicFooter() {
             <span className="font-semibold">Nature Explorers</span>
           </div>
           
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Nature Explorers. All rights reserved.
+          </p>
+          
           <div className="flex items-center gap-4">
             <a
               href="https://www.instagram.com/natureexplorers.gr/"
@@ -27,7 +31,6 @@ export default function PublicFooter() {
               rel="noopener noreferrer"
               className="text-stone-600 hover:text-emerald-600 transition-colors"
               aria-label="Instagram">
-
               <Instagram className="w-5 h-5" />
             </a>
             <a
@@ -36,33 +39,19 @@ export default function PublicFooter() {
               rel="noopener noreferrer"
               className="text-stone-600 hover:text-emerald-600 transition-colors"
               aria-label="Facebook">
-
               <Facebook className="w-5 h-5" />
             </a>
             <a
               href="mailto:natureexplorersgr@gmail.com"
               className="text-stone-600 hover:text-emerald-600 transition-colors"
               aria-label="Email">
-
               <Mail className="w-5 h-5" />
             </a>
-          </div>
-
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Nature Explorers. All rights reserved.
-          </p>
-          
-          <nav className="flex items-center gap-4 text-sm font-medium">
-            <Link to={createPageUrl("Calendar")} className="text-muted-foreground hover:text-primary">
-              {language === 'el' ? 'Εκδρομές' : 'Expeditions'}
-            </Link>
-            <Link to={createPageUrl("OrganizersList")} className="text-muted-foreground hover:text-primary">
-              {language === 'el' ? 'Οδηγοί' : 'Organizers'}
-            </Link>
-            <Link to={createPageUrl("TermsOfUse")} className="text-muted-foreground hover:text-primary">
+            
+            <Link to={createPageUrl("TermsOfUse")} className="text-sm font-medium text-muted-foreground hover:text-primary">
               {language === 'el' ? 'Όροι Χρήσης' : 'Terms of Use'}
             </Link>
-          </nav>
+          </div>
         </div>
       </div>
     </footer>);
