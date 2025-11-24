@@ -59,29 +59,9 @@ export default function HomePage() {
         return computedStatus === 'upcoming' || computedStatus === 'happening now';
       });
       
-      // Select 3 trips from different organizers
-      const selectedTrips = [];
-      const usedOrganizers = new Set();
-      
-      for (const trip of upcomingTrips) {
-        if (!usedOrganizers.has(trip.organizer_code) && selectedTrips.length < 3) {
-          selectedTrips.push(trip);
-          usedOrganizers.add(trip.organizer_code);
-        }
-        if (selectedTrips.length === 3) break;
-      }
-      
-      // If we have less than 3 trips from different organizers, fill up to 3 with any remaining trips
-      if (selectedTrips.length < 3) {
-        for (const trip of upcomingTrips) {
-          if (!selectedTrips.find(t => t.id === trip.id) && selectedTrips.length < 3) {
-            selectedTrips.push(trip);
-          }
-          if (selectedTrips.length === 3) break;
-        }
-      }
-      
-      return selectedTrips;
+      // Randomly select 3 trips
+      const shuffled = [...upcomingTrips].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, 3);
     },
     initialData: [],
   });
