@@ -91,9 +91,9 @@ export default function TripDetailsPage() {
     }
   }, [trip, organizer]);
 
-  // Increment view count (once per session per trip)
+  // Increment view count (once per session per trip, exclude admin users)
   React.useEffect(() => {
-    if (trip?.id) {
+    if (trip?.id && user?.role !== 'admin') {
       const viewedTripsKey = 'viewed_trips';
       const viewedTrips = JSON.parse(sessionStorage.getItem(viewedTripsKey) || '[]');
       
@@ -106,7 +106,7 @@ export default function TripDetailsPage() {
         base44.entities.HikingTrip.update(trip.id, { view_count: newCount });
       }
     }
-  }, [trip?.id]);
+  }, [trip?.id, user?.role]);
 
   // SEO Configuration with keywords - Dynamic based on trip data
   React.useEffect(() => {
