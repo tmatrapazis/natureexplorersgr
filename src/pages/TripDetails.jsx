@@ -300,10 +300,6 @@ export default function TripDetailsPage() {
                     {trip.distance_km && (
                       <Badge variant="outline">{trip.distance_km} km</Badge>
                     )}
-                    <Badge variant="outline" className="flex items-center gap-1">
-                      <Eye className="w-3 h-3" />
-                      {trip.view_count || 0} {language === 'el' ? 'προβολές' : 'views'}
-                    </Badge>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4 mb-6">
@@ -430,10 +426,12 @@ export default function TripDetailsPage() {
                   {trip.elevation_gain_m && (
                     <Badge variant="outline">↑ {trip.elevation_gain_m}m elevation</Badge>
                   )}
-                  <Badge variant="outline" className="flex items-center gap-1">
-                    <Eye className="w-3 h-3" />
-                    {trip.view_count || 0} {language === 'el' ? 'προβολές' : 'views'}
-                  </Badge>
+                  {user?.role === 'admin' && (
+                    <Badge variant="outline" className="flex items-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      {trip.view_count || 0} {language === 'el' ? 'προβολές' : 'views'}
+                    </Badge>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
