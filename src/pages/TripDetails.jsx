@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -90,6 +90,23 @@ export default function TripDetailsPage() {
       });
     }
   }, [trip, organizer]);
+
+  // Increment view count (once per session per trip)
+  React.useEffect(() => {
+    if (trip?.id) {
+      const viewedTripsKey = 'viewed_trips';
+      const viewedTrips = JSON.parse(sessionStorage.getItem(viewedTripsKey) || '[]');
+      
+      if (!viewedTrips.includes(trip.id)) {
+        // Mark as viewed in session
+        sessionStorage.setItem(viewedTripsKey, JSON.stringify([...viewedTrips, trip.id]));
+        
+        // Increment view count in database
+        const newCount = (trip.view_count || 0) + 1;
+        base44.entities.HikingTrip.update(trip.id, { view_count: newCount });
+      }
+    }
+  }, [trip?.id]);
 
   // SEO Configuration with keywords - Dynamic based on trip data
   React.useEffect(() => {
@@ -283,6 +300,10 @@ export default function TripDetailsPage() {
                     {trip.distance_km && (
                       <Badge variant="outline">{trip.distance_km} km</Badge>
                     )}
+                    <Badge variant="outline" className="flex items-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      {trip.view_count || 0} {language === 'el' ? 'προβολές' : 'views'}
+                    </Badge>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4 mb-6">
@@ -409,6 +430,10 @@ export default function TripDetailsPage() {
                   {trip.elevation_gain_m && (
                     <Badge variant="outline">↑ {trip.elevation_gain_m}m elevation</Badge>
                   )}
+                  <Badge variant="outline" className="flex items-center gap-1">
+                    <Eye className="w-3 h-3" />
+                    {trip.view_count || 0} {language === 'el' ? 'προβολές' : 'views'}
+                  </Badge>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
