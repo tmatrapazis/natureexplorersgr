@@ -152,14 +152,24 @@ export default function CalendarPage() {
         </div>
 
         <div className="flex flex-col gap-8">
-          <div className="flex justify-center">
-            <div className="w-full max-w-xl">
+          <div className="grid lg:grid-cols-2 gap-6">
+            <div>
               <CalendarGrid
                 currentDate={currentDate}
                 onDateChange={setCurrentDate}
                 trips={filteredTrips}
                 onDayClick={handleDayClick}
               />
+            </div>
+
+            <div>
+              {isLoading ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
+                </div>
+              ) : (
+                <PromotedTrip trips={activeTrips} />
+              )}
             </div>
           </div>
 
