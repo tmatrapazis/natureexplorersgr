@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -162,7 +161,7 @@ export default function CalendarPage() {
             />
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6 max-h-[600px] overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-lg p-6 h-fit lg:h-full overflow-y-auto">
             {isLoading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
