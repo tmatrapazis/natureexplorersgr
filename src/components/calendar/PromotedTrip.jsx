@@ -9,6 +9,8 @@ import { createPageUrl } from "@/utils";
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 import { getTripImage, handleImageError } from '../helpers/imageHelpers';
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 
 const difficultyColors = {
   easy: "bg-green-100 text-green-800 border-green-200",
@@ -20,6 +22,18 @@ const difficultyColors = {
 export default function PromotedTrip({ trips }) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+
+  const { data: user } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: async () => {
+      try {
+        return await base44.auth.me();
+      } catch (error) {
+        return null;
+      }
+    },
+    retry: false,
+  });
 
   // Find the most popular trip (highest view_count)
   const mostPopularTrip = React.useMemo(() => {
@@ -47,10 +61,12 @@ export default function PromotedTrip({ trips }) {
         <span className="text-white font-semibold text-sm">
           {language === 'el' ? 'Δημοφιλής Εκδρομή' : 'Popular Trip'}
         </span>
-        <div className="ml-auto flex items-center gap-1 text-white/90 text-xs">
-          <Eye className="w-3 h-3" />
-          <span>{mostPopularTrip.view_count || 0} {language === 'el' ? 'προβολές' : 'views'}</span>
-        </div>
+        {user?.role === 'admin' && (
+          <div className="ml-auto flex items-center gap-1 text-white/90 text-xs">
+            <Eye className="w-3 h-3" />
+            <span>{mostPopularTrip.view_count || 0} {language === 'el' ? 'προβολές' : 'views'}</span>
+          </div>
+        )}
       </div>
 
       <div className="relative w-full h-48 bg-stone-200">
