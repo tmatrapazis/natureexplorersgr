@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 import CalendarGrid from "../components/calendar/CalendarGrid";
 import TripsList from "../components/calendar/TripsList";
 import TripFilters from "../components/calendar/TripFilters";
-import PromotedTrip from "../components/calendar/PromotedTrip";
+import PromotedTrip from "../components/calendar/PromotedTrip.jsx";
 import { getComputedTripStatus } from "../components/helpers/tripHelpers";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
