@@ -1,4 +1,3 @@
-
 import React from "react";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
@@ -80,93 +79,95 @@ export default function TripsList({ trips, selectedDate }) {
   }
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-xl font-bold text-stone-900 mb-4">
+    <div>
+      <h3 className="text-xl font-bold text-stone-900 mb-6">
         {selectedDate ? `${t('calendar.trips_on')} ${format(selectedDate, "MMMM d, yyyy")}` : t('calendar.upcoming_trips')}
       </h3>
       
-      {trips.map((trip) => {
-        const organizer = organizerMap[trip.organizer_code];
-        
-        return (
-          <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 border-stone-200">
-            <div className="w-full h-40 bg-stone-200">
-              <img 
-                src={getTripImage(trip.image_url, trip.id)} 
-                alt={language === 'el'
-                  ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} - ορειβασία trekking outdoor adventure Ελλάδα`
-                  : `${trip.title} - hiking trip ${trip.location} - mountain trekking outdoor activity Greece`}
-                className="w-full h-full object-cover"
-                onError={(e) => handleImageError(e, trip.id)}
-              />
-            </div>
-            
-            <div className="p-4">
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-base font-bold text-stone-900 mb-2 line-clamp-2">{trip.title}</h4>
-                  <div className="flex flex-wrap items-center gap-1.5 mb-2">
-                    <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
-                      {trip.difficulty}
-                    </Badge>
-                    {trip.distance_km && (
-                      <Badge variant="outline" className="border-stone-300 text-xs">
-                        {trip.distance_km} km
-                      </Badge>
-                    )}
-                  </div>
-                </div>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        {trips.map((trip) => {
+          const organizer = organizerMap[trip.organizer_code];
+          
+          return (
+            <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 border-stone-200">
+              <div className="w-full h-40 bg-stone-200">
+                <img 
+                  src={getTripImage(trip.image_url, trip.id)} 
+                  alt={language === 'el'
+                    ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} - ορειβασία trekking outdoor adventure Ελλάδα`
+                    : `${trip.title} - hiking trip ${trip.location} - mountain trekking outdoor activity Greece`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => handleImageError(e, trip.id)}
+                />
               </div>
               
-              {organizer && (
-                <Link
-                  to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
-                  className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-emerald-700 mb-2"
-                >
-                  <User className="w-3 h-3" />
-                  <span>by {organizer.username || organizer.full_name}</span>
-                </Link>
-              )}
-
-              <div className="space-y-1 text-xs text-stone-600 mb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                    <span>{format(new Date(trip.start_date), "MMM d, yyyy")}</span>
+              <div className="p-4">
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-base font-bold text-stone-900 mb-2 line-clamp-2">{trip.title}</h4>
+                    <div className="flex flex-wrap items-center gap-1.5 mb-2">
+                      <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
+                        {trip.difficulty}
+                      </Badge>
+                      {trip.distance_km && (
+                        <Badge variant="outline" className="border-stone-300 text-xs">
+                          {trip.distance_km} km
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                  {trip.price && (
-                    <span className="font-bold text-emerald-700">€{trip.price}</span>
-                  )}
                 </div>
                 
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                  <span className="line-clamp-1">{trip.location}</span>
+                {organizer && (
+                  <Link
+                    to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
+                    className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-emerald-700 mb-2"
+                  >
+                    <User className="w-3 h-3" />
+                    <span>by {organizer.username || organizer.full_name}</span>
+                  </Link>
+                )}
+
+                <div className="space-y-1 text-xs text-stone-600 mb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <Calendar className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                      <span>{format(new Date(trip.start_date), "MMM d, yyyy")}</span>
+                    </div>
+                    {trip.price && (
+                      <span className="font-bold text-emerald-700">€{trip.price}</span>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                    <span className="line-clamp-1">{trip.location}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <Link 
+                    to={`${createPageUrl("TripDetails")}?id=${trip.id}`} 
+                    className="flex-1"
+                    onClick={() => handleViewDetailsClick(trip)}
+                  >
+                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 w-full">
+                      {t('trip.view_details')}
+                    </Button>
+                  </Link>
+                  {user && trip.external_link && (
+                    <Button size="sm" variant="outline" asChild>
+                      <a href={trip.external_link} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </Button>
+                  )}
                 </div>
               </div>
-
-              <div className="flex flex-wrap gap-2">
-                <Link 
-                  to={`${createPageUrl("TripDetails")}?id=${trip.id}`} 
-                  className="flex-1"
-                  onClick={() => handleViewDetailsClick(trip)}
-                >
-                  <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 w-full">
-                    {t('trip.view_details')}
-                  </Button>
-                </Link>
-                {user && trip.external_link && (
-                  <Button size="sm" variant="outline" asChild>
-                    <a href={trip.external_link} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </Button>
-                )}
-              </div>
-            </div>
-          </Card>
-        );
-      })}
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 }
