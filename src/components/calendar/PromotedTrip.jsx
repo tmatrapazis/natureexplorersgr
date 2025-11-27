@@ -35,13 +35,26 @@ export default function PromotedTrip({ trips, currentDate }) {
     retry: false,
   });
 
-  // Find the most popular trip (highest view_count)
+  // Filter trips by the current month and find the most popular one
   const mostPopularTrip = React.useMemo(() => {
-    if (!trips || trips.length === 0) return null;
-    return trips.reduce((most, trip) => {
+    if (!trips || trips.length === 0 || !currentDate) return null;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const tripsInCurrentMonth = trips.filter(trip => {
+      const tripDate = new Date(trip.start_date);
+      return tripDate >= today &&
+             tripDate.getMonth() === currentDate.getMonth() &&
+             tripDate.getFullYear() === currentDate.getFullYear();
+    });
+
+    if (tripsInCurrentMonth.length === 0) return null;
+
+    return tripsInCurrentMonth.reduce((most, trip) => {
       return (trip.view_count || 0) > (most.view_count || 0) ? trip : most;
-    }, trips[0]);
-  }, [trips]);
+    }, tripsInCurrentMonth[0]);
+  }, [trips, currentDate]);
 
   if (!mostPopularTrip) {
     return (
