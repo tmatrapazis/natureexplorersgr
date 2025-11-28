@@ -143,10 +143,10 @@ export default function CalendarPage() {
         </header>
 
         <div className="flex gap-3 mb-6 items-center">
-          <div className="bg-emerald-100 text-emerald-800 px-4 py-2 rounded-lg font-medium text-sm">
+          <TripFilters filters={filters} onFilterChange={setFilters} />
+          <div className="bg-emerald-100 text-emerald-800 px-4 py-2.5 rounded-md font-medium text-sm border border-emerald-200">
             {filteredTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
           </div>
-          <TripFilters filters={filters} onFilterChange={setFilters} />
 
           {hasActiveFilters && (
             <Button
