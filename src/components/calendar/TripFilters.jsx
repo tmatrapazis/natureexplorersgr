@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -82,7 +81,7 @@ export default function TripFilters({ filters, onFilterChange }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-background mb-6 pt-5 pr-4 pb-5 pl-4 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input shadow-sm hover:bg-accent hover:text-accent-foreground h-9">
+        <Button variant="outline" className="px-4 py-2.5 text-sm font-medium rounded-md inline-flex items-center justify-center h-9">
           <Filter className="w-4 h-4 mr-2" />
           {t('filters.filter_trips')}
           {activeFiltersCount > 0 &&

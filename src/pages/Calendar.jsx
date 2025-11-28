@@ -144,7 +144,7 @@ export default function CalendarPage() {
 
         <div className="flex gap-3 mb-6 items-center">
           <TripFilters filters={filters} onFilterChange={setFilters} />
-          <div className="bg-emerald-100 text-emerald-800 px-4 py-2 text-sm font-medium rounded-md border border-emerald-200">
+          <div className="bg-emerald-100 text-emerald-800 px-4 py-2.5 text-sm font-medium rounded-md border border-emerald-200 inline-flex items-center justify-center h-9">
             {filteredTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
           </div>
 
