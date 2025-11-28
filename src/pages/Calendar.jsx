@@ -40,6 +40,7 @@ export default function CalendarPage() {
     verifiedOnly: false,
     searchQuery: ""
   });
+  const [showAllTrips, setShowAllTrips] = useState(false);
 
   const { data: trips, isLoading } = useQuery({
     queryKey: ['hiking-trips'],
@@ -113,7 +114,11 @@ export default function CalendarPage() {
     setSelectedDayTrips([]);
   };
 
-  const displayTrips = selectedDate ? selectedDayTrips : filteredTrips.slice(0, 10);
+  const displayTrips = selectedDate 
+    ? selectedDayTrips 
+    : (showAllTrips ? filteredTrips : filteredTrips.slice(0, 10));
+  
+  const hasMoreTrips = !selectedDate && filteredTrips.length > 10;
 
   const hasActiveFilters = filters.difficulty !== "all" ||
     filters.minPrice ||
@@ -180,7 +185,22 @@ export default function CalendarPage() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
               </div>
             ) : (
-              <TripsList trips={displayTrips} selectedDate={selectedDate} />
+              <>
+                <TripsList trips={displayTrips} selectedDate={selectedDate} />
+                {hasMoreTrips && (
+                  <div className="text-center mt-6">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowAllTrips(!showAllTrips)}
+                      className="border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                    >
+                      {showAllTrips 
+                        ? (language === 'el' ? 'Εμφάνιση λιγότερων' : 'Show Less')
+                        : (language === 'el' ? `Δείτε περισσότερα (${filteredTrips.length - 10})` : `View More (${filteredTrips.length - 10})`)}
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
