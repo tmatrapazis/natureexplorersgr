@@ -18,12 +18,12 @@ export default function CalendarPage() {
 
   // SEO Configuration with keywords
   useSEO({
-    title: language === 'el'
-      ? 'Ημερολόγιο Πεζοπορίας | Εκδρομές Ορειβασία | Οργανωμένες Εκδρομές Βουνό | Nature Explorers'
-      : 'Hiking Calendar Greece | Upcoming Trekking Trips & Hiking Events | Nature Explorers',
-    description: language === 'el'
-      ? 'Περιηγηθείτε και κλείστε επερχόμενες πεζοπορικές εκδρομές σε όλη την Ελλάδα. Βρείτε trekking περιπέτειες, outdoor δραστηριότητες, ημερολόγιο εκδρομών και ορειβατικές διαδρομές με πιστοποιημένους τοπικούς οδηγούς. Πεζοπορία Πάρνηθα, Όλυμπος, Πήλιο, Κρήτη.'
-      : 'Browse and book upcoming hiking trips Greece, trekking adventures, and hiking events. Explore weekend hiking trips, one day hikes Greece, mountain trekking calendar with verified organizers. Hiking Parnitha, Olympus, Pelion, Crete.',
+    title: language === 'el' ?
+    'Ημερολόγιο Πεζοπορίας | Εκδρομές Ορειβασία | Οργανωμένες Εκδρομές Βουνό | Nature Explorers' :
+    'Hiking Calendar Greece | Upcoming Trekking Trips & Hiking Events | Nature Explorers',
+    description: language === 'el' ?
+    'Περιηγηθείτε και κλείστε επερχόμενες πεζοπορικές εκδρομές σε όλη την Ελλάδα. Βρείτε trekking περιπέτειες, outdoor δραστηριότητες, ημερολόγιο εκδρομών και ορειβατικές διαδρομές με πιστοποιημένους τοπικούς οδηγούς. Πεζοπορία Πάρνηθα, Όλυμπος, Πήλιο, Κρήτη.' :
+    'Browse and book upcoming hiking trips Greece, trekking adventures, and hiking events. Explore weekend hiking trips, one day hikes Greece, mountain trekking calendar with verified organizers. Hiking Parnitha, Olympus, Pelion, Crete.',
     image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png',
     url: window.location.href,
     type: 'website'
@@ -45,22 +45,22 @@ export default function CalendarPage() {
   const { data: trips, isLoading } = useQuery({
     queryKey: ['hiking-trips'],
     queryFn: () => base44.entities.HikingTrip.list("start_date"),
-    initialData: [],
+    initialData: []
   });
 
-  const activeTrips = trips.filter(trip => {
+  const activeTrips = trips.filter((trip) => {
     const status = getComputedTripStatus(trip);
     return status === 'upcoming' || status === 'happening now';
   });
 
   // Filter trips by the currently displayed month
-  const tripsInCurrentMonth = activeTrips.filter(trip => {
+  const tripsInCurrentMonth = activeTrips.filter((trip) => {
     const tripDate = new Date(trip.start_date);
     return tripDate.getMonth() === currentDate.getMonth() &&
-           tripDate.getFullYear() === currentDate.getFullYear();
+    tripDate.getFullYear() === currentDate.getFullYear();
   });
 
-  const filteredTrips = tripsInCurrentMonth.filter(trip => {
+  const filteredTrips = tripsInCurrentMonth.filter((trip) => {
     if (filters.difficulty !== "all" && trip.difficulty !== filters.difficulty) {
       return false;
     }
@@ -74,7 +74,7 @@ export default function CalendarPage() {
 
     if (filters.tags.length > 0) {
       const tripTags = trip.tags || [];
-      const hasMatchingTag = filters.tags.some(tag => tripTags.includes(tag));
+      const hasMatchingTag = filters.tags.some((tag) => tripTags.includes(tag));
       if (!hasMatchingTag) return false;
     }
 
@@ -85,9 +85,9 @@ export default function CalendarPage() {
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
       const matchesSearch =
-        trip.title?.toLowerCase().includes(query) ||
-        trip.location?.toLowerCase().includes(query) ||
-        trip.description?.toLowerCase().includes(query);
+      trip.title?.toLowerCase().includes(query) ||
+      trip.location?.toLowerCase().includes(query) ||
+      trip.description?.toLowerCase().includes(query);
       if (!matchesSearch) return false;
     }
 
@@ -114,19 +114,19 @@ export default function CalendarPage() {
     setSelectedDayTrips([]);
   };
 
-  const displayTrips = selectedDate 
-    ? selectedDayTrips 
-    : (showAllTrips ? filteredTrips : filteredTrips.slice(0, 10));
-  
+  const displayTrips = selectedDate ?
+  selectedDayTrips :
+  showAllTrips ? filteredTrips : filteredTrips.slice(0, 10);
+
   const hasMoreTrips = !selectedDate && filteredTrips.length > 10;
 
   const hasActiveFilters = filters.difficulty !== "all" ||
-    filters.minPrice ||
-    filters.maxPrice ||
-    filters.tags.length > 0 ||
-    filters.verifiedOnly ||
-    filters.searchQuery ||
-    selectedDate;
+  filters.minPrice ||
+  filters.maxPrice ||
+  filters.tags.length > 0 ||
+  filters.verifiedOnly ||
+  filters.searchQuery ||
+  selectedDate;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
@@ -136,28 +136,28 @@ export default function CalendarPage() {
             {language === 'el' ? 'Ημερολόγιο Πεζοπορικών Εκδρομών' : t('calendar.title')}
           </h1>
           <p className="text-stone-600">
-            {language === 'el'
-              ? 'Ανακαλύψτε επερχόμενες εκδρομές trekking, ορειβασία και hiking events σε όλη την Ελλάδα. Οργανωμένες εκδρομές βουνό και weekend adventures.'
-              : 'Discover upcoming hiking trips Greece, trekking expeditions and outdoor adventures. Weekend hiking ideas and one day hikes across Greek nature trails.'}
+            {language === 'el' ?
+            'Ανακαλύψτε επερχόμενες εκδρομές trekking, ορειβασία και hiking events σε όλη την Ελλάδα. Οργανωμένες εκδρομές βουνό και weekend adventures.' :
+            'Discover upcoming hiking trips Greece, trekking expeditions and outdoor adventures. Weekend hiking ideas and one day hikes across Greek nature trails.'}
           </p>
         </header>
 
         <div className="flex gap-3 mb-6 items-center">
           <TripFilters filters={filters} onFilterChange={setFilters} />
-          <div className="bg-emerald-100 text-emerald-800 px-4 py-2.5 rounded-md font-medium text-sm border border-emerald-200">
+          <div className="bg-emerald-100 text-emerald-800 px-4 py-2 text-sm font-medium rounded-md border border-emerald-200">
             {filteredTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
           </div>
 
-          {hasActiveFilters && (
-            <Button
-              variant="outline"
-              onClick={handleClearAll}
-              className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
-            >
+          {hasActiveFilters &&
+          <Button
+            variant="outline"
+            onClick={handleClearAll}
+            className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800">
+
               <X className="w-4 h-4 mr-2" />
               {t('filters.clear')}
             </Button>
-          )}
+          }
         </div>
 
         <div className="flex flex-col gap-8">
@@ -167,47 +167,47 @@ export default function CalendarPage() {
                 currentDate={currentDate}
                 onDateChange={setCurrentDate}
                 trips={filteredTrips}
-                onDayClick={handleDayClick}
-              />
+                onDayClick={handleDayClick} />
+
             </div>
 
             <div>
-              {isLoading ? (
-                <div className="text-center py-8">
+              {isLoading ?
+              <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
-                </div>
-              ) : (
-                <PromotedTrip trips={activeTrips} currentDate={currentDate} />
-              )}
+                </div> :
+
+              <PromotedTrip trips={activeTrips} currentDate={currentDate} />
+              }
             </div>
           </div>
 
           <div>
-            {isLoading ? (
-              <div className="text-center py-8">
+            {isLoading ?
+            <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
-              </div>
-            ) : (
-              <>
+              </div> :
+
+            <>
                 <TripsList trips={displayTrips} selectedDate={selectedDate} />
-                {hasMoreTrips && (
-                  <div className="text-center mt-6">
+                {hasMoreTrips &&
+              <div className="text-center mt-6">
                     <Button
-                      variant="outline"
-                      onClick={() => setShowAllTrips(!showAllTrips)}
-                      className="border-emerald-300 text-emerald-700 hover:bg-emerald-50"
-                    >
-                      {showAllTrips 
-                        ? (language === 'el' ? 'Εμφάνιση λιγότερων' : 'Show Less')
-                        : (language === 'el' ? `Δείτε περισσότερα (${filteredTrips.length - 10})` : `View More (${filteredTrips.length - 10})`)}
+                  variant="outline"
+                  onClick={() => setShowAllTrips(!showAllTrips)}
+                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50">
+
+                      {showAllTrips ?
+                  language === 'el' ? 'Εμφάνιση λιγότερων' : 'Show Less' :
+                  language === 'el' ? `Δείτε περισσότερα (${filteredTrips.length - 10})` : `View More (${filteredTrips.length - 10})`}
                     </Button>
                   </div>
-                )}
+              }
               </>
-            )}
+            }
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }
