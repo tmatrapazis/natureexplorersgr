@@ -89,7 +89,7 @@ export default function TripsList({ trips, selectedDate }) {
           const organizer = organizerMap[trip.organizer_code];
           
           return (
-            <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 border-stone-200">
+            <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 border-stone-200 flex flex-col h-full">
               <div className="w-full h-40 bg-stone-200">
                 <img 
                   src={getTripImage(trip.image_url, trip.id)} 
@@ -101,51 +101,55 @@ export default function TripsList({ trips, selectedDate }) {
                 />
               </div>
               
-              <div className="p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-base font-bold text-stone-900 mb-2 line-clamp-2">{trip.title}</h4>
-                    <div className="flex flex-wrap items-center gap-1.5 mb-2">
-                      <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
-                        {trip.difficulty}
-                      </Badge>
-                      {trip.distance_km && (
-                        <Badge variant="outline" className="border-stone-300 text-xs">
-                          {trip.distance_km} km
+              <div className="p-4 flex flex-col flex-1">
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-base font-bold text-stone-900 mb-2 line-clamp-2 h-12">{trip.title}</h4>
+                      <div className="flex flex-wrap items-center gap-1.5 mb-2">
+                        <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
+                          {trip.difficulty}
                         </Badge>
-                      )}
+                        {trip.distance_km && (
+                          <Badge variant="outline" className="border-stone-300 text-xs">
+                            {trip.distance_km} km
+                          </Badge>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </div>
-                
-                {organizer && (
-                  <Link
-                    to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
-                    className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-emerald-700 mb-2"
-                  >
-                    <User className="w-3 h-3" />
-                    <span>by {organizer.username || organizer.full_name}</span>
-                  </Link>
-                )}
-
-                <div className="space-y-1 text-xs text-stone-600 mb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                      <span>{format(new Date(trip.start_date), "MMM d, yyyy")}</span>
-                    </div>
-                    {trip.price && (
-                      <span className="font-bold text-emerald-700">€{trip.price}</span>
-                    )}
                   </div>
                   
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                    <span className="line-clamp-1">{trip.location}</span>
+                  <div className="h-6 mb-2">
+                    {organizer && (
+                      <Link
+                        to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
+                        className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-emerald-700"
+                      >
+                        <User className="w-3 h-3" />
+                        <span>by {organizer.username || organizer.full_name}</span>
+                      </Link>
+                    )}
+                  </div>
+
+                  <div className="space-y-1 text-xs text-stone-600 mb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                        <span>{format(new Date(trip.start_date), "MMM d, yyyy")}</span>
+                      </div>
+                      {trip.price && (
+                        <span className="font-bold text-emerald-700">€{trip.price}</span>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-1.5">
+                      <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                      <span className="line-clamp-1">{trip.location}</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mt-auto">
                   <Link 
                     to={`${createPageUrl("TripDetails")}?id=${trip.id}`} 
                     className="flex-1"
