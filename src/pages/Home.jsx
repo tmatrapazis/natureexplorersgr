@@ -59,8 +59,11 @@ export default function HomePage() {
         return computedStatus === 'upcoming' || computedStatus === 'happening now';
       });
       
+      // If no upcoming trips, show the most recent trips instead
+      const tripsToShow = upcomingTrips.length > 0 ? upcomingTrips : trips;
+      
       // Randomly select 3 trips
-      const shuffled = [...upcomingTrips].sort(() => 0.5 - Math.random());
+      const shuffled = [...tripsToShow].sort(() => 0.5 - Math.random());
       return shuffled.slice(0, 3);
     },
     initialData: [],
