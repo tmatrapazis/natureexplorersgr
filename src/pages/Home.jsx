@@ -203,13 +203,25 @@ export default function HomePage() {
                           onError={(e) => handleImageError(e, trip.id)}
                         />
                         <CardContent className="p-4">
-                          <div className="flex justify-between items-center mb-2">
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
                             <Badge className={difficultyColors[trip.difficulty]}>
                               {t(`trip.difficulty_${trip.difficulty}`)}
                             </Badge>
+                            {trip.status === 'upcoming' && (
+                              <Badge className="bg-green-100 text-green-800 border-green-200 border text-xs">
+                                {language === 'el' ? 'Διαθέσιμο' : 'Available'}
+                              </Badge>
+                            )}
+                            {trip.status === 'almost soldout' && (
+                              <Badge className="bg-orange-100 text-orange-800 border-orange-200 border text-xs">
+                                {language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Full'}
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-bold">{trip.title}</h3>
                             <p className="text-lg font-bold text-emerald-700">€{trip.price}</p>
                           </div>
-                          <h3 className="text-lg font-bold mb-2">{trip.title}</h3>
                           
                           {organizer && (
                             <div className="flex items-center gap-1.5 text-xs text-stone-600 mb-2">

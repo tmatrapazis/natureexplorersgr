@@ -359,6 +359,16 @@ export default function OrganizerProfilePage() {
                               €{trip.price}
                             </Badge>
                           )}
+                          {trip.status === 'upcoming' && (
+                            <Badge className="bg-green-100 text-green-800 border-green-200 border text-xs">
+                              {language === 'el' ? 'Διαθέσιμο' : 'Available'}
+                            </Badge>
+                          )}
+                          {trip.status === 'almost soldout' && (
+                            <Badge className="bg-orange-100 text-orange-800 border-orange-200 border text-xs">
+                              {language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Full'}
+                            </Badge>
+                          )}
                         </div>
 
                         <div className="space-y-2 text-sm text-stone-600 mb-3">
