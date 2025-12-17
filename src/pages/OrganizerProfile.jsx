@@ -1,4 +1,3 @@
-
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -46,19 +45,20 @@ export default function OrganizerProfilePage() {
 
   const { data: allTrips = [], isLoading: tripsLoading } = useQuery({
     queryKey: ['organizer-trips', organizerCode],
-    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: organizerCode, status: "upcoming" }, "start_date"),
+    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: organizerCode }, "start_date"),
     enabled: !!organizerCode,
     initialData: [],
   });
 
-  // Filter trips to only show future events (start_date > today)
+  // Filter trips to only show future events with upcoming or almost soldout status
   const trips = React.useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time to start of day
     
     return allTrips.filter(trip => {
       const tripStartDate = new Date(trip.start_date);
-      return tripStartDate >= today;
+      const isUpcoming = trip.status === 'upcoming' || trip.status === 'almost soldout';
+      return tripStartDate >= today && isUpcoming;
     });
   }, [allTrips]);
   
