@@ -20,7 +20,7 @@ const difficultyColors = {
   difficult: "bg-red-100 text-red-800 border-red-200"
 };
 
-export default function TripsList({ trips, selectedDate }) {
+export default React.forwardRef(function TripsList({ trips, selectedDate }, ref) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   
@@ -79,7 +79,7 @@ export default function TripsList({ trips, selectedDate }) {
   }
 
   return (
-    <div>
+    <div ref={ref}>
       <h3 className="text-xl font-bold text-stone-900 mb-6">
         {selectedDate ? `${t('calendar.trips_on')} ${format(selectedDate, "MMMM d, yyyy")}` : t('calendar.upcoming_trips')}
       </h3>
@@ -184,4 +184,4 @@ export default function TripsList({ trips, selectedDate }) {
       </div>
     </div>
   );
-}
+});

@@ -102,10 +102,7 @@ export default function CalendarPage() {
       // Auto scroll to trips list after a short delay
       setTimeout(() => {
         if (tripsListRef.current) {
-          const yOffset = -150; // Offset from top (negative to scroll more)
-          const element = tripsListRef.current;
-          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-          window.scrollTo({ top: y, behavior: 'smooth' });
+          tripsListRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }, 100);
     }
