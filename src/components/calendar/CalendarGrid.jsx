@@ -3,7 +3,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isTod
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function CalendarGrid({ currentDate, onDateChange, trips, onDayClick }) {
+export default function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDate }) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });

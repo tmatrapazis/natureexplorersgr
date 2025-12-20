@@ -41,6 +41,7 @@ export default function CalendarPage() {
     searchQuery: ""
   });
   const [showAllTrips, setShowAllTrips] = useState(false);
+  const tripsListRef = React.useRef(null);
 
   const { data: trips, isLoading } = useQuery({
     queryKey: ['hiking-trips'],
@@ -98,6 +99,12 @@ export default function CalendarPage() {
     if (dayTrips.length > 0) {
       setSelectedDate(day);
       setSelectedDayTrips(dayTrips);
+      // Auto scroll to trips list after a short delay
+      setTimeout(() => {
+        if (tripsListRef.current) {
+          tripsListRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
     }
   };
 
@@ -167,11 +174,12 @@ export default function CalendarPage() {
                 currentDate={currentDate}
                 onDateChange={setCurrentDate}
                 trips={filteredTrips}
-                onDayClick={handleDayClick} />
+                onDayClick={handleDayClick}
+                selectedDate={selectedDate} />
 
             </div>
 
-            <div>
+            <div ref={tripsListRef}>
               {isLoading ?
               <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
