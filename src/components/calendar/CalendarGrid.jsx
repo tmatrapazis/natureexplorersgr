@@ -74,6 +74,7 @@ export default function CalendarGrid({ currentDate, onDateChange, trips, onDayCl
         {allDays.map((day, index) => {
           const dayTrips = day ? getTripsForDay(day) : [];
           const hasTrips = dayTrips.length > 0;
+          const isSelected = day && selectedDate && isSameDay(day, selectedDate);
 
           return (
             <button
@@ -83,20 +84,22 @@ export default function CalendarGrid({ currentDate, onDateChange, trips, onDayCl
               className={`
                 aspect-square p-2 rounded-xl transition-all duration-200 relative
                 ${!day ? "invisible" : ""}
-                ${isToday(day || new Date()) ? "bg-emerald-100 border-2 border-emerald-500" : "hover:bg-stone-100"}
+                ${isSelected ? "bg-orange-200 border-2 border-orange-500" : ""}
+                ${isToday(day || new Date()) && !isSelected ? "bg-emerald-100 border-2 border-emerald-500" : ""}
+                ${!isSelected && !isToday(day || new Date()) ? "hover:bg-stone-100" : ""}
                 ${!isSameMonth(day || new Date(), currentDate) ? "opacity-40" : ""}
                 ${hasTrips ? "cursor-pointer" : "cursor-default"}
               `}
             >
               {day && (
                 <>
-                  <div className={`text-sm font-medium ${isToday(day) ? "text-emerald-700" : "text-stone-700"}`}>
+                  <div className={`text-sm font-medium ${isSelected ? "text-orange-700" : isToday(day) ? "text-emerald-700" : "text-stone-700"}`}>
                     {format(day, "d")}
                   </div>
                   {hasTrips && (
                     <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
                       {dayTrips.slice(0, 3).map((_, i) => (
-                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        <div key={i} className={`w-1.5 h-1.5 rounded-full ${isSelected ? "bg-orange-500" : "bg-emerald-500"}`} />
                       ))}
                     </div>
                   )}
