@@ -62,8 +62,11 @@ export default function HomePage() {
         return startDate >= today;
       });
       
-      // Randomly select 3 trips from upcoming only
-      const shuffled = [...upcomingTrips].sort(() => 0.5 - Math.random());
+      // If no upcoming trips, show the most recent trips instead
+      const tripsToShow = upcomingTrips.length > 0 ? upcomingTrips : trips;
+      
+      // Randomly select 3 trips
+      const shuffled = [...tripsToShow].sort(() => 0.5 - Math.random());
       return shuffled.slice(0, 3);
     },
     initialData: [],
