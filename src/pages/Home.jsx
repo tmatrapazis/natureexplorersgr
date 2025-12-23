@@ -53,7 +53,7 @@ export default function HomePage() {
       // Fetch all trips sorted by start date
       const trips = await base44.entities.HikingTrip.list('start_date', 50);
       
-      // Filter to only show truly upcoming trips (start_date > today)
+      // Filter to only show truly upcoming trips (start_date >= today)
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
@@ -62,11 +62,8 @@ export default function HomePage() {
         return startDate >= today;
       });
       
-      // If no upcoming trips, show the most recent trips instead
-      const tripsToShow = upcomingTrips.length > 0 ? upcomingTrips : trips;
-      
-      // Randomly select 3 trips
-      const shuffled = [...tripsToShow].sort(() => 0.5 - Math.random());
+      // Randomly select 3 upcoming trips only
+      const shuffled = [...upcomingTrips].sort(() => 0.5 - Math.random());
       return shuffled.slice(0, 3);
     },
     initialData: [],
