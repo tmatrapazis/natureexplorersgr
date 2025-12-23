@@ -320,10 +320,11 @@ export default function OrganizerProfilePage() {
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {trips.map((trip) => (
-                  <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
+                  <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full">
                     <Link 
                       to={`${createPageUrl("TripDetails")}?id=${trip.id}`}
                       onClick={() => handleTripViewDetailsClick(trip)}
+                      className="flex flex-col h-full"
                     >
                       {trip.image_url && (
                         <div className="w-full h-48 bg-stone-200">
@@ -337,7 +338,7 @@ export default function OrganizerProfilePage() {
                         </div>
                       )}
                       
-                      <CardContent className="p-4">
+                      <CardContent className="p-4 flex flex-col flex-1">
                         <div className="flex items-start justify-between mb-2">
                           <h3 className="text-lg font-bold text-stone-900 line-clamp-2 flex-1">
                             {trip.title}
@@ -396,7 +397,7 @@ export default function OrganizerProfilePage() {
                           </p>
                         )}
 
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 mt-auto">
                           <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 flex-1">
                             {t('trip.view_details')}
                           </Button>
