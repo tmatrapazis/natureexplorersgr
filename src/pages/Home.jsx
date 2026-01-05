@@ -55,14 +55,14 @@ export default function HomePage() {
       
       // Filter to show trips starting from today + 3 days and after
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      today.setUTCHours(0, 0, 0, 0);
       const threeDaysFromNow = new Date(today);
-      threeDaysFromNow.setDate(today.getDate() + 3);
+      threeDaysFromNow.setUTCDate(today.getUTCDate() + 3);
       
       const upcomingTrips = trips.filter(trip => {
         if (!trip.start_date) return false;
         const startDate = new Date(trip.start_date);
-        startDate.setHours(0, 0, 0, 0);
+        startDate.setUTCHours(0, 0, 0, 0);
         return startDate >= threeDaysFromNow;
       });
       
