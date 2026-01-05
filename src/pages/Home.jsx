@@ -185,6 +185,61 @@ export default function HomePage() {
               </p>
             </div>
           </section>
+
+          <section className="py-12 md:py-20 bg-stone-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-3xl font-bold text-center mb-10">
+                {language === 'el' ? 'Επερχόμενες Πεζοπορικές Εκδρομές' : 'Upcoming Hiking Trips'}
+              </h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {featuredTrips.map(trip => {
+                  const organizer = organizerMap[trip.organizer_code];
+                  
+                  return (
+                    <Card key={trip.id} className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                      <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`}>
+                        <img 
+                          src={getTripImage(trip.image_url, trip.id)} 
+                          alt={trip.title}
+                          className="w-full h-48 object-cover"
+                          onError={(e) => handleImageError(e, trip.id)}
+                        />
+                        <CardContent className="p-4">
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <Badge className={difficultyColors[trip.difficulty]}>
+                              {t(`trip.difficulty_${trip.difficulty}`)}
+                            </Badge>
+                          </div>
+                          <div className="flex justify-between items-center mb-2">
+                            <h3 className="text-lg font-bold">{trip.title}</h3>
+                            <p className="text-lg font-bold text-emerald-700">€{trip.price}</p>
+                          </div>
+                          
+                          {organizer && (
+                            <div className="flex items-center gap-1.5 text-xs text-stone-600 mb-2">
+                              <UserIcon className="w-3 h-3" />
+                              <span>{language === 'el' ? 'από' : 'by'} {organizer.username || organizer.full_name}</span>
+                            </div>
+                          )}
+                          
+                          <div className="space-y-2 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-4 h-4" aria-hidden="true" />
+                              <span>{formatDateRange(trip.start_date, trip.end_date)}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MapPin className="w-4 h-4" aria-hidden="true" />
+                              <span>{trip.location}</span>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Link>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
         </main>
       </div>
     </>
