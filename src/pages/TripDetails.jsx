@@ -256,15 +256,12 @@ export default function TripDetailsPage() {
         <ShareButton trip={trip} language={language} />
         <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
           <div className="max-w-5xl mx-auto">
-            <div className="flex justify-between items-center mb-6">
-              <Link to={createPageUrl("Calendar")}>
-                <Button variant="outline">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  {t('trip.back_to_calendar')}
-                </Button>
-              </Link>
-              <ShareButton trip={trip} language={language} />
-            </div>
+            <Link to={createPageUrl("Calendar")}>
+              <Button variant="outline" className="mb-6">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                {t('trip.back_to_calendar')}
+              </Button>
+            </Link>
 
             <div className="grid lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
