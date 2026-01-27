@@ -119,7 +119,7 @@ export default function ShareButton({ trip, language, className = "" }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className={className}>
+        <Button variant="outline" className={`hidden md:flex ${className}`}>
           <Share2 className="w-4 h-4 mr-2" />
           {language === 'el' ? 'Κοινοποίηση' : 'Share'}
         </Button>
