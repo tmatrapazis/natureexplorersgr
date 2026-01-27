@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Share2 } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -247,6 +247,42 @@ export default function TripDetailsPage() {
     });
   };
 
+  // Handler for share button
+  const handleShare = async () => {
+    const shareUrl = window.location.href;
+    const shareTitle = trip.title;
+    const shareText = language === 'el'
+      ? `Δες αυτή την πεζοπορική εκδρομή: ${trip.title}`
+      : `Check out this hiking trip: ${trip.title}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+        trackEvent('share_success', {
+          event_category: 'Engagement',
+          event_label: trip.title,
+          trip_id: trip.id,
+          method: 'native',
+        });
+      } else {
+        await navigator.clipboard.writeText(shareUrl);
+        alert(language === 'el' ? 'Ο σύνδεσμος αντιγράφηκε!' : 'Link copied to clipboard!');
+        trackEvent('share_success', {
+          event_category: 'Engagement',
+          event_label: trip.title,
+          trip_id: trip.id,
+          method: 'clipboard',
+        });
+      }
+    } catch (error) {
+      console.error('Share failed:', error);
+    }
+  };
+
   // If user is not logged in, show limited details with login prompt
   if (!user) {
     return (
@@ -254,12 +290,18 @@ export default function TripDetailsPage() {
         {eventSchema && <StructuredData data={eventSchema} />}
         <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
           <div className="max-w-5xl mx-auto">
-            <Link to={createPageUrl("Calendar")}>
-              <Button variant="outline" className="mb-6">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                {t('trip.back_to_calendar')}
+            <div className="flex gap-3 mb-6">
+              <Link to={createPageUrl("Calendar")}>
+                <Button variant="outline">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  {t('trip.back_to_calendar')}
+                </Button>
+              </Link>
+              <Button variant="outline" onClick={handleShare}>
+                <Share2 className="w-4 h-4 mr-2" />
+                {language === 'el' ? 'Κοινοποίηση' : 'Share'}
               </Button>
-            </Link>
+            </div>
 
             <div className="grid lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
@@ -377,12 +419,18 @@ export default function TripDetailsPage() {
       {eventSchema && <StructuredData data={eventSchema} />}
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-5xl mx-auto">
-          <Link to={createPageUrl("Calendar")}>
-            <Button variant="outline" className="mb-6">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              {t('trip.back_to_calendar')}
+          <div className="flex gap-3 mb-6">
+            <Link to={createPageUrl("Calendar")}>
+              <Button variant="outline">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                {t('trip.back_to_calendar')}
+              </Button>
+            </Link>
+            <Button variant="outline" onClick={handleShare}>
+              <Share2 className="w-4 h-4 mr-2" />
+              {language === 'el' ? 'Κοινοποίηση' : 'Share'}
             </Button>
-          </Link>
+          </div>
 
           <div className="grid lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
