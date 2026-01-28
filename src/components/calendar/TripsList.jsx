@@ -147,9 +147,9 @@ export default React.forwardRef(function TripsList({ trips, selectedDate }, ref)
                         <Calendar className="w-3 h-3 text-emerald-600 flex-shrink-0" />
                         <span>{format(new Date(trip.start_date), "MMM d, yyyy")}</span>
                       </div>
-                      {trip.price && (
-                        <span className="font-bold text-emerald-700">€{trip.price}</span>
-                      )}
+                      <span className="font-bold text-emerald-700">
+                        {trip.price ? `€${trip.price}` : 'TBA'}
+                      </span>
                     </div>
                     
                     <div className="flex items-center gap-1.5">

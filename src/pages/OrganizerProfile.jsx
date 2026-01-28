@@ -355,11 +355,9 @@ export default function OrganizerProfilePage() {
                               {trip.distance_km} {t('common.distance_unit_km')}
                             </Badge>
                           )}
-                          {trip.price && (
-                            <Badge variant="outline" className="text-xs text-emerald-700">
-                              €{trip.price}
-                            </Badge>
-                          )}
+                          <Badge variant="outline" className="text-xs text-emerald-700">
+                            {trip.price ? `€${trip.price}` : 'TBA'}
+                          </Badge>
                           {trip.status === 'upcoming' && (
                             <Badge className="bg-green-100 text-green-800 border-green-200 border text-xs">
                               {language === 'el' ? 'Διαθέσιμο' : 'Available'}

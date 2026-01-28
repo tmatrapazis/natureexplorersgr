@@ -463,15 +463,15 @@ export default function TripDetailsPage() {
                     </div>
                   )}
 
-                  {trip.price && (
-                    <div className="flex items-center gap-3">
-                      <Euro className="w-5 h-5 text-emerald-600" />
-                      <div>
-                        <p className="text-sm text-stone-500">{t('trip.price')}</p>
-                        <p className="font-medium text-stone-900">€{trip.price} {t('trip.per_person')}</p>
-                      </div>
+                  <div className="flex items-center gap-3">
+                    <Euro className="w-5 h-5 text-emerald-600" />
+                    <div>
+                      <p className="text-sm text-stone-500">{t('trip.price')}</p>
+                      <p className="font-medium text-stone-900">
+                        {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
+                      </p>
                     </div>
-                  )}
+                  </div>
                 </div>
 
                 {trip.meeting_points && trip.meeting_points.length > 0 && (
