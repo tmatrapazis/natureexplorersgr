@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -34,6 +33,9 @@ export default function CreateTripPage() {
     queryKey: ['current-user'],
     queryFn: () => base44.auth.me(),
   });
+
+  // Check if user has an organizer_code linked
+  const hasOrganizerCode = user?.organizer_code;
 
   const [tripData, setTripData] = useState({
     title: "",
@@ -90,11 +92,12 @@ export default function CreateTripPage() {
 
   const createTripMutation = useMutation({
     mutationFn: async (data) => {
+      if (!user?.organizer_code) {
+        throw new Error("You must be linked to an Organizer profile to create trips");
+      }
       return await base44.entities.HikingTrip.create({
         ...data,
-        organizer_id: user.id,
-        organizer_name: user.username || user.full_name,
-        organizer_is_verified: user.is_verified_organizer || false,
+        organizer_code: user.organizer_code,
         status: "upcoming"
       });
     },
@@ -106,6 +109,12 @@ export default function CreateTripPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!hasOrganizerCode) {
+      alert("You need to be linked to an Organizer profile to create trips. Please contact an admin.");
+      return;
+    }
+    
     const dataToSubmit = { ...tripData };
     if (!dataToSubmit.end_date) {
       dataToSubmit.end_date = dataToSubmit.start_date;
@@ -113,9 +122,6 @@ export default function CreateTripPage() {
     if (!dataToSubmit.max_participants || dataToSubmit.max_participants === 0) {
       dataToSubmit.max_participants = dataToSubmit.total_slots;
     }
-    
-    // Add organizer email for notifications
-    dataToSubmit.organizer_email = user.email;
     
     await createTripMutation.mutateAsync(dataToSubmit);
   };
@@ -243,6 +249,14 @@ export default function CreateTripPage() {
 
         <Card className="p-8">
           <h1 className="text-3xl font-bold text-stone-900 mb-6">Create New Hiking Trip</h1>
+
+          {!hasOrganizerCode && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+              <p className="text-amber-800 font-medium">
+                You need to be linked to an Organizer profile to create trips. Please contact an admin to set up your organizer profile.
+              </p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
