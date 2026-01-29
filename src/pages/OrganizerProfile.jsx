@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Phone, Globe, User as UserIcon, ShieldCheck, MapPin, Calendar, Clock, TrendingUp, ExternalLink, Loader2, Facebook, Instagram, Twitter } from "lucide-react";
+import { ArrowLeft, Mail, Phone, Globe, User as UserIcon, ShieldCheck, MapPin, Calendar, Clock, TrendingUp, ExternalLink, Loader2, Facebook, Instagram, Twitter, PlusCircle } from "lucide-react";
 import { format } from "date-fns";
 import { formatDateRange } from "../components/helpers/dateHelpers";
 import { difficultyColors } from "../components/helpers/tripHelpers";
@@ -299,6 +299,18 @@ export default function OrganizerProfilePage() {
                         <span className="text-sm font-medium">{t('social.twitter_x')}</span>
                       </a>
                     )}
+                  </div>
+                )}
+
+                {/* Create Trip Button - Only visible to the organizer themselves */}
+                {user?.organizer_code === organizer?.organizer_code && (
+                  <div className="mt-4 justify-center md:justify-start flex">
+                    <Link to={createPageUrl("CreateTrip")}>
+                      <Button className="bg-emerald-600 hover:bg-emerald-700">
+                        <PlusCircle className="w-4 h-4 mr-2" />
+                        {language === 'el' ? 'Δημιουργία Νέας Εκδρομής' : 'Create New Trip'}
+                      </Button>
+                    </Link>
                   </div>
                 )}
               </div>
