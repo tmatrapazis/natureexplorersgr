@@ -243,46 +243,48 @@ export default function CreateTripPage() {
         <Link to={createPageUrl("MyTrips")}>
           <Button variant="outline" className="mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to My Trips
+            {t('create_trip.back_to_trips')}
           </Button>
         </Link>
 
         <Card className="p-8">
-          <h1 className="text-3xl font-bold text-stone-900 mb-6">Create New Hiking Trip</h1>
+          <h1 className="text-3xl font-bold text-stone-900 mb-6">{t('create_trip.title')}</h1>
 
           {!hasOrganizerCode && (
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
               <p className="text-amber-800 font-medium">
-                You need to be linked to an Organizer profile to create trips. Please contact an admin to set up your organizer profile.
+                {language === 'el'
+                  ? 'Πρέπει να συνδεθείτε με ένα προφίλ Διοργανωτή για να δημιουργήσετε εκδρομές. Παρακαλώ επικοινωνήστε με έναν διαχειριστή για να ρυθμίσετε το προφίλ σας ως διοργανωτή.'
+                  : 'You need to be linked to an Organizer profile to create trips. Please contact an admin to set up your organizer profile.'}
               </p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="title">Trip Title *</Label>
+              <Label htmlFor="title">{t('create_trip.trip_title')} *</Label>
               <Input
                 id="title"
                 value={tripData.title}
                 onChange={(e) => setTripData({...tripData, title: e.target.value})}
-                placeholder="e.g., Sunset Peak Trail Adventure"
+                placeholder={t('create_trip.trip_title_placeholder')}
                 required
               />
             </div>
 
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('create_trip.description')}</Label>
               <Textarea
                 id="description"
                 value={tripData.description}
                 onChange={(e) => setTripData({...tripData, description: e.target.value})}
-                placeholder="Describe the trail, what to expect, highlights..."
+                placeholder={t('create_trip.description_placeholder')}
                 rows={4}
               />
             </div>
 
             <div>
-              <Label>Trip Tags</Label>
+              <Label>{t('create_trip.tags')}</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {availableTags.map(tag => (
                   <Badge
@@ -295,12 +297,12 @@ export default function CreateTripPage() {
                   </Badge>
                 ))}
               </div>
-              <p className="text-xs text-stone-500 mt-2">Click tags to add them to your trip</p>
+              <p className="text-xs text-stone-500 mt-2">{t('create_trip.tags_description')}</p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="start_date">Start Date *</Label>
+                <Label htmlFor="start_date">{t('create_trip.start_date')} *</Label>
                 <Input
                   id="start_date"
                   type="date"
@@ -311,7 +313,7 @@ export default function CreateTripPage() {
               </div>
 
               <div>
-                <Label htmlFor="end_date">End Date</Label>
+                <Label htmlFor="end_date">{t('create_trip.end_date')}</Label>
                 <Input
                   id="end_date"
                   type="date"
@@ -319,12 +321,12 @@ export default function CreateTripPage() {
                   min={tripData.start_date}
                   onChange={(e) => setTripData({...tripData, end_date: e.target.value})}
                 />
-                 <p className="text-xs text-stone-500 mt-1">Leave blank for single-day trips.</p>
+                 <p className="text-xs text-stone-500 mt-1">{t('create_trip.end_date_note')}</p>
               </div>
             </div>
 
             <div>
-                <Label htmlFor="time">Start Time</Label>
+                <Label htmlFor="time">{t('create_trip.start_time')}</Label>
                 <Input
                   id="time"
                   type="time"
@@ -334,20 +336,20 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-              <Label htmlFor="location">General Location/Region *</Label>
+              <Label htmlFor="location">{t('create_trip.location_region')} *</Label>
               <Input
                 id="location"
                 value={tripData.location}
                 onChange={(e) => setTripData({...tripData, location: e.target.value})}
-                placeholder="e.g., Mount Olympus, Crete"
+                placeholder={t('create_trip.location_placeholder')}
                 required
               />
-              <p className="text-xs text-stone-500 mt-1">The general area/region for this trip</p>
+              <p className="text-xs text-stone-500 mt-1">{t('create_trip.location_note')}</p>
             </div>
 
             <div>
-              <Label>Meeting Points</Label>
-              <p className="text-xs text-stone-500 mb-3">Add one or more meeting points where hikers can join the trip</p>
+              <Label>{t('create_trip.meeting_points')}</Label>
+              <p className="text-xs text-stone-500 mb-3">{t('create_trip.meeting_points_description')}</p>
               
               {tripData.meeting_points.length > 0 && (
                 <div className="space-y-2 mb-4">
@@ -383,18 +385,18 @@ export default function CreateTripPage() {
 
               <div className="space-y-3 border rounded-lg p-4 bg-white">
                 <Input
-                  placeholder="Meeting point name (e.g., Trailhead Parking Lot)"
+                  placeholder={t('create_trip.meeting_point_name_placeholder')}
                   value={newMeetingPoint.name}
                   onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, name: e.target.value })}
                 />
                 <Input
-                  placeholder="Location (address or coordinates)"
+                  placeholder={t('create_trip.meeting_point_location_placeholder')}
                   value={newMeetingPoint.location}
                   onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, location: e.target.value })}
                 />
                 <Input
                   type="time"
-                  placeholder="Meeting time (optional)"
+                  placeholder={t('create_trip.meeting_point_time')}
                   value={newMeetingPoint.time}
                   onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, time: e.target.value })}
                 />
@@ -406,14 +408,14 @@ export default function CreateTripPage() {
                   disabled={!newMeetingPoint.name.trim() || !newMeetingPoint.location.trim()}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Meeting Point
+                  {t('create_trip.add_meeting_point')}
                 </Button>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="difficulty">Difficulty Level</Label>
+                <Label htmlFor="difficulty">{t('create_trip.difficulty_level')}</Label>
                 <Select
                   value={tripData.difficulty}
                   onValueChange={(value) => setTripData({...tripData, difficulty: value})}
@@ -422,16 +424,16 @@ export default function CreateTripPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="easy">Easy</SelectItem>
-                    <SelectItem value="moderate">Moderate</SelectItem>
-                    <SelectItem value="challenging">Challenging</SelectItem>
-                    <SelectItem value="difficult">Difficult</SelectItem>
+                    <SelectItem value="easy">{t('trip.difficulty_easy')}</SelectItem>
+                    <SelectItem value="moderate">{t('trip.difficulty_moderate')}</SelectItem>
+                    <SelectItem value="challenging">{t('trip.difficulty_challenging')}</SelectItem>
+                    <SelectItem value="difficult">{t('trip.difficulty_difficult')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label htmlFor="duration">Duration (hours)</Label>
+                <Label htmlFor="duration">{t('create_trip.duration_hours')}</Label>
                 <Input
                   id="duration"
                   type="number"
@@ -445,7 +447,7 @@ export default function CreateTripPage() {
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="distance">Distance (km)</Label>
+                <Label htmlFor="distance">{t('create_trip.distance')}</Label>
                 <Input
                   id="distance"
                   type="number"
@@ -457,7 +459,7 @@ export default function CreateTripPage() {
               </div>
 
               <div>
-                <Label htmlFor="elevation">Elevation Gain (m)</Label>
+                <Label htmlFor="elevation">{t('create_trip.elevation_gain')}</Label>
                 <Input
                   id="elevation"
                   type="number"
@@ -470,7 +472,7 @@ export default function CreateTripPage() {
 
             <div className="grid md:grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="min">Min Participants</Label>
+                <Label htmlFor="min">{t('create_trip.min_participants')}</Label>
                 <Input
                   id="min"
                   type="number"
@@ -481,19 +483,19 @@ export default function CreateTripPage() {
               </div>
 
               <div>
-                <Label htmlFor="max">Max Participants</Label>
+                <Label htmlFor="max">{t('create_trip.max_participants')}</Label>
                 <Input
                   id="max"
                   type="number"
                   min="1"
                   value={tripData.max_participants}
                   onChange={(e) => setTripData({...tripData, max_participants: parseInt(e.target.value)})}
-                  placeholder="Leave 0 for total slots"
+                  placeholder={t('create_trip.max_participants_note')}
                 />
               </div>
 
               <div>
-                <Label htmlFor="slots">Total Slots *</Label>
+                <Label htmlFor="slots">{t('create_trip.total_slots')} *</Label>
                 <Input
                   id="slots"
                   type="number"
@@ -506,7 +508,7 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-              <Label htmlFor="price">Price per Person ($)</Label>
+              <Label htmlFor="price">{t('create_trip.price_per_person')}</Label>
               <Input
                 id="price"
                 type="number"
@@ -518,41 +520,41 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-              <Label htmlFor="cancel_policy">Cancellation Policy</Label>
+              <Label htmlFor="cancel_policy">{t('create_trip.cancellation_policy')}</Label>
               <Textarea
                 id="cancel_policy"
                 value={tripData.cancel_policy}
                 onChange={(e) => setTripData({...tripData, cancel_policy: e.target.value})}
-                placeholder="e.g., Full refund if cancelled 48h before trip start..."
+                placeholder={t('create_trip.cancellation_policy_placeholder')}
                 rows={3}
               />
             </div>
 
             <div>
-              <Label htmlFor="organizer_notes">Organizer Notes (Private)</Label>
+              <Label htmlFor="organizer_notes">{t('create_trip.organizer_notes')}</Label>
               <Textarea
                 id="organizer_notes"
                 value={tripData.organizer_notes}
                 onChange={(e) => setTripData({...tripData, organizer_notes: e.target.value})}
-                placeholder="Notes visible only to hikers with accepted bookings..."
+                placeholder={t('create_trip.organizer_notes_placeholder')}
                 rows={3}
               />
-              <p className="text-xs text-stone-500 mt-1">This will only be shown to confirmed participants</p>
+              <p className="text-xs text-stone-500 mt-1">{t('create_trip.organizer_notes_description')}</p>
             </div>
 
             <div>
-              <Label htmlFor="external">External Link (Optional)</Label>
+              <Label htmlFor="external">{t('create_trip.external_link')}</Label>
               <Input
                 id="external"
                 type="url"
                 value={tripData.external_link}
                 onChange={(e) => setTripData({...tripData, external_link: e.target.value})}
-                placeholder="https://example.com or Facebook event link"
+                placeholder={t('create_trip.external_link_placeholder')}
               />
             </div>
 
             <div>
-              <Label htmlFor="image-upload">Upload Primary Image</Label>
+              <Label htmlFor="image-upload">{t('create_trip.upload_primary_image')}</Label>
               <div className="flex gap-2">
                 <Input
                   id="image-upload"
@@ -568,10 +570,10 @@ export default function CreateTripPage() {
                   onClick={handleImageGeneration}
                   disabled={uploadingImage}
                 >
-                  {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Generate AI Image'}
+                  {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : t('create_trip.generate_ai_image')}
                 </Button>
               </div>
-              {uploadingImage && <p className="text-sm text-stone-500">Uploading...</p>}
+              {uploadingImage && <p className="text-sm text-stone-500">{t('create_trip.uploading')}</p>}
               {tripData.image_url && (
                 <img 
                   src={tripData.image_url} 
@@ -582,7 +584,7 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-              <Label>Gallery Images (Max 5)</Label>
+              <Label>{t('create_trip.gallery_images')}</Label>
               <Input
                 type="file"
                 accept="image/*"
@@ -610,7 +612,7 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-              <Label htmlFor="gpx">GPX Route File (Optional)</Label>
+              <Label htmlFor="gpx">{t('create_trip.gpx_file')}</Label>
               <Input
                 id="gpx"
                 type="file"
@@ -619,17 +621,17 @@ export default function CreateTripPage() {
                 disabled={uploadingImage}
               />
               {tripData.gpx_file_url && (
-                <p className="text-sm text-emerald-600 mt-1">✓ GPX file uploaded</p>
+                <p className="text-sm text-emerald-600 mt-1">✓ {t('create_trip.gpx_uploaded')}</p>
               )}
             </div>
 
             <div>
-              <Label>What to Bring</Label>
+              <Label>{t('create_trip.requirements_label')}</Label>
               <div className="flex gap-2 mb-2">
                 <Input
                   value={currentRequirement}
                   onChange={(e) => setCurrentRequirement(e.target.value)}
-                  placeholder="e.g., Water bottle, Hiking boots"
+                  placeholder={t('create_trip.requirements_placeholder')}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addRequirement())}
                 />
                 <Button type="button" onClick={addRequirement} variant="outline">
@@ -660,14 +662,14 @@ export default function CreateTripPage() {
                 onClick={() => navigate(createPageUrl("MyTrips"))}
                 className="flex-1"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button 
                 type="submit" 
                 className="flex-1 bg-emerald-600 hover:bg-emerald-700"
                 disabled={createTripMutation.isPending}
               >
-                {createTripMutation.isPending ? "Creating..." : "Create Trip"}
+                {createTripMutation.isPending ? t('create_trip.creating') : t('create_trip.create_trip_button')}
               </Button>
             </div>
           </form>
