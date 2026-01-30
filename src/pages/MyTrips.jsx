@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -6,7 +5,7 @@ import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, MapPin, Users, Plus, User as UserIcon, XCircle, Edit, ListOrdered } from "lucide-react";
+import { Calendar, MapPin, Users, Plus, User as UserIcon, XCircle, Edit, ListOrdered, Trash2, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -37,9 +36,9 @@ export default function MyTripsPage() {
   });
 
   const { data: trips, isLoading: tripsLoading } = useQuery({
-    queryKey: ['my-trips', user?.id],
-    queryFn: () => base44.entities.HikingTrip.filter({ organizer_id: user.id }, "-start_date"),
-    enabled: !!user,
+    queryKey: ['my-trips', user?.organizer_code],
+    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: user.organizer_code }, "-start_date"),
+    enabled: !!user?.organizer_code,
     initialData: [],
   });
 
@@ -47,6 +46,24 @@ export default function MyTripsPage() {
     queryKey: ['all-bookings'],
     queryFn: () => base44.entities.Booking.list(),
     initialData: [],
+  });
+
+  const deleteTripMutation = useMutation({
+    mutationFn: async (tripId) => {
+      return await base44.entities.HikingTrip.delete(tripId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-trips'] });
+    },
+  });
+
+  const updateTripStatusMutation = useMutation({
+    mutationFn: async ({ tripId, status }) => {
+      return await base44.entities.HikingTrip.update(tripId, { status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-trips'] });
+    },
   });
 
   const cancelTripMutation = useMutation({
@@ -96,9 +113,19 @@ export default function MyTripsPage() {
   });
 
   const handleCancelTrip = (trip) => {
-    if (window.confirm("Are you sure you want to cancel this trip? This will notify all booked hikers and cannot be undone.")) {
+    if (window.confirm(t('organizer.cancel_trip_confirm'))) {
       cancelTripMutation.mutate({ trip });
     }
+  };
+
+  const handleDeleteTrip = (tripId) => {
+    if (window.confirm(language === 'el' ? 'Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την εκδρομή; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.' : 'Are you sure you want to delete this trip? This action cannot be undone.')) {
+      deleteTripMutation.mutate(tripId);
+    }
+  };
+
+  const handleStatusChange = (tripId, newStatus) => {
+    updateTripStatusMutation.mutate({ tripId, status: newStatus });
   };
 
   const getBookingsForTrip = (tripId) => {
@@ -124,20 +151,20 @@ export default function MyTripsPage() {
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-stone-900">My Organized Trips</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-stone-900">{t('organizer.my_trips')}</h1>
           <div className="flex gap-2">
             {user && (
-              <Link to={`${createPageUrl("OrganizerProfile")}?id=${user.id}`}>
+              <Link to={`${createPageUrl("OrganizerProfile")}?code=${user.organizer_code}`}>
                 <Button variant="outline">
                   <UserIcon className="w-4 h-4 mr-2" />
-                  View My Profile
+                  {t('organizer.view_profile')}
                 </Button>
               </Link>
             )}
             <Link to={createPageUrl("CreateTrip")}>
               <Button className="bg-emerald-600 hover:bg-emerald-700">
                 <Plus className="w-4 h-4 mr-2" />
-                Create New Trip
+                {t('organizer.create_new_trip')}
               </Button>
             </Link>
           </div>
@@ -146,21 +173,21 @@ export default function MyTripsPage() {
         {tripsWithStatus.length === 0 ? (
           <Card className="p-12 text-center">
             <Calendar className="w-16 h-16 mx-auto text-stone-300 mb-4" />
-            <h3 className="text-lg font-semibold text-stone-700 mb-2">No trips yet</h3>
-            <p className="text-stone-500 mb-4">Start organizing your first hiking adventure</p>
+            <h3 className="text-lg font-semibold text-stone-700 mb-2">{t('organizer.no_trips')}</h3>
+            <p className="text-stone-500 mb-4">{t('organizer.no_trips_message')}</p>
             <Link to={createPageUrl("CreateTrip")}>
               <Button className="bg-emerald-600 hover:bg-emerald-700">
-                Create Your First Trip
+                {t('organizer.create_first_trip')}
               </Button>
             </Link>
           </Card>
         ) : (
           <Tabs defaultValue="upcoming" className="w-full">
             <TabsList className="grid w-full grid-cols-4 mb-4">
-              <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-              <TabsTrigger value="happening">Happening Now</TabsTrigger>
-              <TabsTrigger value="completed">Completed</TabsTrigger>
-              <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+              <TabsTrigger value="upcoming">{t('organizer.tab_upcoming')}</TabsTrigger>
+              <TabsTrigger value="happening">{t('organizer.tab_happening')}</TabsTrigger>
+              <TabsTrigger value="completed">{t('organizer.tab_completed')}</TabsTrigger>
+              <TabsTrigger value="cancelled">{t('organizer.tab_cancelled')}</TabsTrigger>
             </TabsList>
             {['upcoming', 'happening', 'completed', 'cancelled'].map(statusKey => {
                const statusValue = statusKey === 'happening' ? 'happening now' : statusKey;
@@ -204,34 +231,51 @@ export default function MyTripsPage() {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <Users className="w-4 h-4 text-emerald-600" />
-                                  <span>{bookedSlots} / {trip.total_slots} confirmed</span>
+                                  <span>{bookedSlots} / {trip.total_slots} {t('organizer.confirmed_bookings')}</span>
                                 </div>
                                 {pendingBookings > 0 && (
                                     <div className="flex items-center gap-2 text-yellow-600 font-semibold">
                                         <ListOrdered className="w-4 h-4"/>
-                                        <span>{pendingBookings} pending request(s)</span>
+                                        <span>{pendingBookings} {t('organizer.pending_requests')}</span>
                                     </div>
                                 )}
                               </div>
 
                               {insights.total > 0 && (
                                 <div className="bg-stone-50 rounded-lg p-3 mb-4">
-                                  <p className="text-xs font-semibold text-stone-600 mb-2">Booking Insights</p>
+                                  <p className="text-xs font-semibold text-stone-600 mb-2">{t('organizer.booking_insights')}</p>
                                   <div className="flex gap-4 text-sm">
-                                    <span>Pending: <strong>{insights.pending}</strong></span>
-                                    <span>Confirmed: <strong className="text-emerald-600">{insights.confirmed}</strong></span>
-                                    <span>Declined: <strong className="text-red-600">{insights.declined}</strong></span>
+                                    <span>{t('organizer.insights_pending')}: <strong>{insights.pending}</strong></span>
+                                    <span>{t('organizer.insights_confirmed')}: <strong className="text-emerald-600">{insights.confirmed}</strong></span>
+                                    <span>{t('organizer.insights_declined')}: <strong className="text-red-600">{insights.declined}</strong></span>
                                   </div>
                                 </div>
                               )}
 
                               <div className="flex flex-wrap items-center gap-2">
                                 <Link to={`${createPageUrl("ManageBookings")}?tripId=${trip.id}`}>
-                                  <Button>Manage Bookings</Button>
+                                  <Button size="sm">{t('organizer.manage_bookings')}</Button>
                                 </Link>
                                 <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
-                                  <Button variant="outline"><Edit className="w-4 h-4 mr-2"/>Edit Trip</Button>
+                                  <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
                                 </Link>
+                                <Select
+                                  value={trip.status}
+                                  onValueChange={(value) => handleStatusChange(trip.id, value)}
+                                >
+                                  <SelectTrigger className="w-[140px] h-9">
+                                    <RefreshCw className="w-4 h-4 mr-2" />
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
+                                    <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
+                                    <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
+                                    <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
+                                    <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
+                                    <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
+                                  </SelectContent>
+                                </Select>
                                 {(trip.computedStatus === 'upcoming' || trip.computedStatus === 'happening now') && (
                                   <Button
                                     variant="destructive"
@@ -240,15 +284,25 @@ export default function MyTripsPage() {
                                     disabled={cancelTripMutation.isPending && cancelTripMutation.variables?.trip.id === trip.id}
                                   >
                                     {cancelTripMutation.isPending && cancelTripMutation.variables?.trip.id === trip.id ? (
-                                      <span className="flex items-center gap-2">Cancelling...</span>
+                                      <span className="flex items-center gap-2">{t('organizer.cancelling')}</span>
                                     ) : (
                                       <>
                                         <XCircle className="w-4 h-4 mr-2" />
-                                        Cancel
+                                        {t('organizer.cancel_trip')}
                                       </>
                                     )}
                                   </Button>
                                 )}
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDeleteTrip(trip.id)}
+                                  disabled={deleteTripMutation.isPending}
+                                  className="text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  {language === 'el' ? 'Διαγραφή' : 'Delete'}
+                                </Button>
                               </div>
                             </div>
                           </div>
@@ -256,7 +310,7 @@ export default function MyTripsPage() {
                       );
                     })}
                     {filteredTrips(statusValue).length === 0 && (
-                      <div className="text-center py-10 text-stone-500">No trips in this category.</div>
+                      <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>
                     )}
                   </div>
                 </TabsContent>

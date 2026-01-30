@@ -302,9 +302,15 @@ export default function OrganizerProfilePage() {
                   </div>
                 )}
 
-                {/* Create Trip Button - Only visible to the organizer themselves */}
+                {/* Organizer Actions - Only visible to the organizer themselves */}
                 {user?.organizer_code === organizer?.organizer_code && (
-                  <div className="mt-4 justify-center md:justify-start flex">
+                  <div className="mt-4 justify-center md:justify-start flex gap-2">
+                    <Link to={createPageUrl("EditOrganizerProfile")}>
+                      <Button variant="outline">
+                        <Edit className="w-4 h-4 mr-2" />
+                        {language === 'el' ? 'Επεξεργασία Προφίλ' : 'Edit Profile'}
+                      </Button>
+                    </Link>
                     <Link to={createPageUrl("CreateTrip")}>
                       <Button className="bg-emerald-600 hover:bg-emerald-700">
                         <PlusCircle className="w-4 h-4 mr-2" />

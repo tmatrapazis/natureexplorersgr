@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -211,11 +210,15 @@ export default function EditProfilePage() {
     e.preventDefault();
     // Validate required fields
     if (!formData.full_name || !formData.phone_number) {
-      alert("Full name and mobile number are required fields.");
+      alert(language === 'el' ? "Το ονοματεπώνυμο και το κινητό τηλέφωνο είναι υποχρεωτικά πεδία." : "Full name and mobile number are required fields.");
       return;
     }
-    // Send all form fields. `updateMe` will handle persisting the data.
-    updateProfileMutation.mutate(formData);
+    
+    // Remove is_verified if present - only admins can set this
+    const { is_verified, ...dataToSubmit } = formData;
+    
+    // Send all form fields except is_verified
+    updateProfileMutation.mutate(dataToSubmit);
   };
 
   const isOrganizer = user?.role === 'admin';
