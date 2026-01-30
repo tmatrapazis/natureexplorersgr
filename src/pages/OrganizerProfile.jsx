@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Phone, Globe, User as UserIcon, ShieldCheck, MapPin, Calendar, Clock, TrendingUp, ExternalLink, Loader2, Facebook, Instagram, Twitter, PlusCircle } from "lucide-react";
+import { ArrowLeft, Mail, Phone, Globe, User as UserIcon, ShieldCheck, MapPin, Calendar, Clock, TrendingUp, ExternalLink, Loader2, Facebook, Instagram, Twitter, PlusCircle, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { formatDateRange } from "../components/helpers/dateHelpers";
 import { difficultyColors } from "../components/helpers/tripHelpers";
