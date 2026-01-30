@@ -304,7 +304,13 @@ export default function OrganizerProfilePage() {
 
                 {/* Organizer Actions - Only visible to the organizer themselves */}
                 {user?.organizer_code === organizer?.organizer_code && (
-                  <div className="mt-4 justify-center md:justify-start flex gap-2">
+                  <div className="mt-4 justify-center md:justify-start flex gap-2 flex-wrap">
+                    <Link to={createPageUrl("MyTrips")}>
+                      <Button variant="outline">
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {language === 'el' ? 'Οι Εκδρομές μου' : 'My Trips'}
+                      </Button>
+                    </Link>
                     <Link to={createPageUrl("EditOrganizerProfile")}>
                       <Button variant="outline">
                         <Edit className="w-4 h-4 mr-2" />

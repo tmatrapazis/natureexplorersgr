@@ -313,13 +313,14 @@ export default function CreateTripPage() {
               </div>
 
               <div>
-                <Label htmlFor="end_date">{t('create_trip.end_date')}</Label>
+                <Label htmlFor="end_date">{t('create_trip.end_date')} *</Label>
                 <Input
                   id="end_date"
                   type="date"
                   value={tripData.end_date}
                   min={tripData.start_date}
                   onChange={(e) => setTripData({...tripData, end_date: e.target.value})}
+                  required
                 />
                  <p className="text-xs text-stone-500 mt-1">{t('create_trip.end_date_note')}</p>
               </div>
@@ -345,6 +346,17 @@ export default function CreateTripPage() {
                 required
               />
               <p className="text-xs text-stone-500 mt-1">{t('create_trip.location_note')}</p>
+            </div>
+
+            <div>
+              <Label htmlFor="event_url">{language === 'el' ? 'Σύνδεσμος Κράτησης' : 'Booking Link'}</Label>
+              <Input
+                id="event_url"
+                type="url"
+                value={tripData.event_url}
+                onChange={(e) => setTripData({...tripData, event_url: e.target.value})}
+                placeholder={language === 'el' ? 'Π.χ. https://example.com/book' : 'e.g. https://example.com/book'}
+              />
             </div>
 
             <div>
@@ -470,7 +482,7 @@ export default function CreateTripPage() {
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="min">{t('create_trip.min_participants')}</Label>
                 <Input
@@ -493,30 +505,32 @@ export default function CreateTripPage() {
                   placeholder={t('create_trip.max_participants_note')}
                 />
               </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="price">{t('create_trip.price_per_person')} *</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={tripData.price}
+                  onChange={(e) => setTripData({...tripData, price: parseFloat(e.target.value)})}
+                  required
+                />
+              </div>
 
               <div>
-                <Label htmlFor="slots">{t('create_trip.total_slots')} *</Label>
+                <Label htmlFor="slots">{t('create_trip.total_slots')}</Label>
                 <Input
                   id="slots"
                   type="number"
                   min="1"
                   value={tripData.total_slots}
                   onChange={(e) => setTripData({...tripData, total_slots: parseInt(e.target.value)})}
-                  required
                 />
               </div>
-            </div>
-
-            <div>
-              <Label htmlFor="price">{t('create_trip.price_per_person')}</Label>
-              <Input
-                id="price"
-                type="number"
-                min="0"
-                step="0.01"
-                value={tripData.price}
-                onChange={(e) => setTripData({...tripData, price: parseFloat(e.target.value)})}
-              />
             </div>
 
             <div>
@@ -543,13 +557,14 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-              <Label htmlFor="external">{t('create_trip.external_link')}</Label>
+              <Label htmlFor="external">{t('create_trip.external_link')} *</Label>
               <Input
                 id="external"
                 type="url"
                 value={tripData.external_link}
                 onChange={(e) => setTripData({...tripData, external_link: e.target.value})}
                 placeholder={t('create_trip.external_link_placeholder')}
+                required
               />
             </div>
 

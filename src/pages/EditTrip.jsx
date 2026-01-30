@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
@@ -197,8 +196,8 @@ export default function EditTripPage() {
               </div>
 
               <div>
-                <Label htmlFor="end_date">End Date</Label>
-                <Input id="end_date" type="date" value={tripData.end_date} min={tripData.start_date} onChange={(e) => handleInputChange('end_date', e.target.value)} />
+                <Label htmlFor="end_date">End Date *</Label>
+                <Input id="end_date" type="date" value={tripData.end_date} min={tripData.start_date} onChange={(e) => handleInputChange('end_date', e.target.value)} required />
                  <p className="text-xs text-stone-500 mt-1">Leave blank for single-day trips.</p>
               </div>
             </div>
@@ -212,6 +211,17 @@ export default function EditTripPage() {
               <Label htmlFor="location">General Location/Region *</Label>
               <Input id="location" value={tripData.location} onChange={(e) => handleInputChange('location', e.target.value)} placeholder="e.g., Mount Olympus, Crete" required />
               <p className="text-xs text-stone-500 mt-1">The general area/region for this trip</p>
+            </div>
+
+            <div>
+              <Label htmlFor="event_url">{language === 'el' ? 'Σύνδεσμος Κράτησης' : 'Booking Link'}</Label>
+              <Input
+                id="event_url"
+                type="url"
+                value={tripData.event_url}
+                onChange={(e) => handleInputChange('event_url', e.target.value)}
+                placeholder={language === 'el' ? 'Π.χ. https://example.com/book' : 'e.g. https://example.com/book'}
+              />
             </div>
 
             <div>
@@ -314,13 +324,13 @@ export default function EditTripPage() {
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="slots">Total Slots *</Label>
-                <Input id="slots" type="number" min="1" value={tripData.total_slots} onChange={(e) => handleInputChange('total_slots', parseInt(e.target.value))} required />
+                <Label htmlFor="price">Price per Person (€) *</Label>
+                <Input id="price" type="number" min="0" step="0.01" value={tripData.price} onChange={(e) => handleInputChange('price', parseFloat(e.target.value))} required />
               </div>
 
               <div>
-                <Label htmlFor="price">Price per Person ($)</Label>
-                <Input id="price" type="number" min="0" step="0.01" value={tripData.price} onChange={(e) => handleInputChange('price', parseFloat(e.target.value))} />
+                <Label htmlFor="slots">Total Slots</Label>
+                <Input id="slots" type="number" min="1" value={tripData.total_slots} onChange={(e) => handleInputChange('total_slots', parseInt(e.target.value))} />
               </div>
             </div>
             
@@ -337,8 +347,8 @@ export default function EditTripPage() {
             </div>
 
             <div>
-              <Label htmlFor="external">External Link (Optional)</Label>
-              <Input id="external" type="url" value={tripData.external_link} onChange={(e) => handleInputChange('external_link', e.target.value)} />
+              <Label htmlFor="external">External Link *</Label>
+              <Input id="external" type="url" value={tripData.external_link} onChange={(e) => handleInputChange('external_link', e.target.value)} required />
             </div>
 
             <div>
