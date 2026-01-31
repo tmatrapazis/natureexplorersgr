@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Loader2, CheckCircle, Upload, Link as LinkIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import toast from 'react-hot-toast';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 
@@ -83,11 +84,10 @@ export default function EditOrganizerProfilePage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organizer'] });
-      setUpdateSuccess(true);
+      toast.success(language === 'el' ? 'Το προφίλ ενημερώθηκε με επιτυχία!' : 'Profile updated successfully!');
       setTimeout(() => {
-        setUpdateSuccess(false);
-        navigate(createPageUrl("MyTrips"));
-      }, 2000);
+        navigate(createPageUrl("OrganizerProfile") + `?code=${user.organizer_code}`);
+      }, 1000);
     },
   });
 
@@ -338,15 +338,6 @@ export default function EditOrganizerProfilePage() {
                 </div>
               </CardContent>
             </Card>
-
-            {updateSuccess && (
-              <Alert variant="default" className="bg-emerald-50 border-emerald-200 text-emerald-800">
-                <CheckCircle className="h-4 w-4" />
-                <AlertDescription>
-                  {t('profile.profile_updated')}
-                </AlertDescription>
-              </Alert>
-            )}
 
             <Card>
               <CardContent className="p-6">
