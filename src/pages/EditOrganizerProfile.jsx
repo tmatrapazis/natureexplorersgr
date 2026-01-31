@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Loader2, CheckCircle, Upload, Link as LinkIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 
@@ -53,6 +54,7 @@ export default function EditOrganizerProfilePage() {
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [photoInputMode, setPhotoInputMode] = useState('url'); // 'url' or 'upload'
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   useEffect(() => {
     if (organizer) {
@@ -83,10 +85,9 @@ export default function EditOrganizerProfilePage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organizer'] });
-      setUpdateSuccess(true);
+      setShowSuccessDialog(true);
       setTimeout(() => {
-        setUpdateSuccess(false);
-        navigate(createPageUrl("MyTrips"));
+        navigate(`${createPageUrl("OrganizerProfile")}?code=${user.organizer_code}`);
       }, 2000);
     },
   });
@@ -339,15 +340,6 @@ export default function EditOrganizerProfilePage() {
               </CardContent>
             </Card>
 
-            {updateSuccess && (
-              <Alert variant="default" className="bg-emerald-50 border-emerald-200 text-emerald-800">
-                <CheckCircle className="h-4 w-4" />
-                <AlertDescription>
-                  {t('profile.profile_updated')}
-                </AlertDescription>
-              </Alert>
-            )}
-
             <Card>
               <CardContent className="p-6">
                 <Button type="submit" disabled={updateOrganizerMutation.isPending} className="w-full">
@@ -358,6 +350,26 @@ export default function EditOrganizerProfilePage() {
             </Card>
           </div>
         </form>
+
+        <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <div className="flex items-center justify-center mb-4">
+                <div className="bg-emerald-100 rounded-full p-3">
+                  <CheckCircle className="h-8 w-8 text-emerald-600" />
+                </div>
+              </div>
+              <DialogTitle className="text-center">
+                {language === 'el' ? 'Επιτυχής Ενημέρωση!' : 'Successfully Updated!'}
+              </DialogTitle>
+              <DialogDescription className="text-center">
+                {language === 'el' 
+                  ? 'Το προφίλ σας ενημερώθηκε με επιτυχία. Θα ανακατευθυνθείτε στη σελίδα του προφίλ σας.'
+                  : 'Your profile has been updated successfully. You will be redirected to your profile page.'}
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
