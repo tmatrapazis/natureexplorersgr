@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle, Upload, Link as LinkIcon } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
@@ -42,6 +42,7 @@ export default function EditOrganizerProfilePage() {
     phone: '',
     years_of_experience: '',
     certifications: '',
+    profile_picture_url: '',
     social_profiles: {
       facebook: '',
       instagram: '',
@@ -50,6 +51,8 @@ export default function EditOrganizerProfilePage() {
   });
 
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [photoInputMode, setPhotoInputMode] = useState('url'); // 'url' or 'upload'
 
   useEffect(() => {
     if (organizer) {
@@ -62,6 +65,7 @@ export default function EditOrganizerProfilePage() {
         phone: organizer.phone || '',
         years_of_experience: organizer.years_of_experience || '',
         certifications: organizer.certifications || '',
+        profile_picture_url: organizer.profile_picture_url || '',
         social_profiles: organizer.social_profiles || {
           facebook: '',
           instagram: '',
@@ -73,8 +77,8 @@ export default function EditOrganizerProfilePage() {
 
   const updateOrganizerMutation = useMutation({
     mutationFn: (updatedData) => {
-      // Remove is_verified - only admins can modify this
-      const { is_verified, organizer_code, profile_picture_url, ...dataToUpdate } = updatedData;
+      // Remove is_verified and organizer_code - only admins can modify these
+      const { is_verified, organizer_code, ...dataToUpdate } = updatedData;
       return base44.entities.Organizer.update(organizer.id, dataToUpdate);
     },
     onSuccess: () => {
@@ -100,6 +104,16 @@ export default function EditOrganizerProfilePage() {
         [platform]: value
       }
     }));
+  };
+
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    setFormData(prev => ({ ...prev, profile_picture_url: file_url }));
+    setUploadingImage(false);
   };
 
   const handleSubmit = (e) => {
@@ -147,6 +161,65 @@ export default function EditOrganizerProfilePage() {
                 <CardTitle>{t('profile.public_organizer_profile')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
+                <div>
+                  <Label>{language === 'el' ? 'Φωτογραφία Προφίλ' : 'Profile Picture'}</Label>
+                  
+                  {formData.profile_picture_url && (
+                    <div className="mt-2 mb-4">
+                      <img 
+                        src={formData.profile_picture_url} 
+                        alt="Profile" 
+                        className="w-32 h-32 rounded-full object-cover border-4 border-emerald-100"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 mb-3">
+                    <Button
+                      type="button"
+                      variant={photoInputMode === 'url' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setPhotoInputMode('url')}
+                    >
+                      <LinkIcon className="w-4 h-4 mr-2" />
+                      {language === 'el' ? 'Σύνδεσμος' : 'URL'}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={photoInputMode === 'upload' ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setPhotoInputMode('upload')}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      {language === 'el' ? 'Μεταφόρτωση' : 'Upload'}
+                    </Button>
+                  </div>
+
+                  {photoInputMode === 'url' ? (
+                    <Input
+                      type="url"
+                      placeholder={language === 'el' ? 'https://example.com/photo.jpg' : 'https://example.com/photo.jpg'}
+                      value={formData.profile_picture_url}
+                      onChange={(e) => setFormData(prev => ({ ...prev, profile_picture_url: e.target.value }))}
+                    />
+                  ) : (
+                    <div>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoUpload}
+                        disabled={uploadingImage}
+                      />
+                      {uploadingImage && (
+                        <p className="text-sm text-stone-500 mt-2 flex items-center">
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          {language === 'el' ? 'Μεταφόρτωση...' : 'Uploading...'}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <div>
                   <Label htmlFor="full_name">{t('profile.full_name')} *</Label>
                   <Input
