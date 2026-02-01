@@ -111,17 +111,15 @@ export default function EditGuideProfilePage() {
 
   const deleteGuideMutation = useMutation({
     mutationFn: () => base44.entities.MountainGuide.delete(guideId),
-    onSuccess: async () => {
-      // Update user's mountain_guide_id to null
-      if (currentUser) {
-        await base44.auth.updateMe({ mountain_guide_id: null });
-      }
+    onSuccess: () => {
       queryClient.invalidateQueries(['mountain-guides']);
       queryClient.invalidateQueries(['user-guide-profile']);
+      queryClient.invalidateQueries(['guide', guideId]);
       toast.success(language === 'el' ? 'Το προφίλ διαγράφηκε' : 'Profile deleted successfully');
       navigate(createPageUrl('Guides'));
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Delete error:', error);
       toast.error(language === 'el' ? 'Σφάλμα διαγραφής' : 'Error deleting profile');
     }
   });
