@@ -67,20 +67,6 @@ export default function HomePage() {
     initialData: [],
   });
 
-  const { data: organizers = [] } = useQuery({
-    queryKey: ['organizers-for-featured'],
-    queryFn: () => base44.entities.Organizer.list(),
-    initialData: [],
-  });
-
-  const organizerMap = React.useMemo(() => {
-    const map = {};
-    organizers.forEach(org => {
-      map[org.organizer_code] = org;
-    });
-    return map;
-  }, [organizers]);
-
   const { data: featuredTrips } = useQuery({
     queryKey: ['featured-trips'],
     queryFn: async () => {
