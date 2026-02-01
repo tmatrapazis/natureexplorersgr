@@ -216,7 +216,7 @@ export default function HomePage() {
                   {featuredExpeditions.map(trip => {
                     const organizer = organizerMap[trip.organizer_code];
                     return (
-                      <Card key={trip.id} className="overflow-hidden hover:shadow-xl transition-shadow">
+                      <Card key={trip.id} className="overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
                         <div className="h-48 bg-stone-200 overflow-hidden">
                           <img 
                             src={getTripImage(trip.image_url, trip.id)}
@@ -225,7 +225,7 @@ export default function HomePage() {
                             onError={(e) => handleImageError(e, trip.id)}
                           />
                         </div>
-                        <CardContent className="p-6">
+                        <CardContent className="p-6 flex flex-col flex-grow">
                           <h3 className="text-xl font-bold text-stone-900 mb-2">{trip.title}</h3>
                           <div className="flex flex-wrap gap-2 mb-3">
                             <Badge className={difficultyColors[trip.difficulty]}>
@@ -246,7 +246,7 @@ export default function HomePage() {
                               <span>{organizer.username || organizer.full_name}</span>
                             </div>
                           )}
-                          <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`}>
+                          <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`} className="mt-auto">
                             <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
                               {language === 'el' ? 'Δείτε Λεπτομέρειες' : 'View Details'}
                             </Button>
