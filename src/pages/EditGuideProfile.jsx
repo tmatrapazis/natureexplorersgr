@@ -51,6 +51,7 @@ export default function EditGuideProfilePage() {
   const [currentCertification, setCurrentCertification] = useState("");
   const [uploadingProfile, setUploadingProfile] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const { data: currentUser } = useQuery({
     queryKey: ['current-user'],
@@ -98,8 +99,7 @@ export default function EditGuideProfilePage() {
     onSuccess: () => {
       queryClient.invalidateQueries(['guide', guideId]);
       queryClient.invalidateQueries(['mountain-guides']);
-      toast.success(language === 'el' ? 'Το προφίλ ενημερώθηκε!' : 'Profile updated successfully!');
-      navigate(createPageUrl('GuideProfile') + `?id=${guideId}`);
+      setShowSuccessDialog(true);
     },
     onError: () => {
       toast.error(language === 'el' ? 'Σφάλμα ενημέρωσης' : 'Error updating profile');
@@ -473,6 +473,30 @@ export default function EditGuideProfilePage() {
             </form>
           </CardContent>
         </Card>
+
+        {/* Success Dialog */}
+        <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {language === 'el' ? '✓ Επιτυχής Ενημέρωση' : '✓ Successfully Updated'}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {language === 'el'
+                  ? 'Το προφίλ σας ως οδηγός βουνού ενημερώθηκε με επιτυχία!'
+                  : 'Your mountain guide profile has been updated successfully!'}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction
+                onClick={() => navigate(createPageUrl('GuideProfile') + `?id=${guideId}`)}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                {language === 'el' ? 'Προβολή Προφίλ' : 'View Profile'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
