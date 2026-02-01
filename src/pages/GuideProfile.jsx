@@ -193,7 +193,7 @@ export default function GuideProfilePage() {
                   <CardTitle>{language === 'el' ? 'Σχετικά με εμένα' : 'About Me'}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-stone-700 whitespace-pre-line">{guide.bio}</p>
+                  <div className="text-stone-700 prose prose-stone max-w-none" dangerouslySetInnerHTML={{ __html: guide.bio }} />
                 </CardContent>
               </Card>
             )}
