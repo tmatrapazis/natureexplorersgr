@@ -54,7 +54,6 @@ import EditProfile from './pages/EditProfile';
 import EditTrip from './pages/EditTrip';
 import HikerProfile from './pages/HikerProfile';
 import Home from './pages/Home';
-import ManageBookings from './pages/ManageBookings';
 import MyBookings from './pages/MyBookings';
 import MyProfile from './pages/MyProfile';
 import MyTrips from './pages/MyTrips';
@@ -76,7 +75,6 @@ export const PAGES = {
     "EditTrip": EditTrip,
     "HikerProfile": HikerProfile,
     "Home": Home,
-    "ManageBookings": ManageBookings,
     "MyBookings": MyBookings,
     "MyProfile": MyProfile,
     "MyTrips": MyTrips,
