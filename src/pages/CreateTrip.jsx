@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,7 @@ import { useTranslation } from '../components/translations/useTranslations';
 
 export default function CreateTripPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
@@ -72,6 +73,19 @@ export default function CreateTripPage() {
     location: "",
     time: ""
   });
+
+  // Load data from navigation state if recreating a trip
+  useEffect(() => {
+    if (location.state?.tripData) {
+      const data = location.state.tripData;
+      setTripData({
+        ...data,
+        start_date: "",
+        end_date: "",
+        status: "draft"
+      });
+    }
+  }, [location.state]);
 
   const availableTags = [
     "beginner-friendly",

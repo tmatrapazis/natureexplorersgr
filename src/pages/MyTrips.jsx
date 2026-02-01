@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar, MapPin, Users, Plus, User as UserIcon, XCircle, Edit, ListOrdered, Trash2, RefreshCw } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getComputedTripStatus, statusColors } from "../components/helpers/tripHelpers";
@@ -20,6 +20,7 @@ import { getTripImage, handleImageError } from "../components/helpers/imageHelpe
 
 export default function MyTripsPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { language } = useLanguage();
   const { t } = useTranslation(language);
@@ -139,6 +140,11 @@ export default function MyTripsPage() {
 
   const isRequiredFieldsFilled = (trip) => {
     return trip.title && trip.start_date && trip.location && trip.difficulty && trip.organizer_code;
+  };
+
+  const handleRecreateTrip = (trip) => {
+    const { id, created_date, updated_date, created_by, start_date, end_date, ...tripData } = trip;
+    navigate(createPageUrl("CreateTrip"), { state: { tripData } });
   };
 
   if (tripsLoading) {
