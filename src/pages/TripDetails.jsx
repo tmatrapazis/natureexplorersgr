@@ -17,6 +17,7 @@ import { useTranslation } from "../components/translations/useTranslations";
 // NEW IMPORTS FOR SEO
 import StructuredData from "../components/seo/StructuredData";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
+import ShareButton from "../components/trip/ShareButton";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
@@ -610,9 +611,18 @@ export default function TripDetailsPage() {
                   ) : (
                     <p className="text-sm text-stone-500">{t('trip.no_booking_info')}</p>
                   )}
+                  
+                  <div className="mt-4 hidden md:block">
+                    <ShareButton trip={trip} language={language} />
+                  </div>
                 </div>
               </Card>
             </div>
+          </div>
+          
+          {/* Mobile Share Button - Sticky at bottom */}
+          <div className="md:hidden">
+            <ShareButton trip={trip} language={language} />
           </div>
         </div>
       </div>
