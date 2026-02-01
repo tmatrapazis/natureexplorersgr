@@ -64,6 +64,8 @@ import RoleSelection from './pages/RoleSelection';
 import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
+import Guides from './pages/Guides';
+import GuideProfile from './pages/GuideProfile';
 import __Layout from './Layout.jsx';
 
 
@@ -85,6 +87,8 @@ export const PAGES = {
     "TempImageUploader": TempImageUploader,
     "TermsOfUse": TermsOfUse,
     "TripDetails": TripDetails,
+    "Guides": Guides,
+    "GuideProfile": GuideProfile,
 }
 
 export const pagesConfig = {

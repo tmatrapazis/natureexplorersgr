@@ -63,6 +63,9 @@ const LoggedInLayout = ({ children, user }) => {
             <Link to={createPageUrl("OrganizersList")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
               <span>{t('navigation.organizers')}</span>
             </Link>
+            <Link to={createPageUrl("Guides")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
+              <span>{t('navigation.guides')}</span>
+            </Link>
           </nav>
 
           <div className="flex items-center gap-3">
