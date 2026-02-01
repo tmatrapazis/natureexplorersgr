@@ -66,6 +66,7 @@ import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
 import Guides from './pages/Guides';
 import GuideProfile from './pages/GuideProfile';
+import CreateGuideProfile from './pages/CreateGuideProfile';
 import __Layout from './Layout.jsx';
 
 
@@ -89,6 +90,7 @@ export const PAGES = {
     "TripDetails": TripDetails,
     "Guides": Guides,
     "GuideProfile": GuideProfile,
+    "CreateGuideProfile": CreateGuideProfile,
 }
 
 export const pagesConfig = {

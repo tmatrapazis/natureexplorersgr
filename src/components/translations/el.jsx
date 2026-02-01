@@ -380,5 +380,26 @@ export const el = {
     "facebook": "Facebook",
     "instagram": "Instagram",
     "twitter_x": "X (Twitter)",
+  },
+  "guides": {
+    "create_profile_cta": "Είστε Ορειβατικός Οδηγός;",
+    "create_profile_description": "Δημιουργήστε το προφίλ σας και μοιραστείτε την εμπειρία σας με την κοινότητα",
+    "create_profile_button": "Δημιουργία Προφίλ",
+    "create_profile_title": "Δημιουργία Προφίλ Οδηγού Βουνού",
+    "back_to_guides": "Πίσω στους Οδηγούς",
+    "profile_photo": "Φωτογραφία Προφίλ",
+    "cover_photo": "Εικόνα Εξωφύλλου",
+    "bio": "Βιογραφικό",
+    "bio_placeholder": "Πείτε μας για την εμπειρία σας, τις ειδικότητές σας...",
+    "years_experience": "Χρόνια Εμπειρίας",
+    "certifications": "Πιστοποιήσεις",
+    "certifications_placeholder": "π.χ. Πρώτες Βοήθειες",
+    "social_media": "Κοινωνικά Δίκτυα",
+    "collaborates_with": "Συνεργασίες με Διοργανωτές",
+    "collaborates_with_description": "Επιλέξτε τους διοργανωτές με τους οποίους συνεργάζεστε",
+    "profile_created": "Το προφίλ δημιουργήθηκε με επιτυχία!",
+    "error_creating_profile": "Σφάλμα κατά τη δημιουργία του προφίλ",
+    "full_name_required": "Το όνομα είναι υποχρεωτικό",
+    "error_uploading_image": "Σφάλμα μεταφόρτωσης εικόνας"
   }
 };
