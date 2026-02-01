@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Globe, LogOut } from "lucide-react";
+import { Globe, LogOut, Menu } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +10,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import PublicHeader from "./components/layout/PublicHeader";
 import PublicFooter from "./components/layout/PublicFooter";
 import { LanguageProvider, useLanguage } from "./components/contexts/LanguageContext";
@@ -21,6 +26,7 @@ const LoggedInLayout = ({ children, user }) => {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
   const [showWelcome, setShowWelcome] = React.useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     // Show welcome modal if user hasn't accepted terms
@@ -68,7 +74,7 @@ const LoggedInLayout = ({ children, user }) => {
             </Link>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
@@ -85,7 +91,7 @@ const LoggedInLayout = ({ children, user }) => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             <Button 
               onClick={handleLogout}
               variant="outline"
@@ -94,6 +100,70 @@ const LoggedInLayout = ({ children, user }) => {
               <LogOut className="w-4 h-4 md:mr-2" />
               <span className="hidden md:inline">{t('common.logout')}</span>
             </Button>
+          </div>
+
+          {/* Mobile Menu */}
+          <div className="md:hidden">
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="bg-white w-64">
+                <div className="flex flex-col gap-6 mt-8">
+                  <Link 
+                    to={createPageUrl("Calendar")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('navigation.calendar')}
+                  </Link>
+                  <Link 
+                    to={createPageUrl("OrganizersList")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('navigation.organizers')}
+                  </Link>
+                  <Link 
+                    to={createPageUrl("Guides")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg font-medium"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('navigation.guides')}
+                  </Link>
+
+                  <div className="border-t pt-6">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="w-full justify-start">
+                          <Globe className="w-4 h-4 mr-2" />
+                          {language === 'en' ? 'English' : 'Ελληνικά'}
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem onClick={() => setLanguage('en')}>
+                          English
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setLanguage('el')}>
+                          Ελληνικά
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  <Button 
+                    onClick={handleLogout}
+                    variant="outline"
+                    className="w-full justify-start"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    {t('common.logout')}
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>

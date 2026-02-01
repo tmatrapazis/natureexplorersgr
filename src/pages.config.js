@@ -50,6 +50,7 @@
 import Calendar from './pages/Calendar';
 import CreateGuideProfile from './pages/CreateGuideProfile';
 import CreateTrip from './pages/CreateTrip';
+import EditGuideProfile from './pages/EditGuideProfile';
 import EditOrganizerProfile from './pages/EditOrganizerProfile';
 import EditProfile from './pages/EditProfile';
 import EditTrip from './pages/EditTrip';
@@ -67,7 +68,6 @@ import RoleSelection from './pages/RoleSelection';
 import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
-import EditGuideProfile from './pages/EditGuideProfile';
 import __Layout from './Layout.jsx';
 
 
@@ -75,6 +75,7 @@ export const PAGES = {
     "Calendar": Calendar,
     "CreateGuideProfile": CreateGuideProfile,
     "CreateTrip": CreateTrip,
+    "EditGuideProfile": EditGuideProfile,
     "EditOrganizerProfile": EditOrganizerProfile,
     "EditProfile": EditProfile,
     "EditTrip": EditTrip,
@@ -92,7 +93,6 @@ export const PAGES = {
     "TempImageUploader": TempImageUploader,
     "TermsOfUse": TermsOfUse,
     "TripDetails": TripDetails,
-    "EditGuideProfile": EditGuideProfile,
 }
 
 export const pagesConfig = {
