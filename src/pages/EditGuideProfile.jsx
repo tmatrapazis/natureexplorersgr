@@ -8,18 +8,31 @@ import { useTranslation } from "../components/translations/useTranslations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Upload, X, Loader2 } from "lucide-react";
+import { ArrowLeft, X, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
-export default function CreateGuideProfilePage() {
+export default function EditGuideProfilePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const guideId = urlParams.get("id");
 
   const [formData, setFormData] = useState({
     full_name: "",
@@ -39,9 +52,18 @@ export default function CreateGuideProfilePage() {
   const [uploadingProfile, setUploadingProfile] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
 
-  const { data: user } = useQuery({
+  const { data: currentUser } = useQuery({
     queryKey: ['current-user'],
     queryFn: () => base44.auth.me(),
+  });
+
+  const { data: guide, isLoading: guideLoading } = useQuery({
+    queryKey: ['guide', guideId],
+    queryFn: async () => {
+      const guides = await base44.entities.MountainGuide.filter({ id: guideId });
+      return guides[0];
+    },
+    enabled: !!guideId,
   });
 
   const { data: organizers = [] } = useQuery({
@@ -49,31 +71,55 @@ export default function CreateGuideProfilePage() {
     queryFn: () => base44.entities.Organizer.list(),
   });
 
-  const { data: existingGuide } = useQuery({
-    queryKey: ['existing-guide', user?.id],
-    queryFn: () => base44.entities.MountainGuide.filter({ user_id: user.id }),
-    enabled: !!user,
-  });
-
   React.useEffect(() => {
-    if (existingGuide && existingGuide.length > 0) {
-      navigate(createPageUrl('GuideProfile') + `?id=${existingGuide[0].id}`);
-    }
-  }, [existingGuide, navigate]);
+    if (guide) {
+      // Check if user is the owner
+      if (currentUser && guide.user_id !== currentUser.id) {
+        toast.error(language === 'el' ? 'Δεν έχετε δικαίωμα επεξεργασίας' : 'You do not have permission to edit');
+        navigate(createPageUrl('GuideProfile') + `?id=${guideId}`);
+        return;
+      }
 
-  const createGuideMutation = useMutation({
-    mutationFn: (data) => base44.entities.MountainGuide.create(data),
-    onSuccess: async (newGuide) => {
-      // Update user's mountain_guide_id
-      await base44.auth.updateMe({ mountain_guide_id: newGuide.id });
-      
+      setFormData({
+        full_name: guide.full_name || "",
+        bio: guide.bio || "",
+        years_of_experience: guide.years_of_experience || "",
+        certifications: guide.certifications || [],
+        profile_photo_url: guide.profile_photo_url || "",
+        cover_photo_url: guide.cover_photo_url || "",
+        social_media: guide.social_media || { instagram: "", facebook: "" },
+        organizer_codes: guide.organizer_codes || [],
+      });
+    }
+  }, [guide, currentUser, navigate, guideId, language]);
+
+  const updateGuideMutation = useMutation({
+    mutationFn: (data) => base44.entities.MountainGuide.update(guideId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['guide', guideId]);
       queryClient.invalidateQueries(['mountain-guides']);
-      queryClient.invalidateQueries(['user-guide-profile']);
-      toast.success(language === 'el' ? 'Το προφίλ δημιουργήθηκε με επιτυχία!' : 'Profile created successfully!');
-      navigate(createPageUrl('GuideProfile') + `?id=${newGuide.id}`);
+      toast.success(language === 'el' ? 'Το προφίλ ενημερώθηκε!' : 'Profile updated successfully!');
+      navigate(createPageUrl('GuideProfile') + `?id=${guideId}`);
     },
     onError: () => {
-      toast.error(language === 'el' ? 'Σφάλμα κατά τη δημιουργία του προφίλ' : 'Error creating profile');
+      toast.error(language === 'el' ? 'Σφάλμα ενημέρωσης' : 'Error updating profile');
+    }
+  });
+
+  const deleteGuideMutation = useMutation({
+    mutationFn: () => base44.entities.MountainGuide.delete(guideId),
+    onSuccess: async () => {
+      // Update user's mountain_guide_id to null
+      if (currentUser) {
+        await base44.auth.updateMe({ mountain_guide_id: null });
+      }
+      queryClient.invalidateQueries(['mountain-guides']);
+      queryClient.invalidateQueries(['user-guide-profile']);
+      toast.success(language === 'el' ? 'Το προφίλ διαγράφηκε' : 'Profile deleted successfully');
+      navigate(createPageUrl('Guides'));
+    },
+    onError: () => {
+      toast.error(language === 'el' ? 'Σφάλμα διαγραφής' : 'Error deleting profile');
     }
   });
 
@@ -128,15 +174,13 @@ export default function CreateGuideProfilePage() {
       return;
     }
 
-    createGuideMutation.mutate({
+    updateGuideMutation.mutate({
       ...formData,
-      user_id: user.id,
       years_of_experience: formData.years_of_experience ? Number(formData.years_of_experience) : 0,
-      status: 'active',
     });
   };
 
-  if (!user) {
+  if (guideLoading || !currentUser) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" />
@@ -144,22 +188,68 @@ export default function CreateGuideProfilePage() {
     );
   }
 
+  if (!guide) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">
+            {language === 'el' ? 'Το προφίλ δεν βρέθηκε' : 'Profile not found'}
+          </h2>
+          <Button onClick={() => navigate(createPageUrl('Guides'))}>
+            {language === 'el' ? 'Επιστροφή στους Οδηγούς' : 'Back to Guides'}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 py-12 px-4">
       <div className="container mx-auto max-w-4xl">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(createPageUrl('Guides'))}
-          className="mb-6"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
-        </Button>
+        <div className="flex items-center justify-between mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(createPageUrl('GuideProfile') + `?id=${guideId}`)}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            {language === 'el' ? 'Πίσω στο Προφίλ' : 'Back to Profile'}
+          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">
+                <Trash2 className="w-4 h-4 mr-2" />
+                {language === 'el' ? 'Διαγραφή Προφίλ' : 'Delete Profile'}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  {language === 'el' ? 'Διαγραφή Προφίλ Οδηγού;' : 'Delete Guide Profile?'}
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {language === 'el'
+                    ? 'Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Το προφίλ σας ως οδηγός θα διαγραφεί οριστικά.'
+                    : 'This action cannot be undone. Your guide profile will be permanently deleted.'}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => deleteGuideMutation.mutate()}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  {deleteGuideMutation.isPending ? t('common.loading') : t('common.delete')}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
 
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">
-              {language === 'el' ? 'Δημιουργία Προφίλ Οδηγού Βουνού' : 'Create Mountain Guide Profile'}
+              {language === 'el' ? 'Επεξεργασία Προφίλ Οδηγού' : 'Edit Guide Profile'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -361,22 +451,22 @@ export default function CreateGuideProfilePage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate(createPageUrl('Guides'))}
+                  onClick={() => navigate(createPageUrl('GuideProfile') + `?id=${guideId}`)}
                 >
                   {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"
-                  disabled={createGuideMutation.isPending}
+                  disabled={updateGuideMutation.isPending}
                   className="bg-emerald-600 hover:bg-emerald-700"
                 >
-                  {createGuideMutation.isPending ? (
+                  {updateGuideMutation.isPending ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                       {t('common.loading')}
                     </>
                   ) : (
-                    language === 'el' ? 'Δημιουργία Προφίλ' : 'Create Profile'
+                    t('common.save')
                   )}
                 </Button>
               </div>

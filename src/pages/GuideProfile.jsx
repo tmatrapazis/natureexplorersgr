@@ -1,14 +1,14 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Shield, Award, Briefcase, Instagram, Facebook, MapPin, Calendar, TrendingUp } from "lucide-react";
+import { ArrowLeft, Shield, Award, Briefcase, Instagram, Facebook, MapPin, Calendar, TrendingUp, Edit, Trash2 } from "lucide-react";
 import { formatDateRange } from "../components/helpers/dateHelpers";
 import { difficultyColors } from "../components/helpers/tripHelpers";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
@@ -16,9 +16,16 @@ import { getTripImage, handleImageError } from "../components/helpers/imageHelpe
 export default function GuideProfilePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const navigate = useNavigate();
   
   const urlParams = new URLSearchParams(window.location.search);
   const guideId = urlParams.get("id");
+
+  const { data: currentUser } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: () => base44.auth.me(),
+    retry: false,
+  });
 
   const { data: guide, isLoading: guideLoading } = useQuery({
     queryKey: ['guide', guideId],
@@ -61,6 +68,8 @@ export default function GuideProfilePage() {
     }
   }, [guide, language]);
 
+  const isOwner = currentUser && guide && guide.user_id === currentUser.id;
+
   if (guideLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -101,12 +110,24 @@ export default function GuideProfilePage() {
       </div>
 
       <div className="container mx-auto max-w-5xl px-4 -mt-24 relative z-10">
-        <Link to={createPageUrl("Guides")}>
-          <Button variant="outline" className="mb-4 bg-white">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            {language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
-          </Button>
-        </Link>
+        <div className="flex items-center justify-between mb-4">
+          <Link to={createPageUrl("Guides")}>
+            <Button variant="outline" className="bg-white">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              {language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
+            </Button>
+          </Link>
+
+          {isOwner && (
+            <Button
+              onClick={() => navigate(createPageUrl('EditGuideProfile') + `?id=${guideId}`)}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              {language === 'el' ? 'Επεξεργασία' : 'Edit Profile'}
+            </Button>
+          )}
+        </div>
 
         {/* Profile Header */}
         <Card className="mb-6">
