@@ -10,7 +10,6 @@ import { Calendar, MapPin, Users, Plus, User as UserIcon, XCircle, Edit, ListOrd
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
 import { getComputedTripStatus, statusColors } from "../components/helpers/tripHelpers";
 import { formatDateRange } from "../components/helpers/dateHelpers";
 import { getTripInsights } from "../components/helpers/bookingHelpers";
