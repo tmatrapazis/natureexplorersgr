@@ -67,7 +67,7 @@ export default function GuidesPage() {
           </div>
           <p className="text-lg text-emerald-100 max-w-2xl">
             {language === 'el' 
-              ? 'Γνωρίστε τους πιστοποιημένους επαγγελματίες οδηγούς που κάνουν κάθε εκδρομή ασφαλή και αξέχαστη'
+              ? 'Γνωρίστε τους πιστοποιημένους επαγγελματίες συνοδούς που κάνουν κάθε εκδρομή ασφαλή και αξέχαστη'
               : 'Meet the certified professionals who make every adventure safe and unforgettable'
             }
           </p>
