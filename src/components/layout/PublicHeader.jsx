@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { Mountain, Calendar, Users, LogIn, LogOut, Globe, User, Compass } from 'lucide-react';
+import { Mountain, Calendar, Users, LogIn, LogOut, Globe, User, Compass, Menu } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -13,10 +13,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 export default function PublicHeader() {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const { data: user } = useQuery({
     queryKey: ['current-user-public-header'],
@@ -49,6 +55,7 @@ export default function PublicHeader() {
           </div>
         </Link>
 
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
           <Link to={createPageUrl("Calendar")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
             <Calendar className="w-4 h-4" aria-hidden="true" />
@@ -64,7 +71,8 @@ export default function PublicHeader() {
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" aria-label="Change language">
@@ -84,15 +92,97 @@ export default function PublicHeader() {
           
           {!user ? (
             <Button onClick={handleLogin} variant="default" className="bg-emerald-600 hover:bg-emerald-700">
-              <LogIn className="w-4 h-4 md:mr-2" aria-hidden="true" />
-              <span className="hidden md:inline">{t('common.login')}</span>
+              <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
+              <span>{t('common.login')}</span>
             </Button>
           ) : (
             <Button onClick={handleLogout} variant="default" size="sm" className="bg-emerald-600 hover:bg-emerald-900">
-              <LogOut className="w-4 h-4 md:mr-2" aria-hidden="true" />
-              <span className="hidden md:inline">{t('common.logout')}</span>
+              <LogOut className="w-4 h-4 mr-2" aria-hidden="true" />
+              <span>{t('common.logout')}</span>
             </Button>
           )}
+        </div>
+
+        {/* Mobile Hamburger Menu */}
+        <div className="md:hidden">
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="sm" aria-label="Open menu">
+                <Menu className="w-6 h-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[280px] bg-white">
+              <div className="flex flex-col gap-6 mt-8">
+                <Link 
+                  to={createPageUrl("Calendar")} 
+                  className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Calendar className="w-5 h-5" />
+                  {t('navigation.calendar')}
+                </Link>
+                <Link 
+                  to={createPageUrl("OrganizersList")} 
+                  className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Users className="w-5 h-5" />
+                  {t('navigation.organizers')}
+                </Link>
+                <Link 
+                  to={createPageUrl("Guides")} 
+                  className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Compass className="w-5 h-5" />
+                  {t('navigation.guides')}
+                </Link>
+
+                <div className="border-t pt-6">
+                  <div className="mb-4">
+                    <p className="text-sm text-stone-500 mb-2">{language === 'el' ? 'Γλώσσα' : 'Language'}</p>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant={language === 'en' ? 'default' : 'outline'} 
+                        size="sm"
+                        onClick={() => setLanguage('en')}
+                        className="flex-1"
+                      >
+                        English
+                      </Button>
+                      <Button 
+                        variant={language === 'el' ? 'default' : 'outline'} 
+                        size="sm"
+                        onClick={() => setLanguage('el')}
+                        className="flex-1"
+                      >
+                        Ελληνικά
+                      </Button>
+                    </div>
+                  </div>
+
+                  {!user ? (
+                    <Button 
+                      onClick={handleLogin}
+                      className="w-full bg-emerald-600 hover:bg-emerald-700"
+                    >
+                      <LogIn className="w-4 h-4 mr-2" />
+                      {t('common.login')}
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={handleLogout}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      {t('common.logout')}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
