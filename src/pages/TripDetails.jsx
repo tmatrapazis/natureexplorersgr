@@ -151,7 +151,7 @@ export default function TripDetailsPage() {
     }
   }, [trip, language]);
 
-  // Enhanced Structured Data for Event with keywords
+  // Enhanced Structured Data for Event with keywords - Optimized for Google Search
   const eventSchema = trip ? {
     "@context": "https://schema.org",
     "@type": "SportsEvent",
@@ -159,9 +159,9 @@ export default function TripDetailsPage() {
     "description": trip.description || (language === 'el' 
       ? `Πεζοπορική εκδρομή ${trip.difficulty} επιπέδου στο ${trip.location}. Οργανωμένες εκδρομές βουνό, outdoor περιπέτεια ορειβασίας και trekking με έμπειρο οδηγό. Ημερολόγιο εκδρομών Nature Explorers Greece.`
       : `${trip.difficulty} level hiking trip and trekking adventure in ${trip.location}. Outdoor mountain expedition with experienced guide. Hiking calendar and weekend hiking trips Greece.`),
-    "image": trip.image_url,
-    "startDate": trip.start_date + (trip.start_time ? `T${trip.start_time}:00` : ''),
-    "endDate": trip.end_date || trip.start_date,
+    "image": [trip.image_url || getTripImage(null, trip.id)],
+    "startDate": trip.start_date + (trip.start_time ? `T${trip.start_time}:00` : 'T09:00:00'),
+    "endDate": (trip.end_date || trip.start_date) + 'T18:00:00',
     "location": {
       "@type": "Place",
       "name": trip.location,
@@ -170,34 +170,77 @@ export default function TripDetailsPage() {
         "addressLocality": trip.location,
         "addressRegion": trip.location,
         "addressCountry": "GR"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "addressCountry": "GR"
       }
     },
     "organizer": organizer ? {
+      "@type": organizer.website ? "Organization" : "Person",
+      "name": organizer.username || organizer.full_name,
+      "url": organizer.website || `${window.location.origin}${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`,
+      "telephone": organizer.phone,
+      "email": organizer.email,
+      "image": organizer.profile_picture_url
+    } : {
+      "@type": "Organization",
+      "name": "Nature Explorers",
+      "url": window.location.origin
+    },
+    "performer": organizer ? {
       "@type": "Person",
       "name": organizer.username || organizer.full_name
     } : undefined,
-    "offers": trip.price ? {
+    "offers": {
       "@type": "Offer",
-      "price": trip.price,
+      "price": trip.price || 0,
       "priceCurrency": "EUR",
-      "url": window.location.href,
-      "availability": trip.max_participants ? "https://schema.org/InStock" : undefined,
-      "validFrom": trip.created_date
-    } : undefined,
+      "url": trip.event_url || window.location.href,
+      "availability": trip.status === 'cancelled' ? "https://schema.org/SoldOut" : 
+                      trip.status === 'almost soldout' ? "https://schema.org/LimitedAvailability" : 
+                      "https://schema.org/InStock",
+      "validFrom": trip.created_date || trip.start_date
+    },
     "eventStatus": trip.status === 'cancelled' 
       ? "https://schema.org/EventCancelled" 
+      : trip.status === 'completed' 
+      ? "https://schema.org/EventScheduled"
       : "https://schema.org/EventScheduled",
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
     "sport": language === 'el' ? "Πεζοπορία και Ορειβασία" : "Hiking and Trekking",
     "keywords": language === 'el'
       ? `πεζοπορία, ${trip.location}, εκδρομές, ορειβασία, trekking, outdoor, ${trip.difficulty}, οργανωμένες εκδρομές βουνού, hiking greece`
       : `hiking, ${trip.location}, trekking, outdoor activities, mountain adventure, ${trip.difficulty}, hiking trips greece, weekend hiking`,
-    "inLanguage": language === 'el' ? "el" : "en"
+    "inLanguage": language === 'el' ? "el" : "en",
+    "typicalAgeRange": "18-65",
+    "maximumAttendeeCapacity": trip.max_participants,
+    "remainingAttendeeCapacity": trip.max_participants,
+    "isAccessibleForFree": trip.price === 0 || !trip.price,
+    "url": window.location.href
   } : null;
+  
+  // Breadcrumb structured data for better navigation
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": window.location.origin
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Calendar",
+        "item": `${window.location.origin}${createPageUrl("Calendar")}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": trip?.title || "Trip Details",
+        "item": window.location.href
+      }
+    ]
+  };
 
   if (tripLoading) {
     return (
@@ -252,6 +295,7 @@ export default function TripDetailsPage() {
     return (
       <>
         {eventSchema && <StructuredData data={eventSchema} />}
+        <StructuredData data={breadcrumbSchema} />
         <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
           <div className="max-w-5xl mx-auto">
             <Link to={createPageUrl("Calendar")}>
@@ -375,6 +419,7 @@ export default function TripDetailsPage() {
   return (
     <>
       {eventSchema && <StructuredData data={eventSchema} />}
+      <StructuredData data={breadcrumbSchema} />
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-5xl mx-auto">
           <Link to={createPageUrl("Calendar")}>
