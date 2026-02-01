@@ -137,6 +137,10 @@ export default function MyTripsPage() {
     return allBookings.filter(b => b.trip_id === tripId && b.status === "pending").length;
   };
 
+  const isRequiredFieldsFilled = (trip) => {
+    return trip.title && trip.start_date && trip.location && trip.difficulty && trip.organizer_code;
+  };
+
   if (tripsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
