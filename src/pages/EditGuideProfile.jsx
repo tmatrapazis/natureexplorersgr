@@ -101,7 +101,8 @@ export default function EditGuideProfilePage() {
       queryClient.invalidateQueries(['mountain-guides']);
       setShowSuccessDialog(true);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Update error:', error);
       toast.error(language === 'el' ? 'Σφάλμα ενημέρωσης' : 'Error updating profile');
     }
   });
