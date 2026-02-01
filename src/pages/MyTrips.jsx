@@ -10,6 +10,7 @@ import { Calendar, MapPin, Users, Plus, User as UserIcon, XCircle, Edit, ListOrd
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
 import { getComputedTripStatus, statusColors } from "../components/helpers/tripHelpers";
 import { formatDateRange } from "../components/helpers/dateHelpers";
 import { getTripInsights } from "../components/helpers/bookingHelpers";
@@ -21,6 +22,7 @@ import { getTripImage, handleImageError } from "../components/helpers/imageHelpe
 export default function MyTripsPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("upcoming");
 
   const { language } = useLanguage();
   const { t } = useTranslation(language);
@@ -199,14 +201,37 @@ export default function MyTripsPage() {
             </Link>
           </Card>
         ) : (
-          <Tabs defaultValue="upcoming" className="w-full">
-            <TabsList className="grid w-full grid-cols-5 mb-4">
-              <TabsTrigger value="draft">{language === 'el' ? 'Πρόχειρα' : 'Drafts'}</TabsTrigger>
-              <TabsTrigger value="upcoming">{t('organizer.tab_upcoming')}</TabsTrigger>
-              <TabsTrigger value="happening">{t('organizer.tab_happening')}</TabsTrigger>
-              <TabsTrigger value="completed">{t('organizer.tab_completed')}</TabsTrigger>
-              <TabsTrigger value="cancelled">{t('organizer.tab_cancelled')}</TabsTrigger>
-            </TabsList>
+          <>
+            {/* Desktop Tabs */}
+            <div className="hidden md:block mb-4">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-5">
+                  <TabsTrigger value="draft">{language === 'el' ? 'Πρόχειρα' : 'Drafts'}</TabsTrigger>
+                  <TabsTrigger value="upcoming">{t('organizer.tab_upcoming')}</TabsTrigger>
+                  <TabsTrigger value="happening">{t('organizer.tab_happening')}</TabsTrigger>
+                  <TabsTrigger value="completed">{t('organizer.tab_completed')}</TabsTrigger>
+                  <TabsTrigger value="cancelled">{t('organizer.tab_cancelled')}</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
+            {/* Mobile Select Dropdown */}
+            <div className="md:hidden mb-4">
+              <Select value={activeTab} onValueChange={setActiveTab}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">{language === 'el' ? 'Πρόχειρα' : 'Drafts'}</SelectItem>
+                  <SelectItem value="upcoming">{t('organizer.tab_upcoming')}</SelectItem>
+                  <SelectItem value="happening">{t('organizer.tab_happening')}</SelectItem>
+                  <SelectItem value="completed">{t('organizer.tab_completed')}</SelectItem>
+                  <SelectItem value="cancelled">{t('organizer.tab_cancelled')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsContent value="draft">
               <div className="grid gap-6">
                 {draftTrips.map((trip) => {
@@ -744,8 +769,9 @@ export default function MyTripsPage() {
                 )}
               </div>
             </TabsContent>
-          </Tabs>
-        )}
+            </Tabs>
+            </>
+            )}
       </div>
     </div>
   );
