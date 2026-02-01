@@ -40,6 +40,7 @@ export const el = {
     "analytics": "Αναλυτικά",
     "edit_profile": "Επεξεργασία Προφίλ",
     "organizers": "Οδηγοί",
+    "guides": "Συνοδοί",
     "home": "Αρχική",
     "my_dashboard": "Μετάβαση στον Πίνακα",
     "manage_bookings": "Διαχείριση Κρατήσεων",
