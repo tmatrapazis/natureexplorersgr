@@ -60,7 +60,8 @@ export default function CreateTripPage() {
     tags: [],
     cancel_policy: "",
     organizer_notes: "",
-    gpx_file_url: ""
+    gpx_file_url: "",
+    status: "draft"
   });
 
   const [currentRequirement, setCurrentRequirement] = useState("");
@@ -97,8 +98,7 @@ export default function CreateTripPage() {
       }
       return await base44.entities.HikingTrip.create({
         ...data,
-        organizer_code: user.organizer_code,
-        status: "upcoming"
+        organizer_code: user.organizer_code
       });
     },
     onSuccess: () => {
@@ -554,6 +554,27 @@ export default function CreateTripPage() {
                 rows={3}
               />
               <p className="text-xs text-stone-500 mt-1">{t('create_trip.organizer_notes_description')}</p>
+            </div>
+
+            <div>
+              <Label htmlFor="status">{language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}</Label>
+              <Select
+                value={tripData.status}
+                onValueChange={(value) => setTripData({...tripData, status: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο (δεν θα δημοσιευτεί)' : 'Draft (will not be published)'}</SelectItem>
+                  <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενη (θα δημοσιευτεί)' : 'Upcoming (will be published)'}</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-stone-500 mt-1">
+                {language === 'el' 
+                  ? 'Επιλέξτε "Πρόχειρο" για να αποθηκεύσετε την εκδρομή χωρίς να τη δημοσιεύσετε. Μπορείτε να την δημοσιεύσετε αργότερα αλλάζοντας την κατάσταση.'
+                  : 'Select "Draft" to save the trip without publishing it. You can publish it later by changing the status.'}
+              </p>
             </div>
 
             <div>
