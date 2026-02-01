@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Shield, Award, Briefcase, Instagram, Facebook, MapPin, Calendar, TrendingUp, Edit, Trash2 } from "lucide-react";
 import { formatDateRange } from "../components/helpers/dateHelpers";
+import ShareGuideButton from "../components/guides/ShareGuideButton";
 import { difficultyColors } from "../components/helpers/tripHelpers";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 
@@ -121,7 +122,8 @@ export default function GuideProfilePage() {
 
       <div className="container mx-auto max-w-5xl px-4 -mt-24 relative z-10">
         {isOwner && (
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end gap-3 mb-4">
+            <ShareGuideButton guide={guide} language={language} />
             <Button
               onClick={() => navigate(createPageUrl('EditGuideProfile') + `?id=${guideId}`)}
               className="bg-emerald-600 hover:bg-emerald-700"
