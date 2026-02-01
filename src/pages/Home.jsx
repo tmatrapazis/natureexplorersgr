@@ -47,6 +47,40 @@ export default function HomePage() {
     retry: false,
   });
 
+  const { data: featuredExpeditions = [] } = useQuery({
+    queryKey: ['featured-expeditions'],
+    queryFn: async () => {
+      const trips = await base44.entities.HikingTrip.list('-start_date', 100);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const futureTrips = trips.filter(trip => {
+        if (!trip.start_date) return false;
+        const startDate = new Date(trip.start_date);
+        startDate.setHours(0, 0, 0, 0);
+        return startDate > today && (trip.status === 'upcoming' || trip.status === 'almost soldout');
+      });
+      
+      const shuffled = [...futureTrips].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, 3);
+    },
+    initialData: [],
+  });
+
+  const { data: organizers = [] } = useQuery({
+    queryKey: ['organizers-for-featured'],
+    queryFn: () => base44.entities.Organizer.list(),
+    initialData: [],
+  });
+
+  const organizerMap = React.useMemo(() => {
+    const map = {};
+    organizers.forEach(org => {
+      map[org.organizer_code] = org;
+    });
+    return map;
+  }, [organizers]);
+
   const { data: featuredTrips } = useQuery({
     queryKey: ['featured-trips'],
     queryFn: async () => {
@@ -185,6 +219,60 @@ export default function HomePage() {
               </p>
             </div>
           </section>
+
+          {featuredExpeditions.length > 0 && (
+            <section className="py-16 px-4 bg-white">
+              <div className="container mx-auto max-w-6xl">
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-stone-900">
+                  {language === 'el' ? 'Επιλεγμένες Εκδρομές' : 'Featured Expeditions'}
+                </h2>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {featuredExpeditions.map(trip => {
+                    const organizer = organizerMap[trip.organizer_code];
+                    return (
+                      <Card key={trip.id} className="overflow-hidden hover:shadow-xl transition-shadow">
+                        <div className="h-48 bg-stone-200 overflow-hidden">
+                          <img 
+                            src={getTripImage(trip.image_url, trip.id)}
+                            alt={trip.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => handleImageError(e, trip.id)}
+                          />
+                        </div>
+                        <CardContent className="p-6">
+                          <h3 className="text-xl font-bold text-stone-900 mb-2">{trip.title}</h3>
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            <Badge className={difficultyColors[trip.difficulty]}>
+                              {trip.difficulty}
+                            </Badge>
+                            <Badge variant="outline">
+                              <Calendar className="w-3 h-3 mr-1" />
+                              {formatDateRange(trip.start_date, trip.end_date)}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-stone-600 mb-2">
+                            <MapPin className="w-4 h-4 text-emerald-600" />
+                            <span>{trip.location}</span>
+                          </div>
+                          {organizer && (
+                            <div className="flex items-center gap-2 text-sm text-stone-500 mb-4">
+                              <UserIcon className="w-4 h-4" />
+                              <span>{organizer.username || organizer.full_name}</span>
+                            </div>
+                          )}
+                          <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`}>
+                            <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+                              {language === 'el' ? 'Δείτε Λεπτομέρειες' : 'View Details'}
+                            </Button>
+                          </Link>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
+          )}
         </main>
       </div>
     </>
