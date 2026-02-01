@@ -126,7 +126,12 @@ export default function EditOrganizerProfilePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateOrganizerMutation.mutate(formData);
+    // Convert years_of_experience to number or null
+    const dataToSubmit = {
+      ...formData,
+      years_of_experience: formData.years_of_experience ? parseFloat(formData.years_of_experience) : null
+    };
+    updateOrganizerMutation.mutate(dataToSubmit);
   };
 
   if (isLoading) {
@@ -276,13 +281,14 @@ export default function EditOrganizerProfilePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone">{t('profile.public_phone')}</Label>
+                  <Label htmlFor="phone">{t('profile.public_phone')} *</Label>
                   <Input
                     id="phone"
                     type="tel"
                     placeholder={t('profile.public_phone_placeholder')}
                     value={formData.phone}
                     onChange={handleInputChange}
+                    required
                   />
                 </div>
 
@@ -326,7 +332,8 @@ export default function EditOrganizerProfilePage() {
                   <Label htmlFor="years_of_experience">{t('profile.years_experience')}</Label>
                   <Input
                     id="years_of_experience"
-                    type="text"
+                    type="number"
+                    min="0"
                     placeholder={t('profile.years_experience_placeholder')}
                     value={formData.years_of_experience}
                     onChange={handleInputChange}
