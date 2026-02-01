@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Globe, LogOut } from "lucide-react";
+import { Globe, LogOut, Menu } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +10,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import PublicHeader from "./components/layout/PublicHeader";
 import PublicFooter from "./components/layout/PublicFooter";
 import { LanguageProvider, useLanguage } from "./components/contexts/LanguageContext";
@@ -21,6 +26,7 @@ const LoggedInLayout = ({ children, user }) => {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
   const [showWelcome, setShowWelcome] = React.useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   React.useEffect(() => {
     // Show welcome modal if user hasn't accepted terms
@@ -56,6 +62,7 @@ const LoggedInLayout = ({ children, user }) => {
             </div>
           </Link>
 
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <Link to={createPageUrl("Calendar")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
               <span>{t('navigation.calendar')}</span>
@@ -68,12 +75,13 @@ const LoggedInLayout = ({ children, user }) => {
             </Link>
           </nav>
 
-          <div className="flex items-center gap-3">
+          {/* Desktop Actions */}
+          <div className="hidden md:flex items-center gap-3">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm">
-                  <Globe className="w-4 h-4 md:mr-2" />
-                  <span className="hidden md:inline">{language === 'en' ? 'EN' : 'ΕΛ'}</span>
+                  <Globe className="w-4 h-4 mr-2" />
+                  <span>{language === 'en' ? 'EN' : 'ΕΛ'}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -85,15 +93,84 @@ const LoggedInLayout = ({ children, user }) => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            
+
             <Button 
               onClick={handleLogout}
               variant="outline"
               size="sm"
             >
-              <LogOut className="w-4 h-4 md:mr-2" />
-              <span className="hidden md:inline">{t('common.logout')}</span>
+              <LogOut className="w-4 h-4 mr-2" />
+              <span>{t('common.logout')}</span>
             </Button>
+          </div>
+
+          {/* Mobile Hamburger Menu */}
+          <div className="md:hidden">
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[280px] bg-white">
+                <div className="flex flex-col gap-6 mt-8">
+                  <Link 
+                    to={createPageUrl("Calendar")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('navigation.calendar')}
+                  </Link>
+                  <Link 
+                    to={createPageUrl("OrganizersList")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('navigation.organizers')}
+                  </Link>
+                  <Link 
+                    to={createPageUrl("Guides")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('navigation.guides')}
+                  </Link>
+
+                  <div className="border-t pt-6">
+                    <div className="mb-4">
+                      <p className="text-sm text-stone-500 mb-2">{language === 'el' ? 'Γλώσσα' : 'Language'}</p>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant={language === 'en' ? 'default' : 'outline'} 
+                          size="sm"
+                          onClick={() => setLanguage('en')}
+                          className="flex-1"
+                        >
+                          English
+                        </Button>
+                        <Button 
+                          variant={language === 'el' ? 'default' : 'outline'} 
+                          size="sm"
+                          onClick={() => setLanguage('el')}
+                          className="flex-1"
+                        >
+                          Ελληνικά
+                        </Button>
+                      </div>
+                    </div>
+
+                    <Button 
+                      onClick={handleLogout}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      {t('common.logout')}
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
