@@ -46,6 +46,7 @@ export default function EditGuideProfilePage() {
       facebook: ""
     },
     organizer_codes: [],
+    status: "active",
   });
 
   const [currentCertification, setCurrentCertification] = useState("");
@@ -90,6 +91,7 @@ export default function EditGuideProfilePage() {
         cover_photo_url: guide.cover_photo_url || "",
         social_media: guide.social_media || { instagram: "", facebook: "" },
         organizer_codes: guide.organizer_codes || [],
+        status: guide.status || "active",
       });
     }
   }, [guide, currentUser, navigate, guideId, language]);
@@ -175,12 +177,16 @@ export default function EditGuideProfilePage() {
       return;
     }
 
-    // Remove user_id from update data (it's immutable and used for RLS)
-    const { user_id, ...dataToUpdate } = formData;
-    
     updateGuideMutation.mutate({
-      ...dataToUpdate,
+      full_name: formData.full_name,
+      bio: formData.bio,
       years_of_experience: formData.years_of_experience ? Number(formData.years_of_experience) : 0,
+      certifications: formData.certifications,
+      profile_photo_url: formData.profile_photo_url,
+      cover_photo_url: formData.cover_photo_url,
+      social_media: formData.social_media,
+      organizer_codes: formData.organizer_codes,
+      status: formData.status,
     });
   };
 
