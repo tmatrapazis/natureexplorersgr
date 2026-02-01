@@ -66,7 +66,7 @@ export default function GuidesPage() {
               {language === 'el' ? 'Συνοδοί Βουνού' : 'Mountain Guides'}
             </h1>
           </div>
-          <p className="text-lg text-emerald-100 max-w-2xl">
+          <p className="text-lg text-emerald-100 max-w-2xl text-center">
             {language === 'el' 
               ? 'Γνωρίστε τους πιστοποιημένους επαγγελματίες συνοδούς που κάνουν κάθε εκδρομή ασφαλή και αξέχαστη'
               : 'Meet the certified professionals who make every adventure safe and unforgettable'
