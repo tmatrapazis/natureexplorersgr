@@ -78,10 +78,13 @@ export default function EditOrganizerProfilePage() {
   }, [organizer]);
 
   const updateOrganizerMutation = useMutation({
-    mutationFn: (updatedData) => {
+    mutationFn: async (updatedData) => {
       // Remove is_verified and organizer_code - only admins can modify these
       const { is_verified, organizer_code, ...dataToUpdate } = updatedData;
-      return base44.entities.Organizer.update(organizer.id, dataToUpdate);
+      console.log('Updating organizer with data:', dataToUpdate);
+      const result = await base44.entities.Organizer.update(organizer.id, dataToUpdate);
+      console.log('Update successful:', result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organizer'] });
@@ -89,6 +92,10 @@ export default function EditOrganizerProfilePage() {
       setTimeout(() => {
         navigate(`${createPageUrl("OrganizerProfile")}?code=${user.organizer_code}`);
       }, 2000);
+    },
+    onError: (error) => {
+      console.error('Failed to update organizer profile:', error);
+      alert(`Failed to update profile: ${error.message || 'Unknown error'}`);
     },
   });
 
