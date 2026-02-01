@@ -147,6 +147,7 @@ export default function MyTripsPage() {
 
   const tripsWithStatus = (trips || []).map(trip => ({...trip, computedStatus: getComputedTripStatus(trip)}));
   const filteredTrips = (status) => tripsWithStatus.filter(t => t.computedStatus === status);
+  const draftTrips = (trips || []).filter(t => t.status === 'draft');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
@@ -184,12 +185,115 @@ export default function MyTripsPage() {
           </Card>
         ) : (
           <Tabs defaultValue="upcoming" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-4">
+            <TabsList className="grid w-full grid-cols-5 mb-4">
+              <TabsTrigger value="draft">{language === 'el' ? 'Πρόχειρα' : 'Drafts'}</TabsTrigger>
               <TabsTrigger value="upcoming">{t('organizer.tab_upcoming')}</TabsTrigger>
               <TabsTrigger value="happening">{t('organizer.tab_happening')}</TabsTrigger>
               <TabsTrigger value="completed">{t('organizer.tab_completed')}</TabsTrigger>
               <TabsTrigger value="cancelled">{t('organizer.tab_cancelled')}</TabsTrigger>
             </TabsList>
+            <TabsContent value="draft">
+              <div className="grid gap-6">
+                {draftTrips.map((trip) => {
+                  const bookings = getBookingsForTrip(trip.id);
+                  const bookedSlots = bookings.reduce((sum, b) => sum + b.number_of_people, 0);
+                  const pendingBookings = getPendingBookingsForTrip(trip.id);
+                  const insights = getTripInsights(trip.id, allBookings);
+
+                  return (
+                    <Card key={trip.id} className="p-6 hover:shadow-lg transition-shadow border-dashed">
+                      <div className="flex flex-col md:flex-row gap-6">
+                        <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
+                          <img 
+                            src={getTripImage(trip.image_url, trip.id)} 
+                            alt={trip.title} 
+                            className="w-full h-full object-cover"
+                            onError={(e) => handleImageError(e, trip.id)}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
+                            <div>
+                              <h3 className="text-xl font-bold text-stone-900 mb-2">{trip.title}</h3>
+                              <div className="flex flex-wrap gap-2">
+                                <Badge className="bg-stone-400">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</Badge>
+                                <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
+                                {trip.tags && trip.tags.slice(0, 3).map(tag => (
+                                  <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="grid sm:grid-cols-2 gap-3 mb-4 text-sm text-stone-600">
+                            <div className="flex items-center gap-2">
+                              <MapPin className="w-4 h-4 text-emerald-600" />
+                              <span>{trip.location}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Users className="w-4 h-4 text-emerald-600" />
+                              <span>{bookedSlots} / {trip.total_slots} {t('organizer.confirmed_bookings')}</span>
+                            </div>
+                            {pendingBookings > 0 && (
+                                <div className="flex items-center gap-2 text-yellow-600 font-semibold">
+                                    <ListOrdered className="w-4 h-4"/>
+                                    <span>{pendingBookings} {t('organizer.pending_requests')}</span>
+                                </div>
+                            )}
+                          </div>
+
+                          {insights.total > 0 && (
+                            <div className="bg-stone-50 rounded-lg p-3 mb-4">
+                              <p className="text-xs font-semibold text-stone-600 mb-2">{t('organizer.booking_insights')}</p>
+                              <div className="flex gap-4 text-sm">
+                                <span>{t('organizer.insights_pending')}: <strong>{insights.pending}</strong></span>
+                                <span>{t('organizer.insights_confirmed')}: <strong className="text-emerald-600">{insights.confirmed}</strong></span>
+                                <span>{t('organizer.insights_declined')}: <strong className="text-red-600">{insights.declined}</strong></span>
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
+                              <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
+                            </Link>
+                            <Select
+                              value={trip.status}
+                              onValueChange={(value) => handleStatusChange(trip.id, value)}
+                            >
+                              <SelectTrigger className="w-[140px] h-9">
+                                <RefreshCw className="w-4 h-4 mr-2" />
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
+                                <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
+                                <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
+                                <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
+                                <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
+                                <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDeleteTrip(trip.id)}
+                              disabled={deleteTripMutation.isPending}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              {language === 'el' ? 'Διαγραφή' : 'Delete'}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+                {draftTrips.length === 0 && (
+                  <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>
+                )}
+              </div>
+            </TabsContent>
             {['upcoming', 'happening', 'completed', 'cancelled'].map(statusKey => {
                const statusValue = statusKey === 'happening' ? 'happening now' : statusKey;
                return (
