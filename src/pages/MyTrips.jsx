@@ -254,9 +254,6 @@ export default function MyTripsPage() {
                               )}
 
                               <div className="flex flex-wrap items-center gap-2">
-                                <Link to={`${createPageUrl("ManageBookings")}?tripId=${trip.id}`}>
-                                  <Button size="sm">{t('organizer.manage_bookings')}</Button>
-                                </Link>
                                 <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
                                   <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
                                 </Link>
