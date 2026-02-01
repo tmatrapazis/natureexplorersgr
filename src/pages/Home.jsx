@@ -28,14 +28,14 @@ export default function HomePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
-  // SEO Configuration with provided keywords
+  // Enhanced SEO Configuration with target keywords
   useSEO({
     title: language === 'el' 
-      ? 'Nature Explorers | Πεζοπορία Ελλάδα | Ομάδες Πεζοπορίας | Εκδρομές Βουνό | Ορειβασία'
-      : 'Nature Explorers | Hiking Greece | Hiking Trips Greece | Outdoor Adventures | Trekking',
+      ? 'Πεζοπορία Ελλάδα | Οργανωμένες Εκδρομές | Ομαδικές Εκδρομές | Nature Explorers'
+      : 'Hiking Greece | Trekking Greece | Organized Hiking Trips | Nature Explorers',
     description: language === 'el'
-      ? 'Ανακαλύψτε πεζοπορικές εκδρομές και ορειβασία σε όλη την Ελλάδα. Ομάδες πεζοπορίας, οργανωμένες εκδρομές βουνό, μονοπάτια πεζοπορίας, πεζοπορία Πάρνηθα, Όλυμπος, Πήλιο. Δραστηριότητες στη φύση και περιπέτεια στη φύση με Nature Explorers.'
-      : 'Discover hiking trips Greece, trekking adventures and outdoor activities. Join hiking teams Greece, explore nature trails, mountain trekking, hiking Parnitha, Olympus, Pelion, Crete. Weekend hiking trips and outdoor adventures with Nature Explorers Greece.',
+      ? 'Οι καλύτερες οργανωμένες εκδρομές και ομαδικές εκδρομές πεζοπορίας στην Ελλάδα. Ταξίδια πεζοπορίας, trekking, ορειβασία σε Πάρνηθα, Όλυμπο, Πήλιο με έμπειρους οδηγούς. Βρείτε ομάδες πεζοπορίας και κρατήστε θέση σε εκδρομές βουνού. Nature Explorers - Η #1 πλατφόρμα outdoor περιπετειών.'
+      : 'Best organized hiking trips and group expeditions in Greece. Hiking tours, trekking adventures, mountain climbing in Parnitha, Olympus, Pelion with expert guides. Find hiking groups and book hiking trips. Nature Explorers - #1 outdoor adventure platform.',
     image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png',
     url: window.location.href,
     type: 'website'
@@ -109,17 +109,18 @@ export default function HomePage() {
     return map;
   }, [organizers]);
 
-  // Structured Data for Organization with keywords
+  // Enhanced Structured Data for Organization with target keywords
   const organizationSchema = {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "TouristInformationCenter",
     "name": "Nature Explorers",
-    "alternateName": language === 'el' ? "Εξερευνητές Φύσης" : "Nature Explorers Greece",
-    "url": "https://natureexplorers.gr",
+    "alternateName": language === 'el' ? "Nature Explorers - Πεζοπορία Ελλάδα" : "Nature Explorers Greece - Hiking & Trekking",
+    "url": window.location.origin,
     "logo": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png",
+    "image": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png",
     "description": language === 'el' 
-      ? "Η κορυφαία πλατφόρμα για πεζοπορία Ελλάδα, ορειβασία, εκδρομές βουνό και outdoor activities. Ομάδες πεζοπορίας, οργανωμένες εκδρομές, πεζοπορικές διαδρομές σε όλη την Ελλάδα."
-      : "The premier platform for hiking Greece, trekking, mountain adventures and outdoor activities. Join hiking teams Greece, explore hiking trails, and discover nature travel experiences.",
+      ? "Η #1 πλατφόρμα για οργανωμένες εκδρομές και ομαδικές εκδρομές πεζοπορίας στην Ελλάδα. Βρείτε ταξίδια πεζοπορίας, trekking Greece, ορειβασία και outdoor δραστηριότητες με πιστοποιημένους οδηγούς. Ημερολόγιο εκδρομών βουνό σε Όλυμπο, Πάρνηθα, Πήλιο και όλη την Ελλάδα."
+      : "The #1 platform for organized hiking trips and group expeditions in Greece. Find hiking tours, trekking adventures Greece, mountain climbing and outdoor activities with certified guides. Hiking calendar for Olympus, Parnitha, Pelion and all Greece.",
     "sameAs": [
       "https://www.facebook.com/natureexplorersgr/",
       "https://www.instagram.com/natureexplorers.gr/"
@@ -129,42 +130,133 @@ export default function HomePage() {
       "email": "natureexplorersgr@gmail.com",
       "contactType": "Customer Service",
       "areaServed": "GR",
-      "availableLanguage": ["English", "Greek"]
+      "availableLanguage": ["en", "el"]
     },
     "areaServed": {
       "@type": "Country",
       "name": "Greece"
     },
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "GR"
+    },
+    "makesOffer": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": language === 'el' ? "Οργανωμένες Εκδρομές Πεζοπορίας" : "Organized Hiking Trips",
+          "description": language === 'el' 
+            ? "Ομαδικές εκδρομές πεζοπορίας με έμπειρους οδηγούς σε όλη την Ελλάδα"
+            : "Group hiking expeditions with experienced guides across Greece"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": language === 'el' ? "Trekking & Ορειβασία" : "Trekking & Mountain Climbing",
+          "description": language === 'el'
+            ? "Trekking adventures και ορειβατικές αποστολές στα ελληνικά βουνά"
+            : "Trekking adventures and mountain expeditions in Greek mountains"
+        }
+      }
+    ],
     "keywords": language === 'el'
-      ? "πεζοπορία, πεζοπορία ελλάδα, ομάδες πεζοπορίας, εκδρομές βουνό, πεζοπορικές διαδρομές, ημερολόγιο εκδρομών, δραστηριότητες στη φύση, ορειβασία, ορειβασία ελλάδα, φυσικές διαδρομές, μονοπάτια πεζοπορίας, πεζοπορία πάρνηθα, πεζοπορία όλυμπος, οργανωμένες εκδρομές βουνού, περιπέτεια στη φύση"
-      : "hiking, hiking greece, hiking trips greece, hiking teams greece, hiking adventures, hiking calendar, outdoor activities greece, trekking, trekking greece, mountain trekking, hiking tours greece, nature travel, hiking parnitha, hiking olympus, hiking pelion, weekend hiking trips greece, hiking community greece, greek hiking groups, nature explorers greece"
+      ? "ταξίδια, πεζοπορία, πεζοπορία στην ελλάδα, trekking greece, hiking greece, εκδρομές, ομαδικές εκδρομές, οργανωμένες εκδρομές, ομάδες πεζοπορίας, εκδρομές βουνό, ορειβασία, outdoor activities, πεζοπορικές διαδρομές, μονοπάτια, hiking trips, weekend εκδρομές, φύση, περιπέτεια"
+      : "travel, hiking, hiking in greece, trekking greece, hiking greece, trips, group trips, organized trips, hiking groups, mountain trips, climbing, outdoor activities, hiking trails, paths, hiking adventures, weekend trips, nature, adventure"
   };
 
-  // Structured Data for WebSite
+  // Enhanced Structured Data for WebSite with FAQs
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Nature Explorers",
-    "alternateName": language === 'el' ? "Εξερευνητές Φύσης - Πεζοπορία Ελλάδα" : "Nature Explorers - Hiking Greece",
-    "url": "https://natureexplorers.gr",
+    "alternateName": language === 'el' ? "Nature Explorers - Πεζοπορία Ελλάδα | Οργανωμένες Εκδρομές" : "Nature Explorers - Hiking Greece | Organized Trips",
+    "url": window.location.origin,
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://natureexplorers.gr/calendar?search={search_term_string}"
+        "urlTemplate": `${window.location.origin}${createPageUrl("Calendar")}?search={search_term_string}`
       },
       "query-input": "required name=search_term_string"
     },
     "inLanguage": ["en", "el"],
+    "description": language === 'el'
+      ? "Βρείτε οργανωμένες εκδρομές πεζοπορίας, ομαδικές εκδρομές και ταξίδια στην Ελλάδα. Trekking Greece, hiking adventures με έμπειρους οδηγούς."
+      : "Find organized hiking trips, group expeditions and travel adventures in Greece. Trekking Greece, hiking tours with expert guides.",
+    "about": {
+      "@type": "Thing",
+      "name": language === 'el' ? "Πεζοπορία και Ορειβασία Ελλάδα" : "Hiking and Trekking Greece"
+    },
     "keywords": language === 'el'
-      ? "πού να πάω για πεζοπορία στην ελλάδα, καλύτερα μονοπάτια πεζοπορίας, οργανωμένες εκδρομές βουνού, ομάδες πεζοπορίας, hiking greece"
-      : "hiking greece, hiking trips greece, weekend hiking ideas greece, upcoming hiking events in greece, hiking groups near athens, nature trips in greece"
+      ? "ταξίδια, πεζοπορία, πεζοπορία στην ελλάδα, trekking greece, hiking greece, εκδρομές, ομαδικές εκδρομές, οργανωμένες εκδρομές, πού να πάω για πεζοπορία, καλύτερες εκδρομές βουνό, ομάδες πεζοπορίας αθήνα, weekend εκδρομές, μονοήμερες εκδρομές, πολυήμερες εκδρομές, ορειβασία ελλάδα"
+      : "travel, hiking, hiking in greece, trekking greece, hiking greece, trips, group trips, organized trips, where to hike in greece, best mountain trips, hiking groups athens, weekend trips, day trips, multi-day trips, climbing greece"
+  };
+  
+  // FAQ Schema for SEO
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": language === 'el' ? [
+      {
+        "@type": "Question",
+        "name": "Πού μπορώ να βρω οργανωμένες εκδρομές πεζοπορίας στην Ελλάδα;",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Στο Nature Explorers θα βρείτε τις καλύτερες οργανωμένες εκδρομές και ομαδικές εκδρομές πεζοπορίας σε όλη την Ελλάδα με πιστοποιημένους οδηγούς. Εξερευνήστε το ημερολόγιο εκδρομών μας για trekking, ορειβασία και outdoor δραστηριότητες."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Πώς μπορώ να συμμετέχω σε ομαδικές εκδρομές πεζοπορίας;",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Εγγραφείτε στο Nature Explorers, περιηγηθείτε στις διαθέσιμες εκδρομές στο ημερολόγιο, επιλέξτε την εκδρομή που σας ενδιαφέρει και κάντε κράτηση. Όλες οι εκδρομές είναι οργανωμένες με έμπειρους συνοδούς βουνού."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Τι είδους εκδρομές προσφέρει το Nature Explorers;",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Προσφέρουμε ποικιλία εκδρομών: μονοήμερες και πολυήμερες εκδρομές πεζοπορίας, trekking adventures, ορειβασία, weekend trips και outdoor δραστηριότητες σε Όλυμπο, Πάρνηθα, Πήλιο και όλη την Ελλάδα."
+        }
+      }
+    ] : [
+      {
+        "@type": "Question",
+        "name": "Where can I find organized hiking trips in Greece?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "At Nature Explorers you'll find the best organized hiking trips and group expeditions across Greece with certified guides. Explore our hiking calendar for trekking, mountain climbing and outdoor activities."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How can I join group hiking expeditions?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sign up at Nature Explorers, browse available trips in our calendar, select the expedition that interests you and make a booking. All trips are organized with experienced mountain guides."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What types of trips does Nature Explorers offer?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We offer a variety of trips: day trips and multi-day hiking expeditions, trekking adventures, mountain climbing, weekend trips and outdoor activities in Olympus, Parnitha, Pelion and all over Greece."
+        }
+      }
+    ]
   };
 
   return (
     <>
       <StructuredData data={organizationSchema} />
       <StructuredData data={websiteSchema} />
+      <StructuredData data={faqSchema} />
       
       <div className="flex flex-col min-h-screen">
         <main className="flex-1">
@@ -179,12 +271,12 @@ export default function HomePage() {
             />
             <div className="relative z-20 container px-4">
               <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-lg">
-                {language === 'el' ? 'Ζήσε την Πεζοπορική Περιπέτεια' : t('home.hero_title')}
+                {language === 'el' ? 'Οργανωμένες Εκδρομές Πεζοπορίας στην Ελλάδα' : 'Organized Hiking Trips in Greece'}
               </h1>
               <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-stone-200 drop-shadow-md">
                 {language === 'el' 
-                  ? 'Βρες ομάδες πεζοπορίας και οδηγούς για μοναδικές εκδρομές ορειβασίας και trekking σε όλη την Ελλάδα'
-                  : t('home.hero_subtitle')}
+                  ? 'Ομαδικές εκδρομές, trekking και ταξίδια ορειβασίας με έμπειρους οδηγούς - Βρείτε την επόμενη περιπέτειά σας!'
+                  : 'Group expeditions, trekking and mountain adventures with expert guides - Find your next adventure!'}
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Link to={createPageUrl("Calendar")}>
@@ -200,8 +292,8 @@ export default function HomePage() {
               </div>
               <p className="mt-6 text-sm text-stone-300 max-w-md mx-auto">
                 {language === 'el'
-                  ? 'Εγγραφείτε σήμερα για να ξεκινήσετε το ταξίδι outdoor περιπέτειας'
-                  : t('home.join_message')}
+                  ? 'Εγγραφείτε δωρεάν και ξεκινήστε την επόμενη outdoor περιπέτειά σας σήμερα!'
+                  : 'Sign up free and start your next outdoor adventure today!'}
               </p>
             </div>
           </section>
