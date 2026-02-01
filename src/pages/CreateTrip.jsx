@@ -82,7 +82,11 @@ export default function CreateTripPage() {
         ...data,
         start_date: "",
         end_date: "",
-        status: "draft"
+        status: "draft",
+        meeting_points: data.meeting_points || [],
+        requirements: data.requirements || [],
+        tags: data.tags || [],
+        gallery_images: data.gallery_images || []
       });
     }
   }, [location.state]);
