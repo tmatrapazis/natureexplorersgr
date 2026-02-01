@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { Mountain, Calendar, Users, LogIn, LogOut, Globe, User } from 'lucide-react';
+import { Mountain, Calendar, Users, LogIn, LogOut, Globe, User, Compass } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -58,6 +57,10 @@ export default function PublicHeader() {
           <Link to={createPageUrl("OrganizersList")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
             <Users className="w-4 h-4" aria-hidden="true" />
             {t('navigation.organizers')}
+          </Link>
+          <Link to={createPageUrl("Guides")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
+            <Compass className="w-4 h-4" aria-hidden="true" />
+            {t('navigation.guides')}
           </Link>
         </nav>
 
