@@ -85,8 +85,8 @@ export default function GuidesPage() {
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-emerald-900 mb-2">
                     {language === 'el' 
-                      ? 'Είστε Ορειβατικός Οδηγός;' 
-                      : 'Are You a Mountain Guide?'}
+                        ? 'Είστε Συνοδός Βουνού;' 
+                        : 'Are You a Mountain Guide?'}
                   </h3>
                   <p className="text-stone-700">
                     {language === 'el'
