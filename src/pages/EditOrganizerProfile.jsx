@@ -326,8 +326,7 @@ export default function EditOrganizerProfilePage() {
                   <Label htmlFor="years_of_experience">{t('profile.years_experience')}</Label>
                   <Input
                     id="years_of_experience"
-                    type="number"
-                    min="0"
+                    type="text"
                     placeholder={t('profile.years_experience_placeholder')}
                     value={formData.years_of_experience}
                     onChange={handleInputChange}
