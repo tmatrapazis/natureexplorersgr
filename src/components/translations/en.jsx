@@ -1,4 +1,3 @@
-
 export const en = {
   "common": {
     "back": "Back",
@@ -231,7 +230,7 @@ export const en = {
     "profile_picture": "Profile Picture",
     "email": "Email",
     "full_name": "Full Name",
-    "username": "Username",
+    "username": "Organizer's Name",
     "username_placeholder": "Choose a unique username",
     "username_note": "This can be used for your profile URL",
     "mobile_number": "Mobile Number",
