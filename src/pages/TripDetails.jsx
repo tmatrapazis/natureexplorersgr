@@ -448,8 +448,12 @@ export default function TripDetailsPage() {
                 </div>
               )}
 
-              <Card className="p-6">
-                <h1 className="text-3xl font-bold text-stone-900 mb-2">{trip.title}</h1>
+              <Card className="p-6 relative">
+                <div className="absolute top-6 right-6 hidden md:block">
+                  <ShareButton trip={trip} language={language} />
+                </div>
+                
+                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-20">{trip.title}</h1>
 
                 {organizer && (
                   <Link
@@ -611,10 +615,6 @@ export default function TripDetailsPage() {
                   ) : (
                     <p className="text-sm text-stone-500">{t('trip.no_booking_info')}</p>
                   )}
-                  
-                  <div className="mt-4 hidden md:block">
-                    <ShareButton trip={trip} language={language} />
-                  </div>
                 </div>
               </Card>
             </div>
