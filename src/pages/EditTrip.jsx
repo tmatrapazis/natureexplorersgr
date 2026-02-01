@@ -430,18 +430,18 @@ export default function EditTripPage() {
               </div>
             </div>
 
-            <div className="flex gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => navigate(createPageUrl("MyTrips"))} className="flex-1">{t('common.cancel')}</Button>
+            <div className="flex flex-wrap gap-3 pt-4">
+              <Button type="button" variant="outline" onClick={() => navigate(createPageUrl("MyTrips"))} className="flex-1 min-w-[120px]">{t('common.cancel')}</Button>
               <Button 
                 type="button" 
                 variant="outline" 
                 onClick={handleSaveDraft} 
-                className="flex-1"
+                className="flex-1 min-w-[160px]"
                 disabled={saveDraftMutation.isPending}
               >
                 {saveDraftMutation.isPending ? (language === 'el' ? 'Αποθήκευση...' : 'Saving...') : (language === 'el' ? 'Αποθήκευση ως Πρόχειρο' : 'Save as Draft')}
               </Button>
-              <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={updateTripMutation.isPending}>
+              <Button type="submit" className="flex-1 min-w-[140px] bg-emerald-600 hover:bg-emerald-700" disabled={updateTripMutation.isPending}>
                 {updateTripMutation.isPending ? (language === 'el' ? 'Αποθήκευση...' : 'Saving...') : (language === 'el' ? 'Αποθήκευση Αλλαγών' : 'Save Changes')}
               </Button>
             </div>
