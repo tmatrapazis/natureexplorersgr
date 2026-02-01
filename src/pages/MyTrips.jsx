@@ -284,16 +284,18 @@ export default function MyTripsPage() {
                                   <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
                                 </SelectContent>
                               </Select>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleDeleteTrip(trip.id)}
-                                disabled={deleteTripMutation.isPending}
-                                className="text-red-600 hover:text-red-700"
-                              >
-                                <Trash2 className="w-4 h-4 mr-2" />
-                                {language === 'el' ? 'Διαγραφή' : 'Delete'}
-                              </Button>
+                              {new Date(trip.end_date) >= today && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleDeleteTrip(trip.id)}
+                                  disabled={deleteTripMutation.isPending}
+                                  className="text-red-600 hover:text-red-700"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  {language === 'el' ? 'Διαγραφή' : 'Delete'}
+                                </Button>
+                              )}
                             </div>
                             {!isRequiredFieldsFilled(trip) && (
                               <span className="text-xs text-red-600">
