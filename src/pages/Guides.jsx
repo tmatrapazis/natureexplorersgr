@@ -57,17 +57,18 @@ export default function GuidesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-emerald-700 to-emerald-900 text-white py-16 px-4">
-        <div className="container mx-auto max-w-6xl">
+      <div className="relative bg-gradient-to-r from-emerald-700 to-emerald-900 text-white py-16 px-4 bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1547233528-b4d311a5be41?w=1400&q=80)' }}>
+        <div className="absolute inset-0 bg-emerald-900/70 z-0"></div>
+        <div className="container mx-auto max-w-6xl relative z-10">
           <div className="flex items-center gap-3 mb-4">
             <Compass className="w-10 h-10" />
             <h1 className="text-4xl md:text-5xl font-bold">
-              {language === 'el' ? 'Οδηγοί Βουνού' : 'Mountain Guides'}
+              {language === 'el' ? 'Συνοδοί Βουνού' : 'Mountain Guides'}
             </h1>
           </div>
           <p className="text-lg text-emerald-100 max-w-2xl">
             {language === 'el' 
-              ? 'Γνωρίστε τους πιστοποιημένους επαγγελματίες οδηγούς που κάνουν κάθε εκδρομή ασφαλή και αξέχαστη'
+              ? 'Γνωρίστε τους πιστοποιημένους επαγγελματίες συνοδούς που κάνουν κάθε εκδρομή ασφαλή και αξέχαστη'
               : 'Meet the certified professionals who make every adventure safe and unforgettable'
             }
           </p>
@@ -85,8 +86,8 @@ export default function GuidesPage() {
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-emerald-900 mb-2">
                     {language === 'el' 
-                      ? 'Είστε Ορειβατικός Οδηγός;' 
-                      : 'Are You a Mountain Guide?'}
+                        ? 'Είστε Συνοδός Βουνού;' 
+                        : 'Are You a Mountain Guide?'}
                   </h3>
                   <p className="text-stone-700">
                     {language === 'el'
