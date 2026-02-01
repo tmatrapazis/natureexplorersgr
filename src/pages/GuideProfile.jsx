@@ -107,18 +107,21 @@ export default function GuideProfilePage() {
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-      </div>
-
-      <div className="container mx-auto max-w-5xl px-4 -mt-24 relative z-10">
-        <div className="flex items-center justify-between mb-4">
+        
+        {/* Back Button - Upper Left Corner */}
+        <div className="absolute top-4 left-4 z-20">
           <Link to={createPageUrl("Guides")}>
             <Button variant="outline" className="bg-white">
               <ArrowLeft className="w-4 h-4 mr-2" />
               {language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
             </Button>
           </Link>
+        </div>
+      </div>
 
-          {isOwner && (
+      <div className="container mx-auto max-w-5xl px-4 -mt-24 relative z-10">
+        {isOwner && (
+          <div className="flex justify-end mb-4">
             <Button
               onClick={() => navigate(createPageUrl('EditGuideProfile') + `?id=${guideId}`)}
               className="bg-emerald-600 hover:bg-emerald-700"
@@ -126,8 +129,8 @@ export default function GuideProfilePage() {
               <Edit className="w-4 h-4 mr-2" />
               {language === 'el' ? 'Επεξεργασία' : 'Edit Profile'}
             </Button>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Profile Header */}
         <Card className="mb-6">
