@@ -41,11 +41,17 @@ export default function OrganizersListPage() {
     initialData: [],
   });
 
-  // Create a map of organizer_code -> trip count (only upcoming or almost soldout trips)
+  // Create a map of organizer_code -> trip count (only upcoming or almost soldout trips with start_date > today)
   const tripCountMap = React.useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
     const map = {};
     allTrips.forEach(trip => {
-      if (trip.organizer_code && (trip.status === 'upcoming' || trip.status === 'almost soldout')) {
+      const isUpcoming = (trip.status === 'upcoming' || trip.status === 'almost soldout');
+      const isFuture = trip.start_date && new Date(trip.start_date) > today;
+      
+      if (trip.organizer_code && isUpcoming && isFuture) {
         map[trip.organizer_code] = (map[trip.organizer_code] || 0) + 1;
       }
     });
