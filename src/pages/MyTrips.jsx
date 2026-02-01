@@ -261,37 +261,45 @@ export default function MyTripsPage() {
                             </div>
                           )}
 
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
-                              <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
-                            </Link>
-                            <Select
-                              value={trip.status}
-                              onValueChange={(value) => handleStatusChange(trip.id, value)}
-                            >
-                              <SelectTrigger className="w-[140px] h-9">
-                                <RefreshCw className="w-4 h-4 mr-2" />
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
-                                <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
-                                <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
-                                <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
-                                <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
-                                <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleDeleteTrip(trip.id)}
-                              disabled={deleteTripMutation.isPending}
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              {language === 'el' ? 'Διαγραφή' : 'Delete'}
-                            </Button>
+                          <div className="flex flex-col gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
+                                <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
+                              </Link>
+                              <Select
+                                value={trip.status}
+                                onValueChange={(value) => handleStatusChange(trip.id, value)}
+                                disabled={!isRequiredFieldsFilled(trip)}
+                              >
+                                <SelectTrigger className="w-[140px] h-9">
+                                  <RefreshCw className="w-4 h-4 mr-2" />
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
+                                  <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
+                                  <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
+                                  <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
+                                  <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
+                                  <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDeleteTrip(trip.id)}
+                                disabled={deleteTripMutation.isPending}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                {language === 'el' ? 'Διαγραφή' : 'Delete'}
+                              </Button>
+                            </div>
+                            {!isRequiredFieldsFilled(trip) && (
+                              <span className="text-xs text-red-600">
+                                {language === 'el' ? 'Συμπληρώστε τα υποχρεωτικά πεδία για να δημοσιεύσετε' : 'Fill required fields to publish'}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>
