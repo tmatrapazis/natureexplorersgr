@@ -110,7 +110,12 @@ export default function EditGuideProfilePage() {
   });
 
   const deleteGuideMutation = useMutation({
-    mutationFn: () => base44.entities.MountainGuide.delete(guideId),
+    mutationFn: async () => {
+      if (!guide || guide.user_id !== currentUser?.id) {
+        throw new Error('Permission denied');
+      }
+      return await base44.entities.MountainGuide.delete(guideId);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['mountain-guides']);
       queryClient.invalidateQueries(['user-guide-profile']);
