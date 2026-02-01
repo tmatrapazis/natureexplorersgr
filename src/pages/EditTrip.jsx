@@ -207,46 +207,46 @@ export default function EditTripPage() {
         <Link to={createPageUrl("MyTrips")}>
           <Button variant="outline" className="mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to My Trips
+            {t('create_trip.back_to_trips')}
           </Button>
         </Link>
 
         <Card className="p-8">
-          <h1 className="text-3xl font-bold text-stone-900 mb-6">Edit Hiking Trip</h1>
+          <h1 className="text-3xl font-bold text-stone-900 mb-6">{t('create_trip.edit_title')}</h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="title">Trip Title *</Label>
+              <Label htmlFor="title">{t('create_trip.trip_title')} *</Label>
               <Input id="title" value={tripData.title} onChange={(e) => handleInputChange('title', e.target.value)} required />
             </div>
 
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('create_trip.description')}</Label>
               <Textarea id="description" value={tripData.description} onChange={(e) => handleInputChange('description', e.target.value)} rows={4} />
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="start_date">Start Date *</Label>
+                <Label htmlFor="start_date">{t('create_trip.start_date')} *</Label>
                 <Input id="start_date" type="date" value={tripData.start_date} onChange={(e) => handleInputChange('start_date', e.target.value)} required />
               </div>
 
               <div>
-                <Label htmlFor="end_date">End Date *</Label>
+                <Label htmlFor="end_date">{t('create_trip.end_date')} *</Label>
                 <Input id="end_date" type="date" value={tripData.end_date} min={tripData.start_date} onChange={(e) => handleInputChange('end_date', e.target.value)} required />
-                 <p className="text-xs text-stone-500 mt-1">Leave blank for single-day trips.</p>
+                 <p className="text-xs text-stone-500 mt-1">{t('create_trip.end_date_note')}</p>
               </div>
             </div>
 
             <div>
-                <Label htmlFor="time">Start Time</Label>
+                <Label htmlFor="time">{t('create_trip.start_time')}</Label>
                 <Input id="time" type="time" value={tripData.start_time} onChange={(e) => handleInputChange('start_time', e.target.value)} />
             </div>
 
             <div>
-              <Label htmlFor="location">General Location/Region *</Label>
-              <Input id="location" value={tripData.location} onChange={(e) => handleInputChange('location', e.target.value)} placeholder="e.g., Mount Olympus, Crete" required />
-              <p className="text-xs text-stone-500 mt-1">The general area/region for this trip</p>
+              <Label htmlFor="location">{t('create_trip.location_region')} *</Label>
+              <Input id="location" value={tripData.location} onChange={(e) => handleInputChange('location', e.target.value)} placeholder={t('create_trip.location_placeholder')} required />
+              <p className="text-xs text-stone-500 mt-1">{t('create_trip.location_note')}</p>
             </div>
 
             <div>
@@ -261,8 +261,8 @@ export default function EditTripPage() {
             </div>
 
             <div>
-              <Label>Meeting Points</Label>
-              <p className="text-xs text-stone-500 mb-3">Add one or more meeting points where hikers can join the trip</p>
+              <Label>{t('create_trip.meeting_points')}</Label>
+              <p className="text-xs text-stone-500 mb-3">{t('create_trip.meeting_points_description')}</p>
               
               {tripData.meeting_points.length > 0 && (
                 <div className="space-y-2 mb-4">
@@ -298,18 +298,18 @@ export default function EditTripPage() {
 
               <div className="space-y-3 border rounded-lg p-4 bg-white">
                 <Input
-                  placeholder="Meeting point name (e.g., Trailhead Parking Lot)"
+                  placeholder={t('create_trip.meeting_point_name_placeholder')}
                   value={newMeetingPoint.name}
                   onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, name: e.target.value })}
                 />
                 <Input
-                  placeholder="Location (address or coordinates)"
+                  placeholder={t('create_trip.meeting_point_location_placeholder')}
                   value={newMeetingPoint.location}
                   onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, location: e.target.value })}
                 />
                 <Input
                   type="time"
-                  placeholder="Meeting time"
+                  placeholder={t('create_trip.meeting_point_time')}
                   value={newMeetingPoint.time}
                   onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, time: e.target.value })}
                 />
@@ -321,74 +321,74 @@ export default function EditTripPage() {
                   disabled={!newMeetingPoint.name.trim() || !newMeetingPoint.location.trim()}
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  Add Meeting Point
+                  {t('create_trip.add_meeting_point')}
                 </Button>
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="difficulty">Difficulty Level</Label>
+                <Label htmlFor="difficulty">{t('create_trip.difficulty_level')}</Label>
                 <Select value={tripData.difficulty} onValueChange={(value) => handleInputChange('difficulty', value)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="easy">Easy</SelectItem>
-                    <SelectItem value="moderate">Moderate</SelectItem>
-                    <SelectItem value="challenging">Challenging</SelectItem>
-                    <SelectItem value="difficult">Difficult</SelectItem>
+                    <SelectItem value="easy">{t('trip.difficulty_easy')}</SelectItem>
+                    <SelectItem value="moderate">{t('trip.difficulty_moderate')}</SelectItem>
+                    <SelectItem value="challenging">{t('trip.difficulty_challenging')}</SelectItem>
+                    <SelectItem value="difficult">{t('trip.difficulty_difficult')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label htmlFor="duration">Duration (hours)</Label>
+                <Label htmlFor="duration">{t('create_trip.duration_hours')}</Label>
                 <Input id="duration" type="number" min="1" step="0.5" value={tripData.duration_hours} onChange={(e) => handleInputChange('duration_hours', parseFloat(e.target.value))} />
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="distance">Distance (km)</Label>
+                <Label htmlFor="distance">{t('create_trip.distance')}</Label>
                 <Input id="distance" type="number" min="0" step="0.1" value={tripData.distance_km} onChange={(e) => handleInputChange('distance_km', parseFloat(e.target.value))} />
               </div>
 
               <div>
-                <Label htmlFor="elevation">Elevation Gain (m)</Label>
+                <Label htmlFor="elevation">{t('create_trip.elevation_gain')}</Label>
                 <Input id="elevation" type="number" min="0" value={tripData.elevation_gain_m} onChange={(e) => handleInputChange('elevation_gain_m', parseInt(e.target.value))} />
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="price">Price per Person (€) *</Label>
+                <Label htmlFor="price">{t('create_trip.price_per_person')} *</Label>
                 <Input id="price" type="number" min="0" step="0.01" value={tripData.price} onChange={(e) => handleInputChange('price', parseFloat(e.target.value))} required />
               </div>
 
               <div>
-                <Label htmlFor="slots">Total Slots</Label>
+                <Label htmlFor="slots">{t('create_trip.total_slots')}</Label>
                 <Input id="slots" type="number" min="1" value={tripData.total_slots} onChange={(e) => handleInputChange('total_slots', parseInt(e.target.value))} />
               </div>
             </div>
             
             <div>
-              <Label htmlFor="organizer_email">Organizer Email</Label>
+              <Label htmlFor="organizer_email">{language === 'el' ? 'Email Διοργανωτή' : 'Organizer Email'}</Label>
               <Input
                 id="organizer_email"
                 type="email"
                 value={tripData.organizer_email || (user ? user.email : '')}
                 onChange={(e) => handleInputChange('organizer_email', e.target.value)}
-                placeholder="Email for communication"
+                placeholder={language === 'el' ? 'Email για επικοινωνία' : 'Email for communication'}
               />
-              <p className="text-xs text-stone-500 mt-1">This email will be used for trip-related communications.</p>
+              <p className="text-xs text-stone-500 mt-1">{language === 'el' ? 'Αυτό το email θα χρησιμοποιηθεί για επικοινωνία σχετική με την εκδρομή.' : 'This email will be used for trip-related communications.'}</p>
             </div>
 
             <div>
-              <Label htmlFor="external">External Link *</Label>
+              <Label htmlFor="external">{t('create_trip.external_link')} *</Label>
               <Input id="external" type="url" value={tripData.external_link} onChange={(e) => handleInputChange('external_link', e.target.value)} required />
             </div>
 
             <div>
-              <Label htmlFor="image-upload">Upload Primary Image</Label>
+              <Label htmlFor="image-upload">{t('create_trip.upload_primary_image')}</Label>
               <Input
                 id="image-upload"
                 type="file"
@@ -399,7 +399,7 @@ export default function EditTripPage() {
               {uploadingImage && (
                 <p className="text-sm text-stone-500 mt-2 flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Uploading...
+                  {t('create_trip.uploading')}
                 </p>
               )}
               {tripData.image_url && (
@@ -410,12 +410,12 @@ export default function EditTripPage() {
             </div>
 
             <div>
-              <Label>What to Bring</Label>
+              <Label>{t('create_trip.requirements_label')}</Label>
               <div className="flex gap-2 mb-2">
                 <Input
                   value={currentRequirement}
                   onChange={(e) => setCurrentRequirement(e.target.value)}
-                  placeholder="e.g., Water bottle, Hiking boots"
+                  placeholder={t('create_trip.requirements_placeholder')}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addRequirement())}
                 />
                 <Button type="button" onClick={addRequirement} variant="outline"><Plus className="w-4 h-4" /></Button>
@@ -431,7 +431,7 @@ export default function EditTripPage() {
             </div>
 
             <div className="flex gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => navigate(createPageUrl("MyTrips"))} className="flex-1">Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => navigate(createPageUrl("MyTrips"))} className="flex-1">{t('common.cancel')}</Button>
               <Button 
                 type="button" 
                 variant="outline" 
@@ -439,10 +439,10 @@ export default function EditTripPage() {
                 className="flex-1"
                 disabled={saveDraftMutation.isPending}
               >
-                {saveDraftMutation.isPending ? "Saving..." : "Save as Draft"}
+                {saveDraftMutation.isPending ? (language === 'el' ? 'Αποθήκευση...' : 'Saving...') : (language === 'el' ? 'Αποθήκευση ως Πρόχειρο' : 'Save as Draft')}
               </Button>
               <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={updateTripMutation.isPending}>
-                {updateTripMutation.isPending ? "Saving..." : "Save Changes"}
+                {updateTripMutation.isPending ? (language === 'el' ? 'Αποθήκευση...' : 'Saving...') : (language === 'el' ? 'Αποθήκευση Αλλαγών' : 'Save Changes')}
               </Button>
             </div>
           </form>
