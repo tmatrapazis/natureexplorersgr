@@ -95,23 +95,14 @@ export default function EditGuideProfilePage() {
   }, [guide, currentUser, navigate, guideId, language]);
 
   const updateGuideMutation = useMutation({
-    mutationFn: async (data) => {
-      console.log('[Mutation] Starting update for guide:', guideId);
-      console.log('[Mutation] Update data:', data);
-      const result = await base44.entities.MountainGuide.update(guideId, data);
-      console.log('[Mutation] Update successful:', result);
-      return result;
-    },
-    onSuccess: (data) => {
-      console.log('[Mutation] onSuccess called with data:', data);
+    mutationFn: (data) => base44.entities.MountainGuide.update(guideId, data),
+    onSuccess: () => {
       queryClient.invalidateQueries(['guide', guideId]);
       queryClient.invalidateQueries(['mountain-guides']);
-      toast.success(language === 'el' ? 'Το προφίλ ενημερώθηκε!' : 'Profile updated!');
       setShowSuccessDialog(true);
     },
     onError: (error) => {
-      console.error('[Mutation] Update error:', error);
-      console.error('[Mutation] Error details:', JSON.stringify(error, null, 2));
+      console.error('Update error:', error);
       toast.error(language === 'el' ? 'Σφάλμα ενημέρωσης' : 'Error updating profile');
     }
   });
@@ -178,22 +169,19 @@ export default function EditGuideProfilePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('[handleSubmit] Form submitted');
     
     if (!formData.full_name.trim()) {
       toast.error(language === 'el' ? 'Το όνομα είναι υποχρεωτικό' : 'Full name is required');
       return;
     }
 
-    const dataToUpdate = {
-      ...formData,
+    // Remove user_id from update data (it's immutable and used for RLS)
+    const { user_id, ...dataToUpdate } = formData;
+    
+    updateGuideMutation.mutate({
+      ...dataToUpdate,
       years_of_experience: formData.years_of_experience ? Number(formData.years_of_experience) : 0,
-    };
-    
-    console.log('[handleSubmit] Updating guide with data:', dataToUpdate);
-    console.log('[handleSubmit] Guide ID:', guideId);
-    
-    updateGuideMutation.mutate(dataToUpdate);
+    });
   };
 
   if (guideLoading || !currentUser) {
