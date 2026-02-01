@@ -557,14 +557,13 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-              <Label htmlFor="external">{t('create_trip.external_link')} *</Label>
+              <Label htmlFor="external">{t('create_trip.external_link')}</Label>
               <Input
                 id="external"
                 type="url"
                 value={tripData.external_link}
                 onChange={(e) => setTripData({...tripData, external_link: e.target.value})}
                 placeholder={t('create_trip.external_link_placeholder')}
-                required
               />
             </div>
 
