@@ -177,7 +177,7 @@ export default function MyTripsPage() {
           </div>
         </div>
 
-        {tripsWithStatus.length === 0 ? (
+        {trips.length === 0 ? (
           <Card className="p-12 text-center">
             <Calendar className="w-16 h-16 mx-auto text-stone-300 mb-4" />
             <h3 className="text-lg font-semibold text-stone-700 mb-2">{t('organizer.no_trips')}</h3>
