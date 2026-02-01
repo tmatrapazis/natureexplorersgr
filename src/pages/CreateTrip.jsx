@@ -107,6 +107,23 @@ export default function CreateTripPage() {
     },
   });
 
+  const saveDraftMutation = useMutation({
+    mutationFn: async (data) => {
+      if (!user?.organizer_code) {
+        throw new Error("You must be linked to an Organizer profile to create trips");
+      }
+      return await base44.entities.HikingTrip.create({
+        ...data,
+        organizer_code: user.organizer_code,
+        status: "draft"
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+      navigate(createPageUrl("MyTrips"));
+    },
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -124,6 +141,23 @@ export default function CreateTripPage() {
     }
     
     await createTripMutation.mutateAsync(dataToSubmit);
+  };
+
+  const handleSaveDraft = async () => {
+    if (!hasOrganizerCode) {
+      alert("You need to be linked to an Organizer profile to create trips. Please contact an admin.");
+      return;
+    }
+    
+    const dataToSubmit = { ...tripData };
+    if (!dataToSubmit.end_date) {
+      dataToSubmit.end_date = dataToSubmit.start_date;
+    }
+    if (!dataToSubmit.max_participants || dataToSubmit.max_participants === 0) {
+      dataToSubmit.max_participants = dataToSubmit.total_slots;
+    }
+    
+    await saveDraftMutation.mutateAsync(dataToSubmit);
   };
 
   const addRequirement = () => {
@@ -695,14 +729,21 @@ export default function CreateTripPage() {
                 type="button"
                 variant="outline"
                 onClick={() => navigate(createPageUrl("MyTrips"))}
-                className="flex-1"
               >
                 {t('common.cancel')}
               </Button>
               <Button 
+                type="button"
+                variant="outline"
+                onClick={handleSaveDraft}
+                disabled={saveDraftMutation.isPending || createTripMutation.isPending}
+              >
+                {saveDraftMutation.isPending ? t('create_trip.saving') : (language === 'el' ? 'Αποθήκευση Πρόχειρου' : 'Save as Draft')}
+              </Button>
+              <Button 
                 type="submit" 
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700"
-                disabled={createTripMutation.isPending}
+                className="bg-emerald-600 hover:bg-emerald-700"
+                disabled={createTripMutation.isPending || saveDraftMutation.isPending}
               >
                 {createTripMutation.isPending ? t('create_trip.creating') : t('create_trip.create_trip_button')}
               </Button>
