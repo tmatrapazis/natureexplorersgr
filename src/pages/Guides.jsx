@@ -58,7 +58,8 @@ export default function GuidesPage() {
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-emerald-700 to-emerald-900 text-white py-16 px-4 bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1547233528-b4d311a5be41?w=1400&q=80)' }}>
-        <div className="container mx-auto max-w-6xl">
+        <div className="absolute inset-0 bg-emerald-900/70 z-0"></div>
+        <div className="container mx-auto max-w-6xl relative z-10">
           <div className="flex items-center gap-3 mb-4">
             <Compass className="w-10 h-10" />
             <h1 className="text-4xl md:text-5xl font-bold">
