@@ -94,6 +94,22 @@ export default function EditTripPage() {
     },
   });
 
+  const saveDraftMutation = useMutation({
+    mutationFn: async (data) => {
+      return await base44.entities.HikingTrip.update(tripId, {
+        ...data,
+        status: 'draft',
+        organizer_name: user?.username || user?.full_name,
+        organizer_is_verified: user?.is_verified_organizer || false,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
+      navigate(createPageUrl("MyTrips"));
+    },
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!tripData) return;
@@ -113,6 +129,26 @@ export default function EditTripPage() {
     }
     
     await updateTripMutation.mutateAsync(dataToSubmit);
+  };
+
+  const handleSaveDraft = async () => {
+    if (!tripData) return;
+    
+    const { created_date, updated_date, id, computedStatus, ...dataToSubmit } = tripData;
+    
+    if (!dataToSubmit.end_date) {
+      dataToSubmit.end_date = dataToSubmit.start_date;
+    }
+    
+    if (!dataToSubmit.max_participants || dataToSubmit.max_participants === 0) {
+      dataToSubmit.max_participants = dataToSubmit.total_slots;
+    }
+    
+    if (!dataToSubmit.organizer_email && user && user.email) {
+      dataToSubmit.organizer_email = user.email;
+    }
+    
+    await saveDraftMutation.mutateAsync(dataToSubmit);
   };
   
   const handleInputChange = (key, value) => {
@@ -396,6 +432,15 @@ export default function EditTripPage() {
 
             <div className="flex gap-3 pt-4">
               <Button type="button" variant="outline" onClick={() => navigate(createPageUrl("MyTrips"))} className="flex-1">Cancel</Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={handleSaveDraft} 
+                className="flex-1"
+                disabled={saveDraftMutation.isPending}
+              >
+                {saveDraftMutation.isPending ? "Saving..." : "Save as Draft"}
+              </Button>
               <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={updateTripMutation.isPending}>
                 {updateTripMutation.isPending ? "Saving..." : "Save Changes"}
               </Button>
