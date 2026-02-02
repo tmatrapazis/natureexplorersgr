@@ -15,6 +15,7 @@ import useSEO from '../components/seo/useSEO';
 import StructuredData from '../components/seo/StructuredData';
 import { getComputedTripStatus } from '../components/helpers/tripHelpers';
 import { getTripImage, handleImageError } from '../components/helpers/imageHelpers';
+import OptimizedImage from '../components/ui/OptimizedImage';
 
 const difficultyColors = {
   easy: "bg-green-100 text-green-800",
@@ -260,14 +261,32 @@ export default function HomePage() {
       
       <div className="flex flex-col min-h-screen">
         <main className="flex-1">
+          {/* Preload hint for hero image - Critical for LCP */}
+          <link 
+            rel="preload" 
+            as="image" 
+            href="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=800&q=80&fm=webp"
+            imagesrcset="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&q=80&fm=webp 600w, https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp 1200w"
+            imagesizes="100vw"
+          />
+          
           <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white">
             <div className="absolute inset-0 bg-black/50 z-10" />
             <img 
-              src="https://images.unsplash.com/photo-1501555088652-021faa106b9b?q=80&w=2073"
+              src="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp"
+              srcSet="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&q=80&fm=webp 600w,
+                      https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp 1200w,
+                      https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1920&q=80&fm=webp 1920w"
+              sizes="100vw"
               alt={language === 'el' 
                 ? "Πεζοπορία στα ελληνικά βουνά - ομάδες πεζοπορίας σε ορειβατική διαδρομή με πανοραμική θέα - outdoor adventures Greece"
                 : "Hiking in Greek mountains - hiking teams Greece on mountain trekking trail with panoramic views - outdoor activities"}
               className="absolute inset-0 w-full h-full object-cover"
+              loading="eager"
+              fetchpriority="high"
+              decoding="sync"
+              width="1920"
+              height="1280"
             />
             <div className="relative z-20 container px-4 max-w-2xl mx-auto">
               <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight drop-shadow-lg leading-tight">
@@ -309,11 +328,15 @@ export default function HomePage() {
                     const organizer = organizerMap[trip.organizer_code];
                     return (
                       <Card key={trip.id} className="overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
-                        <div className="h-48 bg-stone-200 overflow-hidden">
-                          <img 
+                        <div className="h-48 bg-stone-200 overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
+                          <OptimizedImage
                             src={getTripImage(trip.image_url, trip.id)}
                             alt={trip.title}
-                            className="w-full h-full object-cover"
+                            width={800}
+                            height={450}
+                            className="w-full h-full"
+                            objectFit="cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             onError={(e) => handleImageError(e, trip.id)}
                           />
                         </div>

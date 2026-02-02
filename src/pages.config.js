@@ -55,6 +55,7 @@ import EditOrganizerProfile from './pages/EditOrganizerProfile';
 import EditProfile from './pages/EditProfile';
 import EditTrip from './pages/EditTrip';
 import GuideProfile from './pages/GuideProfile';
+import Guides from './pages/Guides';
 import HikerProfile from './pages/HikerProfile';
 import Home from './pages/Home';
 import MyBookings from './pages/MyBookings';
@@ -67,7 +68,6 @@ import RoleSelection from './pages/RoleSelection';
 import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
-import Guides from './pages/Guides';
 import __Layout from './Layout.jsx';
 
 
@@ -80,6 +80,7 @@ export const PAGES = {
     "EditProfile": EditProfile,
     "EditTrip": EditTrip,
     "GuideProfile": GuideProfile,
+    "Guides": Guides,
     "HikerProfile": HikerProfile,
     "Home": Home,
     "MyBookings": MyBookings,
@@ -92,7 +93,6 @@ export const PAGES = {
     "TempImageUploader": TempImageUploader,
     "TermsOfUse": TermsOfUse,
     "TripDetails": TripDetails,
-    "Guides": Guides,
 }
 
 export const pagesConfig = {
