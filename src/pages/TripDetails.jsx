@@ -46,6 +46,13 @@ export default function TripDetailsPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
 
+  // Redirect to homepage if no trip ID provided (301 redirect)
+  React.useEffect(() => {
+    if (!tripId) {
+      window.location.replace('/');
+    }
+  }, [tripId]);
+
   const { data: user } = useQuery({
     queryKey: ['current-user'],
     queryFn: async () => {
