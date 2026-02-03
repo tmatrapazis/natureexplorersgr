@@ -64,7 +64,7 @@ export default function GreekRefuges() {
       });
     }
     return sorted;
-  }, [sortConfig]);
+  }, [sortConfig, refugesData]);
 
   const handleSort = (key) => {
     setSortConfig((prev) => ({
