@@ -131,6 +131,7 @@ export default function GreekRefuges() {
                   <Marker
                     key={refuge.id}
                     position={[refuge.lat, refuge.lng]}
+                    icon={refugeIcon}
                     eventHandlers={{
                       click: () => {
                         setSelectedRefuge(refuge);
