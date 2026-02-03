@@ -90,7 +90,7 @@ export default function OrganizerProfilePage() {
     }
   };
 
-  // SEO Configuration with keywords
+  // SEO Configuration with keywords and canonical URL
   React.useEffect(() => {
     if (organizer) {
       const pageTitle = language === 'el'
@@ -98,6 +98,16 @@ export default function OrganizerProfilePage() {
         : `${organizer.username || organizer.full_name} - Hiking Guide Greece | Trekking Organizer | Nature Explorers`;
       
       document.title = pageTitle;
+
+      // Add self-referencing canonical tag
+      const canonicalUrl = window.location.href;
+      let canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (!canonicalLink) {
+        canonicalLink = document.createElement('link');
+        canonicalLink.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonicalLink);
+      }
+      canonicalLink.setAttribute('href', canonicalUrl);
       
       const updateMetaTag = (name, content, isProperty = false) => {
         if (!content) return;
