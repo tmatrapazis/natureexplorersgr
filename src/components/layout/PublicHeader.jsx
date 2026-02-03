@@ -107,91 +107,92 @@ export default function PublicHeader() {
 
           {/* Mobile Hamburger Menu */}
           <div className="md:hidden">
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" aria-label="Open menu">
-                <Menu className="w-6 h-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] bg-white">
-              <div className="flex flex-col gap-6 mt-8">
-                <Link 
-                  to={createPageUrl("Calendar")} 
-                  className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Calendar className="w-5 h-5" />
-                  {t('navigation.calendar')}
-                </Link>
-                <Link 
-                  to={createPageUrl("OrganizersList")} 
-                  className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Users className="w-5 h-5" />
-                  {t('navigation.organizers')}
-                </Link>
-                <Link 
-                  to={createPageUrl("Guides")} 
-                  className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Compass className="w-5 h-5" />
-                  {t('navigation.guides')}
-                </Link>
-                <Link 
-                  to={createPageUrl("GreekRefuges")} 
-                  className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {t('navigation.refuges')}
-                </Link>
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" aria-label="Open menu">
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[280px] bg-white">
+                <div className="flex flex-col gap-6 mt-8">
+                  <Link 
+                    to={createPageUrl("Calendar")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Calendar className="w-5 h-5" />
+                    {t('navigation.calendar')}
+                  </Link>
+                  <Link 
+                    to={createPageUrl("OrganizersList")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Users className="w-5 h-5" />
+                    {t('navigation.organizers')}
+                  </Link>
+                  <Link 
+                    to={createPageUrl("Guides")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Compass className="w-5 h-5" />
+                    {t('navigation.guides')}
+                  </Link>
+                  <Link 
+                    to={createPageUrl("GreekRefuges")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('navigation.refuges')}
+                  </Link>
 
-                <div className="border-t pt-6">
-                  <div className="mb-4">
-                    <p className="text-sm text-stone-500 mb-2">{language === 'el' ? 'Γλώσσα' : 'Language'}</p>
-                    <div className="flex gap-2">
-                      <Button 
-                        variant={language === 'en' ? 'default' : 'outline'} 
-                        size="sm"
-                        onClick={() => setLanguage('en')}
-                        className="flex-1"
-                      >
-                        English
-                      </Button>
-                      <Button 
-                        variant={language === 'el' ? 'default' : 'outline'} 
-                        size="sm"
-                        onClick={() => setLanguage('el')}
-                        className="flex-1"
-                      >
-                        Ελληνικά
-                      </Button>
+                  <div className="border-t pt-6">
+                    <div className="mb-4">
+                      <p className="text-sm text-stone-500 mb-2">{language === 'el' ? 'Γλώσσα' : 'Language'}</p>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant={language === 'en' ? 'default' : 'outline'} 
+                          size="sm"
+                          onClick={() => setLanguage('en')}
+                          className="flex-1"
+                        >
+                          English
+                        </Button>
+                        <Button 
+                          variant={language === 'el' ? 'default' : 'outline'} 
+                          size="sm"
+                          onClick={() => setLanguage('el')}
+                          className="flex-1"
+                        >
+                          Ελληνικά
+                        </Button>
+                      </div>
                     </div>
-                  </div>
 
-                  {!user ? (
-                    <Button 
-                      onClick={handleLogin}
-                      className="w-full bg-emerald-600 hover:bg-emerald-700"
-                    >
-                      <LogIn className="w-4 h-4 mr-2" />
-                      {t('common.login')}
-                    </Button>
-                  ) : (
-                    <Button 
-                      onClick={handleLogout}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      {t('common.logout')}
-                    </Button>
-                  )}
+                    {!user ? (
+                      <Button 
+                        onClick={handleLogin}
+                        className="w-full bg-emerald-600 hover:bg-emerald-700"
+                      >
+                        <LogIn className="w-4 h-4 mr-2" />
+                        {t('common.login')}
+                      </Button>
+                    ) : (
+                      <Button 
+                        onClick={handleLogout}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        {t('common.logout')}
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </header>
