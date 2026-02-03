@@ -399,6 +399,7 @@ export default function GuideProfilePage() {
           </div>
         </div>
       </div>
+      </div>
     </>
   );
 }
