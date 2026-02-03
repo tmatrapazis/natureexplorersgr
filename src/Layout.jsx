@@ -50,7 +50,7 @@ const LoggedInLayout = ({ children, user }) => {
       
       <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to={createPageUrl("Home")} className="flex items-center gap-3 pl-5">
+          <Link to={createPageUrl("Home")} className="flex items-center gap-3">
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" 
               alt="Nature Explorers" 
