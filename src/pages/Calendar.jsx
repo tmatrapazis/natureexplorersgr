@@ -11,6 +11,10 @@ import { getComputedTripStatus } from "../components/helpers/tripHelpers";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import useSEO from "../components/seo/useSEO";
+import { toZonedTime } from "date-fns-tz";
+
+// Athens timezone
+const ATHENS_TIMEZONE = 'Europe/Athens';
 
 export default function CalendarPage() {
   const { language } = useLanguage();
@@ -29,7 +33,7 @@ export default function CalendarPage() {
     type: 'website'
   });
 
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(toZonedTime(new Date(), ATHENS_TIMEZONE));
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedDayTrips, setSelectedDayTrips] = useState([]);
   const [filters, setFilters] = useState({
@@ -54,9 +58,9 @@ export default function CalendarPage() {
     return status === 'upcoming' || status === 'happening now';
   });
 
-  // Filter trips by the currently displayed month
+  // Filter trips by the currently displayed month (Athens timezone)
   const tripsInCurrentMonth = activeTrips.filter((trip) => {
-    const tripDate = new Date(trip.start_date);
+    const tripDate = toZonedTime(new Date(trip.start_date), ATHENS_TIMEZONE);
     return tripDate.getMonth() === currentDate.getMonth() &&
     tripDate.getFullYear() === currentDate.getFullYear();
   });

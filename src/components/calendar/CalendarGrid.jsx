@@ -1,7 +1,11 @@
 import React from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+// Athens timezone
+const ATHENS_TIMEZONE = 'Europe/Athens';
 
 export default function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDate }) {
   const monthStart = startOfMonth(currentDate);
@@ -18,10 +22,10 @@ export default function CalendarGrid({ currentDate, onDateChange, trips, onDayCl
     return trips.filter(trip => {
       if (!trip.start_date) return false;
 
-      const start = new Date(trip.start_date);
+      const start = toZonedTime(new Date(trip.start_date), ATHENS_TIMEZONE);
       if (isNaN(start.getTime())) return false;
 
-      // Only show trips on their start_date
+      // Only show trips on their start_date (Athens timezone)
       return isSameDay(day, start);
     });
   };
