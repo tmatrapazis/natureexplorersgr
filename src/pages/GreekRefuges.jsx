@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Mountain, MapPin, Users, ArrowUpDown, ExternalLink, Facebook, Instagram } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import { useLanguage } from '@/components/contexts/LanguageContext';
+import { useTranslation } from '@/components/translations/useTranslations';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -36,14 +38,16 @@ function MapController({ center, zoom }) {
 }
 
 export default function GreekRefuges() {
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
   const [sortConfig, setSortConfig] = useState({ key: 'altitude', direction: 'desc' });
   const [selectedRefuge, setSelectedRefuge] = useState(null);
   const [mapCenter, setMapCenter] = useState([39.0, 22.0]);
   const [mapZoom, setMapZoom] = useState(7);
   
   useEffect(() => {
-    document.title = "Ελληνικά Ορειβατικά Καταφύγια | Nature Explorers";
-  }, []);
+    document.title = `${t('refuges.page_title')} | Nature Explorers`;
+  }, [language, t]);
 
   const { data: refugesData = [], isLoading } = useQuery({
     queryKey: ['refuges'],
@@ -85,7 +89,7 @@ export default function GreekRefuges() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Mountain className="w-12 h-12 text-emerald-600 animate-pulse mx-auto mb-4" />
-          <p className="text-stone-600">Φόρτωση καταφυγίων...</p>
+          <p className="text-stone-600">{t('refuges.loading')}</p>
         </div>
       </div>
     );
@@ -99,11 +103,11 @@ export default function GreekRefuges() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <Mountain className="w-12 h-12 text-emerald-600" />
             <h1 className="text-4xl md:text-5xl font-bold text-stone-900">
-              Ελληνικά Ορειβατικά Καταφύγια
+              {t('refuges.page_title')}
             </h1>
           </div>
           <p className="text-lg text-stone-600 max-w-3xl mx-auto">
-            Εξερευνήστε τα {refugesData.length} ορειβατικά καταφύγια της Ελλάδας στον χάρτη και βρείτε πληροφορίες για κάθε καταφύγιο.
+            {t('refuges.page_subtitle').replace('{count}', refugesData.length)}
           </p>
         </div>
 
@@ -146,7 +150,7 @@ export default function GreekRefuges() {
                         {refuge.capacity > 0 && (
                           <p className="text-sm mb-2">
                             <Users className="w-3 h-3 inline mr-1" />
-                            {refuge.capacity} άτομα
+                            {refuge.capacity} {t('refuges.people')}
                           </p>
                         )}
                         <div className="flex gap-2 justify-center mt-2">
@@ -185,10 +189,10 @@ export default function GreekRefuges() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-emerald-600" />
-              Λίστα Καταφυγίων
+              {t('refuges.list_title')}
             </CardTitle>
             <p className="text-sm text-stone-600 mt-2">
-              Κάντε κλικ σε οποιαδήποτε γραμμή για να δείτε το καταφύγιο στον χάρτη
+              {t('refuges.list_subtitle')}
             </p>
           </CardHeader>
           <CardContent>
@@ -203,7 +207,7 @@ export default function GreekRefuges() {
                         onClick={() => handleSort('name')}
                         className="font-semibold"
                       >
-                        Καταφύγιο
+                        {t('refuges.refuge_name')}
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                       </Button>
                     </th>
@@ -214,7 +218,7 @@ export default function GreekRefuges() {
                         onClick={() => handleSort('mountain')}
                         className="font-semibold"
                       >
-                        Βουνό
+                        {t('refuges.mountain')}
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                       </Button>
                     </th>
@@ -225,7 +229,7 @@ export default function GreekRefuges() {
                         onClick={() => handleSort('altitude')}
                         className="font-semibold"
                       >
-                        Υψόμετρο
+                        {t('refuges.altitude')}
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                       </Button>
                     </th>
@@ -236,12 +240,12 @@ export default function GreekRefuges() {
                         onClick={() => handleSort('capacity')}
                         className="font-semibold"
                       >
-                        Χωρητικότητα
+                        {t('refuges.capacity')}
                         <ArrowUpDown className="w-4 h-4 ml-2" />
                       </Button>
                     </th>
                     <th className="text-left p-3">
-                      <span className="font-semibold">Τύπος</span>
+                      <span className="font-semibold">{t('refuges.type')}</span>
                     </th>
                   </tr>
                 </thead>
@@ -266,7 +270,7 @@ export default function GreekRefuges() {
                               onClick={(e) => e.stopPropagation()}
                             >
                               <ExternalLink className="w-3 h-3" />
-                              Ιστοσελίδα
+                              {t('refuges.website')}
                             </a>
                           )}
                           {refuge.refuge_link && (
@@ -278,7 +282,7 @@ export default function GreekRefuges() {
                               onClick={(e) => e.stopPropagation()}
                             >
                               <ExternalLink className="w-3 h-3" />
-                              Κρατήσεις
+                              {t('refuges.bookings')}
                             </a>
                           )}
                           {(refuge.google_maps_link || (refuge.lat && refuge.lng)) && (
@@ -290,7 +294,7 @@ export default function GreekRefuges() {
                               onClick={(e) => e.stopPropagation()}
                             >
                               <MapPin className="w-3 h-3" />
-                              Maps
+                              {t('refuges.maps')}
                             </a>
                           )}
                           {refuge.facebook && (
@@ -324,7 +328,7 @@ export default function GreekRefuges() {
                         </Badge>
                       </td>
                       <td className="p-3 text-stone-700">
-                        {refuge.capacity > 0 ? `${refuge.capacity} άτομα` : '-'}
+                        {refuge.capacity > 0 ? `${refuge.capacity} ${t('refuges.people')}` : '-'}
                       </td>
                       <td className="p-3">
                         <Badge className="bg-emerald-600 text-white">
@@ -342,7 +346,7 @@ export default function GreekRefuges() {
         {/* Footer Info */}
         <div className="mt-8 text-center text-sm text-stone-600">
           <p>
-            Δεδομένα από{' '}
+            {t('refuges.data_source')}{' '}
             <a
               href="https://www.topoguide.gr/greece/mountain_refuges.php"
               target="_blank"
@@ -353,7 +357,7 @@ export default function GreekRefuges() {
             </a>
           </p>
           <p className="mt-2">
-            Οι συντεταγμένες είναι προσεγγιστικές. Για ακριβείς πληροφορίες επικοινωνήστε με τους διαχειριστές των καταφυγίων.
+            {t('refuges.coordinates_note')}
           </p>
         </div>
       </div>

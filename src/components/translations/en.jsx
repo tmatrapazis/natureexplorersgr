@@ -400,4 +400,25 @@ export const en = {
     "full_name_required": "Full name is required",
     "error_uploading_image": "Error uploading image"
   },
+  "refuges": {
+    "page_title": "Greek Mountain Refuges",
+    "page_subtitle": "Explore {count} mountain refuges of Greece on the map and find information for each refuge.",
+    "loading": "Loading refuges...",
+    "list_title": "Refuges List",
+    "list_subtitle": "Click on any row to see the refuge on the map",
+    "refuge_name": "Refuge",
+    "mountain": "Mountain",
+    "altitude": "Altitude",
+    "capacity": "Capacity",
+    "type": "Type",
+    "website": "Website",
+    "bookings": "Bookings",
+    "maps": "Maps",
+    "people": "people",
+    "type_mountaineering": "Mountaineering",
+    "type_emergency": "Emergency",
+    "type_hunting": "Hunting",
+    "data_source": "Data from",
+    "coordinates_note": "Coordinates are approximate. For accurate information contact the refuge managers.",
+  }
 };
