@@ -3,21 +3,43 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Mountain, MapPin, Users, ArrowUpDown, ExternalLink, Facebook, Instagram } from 'lucide-react';
+import { Mountain, MapPin, Users, ArrowUpDown, ExternalLink, Facebook, Instagram, Home } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/components/contexts/LanguageContext';
 import { useTranslation } from '@/components/translations/useTranslations';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import ReactDOMServer from 'react-dom/server';
 
-// Fix Leaflet default marker icons
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+// Create custom refuge home icon using lucide-react
+const createRefugeIcon = () => {
+  const iconHtml = ReactDOMServer.renderToString(
+    <div style={{ 
+      backgroundColor: '#059669', 
+      borderRadius: '50%', 
+      width: '32px', 
+      height: '32px', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      border: '3px solid white',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
+    }}>
+      <Home style={{ color: 'white', width: '18px', height: '18px' }} />
+    </div>
+  );
+  
+  return L.divIcon({
+    html: iconHtml,
+    className: 'custom-refuge-icon',
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16],
+  });
+};
+
+const refugeIcon = createRefugeIcon();
 
 // Helper function to generate Google Maps link
 const getGoogleMapsLink = (lat, lng) => {
