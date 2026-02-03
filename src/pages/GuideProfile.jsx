@@ -13,6 +13,7 @@ import { formatDateRange } from "../components/helpers/dateHelpers";
 import ShareGuideButton from "../components/guides/ShareGuideButton";
 import { difficultyColors } from "../components/helpers/tripHelpers";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
+import StructuredData from "../components/seo/StructuredData";
 
 export default function GuideProfilePage() {
   const { language } = useLanguage();
@@ -21,6 +22,13 @@ export default function GuideProfilePage() {
   
   const urlParams = new URLSearchParams(window.location.search);
   const guideId = urlParams.get("id");
+
+  // Redirect to Guides page if no guide ID provided (301 redirect)
+  React.useEffect(() => {
+    if (!guideId) {
+      window.location.replace(createPageUrl("Guides"));
+    }
+  }, [guideId]);
 
   const { data: currentUser } = useQuery({
     queryKey: ['current-user'],
@@ -61,15 +69,86 @@ export default function GuideProfilePage() {
     enabled: !!guideId,
   });
 
+  // SEO Configuration with canonical URL and meta tags
   React.useEffect(() => {
     if (guide) {
-      document.title = language === 'el'
-        ? `${guide.full_name} - Οδηγός Βουνού | Nature Explorers`
-        : `${guide.full_name} - Mountain Guide | Nature Explorers`;
+      // Dynamic page title
+      const pageTitle = language === 'el'
+        ? `${guide.full_name} - Πιστοποιημένος Οδηγός Βουνού | Nature Explorers`
+        : `${guide.full_name} - Certified Mountain Guide | Nature Explorers`;
+      
+      document.title = pageTitle;
+
+      // Add self-referencing canonical tag
+      const canonicalUrl = window.location.href;
+      let canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (!canonicalLink) {
+        canonicalLink = document.createElement('link');
+        canonicalLink.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonicalLink);
+      }
+      canonicalLink.setAttribute('href', canonicalUrl);
+
+      // Dynamic meta description from bio
+      const updateMetaTag = (name, content, isProperty = false) => {
+        if (!content) return;
+        const attribute = isProperty ? 'property' : 'name';
+        let element = document.querySelector(`meta[${attribute}="${name}"]`);
+        if (!element) {
+          element = document.createElement('meta');
+          element.setAttribute(attribute, name);
+          document.head.appendChild(element);
+        }
+        element.setAttribute('content', content);
+      };
+
+      // Extract text from bio HTML and create description
+      const bioText = guide.bio ? guide.bio.replace(/<[^>]*>/g, '').substring(0, 150) : '';
+      const description = bioText 
+        ? `${bioText}${bioText.length === 150 ? '...' : ''}`
+        : language === 'el'
+          ? `Γνωρίστε τον ${guide.full_name}, έμπειρο οδηγό βουνού στη Nature Explorers. ${guide.years_of_experience ? `${guide.years_of_experience} χρόνια εμπειρίας.` : ''} Δείτε το προφίλ και τις επερχόμενες εκδρομές.`
+          : `Meet ${guide.full_name}, an experienced mountain guide at Nature Explorers. ${guide.years_of_experience ? `${guide.years_of_experience} years of experience.` : ''} View their profile and upcoming trips.`;
+
+      updateMetaTag('description', description);
+      updateMetaTag('og:title', pageTitle, true);
+      updateMetaTag('og:description', description, true);
+      updateMetaTag('og:image', guide.profile_photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(guide.full_name)}&size=400&background=10b981&color=fff`, true);
+      updateMetaTag('og:url', canonicalUrl, true);
+      updateMetaTag('og:type', 'profile', true);
     }
   }, [guide, language]);
 
   const isOwner = currentUser && guide && guide.user_id === currentUser.id;
+
+  // Structured Data for Person/ProfilePage
+  const guideSchema = guide ? {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": guide.full_name,
+    "description": guide.bio ? guide.bio.replace(/<[^>]*>/g, '').substring(0, 200) : (language === 'el'
+      ? `Επαγγελματίας οδηγός βουνού και πεζοπορίας στην Ελλάδα με εξειδίκευση σε ορειβατικές εκδρομές και trekking.`
+      : `Professional mountain and hiking guide in Greece specializing in trekking expeditions and outdoor adventures.`),
+    "image": guide.profile_photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(guide.full_name)}&size=400&background=10b981&color=fff`,
+    "url": window.location.href,
+    "jobTitle": language === 'el' ? "Οδηγός Βουνού" : "Mountain Guide",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "Nature Explorers"
+    },
+    ...(guide.years_of_experience && {
+      "knowsAbout": language === 'el'
+        ? ["Πεζοπορία", "Ορειβασία", "Trekking", "Outdoor Activities", "Mountain Safety"]
+        : ["Hiking", "Mountain Trekking", "Outdoor Adventure", "Nature Exploration", "Mountain Safety"]
+    }),
+    ...(guide.social_media?.instagram && { "sameAs": [guide.social_media.instagram, guide.social_media.facebook].filter(Boolean) }),
+    ...(guide.certifications && guide.certifications.length > 0 && {
+      "hasCredential": guide.certifications.map(cert => ({
+        "@type": "EducationalOccupationalCredential",
+        "name": cert
+      }))
+    })
+  } : null;
 
   if (guideLoading) {
     return (
@@ -97,7 +176,9 @@ export default function GuideProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50">
+    <>
+      {guideSchema && <StructuredData data={guideSchema} />}
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50">
       {/* Hero Section with Cover Photo */}
       <div className="relative h-64 md:h-96 bg-gradient-to-r from-emerald-700 to-emerald-900">
         {guide.cover_photo_url && (
@@ -318,6 +399,6 @@ export default function GuideProfilePage() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
