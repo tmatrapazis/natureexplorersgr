@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { Mountain, Calendar, Users, LogIn, LogOut, Globe, User, Compass, Menu } from 'lucide-react';
+import { Mountain, Calendar, Users, LogIn, LogOut, Globe, User, Compass, Menu, Home } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../contexts/LanguageContext';
