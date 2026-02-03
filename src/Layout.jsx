@@ -121,23 +121,26 @@ const LoggedInLayout = ({ children, user }) => {
                   <div className="flex flex-col gap-6 mt-8">
                     <Link 
                       to={createPageUrl("Calendar")} 
-                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
                       onClick={() => setMobileMenuOpen(false)}
                     >
+                      <Calendar className="w-5 h-5" />
                       {t('navigation.calendar')}
                     </Link>
                     <Link 
                       to={createPageUrl("OrganizersList")} 
-                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
                       onClick={() => setMobileMenuOpen(false)}
                     >
+                      <Users className="w-5 h-5" />
                       {t('navigation.organizers')}
                     </Link>
                     <Link 
                       to={createPageUrl("Guides")} 
-                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
                       onClick={() => setMobileMenuOpen(false)}
                     >
+                      <Compass className="w-5 h-5" />
                       {t('navigation.guides')}
                     </Link>
                     <Link 
