@@ -49,132 +49,23 @@ const LoggedInLayout = ({ children, user }) => {
       )}
       
       <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
-        <div className="w-full">
-          {/* Top row: Logo and Actions */}
-          <div className="border-b border-stone-100">
-            <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-              <Link to={createPageUrl("Home")} className="flex items-center gap-3">
-                <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" 
-                  alt="Nature Explorers" 
-                  className="h-10 w-auto" 
-                />
-                <div>
-                  <h1 className="font-bold text-xl text-stone-900">{t('header.app_name')}</h1>
-                  <p className="text-xs text-stone-500">{t('header.tagline')}</p>
-                </div>
-              </Link>
-
-              {/* Desktop Actions */}
-              <div className="hidden md:flex items-center gap-3">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <Globe className="w-4 h-4 mr-2" />
-                      <span>{language === 'en' ? 'EN' : 'ΕΛ'}</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => setLanguage('en')}>
-                      English
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setLanguage('el')}>
-                      Ελληνικά
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
-                <Button 
-                  onClick={handleLogout}
-                  variant="outline"
-                  size="sm"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  <span>{t('common.logout')}</span>
-                </Button>
+        <div className="w-full py-4 pl-5 pr-5">
+          <div className="flex items-center justify-between gap-8">
+            {/* Logo on the left */}
+            <Link to={createPageUrl("Home")} className="flex items-center gap-3 flex-shrink-0">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" 
+                alt="Nature Explorers" 
+                className="h-10 w-auto" 
+              />
+              <div>
+                <h1 className="font-bold text-xl text-stone-900">{t('header.app_name')}</h1>
+                <p className="text-xs text-stone-500">{t('header.tagline')}</p>
               </div>
+            </Link>
 
-              {/* Mobile Hamburger Menu */}
-              <div className="md:hidden">
-                <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-                  <SheetTrigger asChild>
-                    <Button variant="ghost" size="sm">
-                      <Menu className="w-6 h-6" />
-                    </Button>
-                  </SheetTrigger>
-                  <SheetContent side="right" className="w-[280px] bg-white">
-                    <div className="flex flex-col gap-6 mt-8">
-                      <Link 
-                        to={createPageUrl("Calendar")} 
-                        className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {t('navigation.calendar')}
-                      </Link>
-                      <Link 
-                        to={createPageUrl("OrganizersList")} 
-                        className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {t('navigation.organizers')}
-                      </Link>
-                      <Link 
-                        to={createPageUrl("Guides")} 
-                        className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {t('navigation.guides')}
-                      </Link>
-                      <Link 
-                        to={createPageUrl("GreekRefuges")} 
-                        className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {t('navigation.refuges')}
-                      </Link>
-
-                      <div className="border-t pt-6">
-                        <div className="mb-4">
-                          <p className="text-sm text-stone-500 mb-2">{language === 'el' ? 'Γλώσσα' : 'Language'}</p>
-                          <div className="flex gap-2">
-                            <Button 
-                              variant={language === 'en' ? 'default' : 'outline'} 
-                              size="sm"
-                              onClick={() => setLanguage('en')}
-                              className="flex-1"
-                            >
-                              English
-                            </Button>
-                            <Button 
-                              variant={language === 'el' ? 'default' : 'outline'} 
-                              size="sm"
-                              onClick={() => setLanguage('el')}
-                              className="flex-1"
-                            >
-                              Ελληνικά
-                            </Button>
-                          </div>
-                        </div>
-
-                        <Button 
-                          onClick={handleLogout}
-                          variant="outline"
-                          className="w-full"
-                        >
-                          <LogOut className="w-4 h-4 mr-2" />
-                          {t('common.logout')}
-                        </Button>
-                      </div>
-                    </div>
-                  </SheetContent>
-                </Sheet>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom row: Navigation */}
-          <div className="container mx-auto px-4 py-2">
-            <nav className="hidden md:flex items-center justify-center gap-8">
+            {/* Desktop Navigation in center */}
+            <nav className="hidden md:flex items-center gap-8 flex-1 justify-center">
               <Link to={createPageUrl("Calendar")} className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
                 {t('navigation.calendar')}
               </Link>
@@ -188,6 +79,111 @@ const LoggedInLayout = ({ children, user }) => {
                 {t('navigation.refuges')}
               </Link>
             </nav>
+
+            {/* Desktop Actions on the right */}
+            <div className="hidden md:flex items-center gap-3 flex-shrink-0">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Globe className="w-4 h-4 mr-2" />
+                    <span>{language === 'en' ? 'EN' : 'ΕΛ'}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => setLanguage('en')}>
+                    English
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setLanguage('el')}>
+                    Ελληνικά
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Button 
+                onClick={handleLogout}
+                variant="outline"
+                size="sm"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                <span>{t('common.logout')}</span>
+              </Button>
+            </div>
+
+            {/* Mobile Hamburger Menu */}
+            <div className="md:hidden">
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Menu className="w-6 h-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[280px] bg-white">
+                  <div className="flex flex-col gap-6 mt-8">
+                    <Link 
+                      to={createPageUrl("Calendar")} 
+                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {t('navigation.calendar')}
+                    </Link>
+                    <Link 
+                      to={createPageUrl("OrganizersList")} 
+                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {t('navigation.organizers')}
+                    </Link>
+                    <Link 
+                      to={createPageUrl("Guides")} 
+                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {t('navigation.guides')}
+                    </Link>
+                    <Link 
+                      to={createPageUrl("GreekRefuges")} 
+                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {t('navigation.refuges')}
+                    </Link>
+
+                    <div className="border-t pt-6">
+                      <div className="mb-4">
+                        <p className="text-sm text-stone-500 mb-2">{language === 'el' ? 'Γλώσσα' : 'Language'}</p>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant={language === 'en' ? 'default' : 'outline'} 
+                            size="sm"
+                            onClick={() => setLanguage('en')}
+                            className="flex-1"
+                          >
+                            English
+                          </Button>
+                          <Button 
+                            variant={language === 'el' ? 'default' : 'outline'} 
+                            size="sm"
+                            onClick={() => setLanguage('el')}
+                            className="flex-1"
+                          >
+                            Ελληνικά
+                          </Button>
+                        </div>
+                      </div>
+
+                      <Button 
+                        onClick={handleLogout}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        {t('common.logout')}
+                      </Button>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </div>
       </header>
