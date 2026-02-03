@@ -142,9 +142,10 @@ const LoggedInLayout = ({ children, user }) => {
                     </Link>
                     <Link 
                       to={createPageUrl("GreekRefuges")} 
-                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                      className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
                       onClick={() => setMobileMenuOpen(false)}
                     >
+                      <Home className="w-5 h-5" />
                       {t('navigation.refuges')}
                     </Link>
 
