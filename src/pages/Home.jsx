@@ -29,6 +29,14 @@ export default function HomePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
+  // 301 Redirect: /Home and /home to root /
+  React.useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/Home' || path === '/home') {
+      window.location.replace('/');
+    }
+  }, []);
+
   // Enhanced SEO Configuration with target keywords
   useSEO({
     title: language === 'el' 
