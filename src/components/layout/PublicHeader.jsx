@@ -139,6 +139,13 @@ export default function PublicHeader() {
                   <Compass className="w-5 h-5" />
                   {t('navigation.guides')}
                 </Link>
+                <Link 
+                  to={createPageUrl("GreekRefuges")} 
+                  className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {t('navigation.refuges')}
+                </Link>
 
                 <div className="border-t pt-6">
                   <div className="mb-4">
