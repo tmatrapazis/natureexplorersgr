@@ -112,9 +112,9 @@ export default function GreekRefuges() {
         </div>
 
         {/* Map Section */}
-        <Card className="mb-8 overflow-hidden">
+        <Card className="mb-8 overflow-hidden relative z-0">
           <CardContent className="p-0">
-            <div className="h-[500px] w-full">
+            <div className="h-[500px] w-full relative z-0">
               <MapContainer
                 center={mapCenter}
                 zoom={mapZoom}
