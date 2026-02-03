@@ -40,71 +40,73 @@ export default function PublicHeader() {
 
   return (
     <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to={createPageUrl("Home")} className="flex items-center gap-3">
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" 
-            alt={language === 'el' 
-              ? "Nature Explorers - Πεζοπορία Ελλάδα - Ορειβασία - Hiking Greece λογότυπο"
-              : "Nature Explorers - Hiking Greece - Trekking - Outdoor Activities logo"} 
-            className="h-10 w-auto" 
-          />
-          <div>
-            <h1 className="font-bold text-xl text-stone-900">{t('header.app_name')}</h1>
-            <p className="text-xs text-stone-500">{t('header.tagline')}</p>
-          </div>
-        </Link>
+      <div className="w-full py-4 pl-5 pr-5">
+        <div className="flex items-center justify-between gap-8">
+          {/* Logo on the left */}
+          <Link to={createPageUrl("Home")} className="flex items-center gap-3 flex-shrink-0">
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" 
+              alt={language === 'el' 
+                ? "Nature Explorers - Πεζοπορία Ελλάδα - Ορειβασία - Hiking Greece λογότυπο"
+                : "Nature Explorers - Hiking Greece - Trekking - Outdoor Activities logo"} 
+              className="h-10 w-auto" 
+            />
+            <div>
+              <h1 className="font-bold text-xl text-stone-900">{t('header.app_name')}</h1>
+              <p className="text-xs text-stone-500">{t('header.tagline')}</p>
+            </div>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
-          <Link to={createPageUrl("Calendar")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
-            <Calendar className="w-4 h-4" aria-hidden="true" />
-            {t('navigation.calendar')}
-          </Link>
-          <Link to={createPageUrl("OrganizersList")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
-            <Users className="w-4 h-4" aria-hidden="true" />
-            {t('navigation.organizers')}
-          </Link>
-          <Link to={createPageUrl("Guides")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
-            <Compass className="w-4 h-4" aria-hidden="true" />
-            {t('navigation.guides')}
-          </Link>
-        </nav>
+          {/* Desktop Navigation in center */}
+          <nav className="hidden md:flex items-center gap-8 flex-1 justify-center" aria-label="Main navigation">
+            <Link to={createPageUrl("Calendar")} className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+              {t('navigation.calendar')}
+            </Link>
+            <Link to={createPageUrl("OrganizersList")} className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+              {t('navigation.organizers')}
+            </Link>
+            <Link to={createPageUrl("Guides")} className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+              {t('navigation.guides')}
+            </Link>
+            <Link to={createPageUrl("GreekRefuges")} className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+              {t('navigation.refuges')}
+            </Link>
+          </nav>
 
-        {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" aria-label="Change language">
-                <Globe className="w-4 h-4 mr-2" aria-hidden="true" />
-                <span className="sr-only">Select language</span>
+          {/* Desktop Actions on the right */}
+          <div className="hidden md:flex items-center gap-3 flex-shrink-0">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" aria-label="Change language">
+                  <Globe className="w-4 h-4 mr-2" aria-hidden="true" />
+                  <span>{language === 'en' ? 'EN' : 'ΕΛ'}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => setLanguage('en')}>
+                  English
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('el')}>
+                  Ελληνικά
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            {!user ? (
+              <Button onClick={handleLogin} variant="outline" size="sm">
+                <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
+                <span>{t('common.login')}</span>
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setLanguage('en')}>
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLanguage('el')}>
-                Ελληνικά
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          {!user ? (
-            <Button onClick={handleLogin} variant="default" className="bg-emerald-600 hover:bg-emerald-700">
-              <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
-              <span>{t('common.login')}</span>
-            </Button>
-          ) : (
-            <Button onClick={handleLogout} variant="default" size="sm" className="bg-emerald-600 hover:bg-emerald-900">
-              <LogOut className="w-4 h-4 mr-2" aria-hidden="true" />
-              <span>{t('common.logout')}</span>
-            </Button>
-          )}
-        </div>
+            ) : (
+              <Button onClick={handleLogout} variant="outline" size="sm">
+                <LogOut className="w-4 h-4 mr-2" aria-hidden="true" />
+                <span>{t('common.logout')}</span>
+              </Button>
+            )}
+          </div>
 
-        {/* Mobile Hamburger Menu */}
-        <div className="md:hidden">
+          {/* Mobile Hamburger Menu */}
+          <div className="md:hidden">
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="sm" aria-label="Open menu">
