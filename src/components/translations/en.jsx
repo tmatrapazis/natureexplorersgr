@@ -41,6 +41,7 @@ export const en = {
     "edit_profile": "Edit Profile",
     "organizers": "Organizers",
     "guides": "Guides",
+    "refuges": "Refuges",
     "home": "Home",
     "my_dashboard": "Go to Dashboard",
     "manage_bookings": "Manage Bookings",

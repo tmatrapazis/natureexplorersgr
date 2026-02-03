@@ -73,6 +73,9 @@ const LoggedInLayout = ({ children, user }) => {
             <Link to={createPageUrl("Guides")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
               <span>{t('navigation.guides')}</span>
             </Link>
+            <Link to={createPageUrl("GreekRefuges")} className="text-stone-700 hover:text-emerald-600 transition-colors flex items-center gap-2">
+              <span>{t('navigation.refuges')}</span>
+            </Link>
           </nav>
 
           {/* Desktop Actions */}
@@ -134,6 +137,13 @@ const LoggedInLayout = ({ children, user }) => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     {t('navigation.guides')}
+                  </Link>
+                  <Link 
+                    to={createPageUrl("GreekRefuges")} 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('navigation.refuges')}
                   </Link>
 
                   <div className="border-t pt-6">

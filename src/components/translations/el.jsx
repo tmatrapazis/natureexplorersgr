@@ -41,6 +41,7 @@ export const el = {
     "edit_profile": "Επεξεργασία Προφίλ",
     "organizers": "Οδηγοί",
     "guides": "Συνοδοί",
+    "refuges": "Καταφύγια",
     "home": "Αρχική",
     "my_dashboard": "Μετάβαση στον Πίνακα",
     "manage_bookings": "Διαχείριση Κρατήσεων",
