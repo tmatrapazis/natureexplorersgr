@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { X, Heart } from "lucide-react";
+import { X } from "lucide-react";
 import CalendarGrid from "../components/calendar/CalendarGrid";
 import TripsList from "../components/calendar/TripsList";
 import TripFilters from "../components/calendar/TripFilters";
@@ -42,32 +42,10 @@ export default function CalendarPage() {
     maxPrice: "",
     tags: [],
     verifiedOnly: false,
-    searchQuery: "",
-    favoritesOnly: false
+    searchQuery: ""
   });
-  const [currentPage, setCurrentPage] = useState(1);
+  const [showAllTrips, setShowAllTrips] = useState(false);
   const tripsListRef = React.useRef(null);
-
-  // Fetch current user
-  const { data: user } = useQuery({
-    queryKey: ['current-user-calendar'],
-    queryFn: async () => {
-      try {
-        return await base44.auth.me();
-      } catch (error) {
-        return null;
-      }
-    },
-    retry: false,
-  });
-
-  // Fetch user's favorites
-  const { data: favorites = [] } = useQuery({
-    queryKey: ['user-favorites', user?.id],
-    queryFn: () => base44.entities.Favorite.filter({ user_id: user.id }),
-    enabled: !!user,
-    initialData: [],
-  });
 
   const { data: trips, isLoading } = useQuery({
     queryKey: ['hiking-trips'],
@@ -118,11 +96,6 @@ export default function CalendarPage() {
       if (!matchesSearch) return false;
     }
 
-    if (filters.favoritesOnly) {
-      const favoriteTripIds = new Set(favorites.map(fav => fav.trip_id));
-      if (!favoriteTripIds.has(trip.id)) return false;
-    }
-
     return true;
   });
 
@@ -146,15 +119,17 @@ export default function CalendarPage() {
       maxPrice: "",
       tags: [],
       verifiedOnly: false,
-      searchQuery: "",
-      favoritesOnly: false
+      searchQuery: ""
     });
     setSelectedDate(null);
     setSelectedDayTrips([]);
-    setCurrentPage(1);
   };
 
-  const displayTrips = selectedDate ? selectedDayTrips : filteredTrips;
+  const displayTrips = selectedDate ?
+  selectedDayTrips :
+  showAllTrips ? filteredTrips : filteredTrips.slice(0, 10);
+
+  const hasMoreTrips = !selectedDate && filteredTrips.length > 10;
 
   const hasActiveFilters = filters.difficulty !== "all" ||
   filters.minPrice ||
@@ -162,13 +137,7 @@ export default function CalendarPage() {
   filters.tags.length > 0 ||
   filters.verifiedOnly ||
   filters.searchQuery ||
-  filters.favoritesOnly ||
   selectedDate;
-
-  // Reset to page 1 when filters change
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, [filters, selectedDate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
@@ -184,20 +153,8 @@ export default function CalendarPage() {
           </p>
         </header>
 
-        <div className="flex flex-wrap gap-3 mb-6 items-center">
+        <div className="flex gap-3 mb-6 items-center">
           <TripFilters filters={filters} onFilterChange={setFilters} />
-          
-          {user && (
-            <Button
-              variant={filters.favoritesOnly ? "default" : "outline"}
-              onClick={() => setFilters({ ...filters, favoritesOnly: !filters.favoritesOnly })}
-              className={filters.favoritesOnly ? "bg-red-500 hover:bg-red-600 text-white" : "border-red-300 text-red-700 hover:bg-red-50"}
-            >
-              <Heart className={`w-4 h-4 mr-2 ${filters.favoritesOnly ? 'fill-current' : ''}`} />
-              {language === 'el' ? 'Αγαπημένα' : 'Favorites'}
-            </Button>
-          )}
-
           <div className="bg-emerald-100 text-emerald-800 px-4 py-2.5 text-sm font-medium rounded-md border border-emerald-200 inline-flex items-center justify-center h-9">
             {filteredTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
           </div>
@@ -243,13 +200,22 @@ export default function CalendarPage() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
               </div> :
 
-            <TripsList 
-              trips={displayTrips} 
-              selectedDate={selectedDate}
-              currentPage={currentPage}
-              tripsPerPage={12}
-              onPageChange={setCurrentPage}
-            />
+            <>
+                <TripsList trips={displayTrips} selectedDate={selectedDate} />
+                {hasMoreTrips &&
+              <div className="text-center mt-6">
+                    <Button
+                  variant="outline"
+                  onClick={() => setShowAllTrips(!showAllTrips)}
+                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50">
+
+                      {showAllTrips ?
+                  language === 'el' ? 'Εμφάνιση λιγότερων' : 'Show Less' :
+                  language === 'el' ? `Δείτε περισσότερα (${filteredTrips.length - 10})` : `View More (${filteredTrips.length - 10})`}
+                    </Button>
+                  </div>
+              }
+              </>
             }
           </div>
         </div>

@@ -3,16 +3,15 @@ import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, ExternalLink, User, Heart } from "lucide-react";
+import { Calendar, MapPin, ExternalLink, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { trackEvent } from "../analytics/GoogleAnalytics";
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 import { getTripImage, handleImageError } from '../helpers/imageHelpers';
-import { toast } from 'react-hot-toast';
 
 const difficultyColors = {
   easy: "bg-green-100 text-green-800 border-green-200",
@@ -21,10 +20,9 @@ const difficultyColors = {
   difficult: "bg-red-100 text-red-800 border-red-200"
 };
 
-export default React.forwardRef(function TripsList({ trips, selectedDate, currentPage = 1, tripsPerPage = 12, onPageChange }, ref) {
+export default React.forwardRef(function TripsList({ trips, selectedDate }, ref) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
-  const queryClient = useQueryClient();
   
   // Fetch current user
   const { data: user } = useQuery({
@@ -38,63 +36,6 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, curren
     },
     retry: false,
   });
-
-  // Fetch user's favorites
-  const { data: favorites = [] } = useQuery({
-    queryKey: ['user-favorites', user?.id],
-    queryFn: () => base44.entities.Favorite.filter({ user_id: user.id }),
-    enabled: !!user,
-    initialData: [],
-  });
-
-  // Create a set of favorited trip IDs for quick lookup
-  const favoriteTripIds = React.useMemo(() => {
-    return new Set(favorites.map(fav => fav.trip_id));
-  }, [favorites]);
-
-  // Toggle favorite mutation
-  const toggleFavoriteMutation = useMutation({
-    mutationFn: async ({ trip, isFavorited }) => {
-      if (isFavorited) {
-        // Remove from favorites
-        const favorite = favorites.find(fav => fav.trip_id === trip.id);
-        if (favorite) {
-          await base44.entities.Favorite.delete(favorite.id);
-        }
-      } else {
-        // Add to favorites
-        await base44.entities.Favorite.create({
-          user_id: user.id,
-          trip_id: trip.id,
-          trip_title: trip.title,
-          trip_start_date: trip.start_date,
-        });
-      }
-    },
-    onSuccess: (_, { isFavorited }) => {
-      queryClient.invalidateQueries({ queryKey: ['user-favorites'] });
-      toast.success(isFavorited 
-        ? (language === 'el' ? 'Αφαιρέθηκε από τα αγαπημένα' : 'Removed from favorites')
-        : (language === 'el' ? 'Προστέθηκε στα αγαπημένα' : 'Added to favorites')
-      );
-    },
-    onError: () => {
-      toast.error(language === 'el' ? 'Κάτι πήγε στραβά' : 'Something went wrong');
-    },
-  });
-
-  const handleFavoriteClick = (trip, e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    if (!user) {
-      base44.auth.redirectToLogin(window.location.pathname);
-      return;
-    }
-
-    const isFavorited = favoriteTripIds.has(trip.id);
-    toggleFavoriteMutation.mutate({ trip, isFavorited });
-  };
 
   // Fetch all organizers to match with trips
   const { data: organizers = [] } = useQuery({
@@ -125,12 +66,6 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, curren
     });
   };
 
-  // Pagination logic
-  const totalPages = Math.ceil(trips.length / tripsPerPage);
-  const startIndex = (currentPage - 1) * tripsPerPage;
-  const endIndex = startIndex + tripsPerPage;
-  const paginatedTrips = trips.slice(startIndex, endIndex);
-
   if (trips.length === 0) {
     return (
       <div className="text-center py-12">
@@ -145,25 +80,17 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, curren
 
   return (
     <div ref={ref}>
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-stone-900">
-          {selectedDate ? `${t('calendar.trips_on')} ${format(selectedDate, "MMMM d, yyyy")}` : t('calendar.upcoming_trips')}
-        </h3>
-        <div className="text-sm text-stone-600">
-          {language === 'el' 
-            ? `Εμφάνιση ${startIndex + 1}-${Math.min(endIndex, trips.length)} από ${trips.length}` 
-            : `Showing ${startIndex + 1}-${Math.min(endIndex, trips.length)} of ${trips.length}`}
-        </div>
-      </div>
+      <h3 className="text-xl font-bold text-stone-900 mb-6">
+        {selectedDate ? `${t('calendar.trips_on')} ${format(selectedDate, "MMMM d, yyyy")}` : t('calendar.upcoming_trips')}
+      </h3>
       
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {paginatedTrips.map((trip) => {
+        {trips.map((trip) => {
           const organizer = organizerMap[trip.organizer_code];
-          const isFavorited = favoriteTripIds.has(trip.id);
           
           return (
             <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 border-stone-200 flex flex-col h-full">
-              <div className="relative w-full h-40 bg-stone-200">
+              <div className="w-full h-40 bg-stone-200">
                 <img 
                   src={getTripImage(trip.image_url, trip.id)} 
                   alt={language === 'el'
@@ -172,20 +99,6 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, curren
                   className="w-full h-full object-cover"
                   onError={(e) => handleImageError(e, trip.id)}
                 />
-                <button
-                  onClick={(e) => handleFavoriteClick(trip, e)}
-                  className={`absolute top-2 right-2 p-2 rounded-full transition-all ${
-                    isFavorited 
-                      ? 'bg-red-500 text-white hover:bg-red-600' 
-                      : 'bg-white/90 text-stone-600 hover:bg-white hover:text-red-500'
-                  }`}
-                  title={isFavorited 
-                    ? (language === 'el' ? 'Αφαίρεση από αγαπημένα' : 'Remove from favorites')
-                    : (language === 'el' ? 'Προσθήκη στα αγαπημένα' : 'Add to favorites')
-                  }
-                >
-                  <Heart className={`w-4 h-4 ${isFavorited ? 'fill-current' : ''}`} />
-                </button>
               </div>
               
               <div className="p-4 flex flex-col flex-1">
@@ -269,43 +182,6 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, curren
           );
         })}
       </div>
-
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-8">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange?.(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            {language === 'el' ? 'Προηγούμενο' : 'Previous'}
-          </Button>
-          
-          <div className="flex gap-1">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                variant={page === currentPage ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => onPageChange?.(page)}
-                className={page === currentPage ? 'bg-emerald-600 hover:bg-emerald-700' : ''}
-              >
-                {page}
-              </Button>
-            ))}
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange?.(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            {language === 'el' ? 'Επόμενο' : 'Next'}
-          </Button>
-        </div>
-      )}
     </div>
   );
 });
