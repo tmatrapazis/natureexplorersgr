@@ -351,9 +351,6 @@ export default function TripDetailsPage() {
                       <TrendingUp className="w-3 h-3 mr-1" />
                       {trip.difficulty}
                     </Badge>
-                    {trip.distance_km && (
-                      <Badge variant="outline">{trip.distance_km} km</Badge>
-                    )}
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-4 mb-6">
@@ -481,12 +478,6 @@ export default function TripDetailsPage() {
                     <TrendingUp className="w-3 h-3 mr-1" />
                     {trip.difficulty}
                   </Badge>
-                  {trip.distance_km && (
-                    <Badge variant="outline">{trip.distance_km} km</Badge>
-                  )}
-                  {trip.elevation_gain_m && (
-                    <Badge variant="outline">↑ {trip.elevation_gain_m}m elevation</Badge>
-                  )}
                   {user?.role === 'admin' && (
                     <Badge variant="outline" className="flex items-center gap-1">
                       <Eye className="w-3 h-3" />
@@ -546,6 +537,26 @@ export default function TripDetailsPage() {
                             </span>
                           ))}
                         </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {trip.distance_km && trip.distance_km > 0 && (
+                    <div className="flex items-center gap-3">
+                      <TrendingUp className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <p className="text-sm text-stone-500">{language === 'el' ? 'Απόσταση' : 'Distance'}</p>
+                        <p className="font-medium text-stone-900">{trip.distance_km} km</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {trip.elevation_gain_m && trip.elevation_gain_m > 0 && (
+                    <div className="flex items-center gap-3">
+                      <TrendingUp className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <p className="text-sm text-stone-500">{language === 'el' ? 'Υψομετρική Διαφορά' : 'Elevation Gain'}</p>
+                        <p className="font-medium text-stone-900">↑ {trip.elevation_gain_m}m</p>
                       </div>
                     </div>
                   )}
