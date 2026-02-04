@@ -90,27 +90,7 @@ export default function EditTripPage() {
 
   const updateTripMutation = useMutation({
     mutationFn: async (data) => {
-      return await base44.entities.HikingTrip.update(tripId, {
-        ...data,
-        organizer_name: user?.username || user?.full_name,
-        organizer_is_verified: user?.is_verified_organizer || false,
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
-      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
-      navigate(createPageUrl("MyTrips"));
-    },
-  });
-
-  const saveDraftMutation = useMutation({
-    mutationFn: async (data) => {
-      return await base44.entities.HikingTrip.update(tripId, {
-        ...data,
-        status: 'draft',
-        organizer_name: user?.username || user?.full_name,
-        organizer_is_verified: user?.is_verified_organizer || false,
-      });
+      return await base44.entities.HikingTrip.update(tripId, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
@@ -123,7 +103,7 @@ export default function EditTripPage() {
     e.preventDefault();
     if (!tripData) return;
     
-    const { created_date, updated_date, id, computedStatus, ...dataToSubmit } = tripData;
+    const { created_date, updated_date, id, created_by, view_count, ...dataToSubmit } = tripData;
     
     if (!dataToSubmit.end_date) {
       dataToSubmit.end_date = dataToSubmit.start_date;
@@ -131,33 +111,9 @@ export default function EditTripPage() {
     
     if (!dataToSubmit.max_participants || dataToSubmit.max_participants === 0) {
       dataToSubmit.max_participants = dataToSubmit.total_slots;
-    }
-    
-    if (!dataToSubmit.organizer_email && user && user.email) {
-      dataToSubmit.organizer_email = user.email;
     }
     
     await updateTripMutation.mutateAsync(dataToSubmit);
-  };
-
-  const handleSaveDraft = async () => {
-    if (!tripData) return;
-    
-    const { created_date, updated_date, id, computedStatus, ...dataToSubmit } = tripData;
-    
-    if (!dataToSubmit.end_date) {
-      dataToSubmit.end_date = dataToSubmit.start_date;
-    }
-    
-    if (!dataToSubmit.max_participants || dataToSubmit.max_participants === 0) {
-      dataToSubmit.max_participants = dataToSubmit.total_slots;
-    }
-    
-    if (!dataToSubmit.organizer_email && user && user.email) {
-      dataToSubmit.organizer_email = user.email;
-    }
-    
-    await saveDraftMutation.mutateAsync(dataToSubmit);
   };
   
   const handleInputChange = (key, value) => {
@@ -685,18 +641,11 @@ export default function EditTripPage() {
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => navigate(createPageUrl("MyTrips"))} className="flex-1 min-w-[120px]">{t('common.cancel')}</Button>
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={handleSaveDraft} 
-                className="flex-1 min-w-[160px]"
-                disabled={saveDraftMutation.isPending}
-              >
-                {saveDraftMutation.isPending ? (language === 'el' ? 'Αποθήκευση...' : 'Saving...') : (language === 'el' ? 'Αποθήκευση ως Πρόχειρο' : 'Save as Draft')}
+            <div className="flex gap-3 pt-4">
+              <Button type="button" variant="outline" onClick={() => navigate(createPageUrl("MyTrips"))}>
+                {t('common.cancel')}
               </Button>
-              <Button type="submit" className="flex-1 min-w-[140px] bg-emerald-600 hover:bg-emerald-700" disabled={updateTripMutation.isPending}>
+              <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700" disabled={updateTripMutation.isPending}>
                 {updateTripMutation.isPending ? (language === 'el' ? 'Αποθήκευση...' : 'Saving...') : (language === 'el' ? 'Αποθήκευση Αλλαγών' : 'Save Changes')}
               </Button>
             </div>
