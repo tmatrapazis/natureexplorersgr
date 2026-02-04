@@ -384,11 +384,6 @@ export default function OrganizerProfilePage() {
                             <TrendingUp className="w-3 h-3 mr-1" />
                             {trip.difficulty}
                           </Badge>
-                          {trip.distance_km && (
-                            <Badge variant="outline" className="text-xs">
-                              {trip.distance_km} {t('common.distance_unit_km')}
-                            </Badge>
-                          )}
                           <Badge variant="outline" className="text-xs text-emerald-700">
                             {trip.price ? `€${trip.price}` : 'TBA'}
                           </Badge>
