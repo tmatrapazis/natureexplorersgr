@@ -33,7 +33,9 @@ const availableTags = [
 "waterfall",
 "summit",
 "coastal",
-"forest"];
+"forest",
+"bus",
+"organized-carpooling"];
 
 
 export default function TripFilters({ filters, onFilterChange }) {
