@@ -529,6 +529,22 @@ export default function TripDetailsPage() {
                       </p>
                     </div>
                   </div>
+
+                  {trip.departure_from && trip.departure_from.length > 0 && (
+                    <div className="flex items-center gap-3 md:col-start-2">
+                      <MapPin className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <p className="text-sm text-stone-500">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {trip.departure_from.map((location, i) => (
+                            <span key={i} className="text-sm font-medium text-stone-900">
+                              {location}{i < trip.departure_from.length - 1 ? ', ' : ''}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {trip.meeting_points && trip.meeting_points.length > 0 && (
