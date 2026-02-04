@@ -6,6 +6,8 @@ import PublicFooter from "./components/layout/PublicFooter";
 import { LanguageProvider } from "./components/contexts/LanguageContext";
 import GoogleAnalytics from "./components/analytics/GoogleAnalytics";
 import WelcomeModal from "./components/welcome/WelcomeModal";
+import DynamicSidebar from "./components/layout/DynamicSidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "./components/ui/sidebar";
 
 const LoggedInLayout = ({ children, user }) => {
   const [showWelcome, setShowWelcome] = React.useState(false);
@@ -16,6 +18,37 @@ const LoggedInLayout = ({ children, user }) => {
       setShowWelcome(true);
     }
   }, [user]);
+
+  const hasOrganizerAccess = user?.organizer_code;
+
+  if (hasOrganizerAccess) {
+    return (
+      <SidebarProvider defaultOpen={true}>
+        <div className="min-h-screen flex w-full bg-stone-50">
+          {showWelcome && user && (
+            <WelcomeModal 
+              user={user} 
+              onClose={() => setShowWelcome(false)} 
+            />
+          )}
+          
+          <DynamicSidebar user={user} />
+          
+          <SidebarInset className="flex flex-col">
+            <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
+              <SidebarTrigger />
+            </header>
+            
+            <main className="flex-1">
+              {children}
+            </main>
+
+            <PublicFooter />
+          </SidebarInset>
+        </div>
+      </SidebarProvider>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-stone-50">
