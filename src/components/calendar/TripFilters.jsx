@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, X } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -45,11 +47,34 @@ export default function TripFilters({ filters, onFilterChange }) {
   const [open, setOpen] = useState(false);
   const [tempFilters, setTempFilters] = useState(filters);
 
+  // Fetch all unique departure locations
+  const { data: allTrips = [] } = useQuery({
+    queryKey: ['all-trips-departure'],
+    queryFn: () => base44.entities.HikingTrip.list(),
+  });
+
+  const uniqueDepartureLocations = React.useMemo(() => {
+    const locations = new Set();
+    allTrips.forEach(trip => {
+      if (trip.departure_from && Array.isArray(trip.departure_from)) {
+        trip.departure_from.forEach(loc => locations.add(loc));
+      }
+    });
+    return Array.from(locations).sort();
+  }, [allTrips]);
+
   const toggleTag = (tag) => {
     const newTags = tempFilters.tags.includes(tag) ?
     tempFilters.tags.filter((t) => t !== tag) :
     [...tempFilters.tags, tag];
     setTempFilters({ ...tempFilters, tags: newTags });
+  };
+
+  const toggleDepartureLocation = (location) => {
+    const newLocations = tempFilters.departureFrom?.includes(location) ?
+    tempFilters.departureFrom.filter((l) => l !== location) :
+    [...(tempFilters.departureFrom || []), location];
+    setTempFilters({ ...tempFilters, departureFrom: newLocations });
   };
 
   const handleApplyFilters = () => {
@@ -63,6 +88,7 @@ export default function TripFilters({ filters, onFilterChange }) {
       minPrice: "",
       maxPrice: "",
       tags: [],
+      departureFrom: [],
       verifiedOnly: false,
       searchQuery: ""
     };
@@ -76,6 +102,7 @@ export default function TripFilters({ filters, onFilterChange }) {
   filters.minPrice ? 1 : 0,
   filters.maxPrice ? 1 : 0,
   filters.tags.length,
+  filters.departureFrom?.length || 0,
   filters.verifiedOnly ? 1 : 0,
   filters.searchQuery ? 1 : 0].
   reduce((a, b) => a + b, 0);
@@ -195,6 +222,25 @@ export default function TripFilters({ filters, onFilterChange }) {
               )}
             </div>
           </div>
+
+          {/* Departure Locations */}
+          {uniqueDepartureLocations.length > 0 && (
+            <div>
+              <Label>{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</Label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {uniqueDepartureLocations.map((location) =>
+                <Badge
+                  key={location}
+                  variant={tempFilters.departureFrom?.includes(location) ? "default" : "outline"}
+                  className={`cursor-pointer ${tempFilters.departureFrom?.includes(location) ? 'bg-blue-600' : ''}`}
+                  onClick={() => toggleDepartureLocation(location)}>
+
+                    {location}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         <DialogFooter className="gap-2">
