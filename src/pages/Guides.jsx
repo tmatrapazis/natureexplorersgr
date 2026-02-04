@@ -78,8 +78,8 @@ export default function GuidesPage() {
       {/* Guides Grid */}
       <div className="container mx-auto max-w-6xl px-4 py-12">
         
-        {/* Create Profile CTA for logged-in users without a guide profile */}
-        {user && !hasGuideProfile && (
+        {/* Create Profile CTA - shown to all users */}
+        {(!user || !hasGuideProfile) && (
           <Card className="mb-8 border-2 border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
@@ -96,7 +96,13 @@ export default function GuidesPage() {
                   </p>
                 </div>
                 <Button 
-                  onClick={() => navigate(createPageUrl('CreateGuideProfile'))}
+                  onClick={() => {
+                    if (!user) {
+                      base44.auth.redirectToLogin(createPageUrl('CreateGuideProfile'));
+                    } else {
+                      navigate(createPageUrl('CreateGuideProfile'));
+                    }
+                  }}
                   className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2"
                 >
                   <Plus className="w-5 h-5" />
