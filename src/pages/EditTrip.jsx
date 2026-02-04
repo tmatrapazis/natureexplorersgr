@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Plus, X, Loader2, MapPin, Clock } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 import useSEO from '../components/seo/useSEO';
 import { useLanguage } from '../components/contexts/LanguageContext';
@@ -61,6 +62,7 @@ export default function EditTripPage() {
 
   const [tripData, setTripData] = useState(null);
   const [currentRequirement, setCurrentRequirement] = useState("");
+  const [currentDeparture, setCurrentDeparture] = useState("");
   const [newMeetingPoint, setNewMeetingPoint] = useState({
     name: "",
     location: "",
@@ -74,7 +76,14 @@ export default function EditTripPage() {
         start_date: trip.start_date ? new Date(trip.start_date).toISOString().split('T')[0] : "",
         end_date: trip.end_date ? new Date(trip.end_date).toISOString().split('T')[0] : "",
         requirements: trip.requirements || [],
+        departure_from: trip.departure_from || [],
+        tags: trip.tags || [],
         meeting_points: trip.meeting_points || [],
+        gallery_images: trip.gallery_images || [],
+        cancel_policy: trip.cancel_policy || "",
+        organizer_notes: trip.organizer_notes || "",
+        gpx_file_url: trip.gpx_file_url || "",
+        status: trip.status || "draft"
       });
     }
   }, [trip]);
@@ -192,6 +201,86 @@ export default function EditTripPage() {
   const removeMeetingPoint = (index) => {
     handleInputChange('meeting_points', tripData.meeting_points.filter((_, i) => i !== index));
   };
+
+  const addDeparture = () => {
+    if (currentDeparture.trim()) {
+      handleInputChange('departure_from', [...tripData.departure_from, currentDeparture.trim()]);
+      setCurrentDeparture("");
+    }
+  };
+
+  const removeDeparture = (index) => {
+    handleInputChange('departure_from', tripData.departure_from.filter((_, i) => i !== index));
+  };
+
+  const toggleTag = (tag) => {
+    if (tripData.tags.includes(tag)) {
+      handleInputChange('tags', tripData.tags.filter(t => t !== tag));
+    } else {
+      handleInputChange('tags', [...tripData.tags, tag]);
+    }
+  };
+
+  const handleImageGeneration = async () => {
+    setUploadingImage(true);
+    try {
+      const prompt = `Beautiful hiking trail landscape for a ${tripData.difficulty} difficulty hike in ${tripData.location || 'mountains'}, scenic nature photography, high quality`;
+      const result = await base44.integrations.Core.GenerateImage({ prompt });
+      handleInputChange('image_url', result.url);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleGalleryImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file || tripData.gallery_images.length >= 5) return;
+
+    setUploadingImage(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      handleInputChange('gallery_images', [...tripData.gallery_images, file_url]);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const removeGalleryImage = (index) => {
+    handleInputChange('gallery_images', tripData.gallery_images.filter((_, i) => i !== index));
+  };
+
+  const handleGPXUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      handleInputChange('gpx_file_url', file_url);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const availableTags = [
+    "beginner-friendly",
+    "sunrise-hike",
+    "sunset-hike",
+    "pet-friendly",
+    "family-friendly",
+    "challenging",
+    "camping",
+    "multi-day",
+    "guided",
+    "photography",
+    "wildlife",
+    "waterfall",
+    "summit",
+    "coastal",
+    "forest",
+    "bus",
+    "organized-carpooling"
+  ];
   
   if (isTripLoading || !tripData) {
       return (
@@ -222,7 +311,24 @@ export default function EditTripPage() {
 
             <div>
               <Label htmlFor="description">{t('create_trip.description')}</Label>
-              <Textarea id="description" value={tripData.description} onChange={(e) => handleInputChange('description', e.target.value)} rows={4} />
+              <Textarea id="description" value={tripData.description || ""} onChange={(e) => handleInputChange('description', e.target.value)} rows={4} />
+            </div>
+
+            <div>
+              <Label>{t('create_trip.tags')}</Label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {availableTags.map(tag => (
+                  <Badge
+                    key={tag}
+                    variant={tripData.tags.includes(tag) ? "default" : "outline"}
+                    className={`cursor-pointer ${tripData.tags.includes(tag) ? 'bg-emerald-600' : ''}`}
+                    onClick={() => toggleTag(tag)}
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+              <p className="text-xs text-stone-500 mt-2">{t('create_trip.tags_description')}</p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
@@ -240,7 +346,7 @@ export default function EditTripPage() {
 
             <div>
                 <Label htmlFor="time">{t('create_trip.start_time')}</Label>
-                <Input id="time" type="time" value={tripData.start_time} onChange={(e) => handleInputChange('start_time', e.target.value)} />
+                <Input id="time" type="time" value={tripData.start_time || ""} onChange={(e) => handleInputChange('start_time', e.target.value)} />
             </div>
 
             <div>
@@ -250,13 +356,14 @@ export default function EditTripPage() {
             </div>
 
             <div>
-              <Label htmlFor="event_url">{language === 'el' ? 'Σύνδεσμος Κράτησης' : 'Booking Link'}</Label>
+              <Label htmlFor="event_url">{language === 'el' ? 'Σύνδεσμος Κράτησης' : 'Booking Link'} *</Label>
               <Input
                 id="event_url"
                 type="url"
-                value={tripData.event_url}
+                value={tripData.event_url || ""}
                 onChange={(e) => handleInputChange('event_url', e.target.value)}
                 placeholder={language === 'el' ? 'Π.χ. https://example.com/book' : 'e.g. https://example.com/book'}
+                required
               />
             </div>
 
@@ -342,70 +449,183 @@ export default function EditTripPage() {
 
               <div>
                 <Label htmlFor="duration">{t('create_trip.duration_hours')}</Label>
-                <Input id="duration" type="number" min="1" step="0.5" value={tripData.duration_hours} onChange={(e) => handleInputChange('duration_hours', parseFloat(e.target.value))} />
+                <Input id="duration" type="number" min="1" step="0.5" value={tripData.duration_hours || 0} onChange={(e) => handleInputChange('duration_hours', parseFloat(e.target.value))} />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="min">{t('create_trip.min_participants')}</Label>
+                <Input
+                  id="min"
+                  type="number"
+                  min="1"
+                  value={tripData.min_participants || 1}
+                  onChange={(e) => handleInputChange('min_participants', parseInt(e.target.value))}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="max">{t('create_trip.max_participants')}</Label>
+                <Input
+                  id="max"
+                  type="number"
+                  min="1"
+                  value={tripData.max_participants || 0}
+                  onChange={(e) => handleInputChange('max_participants', parseInt(e.target.value))}
+                  placeholder={t('create_trip.max_participants_note')}
+                />
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="distance">{t('create_trip.distance')}</Label>
-                <Input id="distance" type="number" min="0" step="0.1" value={tripData.distance_km} onChange={(e) => handleInputChange('distance_km', parseFloat(e.target.value))} />
+                <Input id="distance" type="number" min="0" step="0.1" value={tripData.distance_km || 0} onChange={(e) => handleInputChange('distance_km', parseFloat(e.target.value))} />
               </div>
 
               <div>
                 <Label htmlFor="elevation">{t('create_trip.elevation_gain')}</Label>
-                <Input id="elevation" type="number" min="0" value={tripData.elevation_gain_m} onChange={(e) => handleInputChange('elevation_gain_m', parseInt(e.target.value))} />
+                <Input id="elevation" type="number" min="0" value={tripData.elevation_gain_m || 0} onChange={(e) => handleInputChange('elevation_gain_m', parseInt(e.target.value))} />
               </div>
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="price">{t('create_trip.price_per_person')} *</Label>
-                <Input id="price" type="number" min="0" step="0.01" value={tripData.price} onChange={(e) => handleInputChange('price', parseFloat(e.target.value))} required />
+                <Input id="price" type="number" min="0" step="0.01" value={tripData.price || 0} onChange={(e) => handleInputChange('price', parseFloat(e.target.value))} required />
               </div>
 
               <div>
                 <Label htmlFor="slots">{t('create_trip.total_slots')}</Label>
-                <Input id="slots" type="number" min="1" value={tripData.total_slots} onChange={(e) => handleInputChange('total_slots', parseInt(e.target.value))} />
+                <Input id="slots" type="number" min="1" value={tripData.total_slots || 10} onChange={(e) => handleInputChange('total_slots', parseInt(e.target.value))} />
               </div>
-            </div>
-            
-            <div>
-              <Label htmlFor="organizer_email">{language === 'el' ? 'Email Διοργανωτή' : 'Organizer Email'}</Label>
-              <Input
-                id="organizer_email"
-                type="email"
-                value={tripData.organizer_email || (user ? user.email : '')}
-                onChange={(e) => handleInputChange('organizer_email', e.target.value)}
-                placeholder={language === 'el' ? 'Email για επικοινωνία' : 'Email for communication'}
-              />
-              <p className="text-xs text-stone-500 mt-1">{language === 'el' ? 'Αυτό το email θα χρησιμοποιηθεί για επικοινωνία σχετική με την εκδρομή.' : 'This email will be used for trip-related communications.'}</p>
             </div>
 
             <div>
-              <Label htmlFor="external">{t('create_trip.external_link')} *</Label>
-              <Input id="external" type="url" value={tripData.external_link} onChange={(e) => handleInputChange('external_link', e.target.value)} required />
+              <Label htmlFor="cancel_policy">{t('create_trip.cancellation_policy')}</Label>
+              <Textarea
+                id="cancel_policy"
+                value={tripData.cancel_policy || ""}
+                onChange={(e) => handleInputChange('cancel_policy', e.target.value)}
+                placeholder={t('create_trip.cancellation_policy_placeholder')}
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="organizer_notes">{t('create_trip.organizer_notes')}</Label>
+              <Textarea
+                id="organizer_notes"
+                value={tripData.organizer_notes || ""}
+                onChange={(e) => handleInputChange('organizer_notes', e.target.value)}
+                placeholder={t('create_trip.organizer_notes_placeholder')}
+                rows={3}
+              />
+              <p className="text-xs text-stone-500 mt-1">{t('create_trip.organizer_notes_description')}</p>
+            </div>
+
+            <div>
+              <Label htmlFor="status">{language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}</Label>
+              <Select
+                value={tripData.status}
+                onValueChange={(value) => handleInputChange('status', value)}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο (δεν θα δημοσιευτεί)' : 'Draft (will not be published)'}</SelectItem>
+                  <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενη (θα δημοσιευτεί)' : 'Upcoming (will be published)'}</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-stone-500 mt-1">
+                {language === 'el' 
+                  ? 'Επιλέξτε "Πρόχειρο" για να αποθηκεύσετε την εκδρομή χωρίς να τη δημοσιεύσετε. Μπορείτε να την δημοσιεύσετε αργότερα αλλάζοντας την κατάσταση.'
+                  : 'Select "Draft" to save the trip without publishing it. You can publish it later by changing the status.'}
+              </p>
+            </div>
+            
+            <div>
+              <Label htmlFor="external">{t('create_trip.external_link')}</Label>
+              <Input
+                id="external"
+                type="url"
+                value={tripData.external_link || ""}
+                onChange={(e) => handleInputChange('external_link', e.target.value)}
+                placeholder={t('create_trip.external_link_placeholder')}
+              />
             </div>
 
             <div>
               <Label htmlFor="image-upload">{t('create_trip.upload_primary_image')}</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploadingImage}
+                  className="flex-1"
+                />
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={handleImageGeneration}
+                  disabled={uploadingImage}
+                >
+                  {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : t('create_trip.generate_ai_image')}
+                </Button>
+              </div>
+              {uploadingImage && <p className="text-sm text-stone-500">{t('create_trip.uploading')}</p>}
+              {tripData.image_url && (
+                <img 
+                  src={tripData.image_url} 
+                  alt="Preview" 
+                  className="mt-2 w-full h-48 object-cover rounded-lg"
+                />
+              )}
+            </div>
+
+            <div>
+              <Label>{t('create_trip.gallery_images')}</Label>
               <Input
-                id="image-upload"
                 type="file"
                 accept="image/*"
-                onChange={handleImageUpload}
+                onChange={handleGalleryImageUpload}
+                disabled={uploadingImage || tripData.gallery_images.length >= 5}
+              />
+              {tripData.gallery_images.length > 0 && (
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {tripData.gallery_images.map((url, index) => (
+                    <div key={index} className="relative">
+                      <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-24 object-cover rounded" />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        className="absolute top-1 right-1"
+                        onClick={() => removeGalleryImage(index)}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="gpx">{t('create_trip.gpx_file')}</Label>
+              <Input
+                id="gpx"
+                type="file"
+                accept=".gpx"
+                onChange={handleGPXUpload}
                 disabled={uploadingImage}
               />
-              {uploadingImage && (
-                <p className="text-sm text-stone-500 mt-2 flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  {t('create_trip.uploading')}
-                </p>
-              )}
-              {tripData.image_url && (
-                <div className="mt-3">
-                  <img src={tripData.image_url} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
-                </div>
+              {tripData.gpx_file_url && (
+                <p className="text-sm text-emerald-600 mt-1">✓ {t('create_trip.gpx_uploaded')}</p>
               )}
             </div>
 
@@ -425,6 +645,41 @@ export default function EditTripPage() {
                   <div key={index} className="flex items-center justify-between bg-stone-50 p-2 rounded">
                     <span className="text-sm">{req}</span>
                     <Button type="button" variant="ghost" size="sm" onClick={() => removeRequirement(index)}><X className="w-4 h-4" /></Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label>{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'} *</Label>
+              <p className="text-xs text-stone-500 mb-2">
+                {language === 'el' 
+                  ? 'Προσθέστε τις τοποθεσίες αναχώρησης (π.χ. Αθήνα, Θεσσαλονίκη)'
+                  : 'Add departure locations (e.g. Athens, Thessaloniki)'}
+              </p>
+              <div className="flex gap-2 mb-2">
+                <Input
+                  value={currentDeparture}
+                  onChange={(e) => setCurrentDeparture(e.target.value)}
+                  placeholder={language === 'el' ? 'π.χ. Αθήνα' : 'e.g. Athens'}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addDeparture())}
+                />
+                <Button type="button" onClick={addDeparture} variant="outline">
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {tripData.departure_from.map((departure, index) => (
+                  <div key={index} className="flex items-center justify-between bg-stone-50 p-2 rounded">
+                    <span className="text-sm">{departure}</span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeDeparture(index)}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
                   </div>
                 ))}
               </div>

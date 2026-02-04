@@ -422,13 +422,14 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-              <Label htmlFor="event_url">{language === 'el' ? 'Σύνδεσμος Κράτησης' : 'Booking Link'}</Label>
+              <Label htmlFor="event_url">{language === 'el' ? 'Σύνδεσμος Κράτησης' : 'Booking Link'} *</Label>
               <Input
                 id="event_url"
                 type="url"
                 value={tripData.event_url}
                 onChange={(e) => setTripData({...tripData, event_url: e.target.value})}
                 placeholder={language === 'el' ? 'Π.χ. https://example.com/book' : 'e.g. https://example.com/book'}
+                required
               />
             </div>
 
@@ -764,7 +765,7 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-              <Label>{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</Label>
+              <Label>{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'} *</Label>
               <p className="text-xs text-stone-500 mb-2">
                 {language === 'el' 
                   ? 'Προσθέστε τις τοποθεσίες αναχώρησης (π.χ. Αθήνα, Θεσσαλονίκη)'
