@@ -442,7 +442,7 @@ export default function TripDetailsPage() {
             </Button>
             {user?.organizer_code === trip?.organizer_code && (
               <Link to={createPageUrl(`EditTrip?id=${trip.id}`)}>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className="bg-emerald-600 hover:bg-emerald-400 active:bg-emerald-500 text-white">
                   Edit Trip
                 </Button>
               </Link>
