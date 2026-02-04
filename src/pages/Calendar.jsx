@@ -54,6 +54,21 @@ export default function CalendarPage() {
     initialData: []
   });
 
+  const { data: organizers = [] } = useQuery({
+    queryKey: ['organizers-calendar'],
+    queryFn: () => base44.entities.Organizer.list(),
+    initialData: []
+  });
+
+  // Create organizer map for quick lookup
+  const organizerMap = React.useMemo(() => {
+    const map = {};
+    organizers.forEach(org => {
+      map[org.organizer_code] = org;
+    });
+    return map;
+  }, [organizers]);
+
   const activeTrips = trips.filter((trip) => {
     const status = getComputedTripStatus(trip);
     return status === 'upcoming' || status === 'happening now';
@@ -84,8 +99,11 @@ export default function CalendarPage() {
       if (!hasMatchingTag) return false;
     }
 
-    if (filters.verifiedOnly && !trip.organizer_is_verified) {
-      return false;
+    if (filters.verifiedOnly) {
+      const organizer = organizerMap[trip.organizer_code];
+      if (!organizer || !organizer.is_verified) {
+        return false;
+      }
     }
 
     if (filters.searchQuery) {
