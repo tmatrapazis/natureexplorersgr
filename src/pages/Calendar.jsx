@@ -44,7 +44,8 @@ export default function CalendarPage() {
     verifiedOnly: false,
     searchQuery: ""
   });
-  const [showAllTrips, setShowAllTrips] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const tripsPerPage = 12;
   const tripsListRef = React.useRef(null);
 
   const { data: trips, isLoading } = useQuery({
@@ -123,13 +124,20 @@ export default function CalendarPage() {
     });
     setSelectedDate(null);
     setSelectedDayTrips([]);
+    setCurrentPage(1);
   };
 
-  const displayTrips = selectedDate ?
-  selectedDayTrips :
-  showAllTrips ? filteredTrips : filteredTrips.slice(0, 10);
+  // Reset to page 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, selectedDate]);
 
-  const hasMoreTrips = !selectedDate && filteredTrips.length > 10;
+  // Calculate pagination
+  const totalPages = selectedDate ? 1 : Math.ceil(filteredTrips.length / tripsPerPage);
+  const startIndex = (currentPage - 1) * tripsPerPage;
+  const endIndex = startIndex + tripsPerPage;
+  
+  const displayTrips = selectedDate ? selectedDayTrips : filteredTrips.slice(startIndex, endIndex);
 
   const hasActiveFilters = filters.difficulty !== "all" ||
   filters.minPrice ||
@@ -202,16 +210,52 @@ export default function CalendarPage() {
 
             <>
                 <TripsList trips={displayTrips} selectedDate={selectedDate} />
-                {hasMoreTrips &&
-              <div className="text-center mt-6">
+                {!selectedDate && totalPages > 1 &&
+              <div className="flex justify-center items-center gap-2 mt-8">
                     <Button
                   variant="outline"
-                  onClick={() => setShowAllTrips(!showAllTrips)}
-                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50">
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50">
+                      {language === 'el' ? 'Προηγούμενη' : 'Previous'}
+                    </Button>
+                    
+                    <div className="flex items-center gap-2">
+                      {[...Array(totalPages)].map((_, i) => {
+                        const pageNum = i + 1;
+                        // Show first, last, current, and adjacent pages
+                        if (
+                          pageNum === 1 ||
+                          pageNum === totalPages ||
+                          Math.abs(pageNum - currentPage) <= 1
+                        ) {
+                          return (
+                            <Button
+                              key={pageNum}
+                              variant={currentPage === pageNum ? "default" : "outline"}
+                              onClick={() => setCurrentPage(pageNum)}
+                              className={currentPage === pageNum ? "bg-emerald-600 hover:bg-emerald-700" : "border-emerald-300 text-emerald-700 hover:bg-emerald-50"}
+                              size="sm"
+                            >
+                              {pageNum}
+                            </Button>
+                          );
+                        } else if (
+                          pageNum === currentPage - 2 ||
+                          pageNum === currentPage + 2
+                        ) {
+                          return <span key={pageNum} className="px-2 text-stone-500">...</span>;
+                        }
+                        return null;
+                      })}
+                    </div>
 
-                      {showAllTrips ?
-                  language === 'el' ? 'Εμφάνιση λιγότερων' : 'Show Less' :
-                  language === 'el' ? `Δείτε περισσότερα (${filteredTrips.length - 10})` : `View More (${filteredTrips.length - 10})`}
+                    <Button
+                  variant="outline"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50">
+                      {language === 'el' ? 'Επόμενη' : 'Next'}
                     </Button>
                   </div>
               }
