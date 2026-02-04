@@ -22,7 +22,6 @@ export default function EditTripPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
 
-  const [user, setUser] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
 
   const { language } = useLanguage();
@@ -34,22 +33,6 @@ export default function EditTripPage() {
     description: 'Edit hiking trip',
     noindex: true
   });
-
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        if (base44.auth && typeof base44.auth.currentUser !== 'undefined') {
-          setUser(base44.auth.currentUser);
-        } else if (base44.auth && typeof base44.auth.getUser === 'function') {
-          const fetchedUser = await base44.auth.getUser();
-          setUser(fetchedUser);
-        }
-      } catch (error) {
-        console.error("Failed to fetch current user from base44 auth:", error);
-      }
-    };
-    fetchCurrentUser();
-  }, []);
 
   const { data: trip, isLoading: isTripLoading } = useQuery({
     queryKey: ['trip', tripId],
@@ -63,11 +46,6 @@ export default function EditTripPage() {
   const [tripData, setTripData] = useState(null);
   const [currentRequirement, setCurrentRequirement] = useState("");
   const [currentDeparture, setCurrentDeparture] = useState("");
-  const [newMeetingPoint, setNewMeetingPoint] = useState({
-    name: "",
-    location: "",
-    time: ""
-  });
 
   useEffect(() => {
     if (trip) {
@@ -78,12 +56,10 @@ export default function EditTripPage() {
         requirements: trip.requirements || [],
         departure_from: trip.departure_from || [],
         tags: trip.tags || [],
-        meeting_points: trip.meeting_points || [],
-        gallery_images: trip.gallery_images || [],
         cancel_policy: trip.cancel_policy || "",
-        organizer_notes: trip.organizer_notes || "",
-        gpx_file_url: trip.gpx_file_url || "",
-        status: trip.status || "draft"
+        status: trip.status || "draft",
+        distance_km: trip.distance_km || 0,
+        elevation_gain_m: trip.elevation_gain_m || 0
       });
     }
   }, [trip]);
@@ -109,11 +85,6 @@ export default function EditTripPage() {
     // Ensure end_date is set
     if (!dataToSubmit.end_date) {
       dataToSubmit.end_date = dataToSubmit.start_date;
-    }
-    
-    // Ensure max_participants is set
-    if (!dataToSubmit.max_participants || dataToSubmit.max_participants === 0) {
-      dataToSubmit.max_participants = dataToSubmit.total_slots;
     }
     
     await updateTripMutation.mutateAsync(dataToSubmit);
@@ -150,17 +121,6 @@ export default function EditTripPage() {
     handleInputChange('requirements', tripData.requirements.filter((_, i) => i !== index));
   };
 
-  const addMeetingPoint = () => {
-    if (newMeetingPoint.name.trim() && newMeetingPoint.location.trim()) {
-      handleInputChange('meeting_points', [...tripData.meeting_points, newMeetingPoint]);
-      setNewMeetingPoint({ name: "", location: "", time: "" });
-    }
-  };
-
-  const removeMeetingPoint = (index) => {
-    handleInputChange('meeting_points', tripData.meeting_points.filter((_, i) => i !== index));
-  };
-
   const addDeparture = () => {
     if (currentDeparture.trim()) {
       handleInputChange('departure_from', [...tripData.departure_from, currentDeparture.trim()]);
@@ -186,36 +146,6 @@ export default function EditTripPage() {
       const prompt = `Beautiful hiking trail landscape for a ${tripData.difficulty} difficulty hike in ${tripData.location || 'mountains'}, scenic nature photography, high quality`;
       const result = await base44.integrations.Core.GenerateImage({ prompt });
       handleInputChange('image_url', result.url);
-    } finally {
-      setUploadingImage(false);
-    }
-  };
-
-  const handleGalleryImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file || tripData.gallery_images.length >= 5) return;
-
-    setUploadingImage(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      handleInputChange('gallery_images', [...tripData.gallery_images, file_url]);
-    } finally {
-      setUploadingImage(false);
-    }
-  };
-
-  const removeGalleryImage = (index) => {
-    handleInputChange('gallery_images', tripData.gallery_images.filter((_, i) => i !== index));
-  };
-
-  const handleGPXUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      handleInputChange('gpx_file_url', file_url);
     } finally {
       setUploadingImage(false);
     }
@@ -304,11 +234,6 @@ export default function EditTripPage() {
             </div>
 
             <div>
-                <Label htmlFor="time">{t('create_trip.start_time')}</Label>
-                <Input id="time" type="time" value={tripData.start_time || ""} onChange={(e) => handleInputChange('start_time', e.target.value)} />
-            </div>
-
-            <div>
               <Label htmlFor="location">{t('create_trip.location_region')} *</Label>
               <Input id="location" value={tripData.location} onChange={(e) => handleInputChange('location', e.target.value)} placeholder={t('create_trip.location_placeholder')} required />
               <p className="text-xs text-stone-500 mt-1">{t('create_trip.location_note')}</p>
@@ -326,72 +251,6 @@ export default function EditTripPage() {
               />
             </div>
 
-            <div>
-              <Label>{t('create_trip.meeting_points')}</Label>
-              <p className="text-xs text-stone-500 mb-3">{t('create_trip.meeting_points_description')}</p>
-              
-              {tripData.meeting_points.length > 0 && (
-                <div className="space-y-2 mb-4">
-                  {tripData.meeting_points.map((point, index) => (
-                    <div key={index} className="bg-stone-50 p-3 rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <MapPin className="w-4 h-4 text-emerald-600" />
-                            <p className="font-medium text-stone-900">{point.name}</p>
-                          </div>
-                          <p className="text-sm text-stone-600 ml-6">{point.location}</p>
-                          {point.time && (
-                            <div className="flex items-center gap-2 mt-1 ml-6">
-                              <Clock className="w-3 h-3 text-stone-500" />
-                              <p className="text-sm text-stone-600">{point.time}</p>
-                            </div>
-                          )}
-                        </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeMeetingPoint(index)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="space-y-3 border rounded-lg p-4 bg-white">
-                <Input
-                  placeholder={t('create_trip.meeting_point_name_placeholder')}
-                  value={newMeetingPoint.name}
-                  onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, name: e.target.value })}
-                />
-                <Input
-                  placeholder={t('create_trip.meeting_point_location_placeholder')}
-                  value={newMeetingPoint.location}
-                  onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, location: e.target.value })}
-                />
-                <Input
-                  type="time"
-                  placeholder={t('create_trip.meeting_point_time')}
-                  value={newMeetingPoint.time}
-                  onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, time: e.target.value })}
-                />
-                <Button
-                  type="button"
-                  onClick={addMeetingPoint}
-                  variant="outline"
-                  className="w-full"
-                  disabled={!newMeetingPoint.name.trim() || !newMeetingPoint.location.trim()}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t('create_trip.add_meeting_point')}
-                </Button>
-              </div>
-            </div>
-
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="difficulty">{t('create_trip.difficulty_level')}</Label>
@@ -404,36 +263,6 @@ export default function EditTripPage() {
                     <SelectItem value="difficult">{t('trip.difficulty_difficult')}</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="duration">{t('create_trip.duration_hours')}</Label>
-                <Input id="duration" type="number" min="1" step="0.5" value={tripData.duration_hours || 0} onChange={(e) => handleInputChange('duration_hours', parseFloat(e.target.value))} />
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="min">{t('create_trip.min_participants')}</Label>
-                <Input
-                  id="min"
-                  type="number"
-                  min="1"
-                  value={tripData.min_participants || 1}
-                  onChange={(e) => handleInputChange('min_participants', parseInt(e.target.value))}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="max">{t('create_trip.max_participants')}</Label>
-                <Input
-                  id="max"
-                  type="number"
-                  min="1"
-                  value={tripData.max_participants || 0}
-                  onChange={(e) => handleInputChange('max_participants', parseInt(e.target.value))}
-                  placeholder={t('create_trip.max_participants_note')}
-                />
               </div>
             </div>
 
@@ -470,18 +299,6 @@ export default function EditTripPage() {
                 placeholder={t('create_trip.cancellation_policy_placeholder')}
                 rows={3}
               />
-            </div>
-
-            <div>
-              <Label htmlFor="organizer_notes">{t('create_trip.organizer_notes')}</Label>
-              <Textarea
-                id="organizer_notes"
-                value={tripData.organizer_notes || ""}
-                onChange={(e) => handleInputChange('organizer_notes', e.target.value)}
-                placeholder={t('create_trip.organizer_notes_placeholder')}
-                rows={3}
-              />
-              <p className="text-xs text-stone-500 mt-1">{t('create_trip.organizer_notes_description')}</p>
             </div>
 
             <div>
@@ -543,48 +360,6 @@ export default function EditTripPage() {
                   alt="Preview" 
                   className="mt-2 w-full h-48 object-cover rounded-lg"
                 />
-              )}
-            </div>
-
-            <div>
-              <Label>{t('create_trip.gallery_images')}</Label>
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleGalleryImageUpload}
-                disabled={uploadingImage || tripData.gallery_images.length >= 5}
-              />
-              {tripData.gallery_images.length > 0 && (
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  {tripData.gallery_images.map((url, index) => (
-                    <div key={index} className="relative">
-                      <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-24 object-cover rounded" />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute top-1 right-1"
-                        onClick={() => removeGalleryImage(index)}
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="gpx">{t('create_trip.gpx_file')}</Label>
-              <Input
-                id="gpx"
-                type="file"
-                accept=".gpx"
-                onChange={handleGPXUpload}
-                disabled={uploadingImage}
-              />
-              {tripData.gpx_file_url && (
-                <p className="text-sm text-emerald-600 mt-1">✓ {t('create_trip.gpx_uploaded')}</p>
               )}
             </div>
 
