@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Plus, X, Loader2, MapPin, Clock } from "lucide-react";
+import { ArrowLeft, Plus, X, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import useSEO from '../components/seo/useSEO';
@@ -43,38 +43,24 @@ export default function CreateTripPage() {
     description: "",
     start_date: "",
     end_date: "",
-    start_time: "",
-    duration_hours: 4,
     location: "", // General location/region
-    meeting_points: [], // Array for multiple meeting points
     difficulty: "moderate",
     distance_km: 0,
     elevation_gain_m: 0,
-    min_participants: 1,
-    max_participants: 0,
     total_slots: 10,
     price: 0,
     external_link: "",
     image_url: "",
-    gallery_images: [],
     requirements: [],
     departure_from: [],
     tags: [],
     cancel_policy: "",
-    organizer_notes: "",
-    gpx_file_url: "",
     status: "draft"
   });
 
   const [currentRequirement, setCurrentRequirement] = useState("");
   const [currentDeparture, setCurrentDeparture] = useState("");
-  const [currentTag, setCurrentTag] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [newMeetingPoint, setNewMeetingPoint] = useState({
-    name: "",
-    location: "",
-    time: ""
-  });
 
   // Load data from navigation state if recreating a trip
   useEffect(() => {
@@ -85,10 +71,8 @@ export default function CreateTripPage() {
         start_date: "",
         end_date: "",
         status: "draft",
-        meeting_points: data.meeting_points || [],
         requirements: data.requirements || [],
-        tags: data.tags || [],
-        gallery_images: data.gallery_images || []
+        tags: data.tags || []
       });
     }
   }, [location.state]);
@@ -158,9 +142,6 @@ export default function CreateTripPage() {
     if (!dataToSubmit.end_date) {
       dataToSubmit.end_date = dataToSubmit.start_date;
     }
-    if (!dataToSubmit.max_participants || dataToSubmit.max_participants === 0) {
-      dataToSubmit.max_participants = dataToSubmit.total_slots;
-    }
     
     await createTripMutation.mutateAsync(dataToSubmit);
   };
@@ -174,9 +155,6 @@ export default function CreateTripPage() {
     const dataToSubmit = { ...tripData };
     if (!dataToSubmit.end_date) {
       dataToSubmit.end_date = dataToSubmit.start_date;
-    }
-    if (!dataToSubmit.max_participants || dataToSubmit.max_participants === 0) {
-      dataToSubmit.max_participants = dataToSubmit.total_slots;
     }
     
     await saveDraftMutation.mutateAsync(dataToSubmit);
@@ -257,58 +235,7 @@ export default function CreateTripPage() {
     }
   };
 
-  const handleGalleryImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file || tripData.gallery_images.length >= 5) return;
 
-    setUploadingImage(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setTripData({
-        ...tripData,
-        gallery_images: [...tripData.gallery_images, file_url]
-      });
-    } finally {
-      setUploadingImage(false);
-    }
-  };
-
-  const removeGalleryImage = (index) => {
-    setTripData({
-      ...tripData,
-      gallery_images: tripData.gallery_images.filter((_, i) => i !== index)
-    });
-  };
-
-  const handleGPXUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setTripData({ ...tripData, gpx_file_url: file_url });
-    } finally {
-      setUploadingImage(false);
-    }
-  };
-
-  const addMeetingPoint = () => {
-    if (newMeetingPoint.name.trim() && newMeetingPoint.location.trim()) {
-      setTripData({
-        ...tripData,
-        meeting_points: [...tripData.meeting_points, newMeetingPoint]
-      });
-      setNewMeetingPoint({ name: "", location: "", time: "" });
-    }
-  };
-
-  const removeMeetingPoint = (index) => {
-    setTripData({
-      ...tripData,
-      meeting_points: tripData.meeting_points.filter((_, i) => i !== index)
-    });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
@@ -400,16 +327,6 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-                <Label htmlFor="time">{t('create_trip.start_time')}</Label>
-                <Input
-                  id="time"
-                  type="time"
-                  value={tripData.start_time}
-                  onChange={(e) => setTripData({...tripData, start_time: e.target.value})}
-                />
-            </div>
-
-            <div>
               <Label htmlFor="location">{t('create_trip.location_region')} *</Label>
               <Input
                 id="location"
@@ -433,72 +350,6 @@ export default function CreateTripPage() {
               />
             </div>
 
-            <div>
-              <Label>{t('create_trip.meeting_points')}</Label>
-              <p className="text-xs text-stone-500 mb-3">{t('create_trip.meeting_points_description')}</p>
-              
-              {tripData.meeting_points.length > 0 && (
-                <div className="space-y-2 mb-4">
-                  {tripData.meeting_points.map((point, index) => (
-                    <div key={index} className="bg-stone-50 p-3 rounded-lg">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <MapPin className="w-4 h-4 text-emerald-600" />
-                            <p className="font-medium text-stone-900">{point.name}</p>
-                          </div>
-                          <p className="text-sm text-stone-600 ml-6">{point.location}</p>
-                          {point.time && (
-                            <div className="flex items-center gap-2 mt-1 ml-6">
-                              <Clock className="w-3 h-3 text-stone-500" />
-                              <p className="text-sm text-stone-600">{point.time}</p>
-                            </div>
-                          )}
-                        </div>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeMeetingPoint(index)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="space-y-3 border rounded-lg p-4 bg-white">
-                <Input
-                  placeholder={t('create_trip.meeting_point_name_placeholder')}
-                  value={newMeetingPoint.name}
-                  onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, name: e.target.value })}
-                />
-                <Input
-                  placeholder={t('create_trip.meeting_point_location_placeholder')}
-                  value={newMeetingPoint.location}
-                  onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, location: e.target.value })}
-                />
-                <Input
-                  type="time"
-                  placeholder={t('create_trip.meeting_point_time')}
-                  value={newMeetingPoint.time}
-                  onChange={(e) => setNewMeetingPoint({ ...newMeetingPoint, time: e.target.value })}
-                />
-                <Button
-                  type="button"
-                  onClick={addMeetingPoint}
-                  variant="outline"
-                  className="w-full"
-                  disabled={!newMeetingPoint.name.trim() || !newMeetingPoint.location.trim()}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  {t('create_trip.add_meeting_point')}
-                </Button>
-              </div>
-            </div>
-
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="difficulty">{t('create_trip.difficulty_level')}</Label>
@@ -516,18 +367,6 @@ export default function CreateTripPage() {
                     <SelectItem value="difficult">{t('trip.difficulty_difficult')}</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="duration">{t('create_trip.duration_hours')}</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  min="1"
-                  step="0.5"
-                  value={tripData.duration_hours}
-                  onChange={(e) => setTripData({...tripData, duration_hours: parseFloat(e.target.value)})}
-                />
               </div>
             </div>
 
@@ -552,31 +391,6 @@ export default function CreateTripPage() {
                   min="0"
                   value={tripData.elevation_gain_m}
                   onChange={(e) => setTripData({...tripData, elevation_gain_m: parseInt(e.target.value)})}
-                />
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="min">{t('create_trip.min_participants')}</Label>
-                <Input
-                  id="min"
-                  type="number"
-                  min="1"
-                  value={tripData.min_participants}
-                  onChange={(e) => setTripData({...tripData, min_participants: parseInt(e.target.value)})}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="max">{t('create_trip.max_participants')}</Label>
-                <Input
-                  id="max"
-                  type="number"
-                  min="1"
-                  value={tripData.max_participants}
-                  onChange={(e) => setTripData({...tripData, max_participants: parseInt(e.target.value)})}
-                  placeholder={t('create_trip.max_participants_note')}
                 />
               </div>
             </div>
@@ -616,18 +430,6 @@ export default function CreateTripPage() {
                 placeholder={t('create_trip.cancellation_policy_placeholder')}
                 rows={3}
               />
-            </div>
-
-            <div>
-              <Label htmlFor="organizer_notes">{t('create_trip.organizer_notes')}</Label>
-              <Textarea
-                id="organizer_notes"
-                value={tripData.organizer_notes}
-                onChange={(e) => setTripData({...tripData, organizer_notes: e.target.value})}
-                placeholder={t('create_trip.organizer_notes_placeholder')}
-                rows={3}
-              />
-              <p className="text-xs text-stone-500 mt-1">{t('create_trip.organizer_notes_description')}</p>
             </div>
 
             <div>
@@ -689,48 +491,6 @@ export default function CreateTripPage() {
                   alt="Preview" 
                   className="mt-2 w-full h-48 object-cover rounded-lg"
                 />
-              )}
-            </div>
-
-            <div>
-              <Label>{t('create_trip.gallery_images')}</Label>
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleGalleryImageUpload}
-                disabled={uploadingImage || tripData.gallery_images.length >= 5}
-              />
-              {tripData.gallery_images.length > 0 && (
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  {tripData.gallery_images.map((url, index) => (
-                    <div key={index} className="relative">
-                      <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-24 object-cover rounded" />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        className="absolute top-1 right-1"
-                        onClick={() => removeGalleryImage(index)}
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="gpx">{t('create_trip.gpx_file')}</Label>
-              <Input
-                id="gpx"
-                type="file"
-                accept=".gpx"
-                onChange={handleGPXUpload}
-                disabled={uploadingImage}
-              />
-              {tripData.gpx_file_url && (
-                <p className="text-sm text-emerald-600 mt-1">✓ {t('create_trip.gpx_uploaded')}</p>
               )}
             </div>
 
