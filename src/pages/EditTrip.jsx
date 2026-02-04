@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Plus, X, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 import useSEO from '../components/seo/useSEO';
 import { useLanguage } from '../components/contexts/LanguageContext';
@@ -24,6 +25,9 @@ export default function EditTripPage() {
 
   const [user, setUser] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [isFormDirty, setIsFormDirty] = useState(false);
+  const [showExitDialog, setShowExitDialog] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState(null);
 
   const { language } = useLanguage();
   const { t } = useTranslation(language);
@@ -103,10 +107,50 @@ export default function EditTripPage() {
     }
     
     await updateTripMutation.mutateAsync(dataToSubmit);
+    setIsFormDirty(false);
   };
+
+  const handleNavigateAway = (destination) => {
+    if (isFormDirty) {
+      setPendingNavigation(destination);
+      setShowExitDialog(true);
+    } else {
+      navigate(destination);
+    }
+  };
+
+  const handleSaveAndExit = async () => {
+    const form = document.querySelector('form');
+    if (form) {
+      const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+      form.dispatchEvent(submitEvent);
+    }
+    setShowExitDialog(false);
+  };
+
+  const handleDiscardAndExit = () => {
+    setIsFormDirty(false);
+    setShowExitDialog(false);
+    if (pendingNavigation) {
+      navigate(pendingNavigation);
+    }
+  };
+
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (isFormDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isFormDirty]);
   
   const handleInputChange = (key, value) => {
       setTripData(prev => ({...prev, [key]: value}));
+      setIsFormDirty(true);
   };
 
   const handleImageUpload = async (e) => {
@@ -199,12 +243,14 @@ export default function EditTripPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
-        <Link to={createPageUrl("MyTrips")}>
-          <Button variant="outline" className="mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('create_trip.back_to_trips')}
-          </Button>
-        </Link>
+        <Button 
+          variant="outline" 
+          className="mb-6"
+          onClick={() => handleNavigateAway(createPageUrl("MyTrips"))}
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          {t('create_trip.back_to_trips')}
+        </Button>
 
         <Card className="p-8">
           <h1 className="text-3xl font-bold text-stone-900 mb-6">{t('create_trip.edit_title')}</h1>
@@ -437,7 +483,7 @@ export default function EditTripPage() {
             </div>
 
             <div className="flex gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => navigate(createPageUrl("MyTrips"))}>
+              <Button type="button" variant="outline" onClick={() => handleNavigateAway(createPageUrl("MyTrips"))}>
                 {t('common.cancel')}
               </Button>
               <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700" disabled={updateTripMutation.isPending}>
@@ -446,6 +492,32 @@ export default function EditTripPage() {
             </div>
           </form>
         </Card>
+
+        <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {language === 'el' ? 'Μη αποθηκευμένες αλλαγές' : 'Unsaved Changes'}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {language === 'el' 
+                  ? 'Έχετε μη αποθηκευμένες αλλαγές. Θέλετε να τις αποθηκεύσετε πριν φύγετε;'
+                  : 'You have unsaved changes. Would you like to save them before leaving?'}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={handleDiscardAndExit}>
+                {language === 'el' ? 'Απόρριψη Αλλαγών' : 'Discard Changes'}
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={() => setShowExitDialog(false)}>
+                {language === 'el' ? 'Ακύρωση' : 'Cancel'}
+              </AlertDialogAction>
+              <AlertDialogAction onClick={handleSaveAndExit} className="bg-emerald-600 hover:bg-emerald-700">
+                {language === 'el' ? 'Αποθήκευση & Έξοδος' : 'Save & Exit'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
