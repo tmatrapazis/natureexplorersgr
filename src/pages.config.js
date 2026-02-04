@@ -49,9 +49,11 @@
  */
 import Calendar from './pages/Calendar';
 import CreateGuideProfile from './pages/CreateGuideProfile';
+import CreateTrip from './pages/CreateTrip';
 import EditGuideProfile from './pages/EditGuideProfile';
 import EditOrganizerProfile from './pages/EditOrganizerProfile';
 import EditProfile from './pages/EditProfile';
+import EditTrip from './pages/EditTrip';
 import GreekRefuges from './pages/GreekRefuges';
 import GuideProfile from './pages/GuideProfile';
 import Guides from './pages/Guides';
@@ -66,8 +68,6 @@ import RequestVerification from './pages/RequestVerification';
 import RoleSelection from './pages/RoleSelection';
 import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
-import CreateTrip from './pages/CreateTrip';
-import EditTrip from './pages/EditTrip';
 import TripDetails from './pages/TripDetails';
 import __Layout from './Layout.jsx';
 
@@ -75,9 +75,11 @@ import __Layout from './Layout.jsx';
 export const PAGES = {
     "Calendar": Calendar,
     "CreateGuideProfile": CreateGuideProfile,
+    "CreateTrip": CreateTrip,
     "EditGuideProfile": EditGuideProfile,
     "EditOrganizerProfile": EditOrganizerProfile,
     "EditProfile": EditProfile,
+    "EditTrip": EditTrip,
     "GreekRefuges": GreekRefuges,
     "GuideProfile": GuideProfile,
     "Guides": Guides,
@@ -92,8 +94,6 @@ export const PAGES = {
     "RoleSelection": RoleSelection,
     "TempImageUploader": TempImageUploader,
     "TermsOfUse": TermsOfUse,
-    "CreateTrip": CreateTrip,
-    "EditTrip": EditTrip,
     "TripDetails": TripDetails,
 }
 

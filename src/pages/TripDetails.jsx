@@ -432,14 +432,22 @@ export default function TripDetailsPage() {
       <StructuredData data={breadcrumbSchema} />
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-5xl mx-auto">
-          <Button 
-            variant="outline" 
-            className="mb-6"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
+          <div className="flex justify-between items-center mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => window.history.back()}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            {user?.organizer_code === trip?.organizer_code && (
+              <Link to={createPageUrl(`EditTrip?id=${trip.id}`)}>
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                  Edit Trip
+                </Button>
+              </Link>
+            )}
+          </div>
 
           <div className="grid lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
