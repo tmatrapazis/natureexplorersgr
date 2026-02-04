@@ -47,6 +47,7 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import Calendar from './pages/Calendar';
 import CreateGuideProfile from './pages/CreateGuideProfile';
 import CreateTrip from './pages/CreateTrip';
 import EditGuideProfile from './pages/EditGuideProfile';
@@ -68,11 +69,11 @@ import RoleSelection from './pages/RoleSelection';
 import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
-import Calendar from './pages/Calendar';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Calendar": Calendar,
     "CreateGuideProfile": CreateGuideProfile,
     "CreateTrip": CreateTrip,
     "EditGuideProfile": EditGuideProfile,
@@ -94,7 +95,6 @@ export const PAGES = {
     "TempImageUploader": TempImageUploader,
     "TermsOfUse": TermsOfUse,
     "TripDetails": TripDetails,
-    "Calendar": Calendar,
 }
 
 export const pagesConfig = {

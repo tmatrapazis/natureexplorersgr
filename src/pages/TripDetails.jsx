@@ -563,6 +563,44 @@ export default function TripDetailsPage() {
                   </div>
                 )}
 
+                {trip.departure_from && trip.departure_from.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="font-semibold text-stone-900 mb-2">
+                      {language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {trip.departure_from.map((location, i) => (
+                        <Badge key={i} className="bg-blue-100 text-blue-800 border-blue-200 border">
+                          <MapPin className="w-3 h-3 mr-1" />
+                          {location}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {trip.tags && trip.tags.length > 0 && (
+                  <div className="mb-6">
+                    <h3 className="font-semibold text-stone-900 mb-2">{language === 'el' ? 'Ετικέτες' : 'Tags'}</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {trip.tags.map((tag, i) => {
+                        const isTransportTag = tag === 'bus' || tag === 'organized-carpooling';
+                        return (
+                          <Badge 
+                            key={i} 
+                            className={isTransportTag 
+                              ? "bg-purple-100 text-purple-800 border-purple-300 border font-semibold" 
+                              : "bg-emerald-100 text-emerald-800 border-emerald-200 border"
+                            }
+                          >
+                            {tag}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {trip.requirements && trip.requirements.length > 0 && (
                   <div>
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>

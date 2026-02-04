@@ -58,6 +58,7 @@ export default function CreateTripPage() {
     image_url: "",
     gallery_images: [],
     requirements: [],
+    departure_from: [],
     tags: [],
     cancel_policy: "",
     organizer_notes: "",
@@ -66,6 +67,7 @@ export default function CreateTripPage() {
   });
 
   const [currentRequirement, setCurrentRequirement] = useState("");
+  const [currentDeparture, setCurrentDeparture] = useState("");
   const [currentTag, setCurrentTag] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
   const [newMeetingPoint, setNewMeetingPoint] = useState({
@@ -106,7 +108,9 @@ export default function CreateTripPage() {
     "waterfall",
     "summit",
     "coastal",
-    "forest"
+    "forest",
+    "bus",
+    "organized-carpooling"
   ];
 
   const createTripMutation = useMutation({
@@ -192,6 +196,23 @@ export default function CreateTripPage() {
     setTripData({
       ...tripData,
       requirements: tripData.requirements.filter((_, i) => i !== index)
+    });
+  };
+
+  const addDeparture = () => {
+    if (currentDeparture.trim()) {
+      setTripData({
+        ...tripData,
+        departure_from: [...tripData.departure_from, currentDeparture.trim()]
+      });
+      setCurrentDeparture("");
+    }
+  };
+
+  const removeDeparture = (index) => {
+    setTripData({
+      ...tripData,
+      departure_from: tripData.departure_from.filter((_, i) => i !== index)
     });
   };
 
@@ -734,6 +755,41 @@ export default function CreateTripPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => removeRequirement(index)}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label>{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</Label>
+              <p className="text-xs text-stone-500 mb-2">
+                {language === 'el' 
+                  ? 'Προσθέστε τις τοποθεσίες αναχώρησης (π.χ. Αθήνα, Θεσσαλονίκη)'
+                  : 'Add departure locations (e.g. Athens, Thessaloniki)'}
+              </p>
+              <div className="flex gap-2 mb-2">
+                <Input
+                  value={currentDeparture}
+                  onChange={(e) => setCurrentDeparture(e.target.value)}
+                  placeholder={language === 'el' ? 'π.χ. Αθήνα' : 'e.g. Athens'}
+                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addDeparture())}
+                />
+                <Button type="button" onClick={addDeparture} variant="outline">
+                  <Plus className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {tripData.departure_from.map((departure, index) => (
+                  <div key={index} className="flex items-center justify-between bg-stone-50 p-2 rounded">
+                    <span className="text-sm">{departure}</span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeDeparture(index)}
                     >
                       <X className="w-4 h-4" />
                     </Button>

@@ -402,7 +402,26 @@ export default function OrganizerProfilePage() {
                               {language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Full'}
                             </Badge>
                           )}
+                          {trip.tags && trip.tags.includes('bus') && (
+                            <Badge className="bg-purple-100 text-purple-800 border-purple-300 border text-xs font-semibold">
+                              🚌 bus
+                            </Badge>
+                          )}
+                          {trip.tags && trip.tags.includes('organized-carpooling') && (
+                            <Badge className="bg-purple-100 text-purple-800 border-purple-300 border text-xs font-semibold">
+                              🚗 carpooling
+                            </Badge>
+                          )}
                         </div>
+                        {trip.departure_from && trip.departure_from.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-3">
+                            {trip.departure_from.map((location, idx) => (
+                              <Badge key={idx} variant="outline" className="border-blue-300 text-blue-700 text-xs">
+                                📍 {location}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
 
                         <div className="space-y-2 text-sm text-stone-600 mb-3">
                           <div className="flex items-center gap-2">
