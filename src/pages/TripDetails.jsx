@@ -481,12 +481,6 @@ export default function TripDetailsPage() {
                     <TrendingUp className="w-3 h-3 mr-1" />
                     {trip.difficulty}
                   </Badge>
-                  {trip.distance_km && (
-                    <Badge variant="outline">{trip.distance_km} km</Badge>
-                  )}
-                  {trip.elevation_gain_m && (
-                    <Badge variant="outline">↑ {trip.elevation_gain_m}m elevation</Badge>
-                  )}
                   {user?.role === 'admin' && (
                     <Badge variant="outline" className="flex items-center gap-1">
                       <Eye className="w-3 h-3" />
