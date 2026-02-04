@@ -103,12 +103,15 @@ export default function EditTripPage() {
     e.preventDefault();
     if (!tripData) return;
     
-    const { created_date, updated_date, id, created_by, view_count, ...dataToSubmit } = tripData;
+    // Remove system fields that shouldn't be updated
+    const { created_date, updated_date, id, created_by, view_count, organizer_name, organizer_is_verified, organizer_email, computedStatus, ...dataToSubmit } = tripData;
     
+    // Ensure end_date is set
     if (!dataToSubmit.end_date) {
       dataToSubmit.end_date = dataToSubmit.start_date;
     }
     
+    // Ensure max_participants is set
     if (!dataToSubmit.max_participants || dataToSubmit.max_participants === 0) {
       dataToSubmit.max_participants = dataToSubmit.total_slots;
     }
