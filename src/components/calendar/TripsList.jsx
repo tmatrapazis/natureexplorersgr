@@ -110,11 +110,6 @@ export default React.forwardRef(function TripsList({ trips, selectedDate }, ref)
                         <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
                           {trip.difficulty}
                         </Badge>
-                        {trip.distance_km && (
-                          <Badge variant="outline" className="border-stone-300 text-xs">
-                            {trip.distance_km} km
-                          </Badge>
-                        )}
                         {trip.status === 'upcoming' && (
                           <Badge className="bg-green-100 text-green-800 border-green-200 border text-xs">
                             {language === 'el' ? 'Διαθέσιμο' : 'Available'}
