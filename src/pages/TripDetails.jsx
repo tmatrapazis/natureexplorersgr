@@ -11,7 +11,6 @@ import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
 import { formatDateRange } from "../components/helpers/dateHelpers";
-import { getPricingOptions, getLowestPrice } from "../components/helpers/pricingHelpers";
 import { trackEvent } from "../components/analytics/GoogleAnalytics";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
@@ -199,7 +198,7 @@ export default function TripDetailsPage() {
     } : undefined,
     "offers": {
       "@type": "Offer",
-      "price": getLowestPrice(trip) || 0,
+      "price": trip.price || 0,
       "priceCurrency": "EUR",
       "url": trip.event_url || window.location.href,
       "availability": trip.status === 'cancelled' ? "https://schema.org/SoldOut" : 
@@ -461,7 +460,14 @@ export default function TripDetailsPage() {
               )}
 
               <Card className="p-6 relative">
-                <div className="absolute top-6 right-6 hidden md:block">
+                <div className="absolute top-6 right-6 hidden md:flex items-center gap-2">
+                  {user && user.organizer_code === trip.organizer_code && (
+                    <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
+                      <Button variant="outline" size="sm">
+                        Edit
+                      </Button>
+                    </Link>
+                  )}
                   <ShareButton trip={trip} language={language} />
                 </div>
                 
@@ -523,19 +529,9 @@ export default function TripDetailsPage() {
                     <Euro className="w-5 h-5 text-emerald-600" />
                     <div>
                       <p className="text-sm text-stone-500">{t('trip.price')}</p>
-                      <div className="space-y-1">
-                        {getPricingOptions(trip).map((option, idx) => (
-                          <p key={idx} className="font-medium text-stone-900">
-                            {option.label}: €{option.price}
-                            {option.description && (
-                              <span className="text-xs text-stone-500 ml-1">({option.description})</span>
-                            )}
-                          </p>
-                        ))}
-                        {getPricingOptions(trip).length === 0 && (
-                          <p className="font-medium text-stone-900">TBA</p>
-                        )}
-                      </div>
+                      <p className="font-medium text-stone-900">
+                        {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
+                      </p>
                     </div>
                   </div>
 
