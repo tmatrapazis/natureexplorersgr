@@ -11,7 +11,7 @@ import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
 import { formatDateRange } from "../components/helpers/dateHelpers";
-import { getPricingOptions } from "../components/helpers/pricingHelpers";
+import { getPricingOptions, getLowestPrice } from "../components/helpers/pricingHelpers";
 import { trackEvent } from "../components/analytics/GoogleAnalytics";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
@@ -199,7 +199,7 @@ export default function TripDetailsPage() {
     } : undefined,
     "offers": {
       "@type": "Offer",
-      "price": trip.price || 0,
+      "price": getLowestPrice(trip) || 0,
       "priceCurrency": "EUR",
       "url": trip.event_url || window.location.href,
       "availability": trip.status === 'cancelled' ? "https://schema.org/SoldOut" : 
@@ -524,13 +524,15 @@ export default function TripDetailsPage() {
                     <div>
                       <p className="text-sm text-stone-500">{t('trip.price')}</p>
                       <div className="space-y-1">
-                        {getPricingOptions(trip).length > 0 ? (
-                          getPricingOptions(trip).map((option, idx) => (
-                            <p key={idx} className="font-medium text-stone-900">
-                              {option.label}: €{option.price} {t('trip.per_person')}
-                            </p>
-                          ))
-                        ) : (
+                        {getPricingOptions(trip).map((option, idx) => (
+                          <p key={idx} className="font-medium text-stone-900">
+                            {option.label}: €{option.price}
+                            {option.description && (
+                              <span className="text-xs text-stone-500 ml-1">({option.description})</span>
+                            )}
+                          </p>
+                        ))}
+                        {getPricingOptions(trip).length === 0 && (
                           <p className="font-medium text-stone-900">TBA</p>
                         )}
                       </div>
