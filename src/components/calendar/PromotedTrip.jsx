@@ -9,6 +9,7 @@ import { createPageUrl } from "@/utils";
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 import { getTripImage, handleImageError } from '../helpers/imageHelpers';
+import { formatPriceForCard } from '../helpers/pricingHelpers';
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 
@@ -101,11 +102,9 @@ export default function PromotedTrip({ trips, currentDate }) {
             <TrendingUp className="w-3 h-3 mr-1" />
             {mostPopularTrip.difficulty}
           </Badge>
-          {mostPopularTrip.price && (
-            <Badge variant="outline" className="text-emerald-700 border-emerald-300">
-              €{mostPopularTrip.price}
-            </Badge>
-          )}
+          <Badge variant="outline" className="text-emerald-700 border-emerald-300">
+            {formatPriceForCard(mostPopularTrip, language)}
+          </Badge>
           {mostPopularTrip.status === 'upcoming' && (
             <Badge className="bg-green-100 text-green-800 border-green-200 border text-xs">
               {language === 'el' ? 'Διαθέσιμο' : 'Available'}

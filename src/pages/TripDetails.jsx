@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
 import { formatDateRange } from "../components/helpers/dateHelpers";
+import { getPricingOptions, getLowestPrice } from "../components/helpers/pricingHelpers";
 import { trackEvent } from "../components/analytics/GoogleAnalytics";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
@@ -198,7 +199,7 @@ export default function TripDetailsPage() {
     } : undefined,
     "offers": {
       "@type": "Offer",
-      "price": trip.price || 0,
+      "price": getLowestPrice(trip) || 0,
       "priceCurrency": "EUR",
       "url": trip.event_url || window.location.href,
       "availability": trip.status === 'cancelled' ? "https://schema.org/SoldOut" : 
@@ -432,22 +433,14 @@ export default function TripDetailsPage() {
       <StructuredData data={breadcrumbSchema} />
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-5xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <Button 
-              variant="outline" 
-              onClick={() => window.history.back()}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            {user?.organizer_code === trip?.organizer_code && (
-              <Link to={createPageUrl(`EditTrip?id=${trip.id}`)}>
-                <Button className="bg-emerald-600 hover:bg-emerald-400 active:bg-emerald-500 text-white">
-                  Edit Trip
-                </Button>
-              </Link>
-            )}
-          </div>
+          <Button 
+            variant="outline" 
+            className="mb-6"
+            onClick={() => window.history.back()}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
 
           <div className="grid lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
@@ -530,9 +523,19 @@ export default function TripDetailsPage() {
                     <Euro className="w-5 h-5 text-emerald-600" />
                     <div>
                       <p className="text-sm text-stone-500">{t('trip.price')}</p>
-                      <p className="font-medium text-stone-900">
-                        {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
-                      </p>
+                      <div className="space-y-1">
+                        {getPricingOptions(trip).map((option, idx) => (
+                          <p key={idx} className="font-medium text-stone-900">
+                            {option.label}: €{option.price}
+                            {option.description && (
+                              <span className="text-xs text-stone-500 ml-1">({option.description})</span>
+                            )}
+                          </p>
+                        ))}
+                        {getPricingOptions(trip).length === 0 && (
+                          <p className="font-medium text-stone-900">TBA</p>
+                        )}
+                      </div>
                     </div>
                   </div>
 

@@ -16,6 +16,7 @@ import StructuredData from '../components/seo/StructuredData';
 import { getComputedTripStatus } from '../components/helpers/tripHelpers';
 import { getTripImage, handleImageError } from '../components/helpers/imageHelpers';
 import OptimizedImage from '../components/ui/OptimizedImage';
+import { formatPriceForCard } from '../components/helpers/pricingHelpers';
 
 const difficultyColors = {
   easy: "bg-green-100 text-green-800",
@@ -353,6 +354,9 @@ export default function HomePage() {
                           <div className="flex flex-wrap gap-2 mb-3">
                             <Badge className={difficultyColors[trip.difficulty]}>
                               {trip.difficulty}
+                            </Badge>
+                            <Badge variant="outline" className="text-emerald-700 border-emerald-300">
+                              {formatPriceForCard(trip, language)}
                             </Badge>
                             <Badge variant="outline">
                               <Calendar className="w-3 h-3 mr-1" />

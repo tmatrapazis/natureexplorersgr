@@ -10,6 +10,7 @@ import { ArrowLeft, Mail, Phone, Globe, User as UserIcon, ShieldCheck, MapPin, C
 import { format } from "date-fns";
 import { formatDateRange } from "../components/helpers/dateHelpers";
 import { difficultyColors } from "../components/helpers/tripHelpers";
+import { formatPriceForCard } from "../components/helpers/pricingHelpers";
 import { trackEvent } from "../components/analytics/GoogleAnalytics";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
@@ -385,7 +386,7 @@ export default function OrganizerProfilePage() {
                             {trip.difficulty}
                           </Badge>
                           <Badge variant="outline" className="text-xs text-emerald-700">
-                            {trip.price ? `€${trip.price}` : 'TBA'}
+                            {formatPriceForCard(trip, language)}
                           </Badge>
                           {trip.status === 'upcoming' && (
                             <Badge className="bg-green-100 text-green-800 border-green-200 border text-xs">

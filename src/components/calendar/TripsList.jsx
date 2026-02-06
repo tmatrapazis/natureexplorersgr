@@ -12,6 +12,7 @@ import { trackEvent } from "../analytics/GoogleAnalytics";
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 import { getTripImage, handleImageError } from '../helpers/imageHelpers';
+import { formatPriceForCard } from '../helpers/pricingHelpers';
 
 const difficultyColors = {
   easy: "bg-green-100 text-green-800 border-green-200",
@@ -162,7 +163,7 @@ export default React.forwardRef(function TripsList({ trips, selectedDate }, ref)
                         <span>{format(new Date(trip.start_date), "MMM d, yyyy")}</span>
                       </div>
                       <span className="font-bold text-emerald-700">
-                        {trip.price ? `€${trip.price}` : 'TBA'}
+                        {formatPriceForCard(trip, language)}
                       </span>
                     </div>
                     
