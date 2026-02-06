@@ -432,7 +432,7 @@ export default function TripDetailsPage() {
       <StructuredData data={breadcrumbSchema} />
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-3 mb-6">
+          <div className="flex items-center justify-between mb-6">
             <Button 
               variant="outline"
               onClick={() => window.history.back()}
@@ -442,7 +442,7 @@ export default function TripDetailsPage() {
             </Button>
             {user?.organizer_code === trip?.organizer_code && (
               <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
-                <Button variant="outline">
+                <Button className="bg-emerald-600 hover:bg-emerald-700">
                   Edit
                 </Button>
               </Link>
