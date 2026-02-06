@@ -148,7 +148,7 @@ export default function CalendarPage() {
   // Reset to page 1 when filters change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [filters, selectedDate]);
+  }, [filters, selectedDate, currentDate]);
 
   // Calculate pagination
   const totalPages = selectedDate ? 1 : Math.ceil(filteredTrips.length / tripsPerPage);
