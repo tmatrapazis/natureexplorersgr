@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Pencil } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -432,14 +432,27 @@ export default function TripDetailsPage() {
       <StructuredData data={breadcrumbSchema} />
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-5xl mx-auto">
-          <Button 
-            variant="outline" 
-            className="mb-6"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
+          <div className="flex items-center justify-between mb-6">
+            <Button 
+              variant="outline"
+              onClick={() => window.history.back()}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            
+            {(user?.role === 'admin' || user?.organizer_code === trip?.organizer_code) && (
+              <Button 
+                asChild
+                variant="outline"
+              >
+                <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit
+                </Link>
+              </Button>
+            )}
+          </div>
 
           <div className="grid lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
@@ -508,8 +521,28 @@ export default function TripDetailsPage() {
                     </div>
                   </div>
 
+                  {trip.duration_hours && (
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <p className="text-sm text-stone-500">{t('trip.duration')}</p>
+                        <p className="font-medium text-stone-900">{trip.duration_hours} {t('trip.hours')}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3">
+                    <Euro className="w-5 h-5 text-emerald-600" />
+                    <div>
+                      <p className="text-sm text-stone-500">{t('trip.price')}</p>
+                      <p className="font-medium text-stone-900">
+                        {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
+                      </p>
+                    </div>
+                  </div>
+
                   {trip.departure_from && trip.departure_from.length > 0 && (
-                    <div className="flex items-center gap-3 md:col-span-2">
+                    <div className="flex items-center gap-3 md:col-start-2">
                       <MapPin className="w-5 h-5 text-emerald-600" />
                       <div>
                         <p className="text-sm text-stone-500">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
@@ -523,34 +556,6 @@ export default function TripDetailsPage() {
                       </div>
                     </div>
                   )}
-                </div>
-
-                <div className="mb-6">
-                  <div className="flex items-start gap-3">
-                    <Euro className="w-5 h-5 text-emerald-600 mt-1" />
-                    <div className="flex-1">
-                      <p className="text-sm text-stone-500 mb-2">{t('trip.price')}</p>
-                      {trip.pricing_options && trip.pricing_options.length > 0 ? (
-                        <div className="space-y-2">
-                          {trip.pricing_options.map((option, index) => (
-                            <div key={index} className="bg-stone-50 p-3 rounded-lg">
-                              <div className="flex items-center justify-between">
-                                <span className="font-medium text-stone-900">{option.label}</span>
-                                <span className="font-bold text-emerald-600">€{option.price}</span>
-                              </div>
-                              {option.description && (
-                                <p className="text-xs text-stone-500 mt-1">{option.description}</p>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="font-medium text-stone-900">
-                          {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
                 </div>
 
                 {trip.meeting_points && trip.meeting_points.length > 0 && (
