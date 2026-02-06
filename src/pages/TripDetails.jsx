@@ -11,7 +11,6 @@ import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
 import { formatDateRange } from "../components/helpers/dateHelpers";
-import { getPricingOptions, getLowestPrice } from "../components/helpers/pricingHelpers";
 import { trackEvent } from "../components/analytics/GoogleAnalytics";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
@@ -199,7 +198,7 @@ export default function TripDetailsPage() {
     } : undefined,
     "offers": {
       "@type": "Offer",
-      "price": getLowestPrice(trip) || 0,
+      "price": trip.price || 0,
       "priceCurrency": "EUR",
       "url": trip.event_url || window.location.href,
       "availability": trip.status === 'cancelled' ? "https://schema.org/SoldOut" : 
@@ -509,38 +508,8 @@ export default function TripDetailsPage() {
                     </div>
                   </div>
 
-                  {trip.duration_hours && (
-                    <div className="flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-emerald-600" />
-                      <div>
-                        <p className="text-sm text-stone-500">{t('trip.duration')}</p>
-                        <p className="font-medium text-stone-900">{trip.duration_hours} {t('trip.hours')}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex items-center gap-3">
-                    <Euro className="w-5 h-5 text-emerald-600" />
-                    <div>
-                      <p className="text-sm text-stone-500">{t('trip.price')}</p>
-                      <div className="space-y-1">
-                        {getPricingOptions(trip).map((option, idx) => (
-                          <p key={idx} className="font-medium text-stone-900">
-                            {option.label}: €{option.price}
-                            {option.description && (
-                              <span className="text-xs text-stone-500 ml-1">({option.description})</span>
-                            )}
-                          </p>
-                        ))}
-                        {getPricingOptions(trip).length === 0 && (
-                          <p className="font-medium text-stone-900">TBA</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
                   {trip.departure_from && trip.departure_from.length > 0 && (
-                    <div className="flex items-center gap-3 md:col-start-2">
+                    <div className="flex items-center gap-3 md:col-span-2">
                       <MapPin className="w-5 h-5 text-emerald-600" />
                       <div>
                         <p className="text-sm text-stone-500">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
@@ -554,6 +523,34 @@ export default function TripDetailsPage() {
                       </div>
                     </div>
                   )}
+                </div>
+
+                <div className="mb-6">
+                  <div className="flex items-start gap-3">
+                    <Euro className="w-5 h-5 text-emerald-600 mt-1" />
+                    <div className="flex-1">
+                      <p className="text-sm text-stone-500 mb-2">{t('trip.price')}</p>
+                      {trip.pricing_options && trip.pricing_options.length > 0 ? (
+                        <div className="space-y-2">
+                          {trip.pricing_options.map((option, index) => (
+                            <div key={index} className="bg-stone-50 p-3 rounded-lg">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium text-stone-900">{option.label}</span>
+                                <span className="font-bold text-emerald-600">€{option.price}</span>
+                              </div>
+                              {option.description && (
+                                <p className="text-xs text-stone-500 mt-1">{option.description}</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="font-medium text-stone-900">
+                          {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {trip.meeting_points && trip.meeting_points.length > 0 && (
