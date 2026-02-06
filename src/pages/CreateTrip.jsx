@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Plus, X, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
@@ -65,6 +66,7 @@ export default function CreateTripPage() {
   const [currentPricingLabel, setCurrentPricingLabel] = useState("");
   const [currentPricingPrice, setCurrentPricingPrice] = useState("");
   const [currentPricingDescription, setCurrentPricingDescription] = useState("");
+  const [useMultiplePricing, setUseMultiplePricing] = useState(false);
 
   // Load data from navigation state if recreating a trip
   useEffect(() => {
@@ -424,74 +426,85 @@ export default function CreateTripPage() {
             </div>
 
             <div>
-              <Label>{language === 'el' ? 'Επιλογές Τιμολόγησης' : 'Pricing Options'}</Label>
-              <p className="text-xs text-stone-500 mb-2">
-                {language === 'el' 
-                  ? 'Προσθέστε διαφορετικές κατηγορίες τιμών (π.χ. Κανονική, Early Bird, Φοιτητική)'
-                  : 'Add different pricing categories (e.g., Standard, Early Bird, Student)'}
-              </p>
-              <div className="space-y-2 mb-2">
-                <div className="grid grid-cols-12 gap-2">
-                  <Input
-                    placeholder={language === 'el' ? 'Κατηγορία' : 'Label'}
-                    value={currentPricingLabel}
-                    onChange={(e) => setCurrentPricingLabel(e.target.value)}
-                    className="col-span-3"
+              <div className="flex items-center justify-between mb-4">
+                <Label>{language === 'el' ? 'Τιμολόγηση' : 'Pricing'}</Label>
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="pricing-mode" className="text-sm font-normal">
+                    {language === 'el' ? 'Πολλαπλές επιλογές τιμών' : 'Multiple pricing options'}
+                  </Label>
+                  <Switch
+                    id="pricing-mode"
+                    checked={useMultiplePricing}
+                    onCheckedChange={setUseMultiplePricing}
                   />
-                  <Input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder={language === 'el' ? 'Τιμή' : 'Price'}
-                    value={currentPricingPrice}
-                    onChange={(e) => setCurrentPricingPrice(e.target.value)}
-                    className="col-span-2"
-                  />
-                  <Input
-                    placeholder={language === 'el' ? 'Περιγραφή (προαιρετικό)' : 'Description (optional)'}
-                    value={currentPricingDescription}
-                    onChange={(e) => setCurrentPricingDescription(e.target.value)}
-                    className="col-span-6"
-                  />
-                  <Button type="button" onClick={addPricingOption} variant="outline" className="col-span-1">
-                    <Plus className="w-4 h-4" />
-                  </Button>
                 </div>
               </div>
-              <div className="space-y-2">
-                {tripData.pricing_options.map((option, index) => (
-                  <div key={index} className="flex items-center justify-between bg-stone-50 p-3 rounded">
-                    <div className="flex-1">
-                      <span className="font-medium text-sm">{option.label}: €{option.price}</span>
-                      {option.description && <p className="text-xs text-stone-500">{option.description}</p>}
+
+              {useMultiplePricing ? (
+                <>
+                  <p className="text-xs text-stone-500 mb-2">
+                    {language === 'el' 
+                      ? 'Προσθέστε διαφορετικές κατηγορίες τιμών (π.χ. Κανονική, Early Bird, Φοιτητική)'
+                      : 'Add different pricing categories (e.g., Standard, Early Bird, Student)'}
+                  </p>
+                  <div className="space-y-2 mb-2">
+                    <div className="grid grid-cols-12 gap-2">
+                      <Input
+                        placeholder={language === 'el' ? 'Κατηγορία' : 'Label'}
+                        value={currentPricingLabel}
+                        onChange={(e) => setCurrentPricingLabel(e.target.value)}
+                        className="col-span-3"
+                      />
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder={language === 'el' ? 'Τιμή' : 'Price'}
+                        value={currentPricingPrice}
+                        onChange={(e) => setCurrentPricingPrice(e.target.value)}
+                        className="col-span-2"
+                      />
+                      <Input
+                        placeholder={language === 'el' ? 'Περιγραφή (προαιρετικό)' : 'Description (optional)'}
+                        value={currentPricingDescription}
+                        onChange={(e) => setCurrentPricingDescription(e.target.value)}
+                        className="col-span-6"
+                      />
+                      <Button type="button" onClick={addPricingOption} variant="outline" className="col-span-1">
+                        <Plus className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removePricingOption(index)}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
                   </div>
-                ))}
-              </div>
-              {tripData.pricing_options.length === 0 && (
-                <div className="mt-2">
-                  <Label htmlFor="legacy-price">{t('create_trip.price_per_person')}</Label>
+                  <div className="space-y-2">
+                    {tripData.pricing_options.map((option, index) => (
+                      <div key={index} className="flex items-center justify-between bg-stone-50 p-3 rounded">
+                        <div className="flex-1">
+                          <span className="font-medium text-sm">{option.label}: €{option.price}</span>
+                          {option.description && <p className="text-xs text-stone-500">{option.description}</p>}
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removePricingOption(index)}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div>
+                  <Label htmlFor="single-price">{t('create_trip.price_per_person')}</Label>
                   <Input
-                    id="legacy-price"
+                    id="single-price"
                     type="number"
                     min="0"
                     step="0.01"
                     value={tripData.price}
                     onChange={(e) => setTripData({...tripData, price: parseFloat(e.target.value)})}
                   />
-                  <p className="text-xs text-stone-500 mt-1">
-                    {language === 'el' 
-                      ? 'Χρησιμοποιήστε αυτό το πεδίο για μονή τιμή ή προσθέστε πολλαπλές επιλογές τιμολόγησης παραπάνω'
-                      : 'Use this field for single price or add multiple pricing options above'}
-                  </p>
                 </div>
               )}
             </div>
