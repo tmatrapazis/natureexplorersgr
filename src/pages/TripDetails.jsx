@@ -276,6 +276,7 @@ export default function TripDetailsPage() {
 
   // Handler for "Book Now" button clicks
   const handleBookNowClick = () => {
+    // Track with Google Analytics
     trackEvent('book_now_click', {
       event_category: 'Booking',
       event_label: trip.title,
@@ -285,6 +286,19 @@ export default function TripDetailsPage() {
       is_social_media: isSocialMedia,
       price: trip.price,
       difficulty: trip.difficulty,
+    });
+
+    // Track with Base44 Analytics
+    base44.analytics.track({
+      eventName: 'trip_booking_button_clicked',
+      properties: {
+        trip_id: trip.id,
+        trip_title: trip.title,
+        organizer: organizer ? (organizer.username || organizer.full_name) : 'Unknown',
+        price: trip.price || 0,
+        difficulty: trip.difficulty,
+        is_social_media: isSocialMedia,
+      }
     });
   };
 
@@ -508,8 +522,28 @@ export default function TripDetailsPage() {
                     </div>
                   </div>
 
+                  {trip.duration_hours && (
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <p className="text-sm text-stone-500">{t('trip.duration')}</p>
+                        <p className="font-medium text-stone-900">{trip.duration_hours} {t('trip.hours')}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3">
+                    <Euro className="w-5 h-5 text-emerald-600" />
+                    <div>
+                      <p className="text-sm text-stone-500">{t('trip.price')}</p>
+                      <p className="font-medium text-stone-900">
+                        {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
+                      </p>
+                    </div>
+                  </div>
+
                   {trip.departure_from && trip.departure_from.length > 0 && (
-                    <div className="flex items-center gap-3 md:col-span-2">
+                    <div className="flex items-center gap-3 md:col-start-2">
                       <MapPin className="w-5 h-5 text-emerald-600" />
                       <div>
                         <p className="text-sm text-stone-500">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
@@ -523,34 +557,6 @@ export default function TripDetailsPage() {
                       </div>
                     </div>
                   )}
-                </div>
-
-                <div className="mb-6">
-                  <div className="flex items-start gap-3">
-                    <Euro className="w-5 h-5 text-emerald-600 mt-1" />
-                    <div className="flex-1">
-                      <p className="text-sm text-stone-500 mb-2">{t('trip.price')}</p>
-                      {trip.pricing_options && trip.pricing_options.length > 0 ? (
-                        <div className="space-y-2">
-                          {trip.pricing_options.map((option, index) => (
-                            <div key={index} className="bg-stone-50 p-3 rounded-lg">
-                              <div className="flex items-center justify-between">
-                                <span className="font-medium text-stone-900">{option.label}</span>
-                                <span className="font-bold text-emerald-600">€{option.price}</span>
-                              </div>
-                              {option.description && (
-                                <p className="text-xs text-stone-500 mt-1">{option.description}</p>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="font-medium text-stone-900">
-                          {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
-                        </p>
-                      )}
-                    </div>
-                  </div>
                 </div>
 
                 {trip.meeting_points && trip.meeting_points.length > 0 && (
