@@ -294,7 +294,8 @@ export default function TripDetailsPage() {
       properties: {
         trip_id: trip.id,
         trip_title: trip.title,
-        organizer: organizer ? (organizer.username || organizer.full_name) : 'Unknown',
+        organizer_code: trip.organizer_code,
+        organizer_name: organizer ? (organizer.username || organizer.full_name) : 'Unknown',
         price: trip.price || 0,
         difficulty: trip.difficulty,
         is_social_media: isSocialMedia,
