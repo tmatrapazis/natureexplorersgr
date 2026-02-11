@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
+import { motion, AnimatePresence } from "framer-motion";
 import PublicHeader from "./components/layout/PublicHeader";
 import PublicFooter from "./components/layout/PublicFooter";
 import MobileBottomTab from "./components/layout/MobileBottomTab";
@@ -29,9 +30,18 @@ const LoggedInLayout = ({ children, user }) => {
       
       <PublicHeader />
 
-      <main className="flex-1">
-        {children}
-      </main>
+      <AnimatePresence mode="wait">
+        <motion.main 
+          key={location.pathname}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.2 }}
+          className="flex-1"
+        >
+          {children}
+        </motion.main>
+      </AnimatePresence>
 
       <PublicFooter />
       
@@ -41,10 +51,23 @@ const LoggedInLayout = ({ children, user }) => {
 };
 
 const PublicLayout = ({ children }) => {
+  const location = useLocation();
+  
   return (
     <div className="flex flex-col min-h-screen">
       <PublicHeader />
-      <main className="flex-1">{children}</main>
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={location.pathname}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.2 }}
+          className="flex-1"
+        >
+          {children}
+        </motion.main>
+      </AnimatePresence>
       <PublicFooter />
     </div>
   );
