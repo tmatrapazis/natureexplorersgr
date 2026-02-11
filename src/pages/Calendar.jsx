@@ -269,10 +269,10 @@ export default function CalendarPage() {
                             </Button>
                           );
                         } else if (
-                          pageNum === currentPage - 2 ||
-                          pageNum === currentPage + 2
+                         pageNum === currentPage - 2 ||
+                         pageNum === currentPage + 2
                         ) {
-                          return <span key={pageNum} className="px-2 text-stone-500">...</span>;
+                          return <span key={pageNum} className="px-2 text-muted-foreground">...</span>;
                         }
                         return null;
                       })}

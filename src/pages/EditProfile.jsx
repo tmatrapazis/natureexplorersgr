@@ -107,6 +107,15 @@ export default function EditProfilePage() {
 
   const updateProfileMutation = useMutation({
     mutationFn: (updatedData) => base44.auth.updateMe(updatedData),
+    onMutate: async (updatedData) => {
+      await queryClient.cancelQueries({ queryKey: ['current-user'] });
+      const previousUser = queryClient.getQueryData(['current-user']);
+      queryClient.setQueryData(['current-user'], (old) => ({ ...old, ...updatedData }));
+      return { previousUser };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(['current-user'], context.previousUser);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['current-user'] });
       setUpdateSuccess(true);
@@ -234,7 +243,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/30 dark:via-emerald-950/10 to-background p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
         {!isNewUser && (
           <Link to={createPageUrl("Calendar")}>
