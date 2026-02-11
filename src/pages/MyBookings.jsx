@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, AlertTriangle, XCircle, Loader2, MapPin, Bug } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import PullToRefresh from "../components/ui/PullToRefresh";
 import {
   Dialog,
   DialogContent,
@@ -188,7 +188,7 @@ export default function MyBookingsPage() {
     refetchOnWindowFocus: true,
   });
 
-  // Cancel booking mutation (ds_cancel_booking)
+  // Cancel booking mutation with optimistic updates
   const cancelBookingMutation = useMutation({
     mutationFn: async ({ booking, reason }) => {
       console.log('[MyBookings] 🚫 Cancelling booking:', booking.id);
@@ -239,6 +239,28 @@ export default function MyBookingsPage() {
 
       console.log('[MyBookings] ✅ Booking cancelled successfully');
       return updatedBooking;
+    },
+    onMutate: async ({ booking, reason }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['my-bookings', user?.id] });
+      
+      // Snapshot previous value
+      const previousBookings = queryClient.getQueryData(['my-bookings', user?.id]);
+      
+      // Optimistically update
+      queryClient.setQueryData(['my-bookings', user?.id], (old) =>
+        old?.map((b) =>
+          b.id === booking.id
+            ? { ...b, status: 'cancelled', cancellation_reason: reason || 'Cancelled by user' }
+            : b
+        )
+      );
+      
+      return { previousBookings };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      queryClient.setQueryData(['my-bookings', user?.id], context.previousBookings);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
@@ -295,13 +317,18 @@ export default function MyBookingsPage() {
   // Count bookings for this user in the diagnostic query
   const myBookingsInDiagnostic = allBookings.filter(b => b.user_id === user.id);
 
+  const handleRefresh = async () => {
+    await queryClient.refetchQueries({ queryKey: ['my-bookings', user?.id] });
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/30 dark:via-emerald-950/10 to-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-stone-900 mb-2">My Bookings</h1>
-          <p className="text-stone-600">Track your trip reservations and their status</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">My Bookings</h1>
+          <p className="text-muted-foreground">Track your trip reservations and their status</p>
         </div>
 
         {/* Diagnostics Panel - Visible to ALL users for debugging */}
@@ -564,5 +591,6 @@ export default function MyBookingsPage() {
         />
       </div>
     </div>
+    </PullToRefresh>
   );
 }

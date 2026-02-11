@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import CalendarGrid from "../components/calendar/CalendarGrid";
 import TripsList from "../components/calendar/TripsList";
 import TripFilters from "../components/calendar/TripFilters";
 import PromotedTrip from "../components/calendar/PromotedTrip.jsx";
+import PullToRefresh from "../components/ui/PullToRefresh";
 import { getComputedTripStatus } from "../components/helpers/tripHelpers";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
@@ -19,6 +20,7 @@ const ATHENS_TIMEZONE = 'Europe/Athens';
 export default function CalendarPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const queryClient = useQueryClient();
 
   // SEO Configuration with keywords
   useSEO({
@@ -165,14 +167,22 @@ export default function CalendarPage() {
   filters.searchQuery ||
   selectedDate;
 
+  const handleRefresh = async () => {
+    await Promise.all([
+      queryClient.refetchQueries({ queryKey: ['hiking-trips'] }),
+      queryClient.refetchQueries({ queryKey: ['organizers-calendar'] })
+    ]);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/30 dark:via-emerald-950/10 to-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-stone-900 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
             {language === 'el' ? 'Ημερολόγιο Πεζοπορικών Εκδρομών' : t('calendar.title')}
           </h1>
-          <p className="text-stone-600">
+          <p className="text-muted-foreground">
             {language === 'el' ?
             'Ανακαλύψτε επερχόμενες εκδρομές trekking, ορειβασία και hiking events σε όλη την Ελλάδα. Οργανωμένες εκδρομές βουνό και weekend adventures.' :
             'Discover upcoming hiking trips Greece, trekking expeditions and outdoor adventures. Weekend hiking ideas and one day hikes across Greek nature trails.'}
@@ -282,6 +292,7 @@ export default function CalendarPage() {
           </div>
         </div>
       </div>
-    </div>);
-
+    </div>
+    </PullToRefresh>
+  );
 }
