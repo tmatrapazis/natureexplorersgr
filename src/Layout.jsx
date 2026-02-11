@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import PublicHeader from "./components/layout/PublicHeader";
 import PublicFooter from "./components/layout/PublicFooter";
+import MobileBottomTab from "./components/layout/MobileBottomTab";
 import { LanguageProvider } from "./components/contexts/LanguageContext";
 import GoogleAnalytics from "./components/analytics/GoogleAnalytics";
 import WelcomeModal from "./components/welcome/WelcomeModal";
@@ -18,7 +19,7 @@ const LoggedInLayout = ({ children, user }) => {
   }, [user]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-stone-50">
+    <div className="min-h-screen flex flex-col bg-background pb-16 md:pb-0">
       {showWelcome && user && (
         <WelcomeModal 
           user={user} 
@@ -33,6 +34,8 @@ const LoggedInLayout = ({ children, user }) => {
       </main>
 
       <PublicFooter />
+      
+      {user && <MobileBottomTab user={user} />}
     </div>
   );
 };
