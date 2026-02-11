@@ -60,8 +60,8 @@ export default function PromotedTrip({ trips, currentDate }) {
   if (!mostPopularTrip) {
     return (
       <Card className="p-6 h-full flex items-center justify-center">
-        <div className="text-center text-stone-500">
-          <Star className="w-12 h-12 mx-auto mb-2 text-stone-300" />
+        <div className="text-center text-muted-foreground">
+          <Star className="w-12 h-12 mx-auto mb-2 text-muted" />
           <p>{language === 'el' ? 'Δεν υπάρχουν διαθέσιμες εκδρομές' : 'No trips available'}</p>
         </div>
       </Card>
@@ -83,7 +83,7 @@ export default function PromotedTrip({ trips, currentDate }) {
         )}
       </div>
 
-      <div className="relative w-full h-48 bg-stone-200">
+      <div className="relative w-full h-48 bg-muted">
         <img 
           src={getTripImage(mostPopularTrip.image_url, mostPopularTrip.id)} 
           alt={mostPopularTrip.title}
@@ -93,7 +93,7 @@ export default function PromotedTrip({ trips, currentDate }) {
       </div>
       
       <div className="p-4 flex-1 flex flex-col">
-        <h3 className="text-xl font-bold text-stone-900 mb-2 line-clamp-2">
+        <h3 className="text-xl font-bold text-foreground mb-2 line-clamp-2">
           {mostPopularTrip.title}
         </h3>
 
@@ -117,7 +117,7 @@ export default function PromotedTrip({ trips, currentDate }) {
           )}
         </div>
 
-        <div className="space-y-2 text-sm text-stone-600 mb-4">
+        <div className="space-y-2 text-sm text-muted-foreground mb-4">
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 text-emerald-600 flex-shrink-0" />
             <span>{format(new Date(mostPopularTrip.start_date), "MMMM d, yyyy")}</span>
@@ -129,7 +129,7 @@ export default function PromotedTrip({ trips, currentDate }) {
         </div>
 
         {mostPopularTrip.description && (
-          <p className="text-sm text-stone-600 line-clamp-3 mb-4">
+          <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
             {mostPopularTrip.description}
           </p>
         )}

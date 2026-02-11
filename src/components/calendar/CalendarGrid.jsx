@@ -43,9 +43,9 @@ export default function CalendarGrid({ currentDate, onDateChange, trips, onDayCl
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-card rounded-2xl shadow-lg p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-stone-900">
+        <h2 className="text-2xl font-bold text-foreground">
           {format(currentDate, "MMMM yyyy")}
         </h2>
         <div className="flex gap-2">
@@ -70,7 +70,7 @@ export default function CalendarGrid({ currentDate, onDateChange, trips, onDayCl
 
       <div className="grid grid-cols-7 gap-2">
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
-          <div key={day} className="text-center text-sm font-semibold text-stone-500 py-2">
+          <div key={day} className="text-center text-sm font-semibold text-muted-foreground py-2">
             {day}
           </div>
         ))}
@@ -90,14 +90,14 @@ export default function CalendarGrid({ currentDate, onDateChange, trips, onDayCl
                 ${!day ? "invisible" : ""}
                 ${isSelected ? "bg-orange-200 border-2 border-orange-500" : ""}
                 ${isToday(day || new Date()) && !isSelected ? "bg-emerald-100 border-2 border-emerald-500" : ""}
-                ${!isSelected && !isToday(day || new Date()) ? "hover:bg-stone-100" : ""}
+                ${!isSelected && !isToday(day || new Date()) ? "hover:bg-muted" : ""}
                 ${!isSameMonth(day || new Date(), currentDate) ? "opacity-40" : ""}
                 ${hasTrips ? "cursor-pointer" : "cursor-default"}
               `}
             >
               {day && (
                 <>
-                  <div className={`text-sm font-medium ${isSelected ? "text-orange-700" : isToday(day) ? "text-emerald-700" : "text-stone-700"}`}>
+                  <div className={`text-sm font-medium ${isSelected ? "text-orange-700" : isToday(day) ? "text-emerald-700" : "text-foreground"}`}>
                     {format(day, "d")}
                   </div>
                   {hasTrips && (

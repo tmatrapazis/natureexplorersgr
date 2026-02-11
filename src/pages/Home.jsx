@@ -327,9 +327,9 @@ export default function HomePage() {
           </section>
 
           {featuredExpeditions.length > 0 && (
-            <section className="py-16 px-4 bg-white">
+            <section className="py-16 px-4 bg-background">
               <div className="container mx-auto max-w-6xl">
-                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-stone-900">
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
                   {language === 'el' ? 'Επιλεγμένες Εκδρομές' : 'Featured Expeditions'}
                 </h2>
                 <div className="grid md:grid-cols-3 gap-6">
@@ -337,7 +337,7 @@ export default function HomePage() {
                     const organizer = organizerMap[trip.organizer_code];
                     return (
                       <Card key={trip.id} className="overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
-                        <div className="h-48 bg-stone-200 overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
+                        <div className="h-48 bg-muted overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
                           <OptimizedImage
                             src={getTripImage(trip.image_url, trip.id)}
                             alt={trip.title}
@@ -350,7 +350,7 @@ export default function HomePage() {
                           />
                         </div>
                         <CardContent className="p-6 flex flex-col flex-grow">
-                          <h3 className="text-xl font-bold text-stone-900 mb-2">{trip.title}</h3>
+                          <h3 className="text-xl font-bold text-foreground mb-2">{trip.title}</h3>
                           <div className="flex flex-wrap gap-2 mb-3">
                             <Badge className={difficultyColors[trip.difficulty]}>
                               {trip.difficulty}
@@ -363,12 +363,12 @@ export default function HomePage() {
                               {formatDateRange(trip.start_date, trip.end_date)}
                             </Badge>
                           </div>
-                          <div className="flex items-center gap-2 text-sm text-stone-600 mb-2">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                             <MapPin className="w-4 h-4 text-emerald-600" />
                             <span>{trip.location}</span>
                           </div>
                           {organizer && (
-                            <div className="flex items-center gap-2 text-sm text-stone-500 mb-4">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
                               <UserIcon className="w-4 h-4" />
                               <span>{organizer.username || organizer.full_name}</span>
                             </div>
