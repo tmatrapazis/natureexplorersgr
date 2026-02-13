@@ -10,6 +10,7 @@ import GoogleAnalytics from "./components/analytics/GoogleAnalytics";
 import WelcomeModal from "./components/welcome/WelcomeModal";
 
 const LoggedInLayout = ({ children, user }) => {
+  const location = useLocation();
   const [showWelcome, setShowWelcome] = React.useState(false);
 
   React.useEffect(() => {
