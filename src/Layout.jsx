@@ -8,6 +8,7 @@ import MobileBottomTab from "./components/layout/MobileBottomTab";
 import { LanguageProvider } from "./components/contexts/LanguageContext";
 import GoogleAnalytics from "./components/analytics/GoogleAnalytics";
 import WelcomeModal from "./components/welcome/WelcomeModal";
+import CookieConsent from "./components/cookie/CookieConsent";
 
 const LoggedInLayout = ({ children, user }) => {
   const location = useLocation();
@@ -112,6 +113,7 @@ export default function Layout({ children, currentPageName }) {
   return (
     <LanguageProvider>
       <GoogleAnalytics />
+      <CookieConsent />
       <LayoutContent children={children} currentPageName={currentPageName} />
     </LanguageProvider>
   );
