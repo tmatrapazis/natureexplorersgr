@@ -1,49 +1,76 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 
-// Replace with your actual GA4 Measurement ID
-const GA_MEASUREMENT_ID = 'G-JZQZ0VT8XK'; // TODO: Replace with your GA4 ID
+const GA_MEASUREMENT_ID = 'G-JZQZ0VT8XK';
 
-export default function GoogleAnalytics() {
+export default function GoogleAnalytics({ enabled = false }) {
   const location = useLocation();
+  const scriptsRef = useRef({ script1: null, script2: null });
+  const isInitializedRef = useRef(false);
 
-  // Initialize GA4 on component mount
+  // Initialize or cleanup GA based on enabled state
   useEffect(() => {
-    // Load GA4 script
-    
-    const script1 = document.createElement('script');
-    script1.async = true;
-    script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    document.head.appendChild(script1);
+    if (enabled && !isInitializedRef.current) {
+      // Enable GA tracking
+      window[`ga-disable-${GA_MEASUREMENT_ID}`] = false;
+      
+      // Load Google Analytics script
+      const script1 = document.createElement('script');
+      script1.async = true;
+      script1.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+      script1.setAttribute('data-cookie-consent', 'analytics');
+      document.head.appendChild(script1);
 
-    // Initialize gtag
-    const script2 = document.createElement('script');
-    script2.innerHTML = `
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '${GA_MEASUREMENT_ID}', {
-        send_page_view: false
+      const script2 = document.createElement('script');
+      script2.setAttribute('data-cookie-consent', 'analytics');
+      script2.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${GA_MEASUREMENT_ID}', {
+          send_page_view: false
+        });
+      `;
+      document.head.appendChild(script2);
+
+      scriptsRef.current = { script1, script2 };
+      isInitializedRef.current = true;
+    } else if (!enabled && isInitializedRef.current) {
+      // Disable GA tracking
+      window[`ga-disable-${GA_MEASUREMENT_ID}`] = true;
+      
+      // Remove GA scripts
+      const scripts = document.querySelectorAll('script[data-cookie-consent="analytics"]');
+      scripts.forEach(script => {
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
       });
-    `;
-    document.head.appendChild(script2);
+      
+      scriptsRef.current = { script1: null, script2: null };
+      isInitializedRef.current = false;
+    }
 
+    // Cleanup on unmount
     return () => {
-      // Cleanup scripts on unmount
-      document.head.removeChild(script1);
-      document.head.removeChild(script2);
+      if (scriptsRef.current.script1?.parentNode) {
+        scriptsRef.current.script1.parentNode.removeChild(scriptsRef.current.script1);
+      }
+      if (scriptsRef.current.script2?.parentNode) {
+        scriptsRef.current.script2.parentNode.removeChild(scriptsRef.current.script2);
+      }
     };
-  }, []);
+  }, [enabled]);
 
-  // Track page views on route change
+  // Track page views on route change (only when enabled)
   useEffect(() => {
-    if (window.gtag) {
+    if (enabled && window.gtag) {
       window.gtag('event', 'page_view', {
         page_path: location.pathname + location.search,
         page_location: window.location.href,
       });
     }
-  }, [location]);
+  }, [location, enabled]);
 
   return null;
 }
@@ -52,7 +79,5 @@ export default function GoogleAnalytics() {
 export const trackEvent = (eventName, eventParams = {}) => {
   if (window.gtag) {
     window.gtag('event', eventName, eventParams);
-  } else {
-    console.warn('GA4 not loaded yet');
   }
 };
