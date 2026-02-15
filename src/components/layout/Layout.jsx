@@ -214,14 +214,17 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
         </Sidebar>
 
         <main className="flex-1 flex flex-col">
-          <header className="bg-white border-b border-stone-200 px-6 py-4 md:hidden">
+          <header 
+            className="bg-white border-b border-stone-200 px-6 py-4 md:hidden sticky top-0 z-40"
+            style={{ paddingTop: 'calc(env(safe-area-inset-top) + 1rem)' }}
+          >
             <div className="flex items-center gap-4">
-              <SidebarTrigger className="hover:bg-stone-100 p-2 rounded-lg transition-colors" />
+              <SidebarTrigger className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]" />
               <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" alt="Nature Explorers" className="h-8 w-auto" />
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1 overflow-auto pb-16 md:pb-0">
             {children}
           </div>
         </main>

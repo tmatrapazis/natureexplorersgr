@@ -1,3 +1,4 @@
+css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -74,13 +75,6 @@
   @font-face {
     font-family: system-ui;
     font-display: swap;
-  }
-  
-  /* iOS Safe Area Support */
-  @supports (padding: env(safe-area-inset-top)) {
-    body {
-      padding-top: env(safe-area-inset-top);
-    }
   }
   
   /* Prevent text selection on interactive elements */

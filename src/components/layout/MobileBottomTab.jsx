@@ -1,10 +1,11 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Home, Calendar, BookOpen, User } from "lucide-react";
 
 export default function MobileBottomTab({ user }) {
   const location = useLocation();
+  const navigate = useNavigate();
   
   const tabs = [
     { 
@@ -37,6 +38,17 @@ export default function MobileBottomTab({ user }) {
     return location.pathname === createPageUrl(pageName);
   };
 
+  const handleTabClick = (e, tab) => {
+    const active = isActive(tab.pageName);
+    
+    // If already on this tab, navigate to root of that section
+    if (active) {
+      e.preventDefault();
+      navigate(tab.path, { replace: true });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <nav 
       className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 select-none"
@@ -51,6 +63,7 @@ export default function MobileBottomTab({ user }) {
             <Link
               key={tab.name}
               to={tab.path}
+              onClick={(e) => handleTabClick(e, tab)}
               className={`flex flex-col items-center justify-center py-2 px-4 min-h-[44px] min-w-[44px] transition-colors ${
                 active 
                   ? "text-emerald-600 dark:text-emerald-400" 
