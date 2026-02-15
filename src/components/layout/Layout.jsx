@@ -1,8 +1,11 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Calendar, Mountain, PlusCircle, Bookmark, Map, User, LogOut, Edit, BarChart3 } from "lucide-react";
+import { Calendar, Mountain, PlusCircle, Bookmark, Map, User, LogOut, Edit, BarChart3, Users, Compass, Home, Globe, LogIn } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useLanguage } from "../contexts/LanguageContext";
+import { useTranslation } from "../translations/useTranslations";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +26,8 @@ import NotificationsBell from "../layout/NotificationsBell";
 
 const AppLayout = ({ children, isOrganizer, user, location }) => {
   const navigate = useNavigate();
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation(language);
 
   React.useEffect(() => {
     if (user) {
@@ -47,22 +52,32 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
     base44.auth.logout(createPageUrl("Home"));
   };
 
+  const handleLogin = () => {
+    base44.auth.redirectToLogin(window.location.pathname);
+  };
+
+  // Public navigation - always shown
+  const publicNav = [
+    { title: t('navigation.calendar'), url: createPageUrl("Calendar"), icon: Calendar },
+    { title: t('navigation.organizers'), url: createPageUrl("OrganizersList"), icon: Users },
+    { title: t('navigation.guides'), url: createPageUrl("Guides"), icon: Compass },
+    { title: t('navigation.refuges'), url: createPageUrl("GreekRefuges"), icon: Home },
+  ];
+
   const clientNav = [
-    { title: "Calendar", url: createPageUrl("Calendar"), icon: Calendar },
     { title: "My Bookings", url: createPageUrl("MyBookings"), icon: Bookmark },
     { title: "My Stats", url: createPageUrl("MyProfile"), icon: BarChart3 },
     { title: "Edit Profile", url: createPageUrl("EditProfile"), icon: Edit },
   ];
 
   const organizerNav = [
-    { title: "Calendar", url: createPageUrl("Calendar"), icon: Calendar },
     { title: "Create Trip", url: createPageUrl("CreateTrip"), icon: PlusCircle },
     { title: "My Trips", url: createPageUrl("MyTrips"), icon: Map },
     { title: "Analytics", url: createPageUrl("MyProfile"), icon: BarChart3 },
     { title: "Edit Profile", url: createPageUrl("EditProfile"), icon: Edit },
   ];
 
-  const navigationItems = isOrganizer ? organizerNav : clientNav;
+  const roleBasedNav = user ? (isOrganizer ? organizerNav : clientNav) : [];
 
   return (
      <SidebarProvider>
@@ -81,13 +96,14 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
           </SidebarHeader>
           
           <SidebarContent className="p-3">
+            {/* Public Navigation */}
             <SidebarGroup>
               <SidebarGroupLabel className="text-xs font-semibold text-stone-500 uppercase tracking-wider px-3 py-2">
-                {isOrganizer ? "Organizer Tools" : "Explore"}
+                {t('common.explore')}
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {navigationItems.map((item) => (
+                  {publicNav.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton 
                         asChild 
@@ -105,10 +121,65 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
+
+            {/* Role-based Navigation */}
+            {user && roleBasedNav.length > 0 && (
+              <SidebarGroup>
+                <SidebarGroupLabel className="text-xs font-semibold text-stone-500 uppercase tracking-wider px-3 py-2">
+                  {isOrganizer ? "Organizer Tools" : "My Activities"}
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {roleBasedNav.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton 
+                          asChild 
+                          className={`hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-200 rounded-lg mb-1 ${
+                            location.pathname.startsWith(item.url.split('?')[0]) ? 'bg-emerald-50 text-emerald-700 font-medium' : ''
+                          }`}
+                        >
+                          <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
+                            <item.icon className="w-4 h-4" />
+                            <span>{item.title}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            )}
+
+            {/* Language Switcher */}
+            <SidebarGroup>
+              <SidebarGroupLabel className="text-xs font-semibold text-stone-500 uppercase tracking-wider px-3 py-2">
+                {language === 'el' ? 'Γλώσσα' : 'Language'}
+              </SidebarGroupLabel>
+              <SidebarGroupContent>
+                <div className="px-3 py-2 flex gap-2">
+                  <Button 
+                    variant={language === 'en' ? 'default' : 'outline'} 
+                    size="sm"
+                    onClick={() => setLanguage('en')}
+                    className="flex-1"
+                  >
+                    EN
+                  </Button>
+                  <Button 
+                    variant={language === 'el' ? 'default' : 'outline'} 
+                    size="sm"
+                    onClick={() => setLanguage('el')}
+                    className="flex-1"
+                  >
+                    ΕΛ
+                  </Button>
+                </div>
+              </SidebarGroupContent>
+            </SidebarGroup>
           </SidebarContent>
 
           <SidebarFooter className="border-t border-stone-200 p-4">
-            {user && (
+            {user ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-3 p-2">
                   <Link to={createPageUrl("EditProfile")} className="flex items-center gap-3 flex-1 min-w-0">
@@ -127,9 +198,17 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
-                  Logout
+                  {t('common.logout')}
                 </button>
               </div>
+            ) : (
+              <Button 
+                onClick={handleLogin}
+                className="w-full bg-emerald-600 hover:bg-emerald-700"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                {t('common.login')}
+              </Button>
             )}
           </SidebarFooter>
         </Sidebar>
