@@ -175,7 +175,7 @@ export default function Layout({ children, currentPageName }) {
     fetchUser();
   }, []);
 
-  const isOrganizer = user?.role === "admin";
+  const isOrganizer = user?.organizer_code && user.organizer_code.trim().length > 0;
   const publicPages = ['Home', 'OrganizersList', 'Calendar', 'TripDetails', 'OrganizerProfile', 'RoleSelection'];
 
   if (currentPageName === 'Home') {

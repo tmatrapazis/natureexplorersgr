@@ -231,7 +231,7 @@ export default function EditProfilePage() {
     updateProfileMutation.mutate(dataToSubmit);
   };
 
-  const isOrganizer = user?.role === 'admin';
+  const isOrganizer = user?.organizer_code && user.organizer_code.trim().length > 0;
   const showVerificationSection = isOrganizer && !user?.is_verified_organizer && user?.verification_status !== 'pending';
 
   if (userLoading) {

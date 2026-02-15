@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -47,16 +46,13 @@ export default function RoleSelectionPage() {
         phone_number: user.phone_number || '',
       };
 
-      // If organizer, set verification status to pending
-      // Note: The actual 'role' field (admin/user) can only be set by platform admins
-      // So we use verification_status to mark someone as an organizer
+      // Store intent in localStorage - organizer access will be granted once organizer_code is assigned
       if (intendedRole === 'organizer') {
-        updates.verification_status = 'pending';
-        console.log('[RoleSelection] 📝 Setting verification_status to pending');
+        updates.intended_role = 'organizer';
+        console.log('[RoleSelection] 📝 Marking user intent as organizer');
       } else {
-        // For hikers, ensure verification_status is 'none'
-        updates.verification_status = 'none';
-        console.log('[RoleSelection] 📝 Setting verification_status to none (hiker)');
+        updates.intended_role = 'hiker';
+        console.log('[RoleSelection] 📝 Marking user intent as hiker');
       }
 
       console.log('[RoleSelection] 💾 Updating user with:', updates);
@@ -81,15 +77,15 @@ export default function RoleSelectionPage() {
                 <li><strong>User ID:</strong> ${user.id}</li>
                 <li><strong>Registration Date:</strong> ${new Date().toLocaleString()}</li>
               </ul>
-              <p>The user's verification_status has been set to <strong>pending</strong>.</p>
+              <p>The user's <strong>intended_role</strong> has been set to <strong>organizer</strong>.</p>
               <p><strong>Next Steps:</strong></p>
               <ol>
                 <li>The user will complete their profile (name, phone, bio, etc.)</li>
-                <li>To give them full organizer permissions, you need to manually change their <strong>role</strong> to <strong>admin</strong> in the Base44 dashboard (Data → User entity → find user → edit role field)</li>
-                <li>Once their role is admin, they can create and manage trips</li>
+                <li>To grant them organizer access, you need to assign them an <strong>organizer_code</strong> in the Base44 dashboard (Data → User entity → find user → set organizer_code field to a unique code like "ORG001")</li>
+                <li>Once they have an organizer_code, they can create and manage trips</li>
                 <li>They may also request verification (verified badge) later through the app</li>
               </ol>
-              <p><em>Note: Until you manually set their role to 'admin' in the dashboard, they will have limited organizer permissions.</em></p>
+              <p><em>Note: Until you assign them an organizer_code in the dashboard, they will not have organizer permissions.</em></p>
             `
           });
           console.log('[RoleSelection] ✅ Admin notification email sent');

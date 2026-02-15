@@ -300,8 +300,9 @@ export default function MyBookingsPage() {
     );
   }
 
-  // Role guard (only show to users)
-  if (user.role !== 'user') {
+  // Role guard (only show to hikers - users without organizer_code)
+  const isOrganizer = user.organizer_code && user.organizer_code.trim().length > 0;
+  if (isOrganizer) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-8">

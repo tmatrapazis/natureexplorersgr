@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -66,7 +65,10 @@ export default function RequestVerificationPage() {
     requestVerificationMutation.mutate(formData);
   };
 
-  if (!user || user.role !== 'admin') {
+  // Check if user is an organizer (has organizer_code)
+  const isOrganizer = user?.organizer_code && user.organizer_code.trim().length > 0;
+  
+  if (!user || !isOrganizer) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-8 text-center">
