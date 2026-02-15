@@ -11,7 +11,30 @@ const defaultPreferences = {
   marketing: false,
 };
 
-export default function CookieConsent() {
+// Safe localStorage parser with fallback
+const getSavedPreferences = () => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return null;
+    
+    const parsed = JSON.parse(saved);
+    // Validate structure
+    if (typeof parsed === 'object' && parsed !== null) {
+      return {
+        necessary: true, // Always enforce
+        analytics: !!parsed.analytics,
+        marketing: !!parsed.marketing,
+      };
+    }
+    return null;
+  } catch (error) {
+    console.warn('[CookieConsent] Failed to parse saved preferences, resetting:', error);
+    localStorage.removeItem(STORAGE_KEY);
+    return null;
+  }
+};
+
+export default function CookieConsent({ onConsentChange }) {
   const [showBanner, setShowBanner] = useState(false);
   const [showPreferences, setShowPreferences] = useState(false);
   const [preferences, setPreferences] = useState(defaultPreferences);
@@ -19,13 +42,14 @@ export default function CookieConsent() {
 
   useEffect(() => {
     // Check if user has already given consent
-    const savedPreferences = localStorage.getItem(STORAGE_KEY);
+    const savedPreferences = getSavedPreferences();
     
     if (savedPreferences) {
-      const parsed = JSON.parse(savedPreferences);
-      setPreferences(parsed);
+      setPreferences(savedPreferences);
       setHasConsented(true);
-      loadScriptsBasedOnConsent(parsed);
+      if (onConsentChange) {
+        onConsentChange(savedPreferences);
+      }
     } else {
       // Show banner if no consent has been given
       setShowBanner(true);
@@ -33,10 +57,25 @@ export default function CookieConsent() {
   }, []);
 
   const savePreferences = (prefs) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
-    setPreferences(prefs);
+    const validatedPrefs = {
+      necessary: true,
+      analytics: !!prefs.analytics,
+      marketing: !!prefs.marketing,
+    };
+    
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(validatedPrefs));
+    } catch (error) {
+      console.warn('[CookieConsent] Failed to save preferences:', error);
+    }
+    
+    setPreferences(validatedPrefs);
     setHasConsented(true);
-    loadScriptsBasedOnConsent(prefs);
+    
+    // Notify parent of consent change
+    if (onConsentChange) {
+      onConsentChange(validatedPrefs);
+    }
   };
 
   const handleAcceptAll = () => {
@@ -73,28 +112,7 @@ export default function CookieConsent() {
     setShowPreferences(true);
   };
 
-  const loadScriptsBasedOnConsent = (prefs) => {
-    // Analytics scripts
-    if (prefs.analytics) {
-      // Load Google Analytics or other analytics scripts
-      console.log('[Cookie Consent] Analytics enabled');
-      // Example: Load GA4
-      // window.gtag && window.gtag('consent', 'update', {
-      //   'analytics_storage': 'granted'
-      // });
-    } else {
-      console.log('[Cookie Consent] Analytics disabled');
-    }
 
-    // Marketing scripts
-    if (prefs.marketing) {
-      // Load marketing/advertising scripts
-      console.log('[Cookie Consent] Marketing enabled');
-      // Example: Load Facebook Pixel, Google Ads, etc.
-    } else {
-      console.log('[Cookie Consent] Marketing disabled');
-    }
-  };
 
   return (
     <>

@@ -110,10 +110,16 @@ function LayoutContent({ children, currentPageName }) {
 }
 
 export default function Layout({ children, currentPageName }) {
+  const [analyticsEnabled, setAnalyticsEnabled] = React.useState(false);
+
+  const handleConsentChange = (preferences) => {
+    setAnalyticsEnabled(preferences.analytics);
+  };
+
   return (
     <LanguageProvider>
-      <GoogleAnalytics />
-      <CookieConsent />
+      <GoogleAnalytics enabled={analyticsEnabled} />
+      <CookieConsent onConsentChange={handleConsentChange} />
       <LayoutContent children={children} currentPageName={currentPageName} />
     </LanguageProvider>
   );
