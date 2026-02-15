@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Cookie } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function CookieConsentBanner({ onAcceptAll, onRejectAll, onCustomize }) {
   return (
@@ -20,23 +22,19 @@ export default function CookieConsentBanner({ onAcceptAll, onRejectAll, onCustom
         </div>
 
         <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mb-6">
-          <a 
-            href="/privacy-policy" 
+          <Link 
+            to={createPageUrl('PrivacyPolicy')}
             className="underline hover:text-foreground transition-colors"
-            target="_blank"
-            rel="noopener noreferrer"
           >
             Privacy Policy
-          </a>
+          </Link>
           <span>•</span>
-          <a 
-            href="/cookie-policy" 
+          <Link 
+            to={createPageUrl('CookiePolicy')}
             className="underline hover:text-foreground transition-colors"
-            target="_blank"
-            rel="noopener noreferrer"
           >
             Cookie Policy
-          </a>
+          </Link>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
