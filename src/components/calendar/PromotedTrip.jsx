@@ -75,7 +75,7 @@ export default function PromotedTrip({ trips, currentDate }) {
         <span className="text-white font-semibold text-sm">
           {language === 'el' ? 'Δημοφιλής Εκδρομή' : 'Popular Trip'}
         </span>
-        {user?.role === 'admin' && (
+        {user?.organizer_code && user.organizer_code.trim().length > 0 && (
           <div className="ml-auto flex items-center gap-1 text-white/90 text-xs">
             <Eye className="w-3 h-3" />
             <span>{mostPopularTrip.view_count || 0} {language === 'el' ? 'προβολές' : 'views'}</span>
