@@ -275,8 +275,8 @@ export default function HomePage() {
             rel="preload" 
             as="image" 
             href="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=800&q=80&fm=webp"
-            imagesrcset="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&q=80&fm=webp 600w, https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp 1200w"
-            imagesizes="100vw"
+            imageSrcSet="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&q=80&fm=webp 600w, https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp 1200w"
+            imageSizes="100vw"
           />
           
           <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white">
