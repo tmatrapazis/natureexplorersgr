@@ -8,6 +8,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/components/contexts/LanguageContext';
 import { useTranslation } from '@/components/translations/useTranslations';
+import PageWrapper from '../components/layout/PageWrapper';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import ReactDOMServer from 'react-dom/server';
@@ -118,8 +119,7 @@ export default function GreekRefuges() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 py-4 md:py-8">
-      <div className="container mx-auto px-4 max-w-7xl">
+    <PageWrapper>
         {/* Header */}
         <div className="text-center mb-6 md:mb-8">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
@@ -513,7 +513,6 @@ export default function GreekRefuges() {
             {t('refuges.coordinates_note')}
           </p>
         </div>
-      </div>
-    </div>
+    </PageWrapper>
   );
 }

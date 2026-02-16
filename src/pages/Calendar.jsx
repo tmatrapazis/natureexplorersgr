@@ -8,6 +8,7 @@ import TripsList from "../components/calendar/TripsList";
 import TripFilters from "../components/calendar/TripFilters";
 import PromotedTrip from "../components/calendar/PromotedTrip.jsx";
 import PullToRefresh from "../components/ui/PullToRefresh";
+import PageWrapper from "../components/layout/PageWrapper";
 import { getComputedTripStatus } from "../components/helpers/tripHelpers";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
@@ -176,8 +177,7 @@ export default function CalendarPage() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/30 dark:via-emerald-950/10 to-background p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
+      <PageWrapper>
         <header className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
             {language === 'el' ? 'Ημερολόγιο Πεζοπορικών Εκδρομών' : t('calendar.title')}
@@ -290,9 +290,7 @@ export default function CalendarPage() {
               </>
             }
           </div>
-        </div>
-      </div>
-    </div>
+      </PageWrapper>
     </PullToRefresh>
   );
 }
