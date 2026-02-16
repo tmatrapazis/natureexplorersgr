@@ -168,20 +168,20 @@ export default function MyTripsPage() {
 
   return (
     <PageWrapper>
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-5xl mx-auto pb-20">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-stone-900">{t('organizer.my_trips')}</h1>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             {user && (
-              <Link to={`${createPageUrl("OrganizerProfile")}?code=${user.organizer_code}`}>
-                <Button variant="outline">
+              <Link to={`${createPageUrl("OrganizerProfile")}?code=${user.organizer_code}`} className="w-full sm:w-auto">
+                <Button variant="outline" className="w-full sm:w-auto min-h-[44px]">
                   <UserIcon className="w-4 h-4 mr-2" />
                   {t('organizer.view_profile')}
                 </Button>
               </Link>
             )}
-            <Link to={createPageUrl("CreateTrip")}>
-              <Button className="bg-emerald-600 hover:bg-emerald-700">
+            <Link to={createPageUrl("CreateTrip")} className="w-full sm:w-auto">
+              <Button className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto min-h-[44px]">
                 <Plus className="w-4 h-4 mr-2" />
                 {t('organizer.create_new_trip')}
               </Button>
@@ -293,17 +293,17 @@ export default function MyTripsPage() {
                           )}
 
                           <div className="flex flex-col gap-2">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
-                                <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
+                            <div className="flex flex-wrap items-center gap-2 min-w-0">
+                              <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`} className="flex-shrink-0">
+                                <Button variant="outline" size="sm" className="min-h-[44px]"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
                               </Link>
                               <Select
                                 value={trip.status}
                                 onValueChange={(value) => handleStatusChange(trip.id, value)}
                                 disabled={!isRequiredFieldsFilled(trip)}
                               >
-                                <SelectTrigger className="w-[140px] h-9">
-                                  <RefreshCw className="w-4 h-4 mr-2" />
+                                <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
+                                  <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -321,7 +321,7 @@ export default function MyTripsPage() {
                                   size="sm"
                                   onClick={() => handleDeleteTrip(trip.id)}
                                   disabled={deleteTripMutation.isPending}
-                                  className="text-red-600 hover:text-red-700"
+                                  className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
                                 >
                                   <Trash2 className="w-4 h-4 mr-2" />
                                   {language === 'el' ? 'Διαγραφή' : 'Delete'}
@@ -404,16 +404,16 @@ export default function MyTripsPage() {
                                 </div>
                               )}
 
-                              <div className="flex flex-wrap items-center gap-2">
-                                <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
-                                  <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
+                              <div className="flex flex-wrap items-center gap-2 min-w-0">
+                                <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`} className="flex-shrink-0">
+                                  <Button variant="outline" size="sm" className="min-h-[44px]"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
                                 </Link>
                                 <Select
                                   value={trip.status}
                                   onValueChange={(value) => handleStatusChange(trip.id, value)}
                                 >
-                                  <SelectTrigger className="w-[140px] h-9">
-                                    <RefreshCw className="w-4 h-4 mr-2" />
+                                  <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
+                                    <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -430,6 +430,7 @@ export default function MyTripsPage() {
                                   size="sm"
                                   onClick={() => handleCancelTrip(trip)}
                                   disabled={cancelTripMutation.isPending && cancelTripMutation.variables?.trip.id === trip.id}
+                                  className="flex-shrink-0 min-h-[44px]"
                                 >
                                   {cancelTripMutation.isPending && cancelTripMutation.variables?.trip.id === trip.id ? (
                                     <span className="flex items-center gap-2">{t('organizer.cancelling')}</span>
@@ -446,7 +447,7 @@ export default function MyTripsPage() {
                                     size="sm"
                                     onClick={() => handleDeleteTrip(trip.id)}
                                     disabled={deleteTripMutation.isPending}
-                                    className="text-red-600 hover:text-red-700"
+                                    className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
                                   >
                                     <Trash2 className="w-4 h-4 mr-2" />
                                     {language === 'el' ? 'Διαγραφή' : 'Delete'}
@@ -524,16 +525,16 @@ export default function MyTripsPage() {
                             </div>
                           )}
 
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
-                              <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
+                          <div className="flex flex-wrap items-center gap-2 min-w-0">
+                            <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`} className="flex-shrink-0">
+                              <Button variant="outline" size="sm" className="min-h-[44px]"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
                             </Link>
                             <Select
                               value={trip.status}
                               onValueChange={(value) => handleStatusChange(trip.id, value)}
                             >
-                              <SelectTrigger className="w-[140px] h-9">
-                                <RefreshCw className="w-4 h-4 mr-2" />
+                              <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
+                                <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -550,6 +551,7 @@ export default function MyTripsPage() {
                               size="sm"
                               onClick={() => handleCancelTrip(trip)}
                               disabled={cancelTripMutation.isPending && cancelTripMutation.variables?.trip.id === trip.id}
+                              className="flex-shrink-0 min-h-[44px]"
                             >
                               {cancelTripMutation.isPending && cancelTripMutation.variables?.trip.id === trip.id ? (
                                 <span className="flex items-center gap-2">{t('organizer.cancelling')}</span>
@@ -566,7 +568,7 @@ export default function MyTripsPage() {
                                 size="sm"
                                 onClick={() => handleDeleteTrip(trip.id)}
                                 disabled={deleteTripMutation.isPending}
-                                className="text-red-600 hover:text-red-700"
+                                className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 {language === 'el' ? 'Διαγραφή' : 'Delete'}
@@ -644,11 +646,12 @@ export default function MyTripsPage() {
                             </div>
                           )}
 
-                          <div className="flex flex-wrap items-center gap-2">
+                          <div className="flex flex-wrap items-center gap-2 min-w-0">
                             <Button 
                               variant="outline" 
                               size="sm"
                               onClick={() => handleRecreateTrip(trip)}
+                              className="flex-shrink-0 min-h-[44px]"
                             >
                               <Plus className="w-4 h-4 mr-2"/>
                               {language === 'el' ? 'Αναδημιουργία' : 'Recreate'}
@@ -725,16 +728,16 @@ export default function MyTripsPage() {
                             </div>
                           )}
 
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`}>
-                              <Button variant="outline" size="sm"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
+                          <div className="flex flex-wrap items-center gap-2 min-w-0">
+                            <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`} className="flex-shrink-0">
+                              <Button variant="outline" size="sm" className="min-h-[44px]"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
                             </Link>
                             <Select
                               value={trip.status}
                               onValueChange={(value) => handleStatusChange(trip.id, value)}
                             >
-                              <SelectTrigger className="w-[140px] h-9">
-                                <RefreshCw className="w-4 h-4 mr-2" />
+                              <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
+                                <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -752,7 +755,7 @@ export default function MyTripsPage() {
                                 size="sm"
                                 onClick={() => handleDeleteTrip(trip.id)}
                                 disabled={deleteTripMutation.isPending}
-                                className="text-red-600 hover:text-red-700"
+                                className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 {language === 'el' ? 'Διαγραφή' : 'Delete'}
