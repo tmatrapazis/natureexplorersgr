@@ -14,7 +14,7 @@ import {
 import { Bell, Check, Circle, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
-export default function NotificationsBell({ user }) {
+export default function NotificationsBell({ user, compact = false }) {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -97,7 +97,7 @@ export default function NotificationsBell({ user }) {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative rounded-full">
+        <Button variant="ghost" size="icon" className={`relative ${compact ? 'rounded-lg min-h-[44px] min-w-[44px]' : 'rounded-full'}`}>
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-medium text-white">
