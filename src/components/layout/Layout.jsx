@@ -231,12 +231,43 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
 
         <main className="flex-1 flex flex-col">
           <header 
-            className="bg-white border-b border-stone-200 px-6 py-4 md:hidden sticky top-0 z-40"
+            className="bg-white border-b border-stone-200 px-4 py-4 md:hidden sticky top-0 z-40"
             style={{ paddingTop: 'calc(env(safe-area-inset-top) + 1rem)' }}
           >
-            <div className="flex items-center gap-4">
-              <SidebarTrigger className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]" />
-              <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" alt="Nature Explorers" className="h-8 w-auto" />
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <SidebarTrigger className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]" />
+                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" alt="Nature Explorers" className="h-8 w-auto" />
+              </div>
+              
+              {/* Organizer actions on MyTrips page */}
+              {isOrganizer && location.pathname.includes('/MyTrips') && user && (
+                <div className="flex items-center gap-1">
+                  <NotificationsBell user={user} compact={true} />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate(createPageUrl("CreateTrip"))}
+                    className="min-h-[44px] min-w-[44px] text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                    title={t('create_trip.title')}
+                  >
+                    <PlusCircle className="w-5 h-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate(createPageUrl("EditProfile"))}
+                    className="min-h-[44px] min-w-[44px] hover:bg-stone-100"
+                    title="Profile"
+                  >
+                    {user.profile_picture_url ? (
+                      <img src={user.profile_picture_url} alt="" className="w-8 h-8 rounded-full object-cover" />
+                    ) : (
+                      <User className="w-5 h-5" />
+                    )}
+                  </Button>
+                </div>
+              )}
             </div>
           </header>
 
