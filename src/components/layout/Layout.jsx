@@ -25,7 +25,7 @@ import PublicHeader from "../layout/PublicHeader";
 import PublicFooter from "../layout/PublicFooter";
 import NotificationsBell from "../layout/NotificationsBell";
 
-const AppLayout = ({ children, isOrganizer, user, location }) => {
+const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
@@ -87,7 +87,6 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
   };
 
   return (
-     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-stone-50">
         <Sidebar className="border-r border-stone-200">
          <SidebarHeader className="border-b border-stone-200 p-6">
@@ -246,6 +245,15 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
           </div>
         </main>
       </div>
+  );
+};
+
+const AppLayout = ({ children, isOrganizer, user, location }) => {
+  return (
+    <SidebarProvider>
+      <AppLayoutInner user={user} isOrganizer={isOrganizer} location={location}>
+        {children}
+      </AppLayoutInner>
     </SidebarProvider>
   );
 };
