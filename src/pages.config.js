@@ -48,6 +48,7 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Calendar from './pages/Calendar';
+import CookiePolicy from './pages/CookiePolicy';
 import CreateGuideProfile from './pages/CreateGuideProfile';
 import CreateTrip from './pages/CreateTrip';
 import EditGuideProfile from './pages/EditGuideProfile';
@@ -64,18 +65,18 @@ import MyProfile from './pages/MyProfile';
 import MyTrips from './pages/MyTrips';
 import OrganizerProfile from './pages/OrganizerProfile';
 import OrganizersList from './pages/OrganizersList';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import RequestVerification from './pages/RequestVerification';
 import RoleSelection from './pages/RoleSelection';
 import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import CookiePolicy from './pages/CookiePolicy';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Calendar": Calendar,
+    "CookiePolicy": CookiePolicy,
     "CreateGuideProfile": CreateGuideProfile,
     "CreateTrip": CreateTrip,
     "EditGuideProfile": EditGuideProfile,
@@ -92,13 +93,12 @@ export const PAGES = {
     "MyTrips": MyTrips,
     "OrganizerProfile": OrganizerProfile,
     "OrganizersList": OrganizersList,
+    "PrivacyPolicy": PrivacyPolicy,
     "RequestVerification": RequestVerification,
     "RoleSelection": RoleSelection,
     "TempImageUploader": TempImageUploader,
     "TermsOfUse": TermsOfUse,
     "TripDetails": TripDetails,
-    "PrivacyPolicy": PrivacyPolicy,
-    "CookiePolicy": CookiePolicy,
 }
 
 export const pagesConfig = {

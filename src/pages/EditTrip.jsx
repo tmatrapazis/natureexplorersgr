@@ -267,8 +267,8 @@ export default function EditTripPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8 w-full overflow-x-hidden">
+      <div className="max-w-3xl mx-auto w-full min-w-0">
         <Button 
           variant="outline" 
           className="mb-6"
@@ -278,8 +278,8 @@ export default function EditTripPage() {
           {t('create_trip.back_to_trips')}
         </Button>
 
-        <Card className="p-8">
-          <h1 className="text-3xl font-bold text-stone-900 mb-6">{t('create_trip.edit_title')}</h1>
+        <Card className="p-4 md:p-8 w-full overflow-x-hidden">
+          <h1 className="text-2xl md:text-3xl font-bold text-stone-900 mb-6 break-words">{t('create_trip.edit_title')}</h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -294,12 +294,12 @@ export default function EditTripPage() {
 
             <div>
               <Label>{t('create_trip.tags')}</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
+              <div className="flex flex-wrap gap-2 mt-2 w-full min-w-0">
                 {availableTags.map(tag => (
                   <Badge
                     key={tag}
                     variant={tripData.tags.includes(tag) ? "default" : "outline"}
-                    className={`cursor-pointer ${tripData.tags.includes(tag) ? 'bg-emerald-600' : ''}`}
+                    className={`cursor-pointer whitespace-normal break-words text-center ${tripData.tags.includes(tag) ? 'bg-emerald-600' : ''}`}
                     onClick={() => toggleTag(tag)}
                   >
                     {tag}
@@ -390,12 +390,12 @@ export default function EditTripPage() {
                       : 'Add different pricing categories (e.g., Standard, Early Bird, Student)'}
                   </p>
                   <div className="space-y-2 mb-2">
-                    <div className="grid grid-cols-12 gap-2">
+                    <div className="flex flex-col md:grid md:grid-cols-12 gap-2">
                       <Input
                         placeholder={language === 'el' ? 'Κατηγορία' : 'Label'}
                         value={currentPricingLabel}
                         onChange={(e) => setCurrentPricingLabel(e.target.value)}
-                        className="col-span-3"
+                        className="md:col-span-3"
                       />
                       <Input
                         type="number"
@@ -404,15 +404,15 @@ export default function EditTripPage() {
                         placeholder={language === 'el' ? 'Τιμή' : 'Price'}
                         value={currentPricingPrice}
                         onChange={(e) => setCurrentPricingPrice(e.target.value)}
-                        className="col-span-2"
+                        className="md:col-span-2"
                       />
                       <Input
                         placeholder={language === 'el' ? 'Περιγραφή (προαιρετικό)' : 'Description (optional)'}
                         value={currentPricingDescription}
                         onChange={(e) => setCurrentPricingDescription(e.target.value)}
-                        className="col-span-6"
+                        className="md:col-span-6"
                       />
-                      <Button type="button" onClick={addPricingOption} variant="outline" className="col-span-1">
+                      <Button type="button" onClick={addPricingOption} variant="outline" className="md:col-span-1">
                         <Plus className="w-4 h-4" />
                       </Button>
                     </div>
@@ -585,11 +585,11 @@ export default function EditTripPage() {
               </div>
             </div>
 
-            <div className="flex gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => handleNavigateAway(createPageUrl("MyTrips"))}>
+            <div className="flex flex-col sm:flex-row gap-3 pt-4 w-full">
+              <Button type="button" variant="outline" onClick={() => handleNavigateAway(createPageUrl("MyTrips"))} className="w-full sm:w-auto">
                 {t('common.cancel')}
               </Button>
-              <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700" disabled={updateTripMutation.isPending}>
+              <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto" disabled={updateTripMutation.isPending}>
                 {updateTripMutation.isPending ? (language === 'el' ? 'Αποθήκευση...' : 'Saving...') : (language === 'el' ? 'Αποθήκευση Αλλαγών' : 'Save Changes')}
               </Button>
             </div>

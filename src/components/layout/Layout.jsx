@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Calendar, Mountain, PlusCircle, Bookmark, Map, User, LogOut, Edit, BarChart3, Users, Compass, Home, Globe, LogIn } from "lucide-react";
+import { Calendar, Mountain, PlusCircle, Bookmark, Map, User, LogOut, Edit, BarChart3, Users, Compass, Home, Globe, LogIn, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useTranslation } from "../translations/useTranslations";
@@ -19,6 +19,7 @@ import {
   SidebarFooter,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import PublicHeader from "../layout/PublicHeader";
 import PublicFooter from "../layout/PublicFooter";
@@ -28,6 +29,7 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
+  const { setOpenMobile } = useSidebar();
 
   React.useEffect(() => {
     if (user) {
@@ -79,12 +81,18 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
 
   const roleBasedNav = user ? (isOrganizer ? organizerNav : clientNav) : [];
 
+  const handleNavClick = () => {
+    // Close mobile sidebar when nav item is clicked
+    setOpenMobile(false);
+  };
+
   return (
      <SidebarProvider>
       <div className="min-h-screen flex w-full bg-stone-50">
         <Sidebar className="border-r border-stone-200">
-          <SidebarHeader className="border-b border-stone-200 p-6">
-            <Link to={createPageUrl("Home")} className="flex items-center gap-3">
+         <SidebarHeader className="border-b border-stone-200 p-6">
+           <div className="flex items-center justify-between">
+             <Link to={createPageUrl("Home")} className="flex items-center gap-3" onClick={handleNavClick}>
               <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
                 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" alt="Nature Explorers" className="w-full h-full object-contain" />
               </div>
@@ -92,7 +100,16 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
                 <h2 className="font-bold text-stone-900">Nature Explorers</h2>
                 <p className="text-xs text-stone-500">natureexplorers.gr</p>
               </div>
-            </Link>
+              </Link>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden"
+                onClick={() => setOpenMobile(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
           </SidebarHeader>
           
           <SidebarContent className="p-3">
@@ -111,7 +128,7 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
                           location.pathname.startsWith(item.url.split('?')[0]) ? 'bg-emerald-50 text-emerald-700 font-medium' : ''
                         }`}
                       >
-                        <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
+                        <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5" onClick={handleNavClick}>
                           <item.icon className="w-4 h-4" />
                           <span>{item.title}</span>
                         </Link>
@@ -138,7 +155,7 @@ const AppLayout = ({ children, isOrganizer, user, location }) => {
                             location.pathname.startsWith(item.url.split('?')[0]) ? 'bg-emerald-50 text-emerald-700 font-medium' : ''
                           }`}
                         >
-                          <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5">
+                          <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5" onClick={handleNavClick}>
                             <item.icon className="w-4 h-4" />
                             <span>{item.title}</span>
                           </Link>
