@@ -118,25 +118,25 @@ export default function GreekRefuges() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 py-4 md:py-8">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <Mountain className="w-12 h-12 text-emerald-600" />
-            <h1 className="text-4xl md:text-5xl font-bold text-stone-900">
+        <div className="text-center mb-6 md:mb-8">
+          <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
+            <Mountain className="w-8 h-8 md:w-12 md:h-12 text-emerald-600 flex-shrink-0" />
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-stone-900 break-words min-w-0">
               {t('refuges.page_title')}
             </h1>
           </div>
-          <p className="text-lg text-stone-600 max-w-3xl mx-auto">
+          <p className="text-sm md:text-lg text-stone-600 max-w-3xl mx-auto px-2 break-words">
             {t('refuges.page_subtitle').replace('{count}', refugesData.length)}
           </p>
         </div>
 
         {/* Map Section */}
-        <Card className="mb-8 overflow-hidden relative z-0">
+        <Card className="mb-6 md:mb-8 overflow-hidden relative z-0 w-full max-w-full">
           <CardContent className="p-0">
-            <div className="h-[500px] w-full relative z-0">
+            <div className="h-[300px] md:h-[500px] w-full max-w-full relative z-0">
               <MapContainer
                 center={mapCenter}
                 zoom={mapZoom}
@@ -207,19 +207,20 @@ export default function GreekRefuges() {
           </CardContent>
         </Card>
 
-        {/* Table Section */}
-        <Card>
+        {/* Table/List Section */}
+        <Card className="w-full max-w-full">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-emerald-600" />
-              {t('refuges.list_title')}
+            <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+              <MapPin className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+              <span className="break-words min-w-0">{t('refuges.list_title')}</span>
             </CardTitle>
-            <p className="text-sm text-stone-600 mt-2">
+            <p className="text-xs md:text-sm text-stone-600 mt-2 break-words">
               {t('refuges.list_subtitle')}
             </p>
           </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
+          <CardContent className="p-0 md:p-6">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
@@ -363,12 +364,141 @@ export default function GreekRefuges() {
                 </tbody>
               </table>
             </div>
+
+            {/* Mobile Card List */}
+            <div className="md:hidden space-y-3 p-4">
+              <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                <Button
+                  variant={sortConfig.key === 'name' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleSort('name')}
+                  className="whitespace-nowrap flex-shrink-0"
+                >
+                  {t('refuges.refuge_name')}
+                  <ArrowUpDown className="w-3 h-3 ml-1" />
+                </Button>
+                <Button
+                  variant={sortConfig.key === 'altitude' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleSort('altitude')}
+                  className="whitespace-nowrap flex-shrink-0"
+                >
+                  {t('refuges.altitude')}
+                  <ArrowUpDown className="w-3 h-3 ml-1" />
+                </Button>
+                <Button
+                  variant={sortConfig.key === 'mountain' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleSort('mountain')}
+                  className="whitespace-nowrap flex-shrink-0"
+                >
+                  {t('refuges.mountain')}
+                  <ArrowUpDown className="w-3 h-3 ml-1" />
+                </Button>
+              </div>
+
+              {sortedRefuges.map((refuge) => (
+                <div
+                  key={refuge.id}
+                  onClick={() => handleRowClick(refuge)}
+                  className={`border rounded-lg p-4 cursor-pointer hover:border-emerald-600 transition-all w-full max-w-full ${
+                    selectedRefuge?.id === refuge.id ? 'bg-emerald-50 border-emerald-600' : 'bg-white'
+                  }`}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-semibold text-stone-900 text-base break-words min-w-0 flex-1">{refuge.name}</h3>
+                      <Badge className="bg-emerald-600 text-white flex-shrink-0 text-xs">
+                        {refuge.type}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-stone-600">
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-4 h-4 flex-shrink-0" />
+                        <span className="break-words min-w-0">{refuge.mountain}</span>
+                      </span>
+                      <Badge variant="outline" className="bg-stone-100 flex-shrink-0">
+                        {refuge.altitude}m
+                      </Badge>
+                      {refuge.capacity > 0 && (
+                        <span className="flex items-center gap-1">
+                          <Users className="w-4 h-4 flex-shrink-0" />
+                          {refuge.capacity}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {refuge.website && (
+                        <a
+                          href={refuge.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-emerald-600 hover:underline inline-flex items-center gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          {t('refuges.website')}
+                        </a>
+                      )}
+                      {refuge.refuge_link && (
+                        <a
+                          href={refuge.refuge_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:underline inline-flex items-center gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          {t('refuges.bookings')}
+                        </a>
+                      )}
+                      {(refuge.google_maps_link || (refuge.lat && refuge.lng)) && (
+                        <a
+                          href={refuge.google_maps_link || getGoogleMapsLink(refuge.lat, refuge.lng)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-red-600 hover:underline inline-flex items-center gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MapPin className="w-3 h-3" />
+                          {t('refuges.maps')}
+                        </a>
+                      )}
+                      {refuge.facebook && (
+                        <a
+                          href={refuge.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-700 hover:underline inline-flex items-center gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Facebook className="w-3 h-3" />
+                        </a>
+                      )}
+                      {refuge.instagram && (
+                        <a
+                          href={refuge.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-pink-600 hover:underline inline-flex items-center gap-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Instagram className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
 
         {/* Footer Info */}
-        <div className="mt-8 text-center text-sm text-stone-600">
-          <p>
+        <div className="mt-6 md:mt-8 text-center text-xs md:text-sm text-stone-600 px-2">
+          <p className="break-words">
             {t('refuges.data_source')}{' '}
             <a
               href="https://www.topoguide.gr/greece/mountain_refuges.php"
@@ -379,7 +509,7 @@ export default function GreekRefuges() {
               Topoguide.gr
             </a>
           </p>
-          <p className="mt-2">
+          <p className="mt-2 break-words">
             {t('refuges.coordinates_note')}
           </p>
         </div>
