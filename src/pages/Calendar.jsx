@@ -290,6 +290,7 @@ export default function CalendarPage() {
               </>
             }
           </div>
+        </div>
       </PageWrapper>
     </PullToRefresh>
   );
