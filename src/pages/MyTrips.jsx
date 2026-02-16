@@ -242,19 +242,19 @@ export default function MyTripsPage() {
 
                   return (
                     <Card key={trip.id} className="p-6 hover:shadow-lg transition-shadow border-dashed">
-                      <div className="flex flex-col md:flex-row gap-6">
-                        <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
-                          <img 
-                            src={getTripImage(trip.image_url, trip.id)} 
-                            alt={trip.title} 
-                            className="w-full h-full object-cover"
-                            onError={(e) => handleImageError(e, trip.id)}
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
-                            <div>
-                              <h3 className="text-xl font-bold text-stone-900 mb-2">{trip.title}</h3>
+                     <div className="flex flex-col md:flex-row gap-6">
+                       <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
+                         <img 
+                           src={getTripImage(trip.image_url, trip.id)} 
+                           alt={trip.title} 
+                           className="w-full h-full object-cover"
+                           onError={(e) => handleImageError(e, trip.id)}
+                         />
+                       </div>
+                       <div className="flex-1 min-w-0">
+                         <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
+                           <div className="min-w-0">
+                             <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
                               <div className="flex flex-wrap gap-2">
                                 <Badge className="bg-stone-400">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</Badge>
                                 <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
@@ -363,10 +363,10 @@ export default function MyTripsPage() {
                                 onError={(e) => handleImageError(e, trip.id)}
                               />
                             </div>
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0">
                               <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
-                                <div>
-                                  <h3 className="text-xl font-bold text-stone-900 mb-2">{trip.title}</h3>
+                                <div className="min-w-0">
+                                  <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
                                   <div className="flex flex-wrap gap-2">
                                     <Badge className="bg-emerald-600">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</Badge>
                                     <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
@@ -484,10 +484,10 @@ export default function MyTripsPage() {
                             onError={(e) => handleImageError(e, trip.id)}
                           />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
-                            <div>
-                              <h3 className="text-xl font-bold text-stone-900 mb-2">{trip.title}</h3>
+                            <div className="min-w-0">
+                              <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
                               <div className="flex flex-wrap gap-2">
                                 <Badge className="bg-blue-600">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</Badge>
                                 <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
@@ -605,10 +605,10 @@ export default function MyTripsPage() {
                             onError={(e) => handleImageError(e, trip.id)}
                           />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
-                            <div>
-                              <h3 className="text-xl font-bold text-stone-900 mb-2">{trip.title}</h3>
+                            <div className="min-w-0">
+                              <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
                               <div className="flex flex-wrap gap-2">
                                 <Badge className="bg-stone-600">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</Badge>
                                 <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
@@ -687,10 +687,10 @@ export default function MyTripsPage() {
                             onError={(e) => handleImageError(e, trip.id)}
                           />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
-                            <div>
-                              <h3 className="text-xl font-bold text-stone-900 mb-2">{trip.title}</h3>
+                            <div className="min-w-0">
+                              <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
                               <div className="flex flex-wrap gap-2">
                                 <Badge className="bg-red-600">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</Badge>
                                 <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
