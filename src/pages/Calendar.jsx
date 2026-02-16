@@ -47,6 +47,7 @@ export default function CalendarPage() {
     verifiedOnly: false,
     searchQuery: ""
   });
+  const [sortBy, setSortBy] = useState("date-asc");
   const [currentPage, setCurrentPage] = useState(1);
   const tripsPerPage = 12;
   const tripsListRef = React.useRef(null);
@@ -121,6 +122,29 @@ export default function CalendarPage() {
     return true;
   });
 
+  // Sort trips based on selected sort option
+  const sortedTrips = React.useMemo(() => {
+    const sorted = [...filteredTrips];
+    
+    switch (sortBy) {
+      case "date-asc":
+        return sorted.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+      case "date-desc":
+        return sorted.sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
+      case "price-asc":
+        return sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
+      case "price-desc":
+        return sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
+      case "location":
+        return sorted.sort((a, b) => (a.location || "").localeCompare(b.location || ""));
+      case "difficulty":
+        const difficultyOrder = { easy: 1, moderate: 2, challenging: 3, difficult: 4 };
+        return sorted.sort((a, b) => (difficultyOrder[a.difficulty] || 0) - (difficultyOrder[b.difficulty] || 0));
+      default:
+        return sorted;
+    }
+  }, [filteredTrips, sortBy]);
+
   const handleDayClick = (day, dayTrips) => {
     if (dayTrips.length > 0) {
       setSelectedDate(day);
@@ -154,11 +178,11 @@ export default function CalendarPage() {
   }, [filters, selectedDate, currentDate]);
 
   // Calculate pagination
-  const totalPages = selectedDate ? 1 : Math.ceil(filteredTrips.length / tripsPerPage);
+  const totalPages = selectedDate ? 1 : Math.ceil(sortedTrips.length / tripsPerPage);
   const startIndex = (currentPage - 1) * tripsPerPage;
   const endIndex = startIndex + tripsPerPage;
   
-  const displayTrips = selectedDate ? selectedDayTrips : filteredTrips.slice(startIndex, endIndex);
+  const displayTrips = selectedDate ? selectedDayTrips : sortedTrips.slice(startIndex, endIndex);
 
   const hasActiveFilters = filters.difficulty !== "all" ||
   filters.minPrice ||
@@ -189,10 +213,24 @@ export default function CalendarPage() {
           </p>
         </header>
 
-        <div className="flex gap-3 mb-6 items-center">
+        <div className="flex gap-3 mb-6 items-center flex-wrap">
           <TripFilters filters={filters} onFilterChange={setFilters} />
+          
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="date-asc">{language === 'el' ? 'Ημερομηνία (Νεότερη πρώτα)' : 'Date (Newest first)'}</option>
+            <option value="date-desc">{language === 'el' ? 'Ημερομηνία (Παλαιότερη πρώτα)' : 'Date (Oldest first)'}</option>
+            <option value="price-asc">{language === 'el' ? 'Τιμή (Χαμηλή → Υψηλή)' : 'Price (Low → High)'}</option>
+            <option value="price-desc">{language === 'el' ? 'Τιμή (Υψηλή → Χαμηλή)' : 'Price (High → Low)'}</option>
+            <option value="location">{language === 'el' ? 'Τοποθεσία (Α-Ω)' : 'Location (A-Z)'}</option>
+            <option value="difficulty">{language === 'el' ? 'Δυσκολία (Εύκολη → Δύσκολη)' : 'Difficulty (Easy → Hard)'}</option>
+          </select>
+
           <div className="bg-emerald-100 text-emerald-800 px-4 py-2.5 text-sm font-medium rounded-md border border-emerald-200 inline-flex items-center justify-center h-9">
-            {filteredTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
+            {sortedTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
           </div>
 
           {hasActiveFilters &&
@@ -213,7 +251,7 @@ export default function CalendarPage() {
               <CalendarGrid
                 currentDate={currentDate}
                 onDateChange={setCurrentDate}
-                trips={filteredTrips}
+                trips={sortedTrips}
                 onDayClick={handleDayClick}
                 selectedDate={selectedDate} />
 
