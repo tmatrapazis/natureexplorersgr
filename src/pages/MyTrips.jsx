@@ -14,6 +14,7 @@ import { getComputedTripStatus, statusColors } from "../components/helpers/tripH
 import { formatDateRange } from "../components/helpers/dateHelpers";
 import { getTripInsights } from "../components/helpers/bookingHelpers";
 import useSEO from '../components/seo/useSEO';
+import PageWrapper from '../components/layout/PageWrapper';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
@@ -166,7 +167,7 @@ export default function MyTripsPage() {
   const cancelledTrips = (trips || []).filter(t => t.status === 'cancelled');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
+    <PageWrapper>
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-stone-900">{t('organizer.my_trips')}</h1>
@@ -772,6 +773,6 @@ export default function MyTripsPage() {
             </>
             )}
       </div>
-    </div>
+    </PageWrapper>
   );
 }

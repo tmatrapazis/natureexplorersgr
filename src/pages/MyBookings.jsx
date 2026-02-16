@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import ReactMarkdown from "react-markdown";
 
 import useSEO from '../components/seo/useSEO';
+import PageWrapper from '../components/layout/PageWrapper';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 
@@ -324,8 +325,8 @@ export default function MyBookingsPage() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/30 dark:via-emerald-950/10 to-background p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+      <PageWrapper className="py-4 md:py-8">
+        <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">My Bookings</h1>
@@ -590,8 +591,8 @@ export default function MyBookingsPage() {
           onConfirm={handleCancelConfirm}
           isPending={cancelBookingMutation.isPending}
         />
-      </div>
-    </div>
+        </div>
+      </PageWrapper>
     </PullToRefresh>
   );
 }

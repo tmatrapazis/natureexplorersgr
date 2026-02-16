@@ -8,6 +8,7 @@ import { User, Loader2, Calendar, Mail, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import VerifiedBadge from '../components/shared/VerifiedBadge';
+import PageWrapper from '../components/layout/PageWrapper';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import useSEO from '../components/seo/useSEO';
@@ -70,8 +71,7 @@ export default function OrganizersListPage() {
   const isLoading = organizersLoading || tripsLoading;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <PageWrapper>
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-3">
             {language === 'el' ? 'Γνωρίστε τους Οδηγούς Πεζοπορίας' : t('organizer.meet_organizers')}
@@ -164,7 +164,6 @@ export default function OrganizersListPage() {
             })}
           </div>
         )}
-      </div>
-    </div>
+    </PageWrapper>
   );
 }

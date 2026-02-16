@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
+import PageWrapper from "../components/layout/PageWrapper";
 import { Compass, Shield, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -55,18 +56,18 @@ export default function GuidesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50">
+    <>
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-emerald-700 to-emerald-900 text-white py-16 px-4 bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1547233528-b4d311a5be41?w=1400&q=80)' }}>
+      <div className="relative bg-gradient-to-r from-emerald-700 to-emerald-900 text-white py-12 md:py-16 px-4 bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1547233528-b4d311a5be41?w=1400&q=80)' }}>
         <div className="absolute inset-0 bg-emerald-900/70 z-0"></div>
         <div className="container mx-auto max-w-6xl relative z-10">
-          <div className="flex items-center gap-3 mb-4">
-            <Compass className="w-10 h-10" />
-            <h1 className="text-4xl md:text-5xl font-bold">
+          <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
+            <Compass className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold break-words min-w-0">
               {language === 'el' ? 'Συνοδοί Βουνού' : 'Mountain Guides'}
             </h1>
           </div>
-          <p className="text-lg text-emerald-100 max-w-2xl text-center">
+          <p className="text-base md:text-lg text-emerald-100 max-w-2xl mx-auto text-center px-2 break-words">
             {language === 'el' 
               ? 'Γνωρίστε τους πιστοποιημένους επαγγελματίες συνοδούς που κάνουν κάθε εκδρομή ασφαλή και αξέχαστη'
               : 'Meet the certified professionals who make every adventure safe and unforgettable'
@@ -76,7 +77,7 @@ export default function GuidesPage() {
       </div>
 
       {/* Guides Grid */}
-      <div className="container mx-auto max-w-6xl px-4 py-12">
+      <PageWrapper>
         
         {/* Create Profile CTA - shown to all users */}
         {(!user || !hasGuideProfile) && (
@@ -138,7 +139,7 @@ export default function GuidesPage() {
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </PageWrapper>
+    </>
   );
 }
