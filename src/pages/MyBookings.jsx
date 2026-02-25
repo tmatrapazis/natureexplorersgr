@@ -297,9 +297,6 @@ export default function MyBookingsPage() {
     );
   }
 
-  // Count bookings for this user in the diagnostic query
-  const myBookingsInDiagnostic = allBookings.filter(b => b.user_id === user.id);
-
   const handleRefresh = async () => {
     await queryClient.refetchQueries({ queryKey: ['my-bookings', user?.id] });
   };
