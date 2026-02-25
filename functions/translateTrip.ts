@@ -4,7 +4,47 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         
-        const { title, description, departure_from, requirements } = await req.json();
+        const body = await req.json();
+
+        // Bulk title translation mode
+        if (body.titles) {
+            const { titles } = body;
+            const prompt = `Translate the following Greek hiking trip titles to English. Return ONLY a JSON array with the same ids and translated titles.
+
+Titles to translate:
+${JSON.stringify(titles)}
+
+Return format:
+{
+  "translatedTitles": [{"id": "...", "title": "translated title"}, ...]
+}`;
+
+            const result = await base44.integrations.Core.InvokeLLM({
+                prompt,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        translatedTitles: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    id: { type: "string" },
+                                    title: { type: "string" }
+                                }
+                            }
+                        }
+                    },
+                    required: ["translatedTitles"]
+                },
+                add_context_from_internet: false
+            });
+
+            return Response.json(result);
+        }
+
+        // Single trip full translation mode
+        const { title, description, departure_from, requirements } = body;
 
         if (!title) {
             return Response.json({ error: "Title is required" }, { status: 400 });
