@@ -1,6 +1,15 @@
 import { isBefore, isAfter, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 
 /**
+ * Parse a YYYY-MM-DD date string as local midnight (avoids UTC shift off-by-one bug)
+ */
+const parseLocalDate = (dateStr) => {
+  if (!dateStr) return null;
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+};
+
+/**
  * Calculate the computed status of a trip based on its dates and status
  */
 export const getComputedTripStatus = (trip) => {
@@ -8,8 +17,8 @@ export const getComputedTripStatus = (trip) => {
   if (!trip.start_date) return 'upcoming';
 
   const today = startOfDay(new Date());
-  const startDate = startOfDay(new Date(trip.start_date));
-  const endDate = trip.end_date ? endOfDay(new Date(trip.end_date)) : endOfDay(new Date(trip.start_date));
+  const startDate = startOfDay(parseLocalDate(trip.start_date));
+  const endDate = trip.end_date ? endOfDay(parseLocalDate(trip.end_date)) : endOfDay(parseLocalDate(trip.start_date));
 
   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return 'upcoming';
 
