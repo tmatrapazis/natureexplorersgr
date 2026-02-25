@@ -67,15 +67,12 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
   ];
 
   const clientNav = [
-    { title: "My Bookings", url: createPageUrl("MyBookings"), icon: Bookmark },
-    { title: "My Stats", url: createPageUrl("MyProfile"), icon: BarChart3 },
     { title: "Edit Profile", url: createPageUrl("EditProfile"), icon: Edit },
   ];
 
   const organizerNav = [
     { title: "Create Trip", url: createPageUrl("CreateTrip"), icon: PlusCircle },
     { title: "My Trips", url: createPageUrl("MyTrips"), icon: Map },
-    { title: "Analytics", url: createPageUrl("MyProfile"), icon: BarChart3 },
     { title: "Edit Profile", url: createPageUrl("EditProfile"), icon: Edit },
   ];
 
