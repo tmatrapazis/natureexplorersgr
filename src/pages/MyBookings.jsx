@@ -131,26 +131,7 @@ export default function MyBookingsPage() {
     },
   });
 
-  // DIAGNOSTIC: Fetch ALL bookings (admin view) to see if any exist
-  const { data: allBookings = [] } = useQuery({
-    queryKey: ['all-bookings-diagnostic'],
-    queryFn: async () => {
-      try {
-        const result = await base44.entities.Booking.list("-created_date", 100);
-        console.log('[MyBookings] 📊 DIAGNOSTIC: Total bookings in database:', result.length);
-        if (result.length > 0) {
-          console.log('[MyBookings] 📊 DIAGNOSTIC: Sample booking user_ids:', 
-            result.slice(0, 5).map(b => ({ id: b.id, user_id: b.user_id, status: b.status }))
-          );
-        }
-        return result || [];
-      } catch (error) {
-        console.warn('[MyBookings] ⚠️ Could not fetch all bookings (might be restricted):', error.message);
-        return [];
-      }
-    },
-    enabled: !!user,
-  });
+
 
   // Fetch bookings for current user (ds_my_bookings)
   const { data: bookings = [], isLoading: bookingsLoading, error: bookingsError, refetch } = useQuery({
