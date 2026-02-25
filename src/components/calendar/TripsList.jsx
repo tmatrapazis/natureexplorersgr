@@ -105,9 +105,21 @@ export default React.forwardRef(function TripsList({ trips, selectedDate }, ref)
 
   return (
     <div ref={ref}>
-      <h3 className="text-xl font-bold text-stone-900 mb-6">
-        {selectedDate ? `${t('calendar.trips_on')} ${format(selectedDate, "MMMM d, yyyy")}` : t('calendar.upcoming_trips')}
-      </h3>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-bold text-stone-900">
+          {selectedDate ? `${t('calendar.trips_on')} ${format(selectedDate, "MMMM d, yyyy")}` : t('calendar.upcoming_trips')}
+        </h3>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleTranslate}
+          disabled={isTranslating}
+          className="gap-1"
+        >
+          <Languages className="w-4 h-4" />
+          <span>{isTranslating ? '...' : translatedTitles ? 'Original' : 'Translate'}</span>
+        </Button>
+      </div>
       
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {trips.map((trip) => {
