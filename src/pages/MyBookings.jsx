@@ -137,34 +137,8 @@ export default function MyBookingsPage() {
   const { data: bookings = [], isLoading: bookingsLoading, error: bookingsError, refetch } = useQuery({
     queryKey: ['my-bookings', user?.id],
     queryFn: async () => {
-      if (!user?.id) {
-        console.log("[MyBookings] ⏸️ Query skipped: user.id is not available yet");
-        return [];
-      }
-      
-      console.log('[MyBookings] 🔍 Fetching bookings for user_id:', user.id);
-      
-      try {
-        const result = await base44.entities.Booking.filter({ user_id: user.id }, "-created_date");
-        console.log('[MyBookings] ✅ Successfully fetched', result.length, 'bookings');
-        
-        if (result.length > 0) {
-          console.log('[MyBookings] 📋 Bookings details:', result.map(b => ({
-            id: b.id,
-            trip_title: b.trip_title,
-            status: b.status,
-            user_id: b.user_id,
-            created_date: b.created_date
-          })));
-        } else {
-          console.log('[MyBookings] ⚠️ No bookings found for user_id:', user.id);
-        }
-        
-        return result || [];
-      } catch (error) {
-        console.error('[MyBookings] ❌ Error fetching bookings:', error);
-        throw error;
-      }
+      if (!user?.id) return [];
+      return await base44.entities.Booking.filter({ user_id: user.id }, "-created_date");
     },
     enabled: !!user?.id,
     refetchOnWindowFocus: true,
