@@ -46,6 +46,45 @@ export default function TripDetailsPage() {
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
 
+  const [translatedTrip, setTranslatedTrip] = React.useState(null);
+  const [isTranslating, setIsTranslating] = React.useState(false);
+
+  // Hide cookie settings button on this page
+  React.useEffect(() => {
+    const hideCookieBtn = () => {
+      const cookieBtn = document.querySelector('[data-cookie-settings-button]');
+      if (cookieBtn) cookieBtn.style.display = 'none';
+    };
+    hideCookieBtn();
+    const timer = setTimeout(hideCookieBtn, 500);
+    return () => {
+      clearTimeout(timer);
+      const cookieBtn = document.querySelector('[data-cookie-settings-button]');
+      if (cookieBtn) cookieBtn.style.display = '';
+    };
+  }, []);
+
+  const handleTranslate = async () => {
+    if (translatedTrip) {
+      setTranslatedTrip(null);
+      return;
+    }
+    setIsTranslating(true);
+    try {
+      const response = await base44.functions.invoke('translateTrip', {
+        title: trip.title,
+        description: trip.description,
+        departure_from: trip.departure_from,
+        requirements: trip.requirements
+      });
+      setTranslatedTrip(response.data.translatedData);
+    } catch (error) {
+      console.error('Translation error:', error);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
   // Redirect to homepage if no trip ID provided (301 redirect)
   React.useEffect(() => {
     if (!tripId) {
@@ -273,6 +312,7 @@ export default function TripDetailsPage() {
 
   const computedStatus = getComputedTripStatus(trip);
   const isSocialMedia = isSocialMediaUrl(trip.event_url);
+  const displayTrip = translatedTrip || trip;
 
   // Handler for "Book Now" button clicks
   const handleBookNowClick = () => {
@@ -459,12 +499,25 @@ export default function TripDetailsPage() {
                 </div>
               )}
 
-              <Card className="p-6 relative">
-                <div className="absolute top-6 right-6 hidden md:block">
-                  <ShareButton trip={trip} language={language} />
+              <Card className="p-6">
+                <div className="flex justify-between items-start gap-4 mb-2">
+                  <h1 className="text-3xl font-bold text-stone-900 flex-1">{displayTrip.title}</h1>
+                  <div className="flex gap-2 flex-shrink-0 pt-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleTranslate}
+                      disabled={isTranslating}
+                      className="gap-1"
+                    >
+                      <Languages className="w-4 h-4" />
+                      <span className="hidden sm:inline">{isTranslating ? '...' : translatedTrip ? 'Original' : 'Translate'}</span>
+                    </Button>
+                    <div className="hidden md:block">
+                      <ShareButton trip={trip} language={language} />
+                    </div>
+                  </div>
                 </div>
-                
-                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-20">{trip.title}</h1>
 
                 {organizer && (
                   <Link
@@ -528,15 +581,15 @@ export default function TripDetailsPage() {
                     </div>
                   </div>
 
-                  {trip.departure_from && trip.departure_from.length > 0 && (
+                  {displayTrip.departure_from && displayTrip.departure_from.length > 0 && (
                     <div className="flex items-center gap-3 md:col-start-2">
                       <MapPin className="w-5 h-5 text-emerald-600" />
                       <div>
                         <p className="text-sm text-stone-500">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
                         <div className="flex flex-wrap gap-1 mt-1">
-                          {trip.departure_from.map((location, i) => (
+                          {displayTrip.departure_from.map((location, i) => (
                             <span key={i} className="text-sm font-medium text-stone-900">
-                              {location}{i < trip.departure_from.length - 1 ? ', ' : ''}
+                              {location}{i < displayTrip.departure_from.length - 1 ? ', ' : ''}
                             </span>
                           ))}
                         </div>
@@ -570,10 +623,10 @@ export default function TripDetailsPage() {
                   </div>
                 )}
 
-                {trip.description && (
+                {displayTrip.description && (
                   <div className="mb-6">
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
+                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{displayTrip.description}</p>
                   </div>
                 )}
 
@@ -599,11 +652,11 @@ export default function TripDetailsPage() {
                   </div>
                 )}
 
-                {trip.requirements && trip.requirements.length > 0 && (
+                {displayTrip.requirements && displayTrip.requirements.length > 0 && (
                   <div>
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
                     <ul className="list-disc list-inside space-y-1 text-stone-600">
-                      {trip.requirements.map((req, i) => (
+                      {displayTrip.requirements.map((req, i) => (
                         <li key={i}>{req}</li>
                       ))}
                     </ul>
@@ -663,8 +716,8 @@ export default function TripDetailsPage() {
             </div>
           </div>
           
-          {/* Mobile Share Button - Sticky at bottom */}
-          <div className="md:hidden">
+          {/* Mobile Share Button */}
+          <div className="md:hidden mt-4">
             <ShareButton trip={trip} language={language} />
           </div>
         </div>
