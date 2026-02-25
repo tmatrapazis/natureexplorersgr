@@ -24,6 +24,30 @@ const difficultyColors = {
 export default React.forwardRef(function TripsList({ trips, selectedDate }, ref) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const [translatedTitles, setTranslatedTitles] = React.useState(null);
+  const [isTranslating, setIsTranslating] = React.useState(false);
+
+  const handleTranslate = async () => {
+    if (translatedTitles) {
+      setTranslatedTitles(null);
+      return;
+    }
+    setIsTranslating(true);
+    try {
+      const response = await base44.functions.invoke('translateTrip', {
+        titles: trips.map(t => ({ id: t.id, title: t.title }))
+      });
+      const map = {};
+      (response.data.translatedTitles || []).forEach(item => {
+        map[item.id] = item.title;
+      });
+      setTranslatedTitles(map);
+    } catch (error) {
+      console.error('Translation error:', error);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
   
   // Fetch current user
   const { data: user } = useQuery({
