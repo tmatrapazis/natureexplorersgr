@@ -254,8 +254,8 @@ export default function EditProfilePage() {
 
         {isNewUser && (
           <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h2 className="text-lg font-bold text-blue-900 mb-1">Welcome to Nature Explorers!</h2>
-            <p className="text-sm text-blue-700">Please complete your profile to get started. Fields marked with * are required.</p>
+            <h2 className="text-lg font-bold text-blue-900 mb-1">{t('profile.welcome_new_user')}</h2>
+            <p className="text-sm text-blue-700">{t('profile.complete_profile_message')}</p>
           </div>
         )}
 
@@ -263,7 +263,7 @@ export default function EditProfilePage() {
           <div className="space-y-8">
             <Card>
               <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
+                <CardTitle>{t('profile.basic_information')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center gap-4">
@@ -275,13 +275,13 @@ export default function EditProfilePage() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <Label htmlFor="profile-picture-upload">Profile Picture</Label>
+                    <Label htmlFor="profile-picture-upload">{t('profile.profile_picture')}</Label>
                     <Input id="profile-picture-upload" type="file" onChange={handleFileChange} disabled={isUploading} accept="image/*" />
                     {isUploading && <p className="text-sm text-muted-foreground mt-1">Uploading...</p>}
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="email">Email *</Label>
+                  <Label htmlFor="email">{t('profile.email')} *</Label>
                   <Input id="email" value={formData.email} disabled required />
                 </div>
                  <div>{/*
@@ -294,25 +294,25 @@ export default function EditProfilePage() {
                   />
                 */} </div>
                 <div>
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="username">{t('profile.username')}</Label>
                   <Input
                     id="username"
                     value={formData.username}
                     onChange={handleInputChange}
-                    placeholder="Choose a unique username"
+                    placeholder={t('profile.username_placeholder')}
                   />
-                  <p className="text-xs text-stone-500 mt-1">This can be used for your profile URL</p>
+                  <p className="text-xs text-stone-500 mt-1">{t('profile.username_note')}</p>
                 </div>
                 <div>
-                  <Label htmlFor="phone_number">Mobile Number</Label>
+                  <Label htmlFor="phone_number">{t('profile.mobile_number')}</Label>
                   <Input
                     id="phone_number"
                     type="tel"
-                    placeholder="Your primary contact number"
+                    placeholder={t('profile.mobile_number_placeholder')}
                     value={formData.phone_number}
                     onChange={handleInputChange}
                   />
-                  <p className="text-xs text-stone-500 mt-1">Numbers only</p>
+                  <p className="text-xs text-stone-500 mt-1">{t('profile.mobile_number_note')}</p>
                 </div>
               </CardContent>
             </Card>
@@ -322,44 +322,44 @@ export default function EditProfilePage() {
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                    <CardTitle>Safety & Health Information</CardTitle>
+                    <CardTitle>{t('profile.safety_health')}</CardTitle>
                   </div>
                   <CardDescription>
-                    This information is confidential and will only be shared with the trip organizer after you book a trip.
+                    {t('profile.safety_health_description')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div>
-                    <Label htmlFor="training_status">Fitness Level</Label>
+                    <Label htmlFor="training_status">{t('profile.fitness_level')}</Label>
                     <Select id="training_status" value={formData.training_status} onValueChange={(value) => handleSelectChange('training_status', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select your fitness level" />
+                        <SelectValue placeholder={t('profile.fitness_placeholder')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Beginner">Beginner (new to hiking)</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate (hike regularly)</SelectItem>
-                        <SelectItem value="Advanced">Advanced (very experienced)</SelectItem>
+                        <SelectItem value="Beginner">{t('profile.fitness_beginner')}</SelectItem>
+                        <SelectItem value="Intermediate">{t('profile.fitness_intermediate')}</SelectItem>
+                        <SelectItem value="Advanced">{t('profile.fitness_advanced')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="health_status">General Health</Label>
-                    <Textarea id="health_status" placeholder="Any general conditions an organizer should know about? (e.g., 'Good overall health, no issues.')" value={formData.health_status} onChange={handleInputChange} />
+                    <Label htmlFor="health_status">{t('profile.general_health')}</Label>
+                    <Textarea id="health_status" placeholder={t('profile.general_health_placeholder')} value={formData.health_status} onChange={handleInputChange} />
                   </div>
                   <div>
-                    <Label htmlFor="medical_needs">Allergies & Medical Needs</Label>
-                    <Textarea id="medical_needs" placeholder="List any allergies (e.g., bees, nuts), medical conditions, or important medications." value={formData.medical_needs} onChange={handleInputChange} />
+                    <Label htmlFor="medical_needs">{t('profile.allergies_medical')}</Label>
+                    <Textarea id="medical_needs" placeholder={t('profile.allergies_placeholder')} value={formData.medical_needs} onChange={handleInputChange} />
                   </div>
                   <div>
-                    <Label htmlFor="emergency_contact_number">Emergency Contact Number</Label>
+                    <Label htmlFor="emergency_contact_number">{t('profile.emergency_contact')}</Label>
                     <Input
                       id="emergency_contact_number"
                       type="tel"
-                      placeholder="Phone number of a trusted contact"
+                      placeholder={t('profile.emergency_contact_placeholder')}
                       value={formData.emergency_contact_number}
                       onChange={handleInputChange}
                     />
-                    <p className="text-xs text-stone-500 mt-1">Numbers only</p>
+                    <p className="text-xs text-stone-500 mt-1">{t('profile.mobile_number_note')}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -371,55 +371,55 @@ export default function EditProfilePage() {
                   <CardHeader>
                     <div className="flex items-center gap-2">
                       <UserCog className="w-5 h-5 text-blue-600" />
-                      <CardTitle>Public Organizer Profile</CardTitle>
+                      <CardTitle>{t('profile.public_organizer_profile')}</CardTitle>
                     </div>
                     <CardDescription>
-                      This information is public on your organizer profile page.
+                      {t('profile.public_profile_description')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div>
-                      <Label htmlFor="bio">Bio</Label>
-                      <Textarea id="bio" placeholder="Tell us about yourself and your experience" value={formData.bio} onChange={handleInputChange} rows={4} />
+                      <Label htmlFor="bio">{t('profile.bio')}</Label>
+                      <Textarea id="bio" placeholder={t('profile.bio_placeholder')} value={formData.bio} onChange={handleInputChange} rows={4} />
                     </div>
                     <div>
-                      <Label htmlFor="website">Website</Label>
-                      <Input id="website" type="url" placeholder="https://yourwebsite.com" value={formData.website} onChange={handleInputChange} />
+                      <Label htmlFor="website">{t('profile.website')}</Label>
+                      <Input id="website" type="url" placeholder={t('profile.website_placeholder')} value={formData.website} onChange={handleInputChange} />
                     </div>
                     <div>
-                      <Label htmlFor="phone">Public Phone Number</Label>
-                      <Input id="phone" type="tel" placeholder="+30 123 456 7890" value={formData.phone} onChange={handleInputChange} />
+                      <Label htmlFor="phone">{t('profile.public_phone')}</Label>
+                      <Input id="phone" type="tel" placeholder={t('profile.public_phone_placeholder')} value={formData.phone} onChange={handleInputChange} />
                     </div>
 
                     <div>
-                      <Label>Social Media Profiles</Label>
+                      <Label>{t('profile.social_media')}</Label>
                       <div className="space-y-3 mt-2">
                         <div>
-                          <Label htmlFor="facebook" className="text-sm text-stone-600">Facebook</Label>
+                          <Label htmlFor="facebook" className="text-sm text-stone-600">{t('profile.facebook')}</Label>
                           <Input
                             id="facebook"
                             type="url"
-                            placeholder="https://facebook.com/yourprofile"
+                            placeholder={t('profile.facebook_placeholder')}
                             value={formData.social_profiles.facebook}
                             onChange={(e) => handleSocialProfileChange('facebook', e.target.value)}
                           />
                         </div>
                         <div>
-                          <Label htmlFor="instagram" className="text-sm text-stone-600">Instagram</Label>
+                          <Label htmlFor="instagram" className="text-sm text-stone-600">{t('profile.instagram')}</Label>
                           <Input
                             id="instagram"
                             type="url"
-                            placeholder="https://instagram.com/yourprofile"
+                            placeholder={t('profile.instagram_placeholder')}
                             value={formData.social_profiles.instagram}
                             onChange={(e) => handleSocialProfileChange('instagram', e.target.value)}
                           />
                         </div>
                         <div>
-                          <Label htmlFor="twitter" className="text-sm text-stone-600">Twitter/X</Label>
+                          <Label htmlFor="twitter" className="text-sm text-stone-600">{t('profile.twitter')}</Label>
                           <Input
                             id="twitter"
                             type="url"
-                            placeholder="https://twitter.com/yourprofile"
+                            placeholder={t('profile.twitter_placeholder')}
                             value={formData.social_profiles.twitter}
                             onChange={(e) => handleSocialProfileChange('twitter', e.target.value)}
                           />
@@ -433,41 +433,41 @@ export default function EditProfilePage() {
                   <CardHeader>
                     <div className="flex items-center gap-2">
                       <Shield className="w-5 h-5 text-purple-600" />
-                      <CardTitle>Advanced Information</CardTitle>
+                      <CardTitle>{t('profile.advanced_information')}</CardTitle>
                     </div>
                     <CardDescription>
-                      Professional credentials and business details for organizers.
+                      {t('profile.advanced_information_description')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div>
-                      <Label htmlFor="years_of_experience">Years of Experience</Label>
+                      <Label htmlFor="years_of_experience">{t('profile.years_experience')}</Label>
                       <Input
                         id="years_of_experience"
                         type="number"
                         min="0"
-                        placeholder="e.g., 5"
+                        placeholder={t('profile.years_experience_placeholder')}
                         value={formData.years_of_experience}
                         onChange={handleInputChange}
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="gemi_number">G.E.MI Number</Label>
+                      <Label htmlFor="gemi_number">{t('profile.gemi_number')}</Label>
                       <Input
                         id="gemi_number"
-                        placeholder="Greek General Commercial Registry number"
+                        placeholder={t('profile.gemi_placeholder')}
                         value={formData.gemi_number}
                         onChange={handleInputChange}
                       />
-                      <p className="text-xs text-stone-500 mt-1">For registered businesses in Greece</p>
+                      <p className="text-xs text-stone-500 mt-1">{t('profile.gemi_note')}</p>
                     </div>
 
                     <div>
-                      <Label htmlFor="certifications">Certifications & Qualifications</Label>
+                      <Label htmlFor="certifications">{t('profile.certifications')}</Label>
                       <Textarea
                         id="certifications"
-                        placeholder="e.g., Wilderness First Aid, Mountain Guide License, First Responder..."
+                        placeholder={t('profile.certifications_placeholder')}
                         value={formData.certifications}
                         onChange={handleInputChange}
                         rows={3}
@@ -475,7 +475,7 @@ export default function EditProfilePage() {
                     </div>
 
                     <div>
-                      <Label>Upload Certification Files (PDF)</Label>
+                      <Label>{t('profile.upload_certifications')}</Label>
                       <Input
                         type="file"
                         accept=".pdf"
@@ -486,7 +486,7 @@ export default function EditProfilePage() {
                         <div className="mt-3 space-y-2">
                           {formData.certification_files.map((url, index) => (
                             <div key={index} className="flex items-center justify-between bg-stone-50 p-3 rounded-lg">
-                              <span className="text-sm text-stone-700">Certification {index + 1}.pdf</span>
+                              <span className="text-sm text-stone-700">{t('profile.certification_file')} {index + 1}.pdf</span>
                               <div className="flex gap-2">
                                 <Button
                                   type="button"
@@ -512,8 +512,8 @@ export default function EditProfilePage() {
                     </div>
 
                     <div>
-                      <Label>Bank Accounts</Label>
-                      <p className="text-xs text-stone-500 mb-3">Add your bank account details for receiving payments from hikers.</p>
+                      <Label>{t('profile.bank_accounts')}</Label>
+                      <p className="text-xs text-stone-500 mb-3">{t('profile.bank_accounts_description')}</p>
 
                       {formData.bank_accounts.length > 0 && (
                         <div className="space-y-2 mb-4">
@@ -542,22 +542,22 @@ export default function EditProfilePage() {
 
                       <div className="space-y-3 border rounded-lg p-4 bg-white">
                         <Input
-                          placeholder="Bank Name (e.g., Alpha Bank)"
+                          placeholder={t('profile.bank_name_placeholder')}
                           value={newBankAccount.bank_name}
                           onChange={(e) => setNewBankAccount({ ...newBankAccount, bank_name: e.target.value })}
                         />
                         <Input
-                          placeholder="Account Holder Name"
+                          placeholder={t('profile.account_holder')}
                           value={newBankAccount.account_holder}
                           onChange={(e) => setNewBankAccount({ ...newBankAccount, account_holder: e.target.value })}
                         />
                         <Input
-                          placeholder="IBAN (e.g., GR16 0110 1250 0000 1234 5678 901)"
+                          placeholder={t('profile.iban_placeholder')}
                           value={newBankAccount.iban}
                           onChange={(e) => setNewBankAccount({ ...newBankAccount, iban: e.target.value })}
                         />
                         <Input
-                          placeholder="SWIFT/BIC Code (Optional)"
+                          placeholder={t('profile.swift_bic')}
                           value={newBankAccount.swift_bic}
                           onChange={(e) => setNewBankAccount({ ...newBankAccount, swift_bic: e.target.value })}
                         />
@@ -569,7 +569,7 @@ export default function EditProfilePage() {
                           disabled={!newBankAccount.bank_name || !newBankAccount.iban}
                         >
                           <Plus className="w-4 h-4 mr-2" />
-                          Add Bank Account
+                          {t('profile.add_bank_account')}
                         </Button>
                       </div>
                     </div>
@@ -580,16 +580,16 @@ export default function EditProfilePage() {
                   <Card className="border-amber-200 bg-amber-50">
                     <CardContent className="p-6">
                       <h4 className="font-semibold text-amber-900 mb-2 flex items-center gap-2">
-                        <Shield className="w-5 h-5" />
-                        Become a Verified Organizer
+                      <Shield className="w-5 h-5" />
+                      {t('profile.become_verified')}
                       </h4>
                       <p className="text-sm text-amber-800 mb-3">
-                        Get a verified badge, build trust with hikers, and increase your visibility on the platform.
+                      {t('profile.become_verified_description')}
                       </p>
                       <Link to={createPageUrl("RequestVerification")}>
-                        <Button variant="outline" className="border-amber-300 hover:bg-amber-100">
-                          Request Verification
-                        </Button>
+                      <Button variant="outline" className="border-amber-300 hover:bg-amber-100">
+                        {t('profile.request_verification')}
+                      </Button>
                       </Link>
                     </CardContent>
                   </Card>
@@ -618,7 +618,7 @@ export default function EditProfilePage() {
               <Alert variant="default" className="bg-emerald-50 border-emerald-200 text-emerald-800">
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
-                  {isNewUser ? "Profile created successfully! Redirecting..." : "Your profile has been updated successfully!"}
+                  {isNewUser ? t('profile.profile_created') : t('profile.profile_updated')}
                 </AlertDescription>
               </Alert>
             )}
@@ -627,7 +627,7 @@ export default function EditProfilePage() {
               <CardFooter className="p-6 flex-col gap-3">
                 <Button type="submit" disabled={updateProfileMutation.isPending} className="w-full">
                   {updateProfileMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isNewUser ? "Complete Profile" : "Save Changes"}
+                  {isNewUser ? t('profile.complete_profile') : t('profile.save_changes')}
                 </Button>
                 
                 {!isNewUser && (

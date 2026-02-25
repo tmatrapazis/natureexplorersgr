@@ -225,14 +225,14 @@ export default function EditGuideProfilePage() {
             onClick={() => window.history.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {language === 'el' ? 'Πίσω στο Προφίλ' : 'Back to Profile'}
+            {t('guides.back_to_guides')}
           </Button>
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive">
                 <Trash2 className="w-4 h-4 mr-2" />
-                {language === 'el' ? 'Διαγραφή Προφίλ' : 'Delete Profile'}
+                {t('common.delete')}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
@@ -244,6 +244,7 @@ export default function EditGuideProfilePage() {
                   {language === 'el'
                     ? 'Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Το προφίλ σας ως οδηγός θα διαγραφεί οριστικά.'
                     : 'This action cannot be undone. Your guide profile will be permanently deleted.'}
+
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -262,7 +263,7 @@ export default function EditGuideProfilePage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">
-              {language === 'el' ? 'Επεξεργασία Προφίλ Οδηγού' : 'Edit Guide Profile'}
+              {t('guides.create_profile_title')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -270,7 +271,7 @@ export default function EditGuideProfilePage() {
               
               {/* Profile Photo */}
               <div>
-                <Label>{language === 'el' ? 'Φωτογραφία Προφίλ' : 'Profile Photo'}</Label>
+                <Label>{t('guides.profile_photo')}</Label>
                 {formData.profile_photo_url ? (
                   <div className="mt-2 relative w-32 h-32">
                     <img 
@@ -301,7 +302,7 @@ export default function EditGuideProfilePage() {
 
               {/* Cover Photo */}
               <div>
-                <Label>{language === 'el' ? 'Εικόνα Εξωφύλλου' : 'Cover Photo'}</Label>
+                <Label>{t('guides.cover_photo')}</Label>
                 {formData.cover_photo_url ? (
                   <div className="mt-2 relative w-full h-48">
                     <img 
@@ -333,7 +334,7 @@ export default function EditGuideProfilePage() {
               {/* Full Name */}
               <div>
                 <Label htmlFor="full_name">
-                  {language === 'el' ? 'Ονοματεπώνυμο' : 'Full Name'} *
+                  {t('profile.full_name')} *
                 </Label>
                 <Input
                   id="full_name"
@@ -346,7 +347,7 @@ export default function EditGuideProfilePage() {
 
               {/* Bio */}
               <div>
-                <Label>{language === 'el' ? 'Βιογραφικό' : 'Bio'}</Label>
+                <Label>{t('guides.bio')}</Label>
                 <ReactQuill
                   value={formData.bio}
                   onChange={(value) => setFormData(prev => ({ ...prev, bio: value }))}
@@ -360,7 +361,7 @@ export default function EditGuideProfilePage() {
               {/* Years of Experience */}
               <div>
                 <Label htmlFor="years">
-                  {language === 'el' ? 'Χρόνια Εμπειρίας' : 'Years of Experience'}
+                  {t('guides.years_experience')}
                 </Label>
                 <Input
                   id="years"
@@ -374,12 +375,12 @@ export default function EditGuideProfilePage() {
 
               {/* Certifications */}
               <div>
-                <Label>{language === 'el' ? 'Πιστοποιήσεις' : 'Certifications'}</Label>
+                <Label>{t('guides.certifications')}</Label>
                 <div className="flex gap-2 mt-2">
                   <Input
                     value={currentCertification}
                     onChange={(e) => setCurrentCertification(e.target.value)}
-                    placeholder={language === 'el' ? 'π.χ. Πρώτες Βοήθειες' : 'e.g. First Aid'}
+                    placeholder={t('guides.certifications_placeholder')}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCertification())}
                   />
                   <Button type="button" onClick={handleAddCertification}>
@@ -404,7 +405,7 @@ export default function EditGuideProfilePage() {
 
               {/* Social Media */}
               <div className="space-y-3">
-                <Label>{language === 'el' ? 'Κοινωνικά Δίκτυα' : 'Social Media'}</Label>
+                <Label>{t('guides.social_media')}</Label>
                 <div>
                   <Label htmlFor="instagram" className="text-sm">Instagram</Label>
                   <Input
@@ -434,12 +435,10 @@ export default function EditGuideProfilePage() {
               {/* Associated Organizers */}
               <div>
                 <Label>
-                  {language === 'el' ? 'Συνεργασίες με Διοργανωτές' : 'Collaborates With Organizers'}
+                  {t('guides.collaborates_with')}
                 </Label>
                 <p className="text-sm text-stone-600 mb-3">
-                  {language === 'el' 
-                    ? 'Επιλέξτε τους διοργανωτές με τους οποίους συνεργάζεστε'
-                    : 'Select the organizers you work with'}
+                  {t('guides.collaborates_with_description')}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto border rounded-lg p-3">
                   {organizers.map(org => (
