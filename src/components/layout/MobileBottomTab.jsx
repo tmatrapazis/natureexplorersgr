@@ -39,14 +39,7 @@ export default function MobileBottomTab({ user }) {
   };
 
   const handleTabClick = (e, tab) => {
-    const active = isActive(tab.pageName);
-    
-    // If already on this tab, navigate to root of that section
-    if (active) {
-      e.preventDefault();
-      navigate(tab.path, { replace: true });
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    // No auto-scroll behavior
   };
 
   return (
