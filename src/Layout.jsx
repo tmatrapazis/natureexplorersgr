@@ -48,12 +48,11 @@ function LayoutContent({ children, currentPageName }) {
           setShowWelcome(true);
         }
       } catch (error) {
-        setUser(null);
         console.log('[Layout] User not authenticated');
       }
     };
     fetchUser();
-  }, [location.pathname]);
+  }, []);
 
   const isOrganizer = user?.organizer_code && user.organizer_code.trim().length > 0;
 
