@@ -142,7 +142,7 @@ export default React.forwardRef(function TripsList({ trips, selectedDate }, ref)
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-base font-bold text-stone-900 mb-2 line-clamp-2 h-12">{trip.title}</h4>
+                      <h4 className="text-base font-bold text-stone-900 mb-2 line-clamp-2 h-12">{translatedTitles?.[trip.id] || trip.title}</h4>
                       <div className="flex flex-wrap items-center gap-1.5 mb-2">
                         <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
                           {trip.difficulty}
