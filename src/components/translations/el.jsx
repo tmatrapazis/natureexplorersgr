@@ -234,7 +234,7 @@ export const el = {
     "profile_picture": "Φωτογραφία Προφίλ",
     "email": "Email",
     "full_name": "Ονοματεπώνυμο",
-    "username": "Όνομα Διοργανωτή",
+    "username": "Όνομα Χρήστη",
     "username_placeholder": "Επιλέξτε ένα μοναδικό όνομα χρήστη",
     "username_note": "Αυτό μπορεί να χρησιμοποιηθεί για το URL του προφίλ σας",
     "mobile_number": "Κινητό Τηλέφωνο",
