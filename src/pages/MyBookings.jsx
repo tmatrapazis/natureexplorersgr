@@ -5,7 +5,7 @@ import { format, formatDistanceToNow } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, AlertTriangle, XCircle, Loader2, MapPin, Bug } from "lucide-react";
+import { Calendar, Users, AlertTriangle, XCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import PullToRefresh from "../components/ui/PullToRefresh";
