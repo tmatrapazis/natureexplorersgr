@@ -139,21 +139,8 @@ export default function MyBookingsPage() {
   // Cancel booking mutation with optimistic updates
   const cancelBookingMutation = useMutation({
     mutationFn: async ({ booking, reason }) => {
-      console.log('[MyBookings] 🚫 Cancelling booking:', booking.id);
-      
-      // Guard: validate ownership and status
-      if (booking.user_id !== user.id) {
-        console.error('[MyBookings] ❌ Unauthorized: user_id mismatch', {
-          booking_user_id: booking.user_id,
-          current_user_id: user.id
-        });
-        throw new Error('Unauthorized: You can only cancel your own bookings');
-      }
-      
-      if (!['pending', 'confirmed'].includes(booking.status)) {
-        console.error('[MyBookings] ❌ Invalid status for cancellation:', booking.status);
-        throw new Error('Cannot cancel: Booking status must be pending or confirmed');
-      }
+      if (booking.user_id !== user.id) throw new Error('Unauthorized: You can only cancel your own bookings');
+      if (!['pending', 'confirmed'].includes(booking.status)) throw new Error('Cannot cancel: Booking status must be pending or confirmed');
 
       // Update booking status
       const updatedBooking = await base44.entities.Booking.update(booking.id, { 
