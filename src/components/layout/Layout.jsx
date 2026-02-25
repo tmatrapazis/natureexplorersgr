@@ -270,6 +270,9 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             </div>
           </header>
 
+          {showProfileBanner && (
+            <CompleteProfileBanner onDismiss={() => setShowProfileBanner(false)} />
+          )}
           <div className="flex-1 overflow-auto pb-16 md:pb-0">
             {children}
           </div>
