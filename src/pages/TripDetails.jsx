@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Languages } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -45,6 +45,9 @@ export default function TripDetailsPage() {
   
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
+  
+  const [translatedTrip, setTranslatedTrip] = React.useState(null);
+  const [isTranslating, setIsTranslating] = React.useState(false);
 
   // Redirect to homepage if no trip ID provided (301 redirect)
   React.useEffect(() => {
@@ -276,7 +279,6 @@ export default function TripDetailsPage() {
 
   // Handler for "Book Now" button clicks
   const handleBookNowClick = () => {
-    // Track with Google Analytics
     trackEvent('book_now_click', {
       event_category: 'Booking',
       event_label: trip.title,
@@ -286,20 +288,6 @@ export default function TripDetailsPage() {
       is_social_media: isSocialMedia,
       price: trip.price,
       difficulty: trip.difficulty,
-    });
-
-    // Track with Base44 Analytics
-    base44.analytics.track({
-      eventName: 'trip_booking_button_clicked',
-      properties: {
-        trip_id: trip.id,
-        trip_title: trip.title,
-        organizer_code: trip.organizer_code,
-        organizer_name: organizer ? (organizer.username || organizer.full_name) : 'Unknown',
-        price: trip.price || 0,
-        difficulty: trip.difficulty,
-        is_social_media: isSocialMedia,
-      }
     });
   };
 
@@ -312,6 +300,31 @@ export default function TripDetailsPage() {
       destination_url: trip.external_link,
     });
   };
+
+  // Handler for translate button
+  const handleTranslate = async () => {
+    if (translatedTrip) {
+      setTranslatedTrip(null);
+      return;
+    }
+    
+    setIsTranslating(true);
+    try {
+      const response = await base44.functions.invoke('translateTrip', {
+        title: trip.title,
+        description: trip.description,
+        departure_from: trip.departure_from,
+        requirements: trip.requirements
+      });
+      setTranslatedTrip(response.data.translatedData);
+    } catch (error) {
+      console.error('Translation error:', error);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const displayTrip = translatedTrip || trip;
 
   // If user is not logged in, show limited details with login prompt
   if (!user) {
@@ -475,11 +488,21 @@ export default function TripDetailsPage() {
               )}
 
               <Card className="p-6 relative">
-                <div className="absolute top-6 right-6 hidden md:block">
+                <div className="absolute top-6 right-6 hidden md:flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleTranslate}
+                    disabled={isTranslating}
+                    className="gap-2"
+                  >
+                    <Languages className="w-4 h-4" />
+                    {isTranslating ? 'Translating...' : translatedTrip ? 'Show Original' : 'Translate'}
+                  </Button>
                   <ShareButton trip={trip} language={language} />
                 </div>
                 
-                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-20">{trip.title}</h1>
+                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-32">{displayTrip.title}</h1>
 
                 {organizer && (
                   <Link
@@ -543,15 +566,15 @@ export default function TripDetailsPage() {
                     </div>
                   </div>
 
-                  {trip.departure_from && trip.departure_from.length > 0 && (
+                  {displayTrip.departure_from && displayTrip.departure_from.length > 0 && (
                     <div className="flex items-center gap-3 md:col-start-2">
                       <MapPin className="w-5 h-5 text-emerald-600" />
                       <div>
                         <p className="text-sm text-stone-500">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
                         <div className="flex flex-wrap gap-1 mt-1">
-                          {trip.departure_from.map((location, i) => (
+                          {displayTrip.departure_from.map((location, i) => (
                             <span key={i} className="text-sm font-medium text-stone-900">
-                              {location}{i < trip.departure_from.length - 1 ? ', ' : ''}
+                              {location}{i < displayTrip.departure_from.length - 1 ? ', ' : ''}
                             </span>
                           ))}
                         </div>
@@ -585,10 +608,10 @@ export default function TripDetailsPage() {
                   </div>
                 )}
 
-                {trip.description && (
+                {displayTrip.description && (
                   <div className="mb-6">
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
+                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{displayTrip.description}</p>
                   </div>
                 )}
 
@@ -614,11 +637,11 @@ export default function TripDetailsPage() {
                   </div>
                 )}
 
-                {trip.requirements && trip.requirements.length > 0 && (
+                {displayTrip.requirements && displayTrip.requirements.length > 0 && (
                   <div>
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
                     <ul className="list-disc list-inside space-y-1 text-stone-600">
-                      {trip.requirements.map((req, i) => (
+                      {displayTrip.requirements.map((req, i) => (
                         <li key={i}>{req}</li>
                       ))}
                     </ul>
@@ -678,8 +701,18 @@ export default function TripDetailsPage() {
             </div>
           </div>
           
-          {/* Mobile Share Button - Sticky at bottom */}
-          <div className="md:hidden">
+          {/* Mobile Translate & Share Buttons - Sticky at bottom */}
+          <div className="md:hidden fixed bottom-20 left-0 right-0 p-4 bg-white border-t shadow-lg flex gap-2 z-10">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleTranslate}
+              disabled={isTranslating}
+              className="flex-1 gap-2"
+            >
+              <Languages className="w-4 h-4" />
+              {isTranslating ? 'Translating...' : translatedTrip ? 'Original' : 'Translate'}
+            </Button>
             <ShareButton trip={trip} language={language} />
           </div>
         </div>
