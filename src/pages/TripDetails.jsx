@@ -45,9 +45,30 @@ export default function TripDetailsPage() {
   
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
-  
+
   const [translatedTrip, setTranslatedTrip] = React.useState(null);
   const [isTranslating, setIsTranslating] = React.useState(false);
+
+  const handleTranslate = async () => {
+    if (translatedTrip) {
+      setTranslatedTrip(null);
+      return;
+    }
+    setIsTranslating(true);
+    try {
+      const response = await base44.functions.invoke('translateTrip', {
+        title: trip.title,
+        description: trip.description,
+        departure_from: trip.departure_from,
+        requirements: trip.requirements
+      });
+      setTranslatedTrip(response.data.translatedData);
+    } catch (error) {
+      console.error('Translation error:', error);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
 
   // Redirect to homepage if no trip ID provided (301 redirect)
   React.useEffect(() => {
@@ -276,6 +297,7 @@ export default function TripDetailsPage() {
 
   const computedStatus = getComputedTripStatus(trip);
   const isSocialMedia = isSocialMediaUrl(trip.event_url);
+  const displayTrip = translatedTrip || trip;
 
   // Handler for "Book Now" button clicks
   const handleBookNowClick = () => {
@@ -300,31 +322,6 @@ export default function TripDetailsPage() {
       destination_url: trip.external_link,
     });
   };
-
-  // Handler for translate button
-  const handleTranslate = async () => {
-    if (translatedTrip) {
-      setTranslatedTrip(null);
-      return;
-    }
-    
-    setIsTranslating(true);
-    try {
-      const response = await base44.functions.invoke('translateTrip', {
-        title: trip.title,
-        description: trip.description,
-        departure_from: trip.departure_from,
-        requirements: trip.requirements
-      });
-      setTranslatedTrip(response.data.translatedData);
-    } catch (error) {
-      console.error('Translation error:', error);
-    } finally {
-      setIsTranslating(false);
-    }
-  };
-
-  const displayTrip = translatedTrip || trip;
 
   // If user is not logged in, show limited details with login prompt
   if (!user) {
@@ -487,22 +484,23 @@ export default function TripDetailsPage() {
                 </div>
               )}
 
-              <Card className="p-6 relative">
-                <div className="absolute top-6 right-6 hidden md:flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleTranslate}
-                    disabled={isTranslating}
-                    className="gap-2"
-                  >
-                    <Languages className="w-4 h-4" />
-                    {isTranslating ? 'Translating...' : translatedTrip ? 'Show Original' : 'Translate'}
-                  </Button>
-                  <ShareButton trip={trip} language={language} />
+              <Card className="p-6">
+                <div className="flex justify-between items-start gap-4 mb-2">
+                  <h1 className="text-3xl font-bold text-stone-900 flex-1">{displayTrip.title}</h1>
+                  <div className="hidden md:flex gap-2 flex-shrink-0 pt-1">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleTranslate}
+                      disabled={isTranslating}
+                      className="gap-2"
+                    >
+                      <Languages className="w-4 h-4" />
+                      {isTranslating ? '...' : translatedTrip ? 'Original' : 'Translate'}
+                    </Button>
+                    <ShareButton trip={trip} language={language} />
+                  </div>
                 </div>
-                
-                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-32">{displayTrip.title}</h1>
 
                 {organizer && (
                   <Link
@@ -701,8 +699,8 @@ export default function TripDetailsPage() {
             </div>
           </div>
           
-          {/* Mobile Translate & Share Buttons - Sticky at bottom */}
-          <div className="md:hidden fixed bottom-20 left-0 right-0 p-4 bg-white border-t shadow-lg flex gap-2 z-10">
+          {/* Mobile Translate & Share Buttons */}
+          <div className="md:hidden flex gap-2 mt-4">
             <Button
               variant="outline"
               size="sm"
@@ -711,7 +709,7 @@ export default function TripDetailsPage() {
               className="flex-1 gap-2"
             >
               <Languages className="w-4 h-4" />
-              {isTranslating ? 'Translating...' : translatedTrip ? 'Original' : 'Translate'}
+              {isTranslating ? 'Translating...' : translatedTrip ? 'Show Original' : 'Translate'}
             </Button>
             <ShareButton trip={trip} language={language} />
           </div>
