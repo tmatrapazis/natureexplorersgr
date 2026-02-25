@@ -98,7 +98,7 @@ const CancelBookingDialog = ({ open, onOpenChange, onConfirm, isPending }) => {
 export default function MyBookingsPage() {
   const queryClient = useQueryClient();
   const [cancelDialog, setCancelDialog] = useState({ open: false, booking: null });
-  const [showDiagnostics, setShowDiagnostics] = useState(true);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
 
   const { language } = useLanguage();
   const { t } = useTranslation(language);
