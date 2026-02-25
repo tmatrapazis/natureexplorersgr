@@ -4,7 +4,8 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         
-        const body = await req.json();
+        const raw = await req.json();
+        const body = raw.payload || raw;
 
         // Bulk title translation mode
         if (body.titles) {
