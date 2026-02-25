@@ -115,16 +115,8 @@ export default function MyBookingsPage() {
     queryKey: ['current-user'],
     queryFn: async () => {
       try {
-        const currentUser = await base44.auth.me();
-        console.log("[MyBookings] ✅ Current User fetched:", {
-          id: currentUser.id,
-          email: currentUser.email,
-          role: currentUser.role,
-          full_name: currentUser.full_name
-        });
-        return currentUser;
+        return await base44.auth.me();
       } catch (error) {
-        console.error('[MyBookings] ❌ Error fetching user:', error);
         base44.auth.redirectToLogin(window.location.pathname);
         return null;
       }
