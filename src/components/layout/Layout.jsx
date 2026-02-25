@@ -31,22 +31,23 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
   const { setOpenMobile } = useSidebar();
+  const [showProfileBanner, setShowProfileBanner] = React.useState(false);
 
   React.useEffect(() => {
     if (user) {
       const intendedRole = localStorage.getItem('intended_role');
-      
+
       if (intendedRole && (!user.full_name || !user.phone_number)) {
         if (!location.pathname.includes('RoleSelection')) {
           navigate(createPageUrl("RoleSelection"));
         }
         return;
       }
-      
+
       if (!user.full_name || !user.phone_number) {
-        if (!location.pathname.includes('EditProfile') && !location.pathname.includes('RoleSelection')) {
-          navigate(createPageUrl("EditProfile"));
-        }
+        setShowProfileBanner(true);
+      } else {
+        setShowProfileBanner(false);
       }
     }
   }, [user, navigate, location.pathname]);
