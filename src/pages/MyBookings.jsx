@@ -172,7 +172,6 @@ export default function MyBookingsPage() {
         `
       });
 
-      console.log('[MyBookings] ✅ Booking cancelled successfully');
       return updatedBooking;
     },
     onMutate: async ({ booking, reason }) => {
