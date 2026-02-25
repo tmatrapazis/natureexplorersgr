@@ -161,9 +161,10 @@ export default function MyTripsPage() {
   today.setHours(0, 0, 0, 0);
   
   const draftTrips = (trips || []).filter(t => t.status === 'draft');
-  const upcomingTrips = (trips || []).filter(t => t.status === 'upcoming' && new Date(t.start_date) > today);
-  const happeningTrips = (trips || []).filter(t => (new Date(t.start_date) <= today && new Date(t.end_date) >= today) || t.status === 'happening now');
-  const completedTrips = (trips || []).filter(t => new Date(t.end_date) < today || t.status === 'completed');
+  const parseDate = (str) => { const [y, m, d] = str.split('-').map(Number); return new Date(y, m - 1, d); };
+  const upcomingTrips = (trips || []).filter(t => t.status === 'upcoming' && parseDate(t.start_date) > today);
+  const happeningTrips = (trips || []).filter(t => (parseDate(t.start_date) <= today && parseDate(t.end_date) >= today) || t.status === 'happening now');
+  const completedTrips = (trips || []).filter(t => parseDate(t.end_date) < today || t.status === 'completed');
   const cancelledTrips = (trips || []).filter(t => t.status === 'cancelled');
 
   return (
