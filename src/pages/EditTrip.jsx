@@ -123,7 +123,8 @@ export default function EditTripPage() {
       setPendingNavigation(destination);
       setShowExitDialog(true);
     } else {
-      navigate(destination);
+      if (destination) navigate(destination);
+      else window.history.back();
     }
   };
 
@@ -139,9 +140,8 @@ export default function EditTripPage() {
   const handleDiscardAndExit = () => {
     setIsFormDirty(false);
     setShowExitDialog(false);
-    if (pendingNavigation) {
-      navigate(pendingNavigation);
-    }
+    if (pendingNavigation) navigate(pendingNavigation);
+    else window.history.back();
   };
 
   useEffect(() => {
@@ -272,7 +272,7 @@ export default function EditTripPage() {
         <Button 
           variant="outline" 
           className="mb-6"
-          onClick={() => handleNavigateAway(createPageUrl("MyTrips"))}
+          onClick={() => handleNavigateAway(null)}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           {t('create_trip.back_to_trips')}
@@ -586,7 +586,7 @@ export default function EditTripPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-4 w-full">
-              <Button type="button" variant="outline" onClick={() => handleNavigateAway(createPageUrl("MyTrips"))} className="w-full sm:w-auto">
+              <Button type="button" variant="outline" onClick={() => handleNavigateAway(null)} className="w-full sm:w-auto">
                 {t('common.cancel')}
               </Button>
               <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto" disabled={updateTripMutation.isPending}>

@@ -270,12 +270,10 @@ export default function CreateTripPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8 w-full overflow-x-hidden">
       <div className="max-w-3xl mx-auto w-full min-w-0">
-        <Link to={createPageUrl("MyTrips")}>
-          <Button variant="outline" className="mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('create_trip.back_to_trips')}
-          </Button>
-        </Link>
+        <Button variant="outline" className="mb-6" onClick={() => window.history.back()}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          {t('create_trip.back_to_trips')}
+        </Button>
 
         <Card className="p-4 md:p-8 w-full overflow-x-hidden">
           <h1 className="text-2xl md:text-3xl font-bold text-stone-900 mb-6 break-words">{t('create_trip.title')}</h1>

@@ -222,7 +222,7 @@ export default function EditGuideProfilePage() {
         <div className="flex items-center justify-between mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate(createPageUrl('GuideProfile') + `?id=${guideId}`)}
+            onClick={() => window.history.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {language === 'el' ? 'Πίσω στο Προφίλ' : 'Back to Profile'}
@@ -464,7 +464,7 @@ export default function EditGuideProfilePage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate(createPageUrl('GuideProfile') + `?id=${guideId}`)}
+                  onClick={() => window.history.back()}
                 >
                   {t('common.cancel')}
                 </Button>

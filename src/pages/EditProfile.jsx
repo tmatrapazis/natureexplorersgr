@@ -246,12 +246,10 @@ export default function EditProfilePage() {
     <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/30 dark:via-emerald-950/10 to-background p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
         {!isNewUser && (
-          <Link to={createPageUrl("Calendar")}>
-            <Button variant="outline" className="mb-6">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to App
-            </Button>
-          </Link>
+          <Button variant="outline" className="mb-6" onClick={() => window.history.back()}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
         )}
 
         {isNewUser && (

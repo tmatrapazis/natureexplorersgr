@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -73,12 +72,10 @@ export default function HikerProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-xl mx-auto">
-        <Link to={`${createPageUrl("ManageBookings")}?tripId=${tripId}`}>
-          <Button variant="outline" className="mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('backToBookings')}
-          </Button>
-        </Link>
+        <Button variant="outline" className="mb-6" onClick={() => window.history.back()}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          {t('backToBookings')}
+        </Button>
         <div className="space-y-6">
           <Card>
             <CardHeader className="items-center text-center p-8 bg-stone-50">
