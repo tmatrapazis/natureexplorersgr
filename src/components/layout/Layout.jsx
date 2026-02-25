@@ -44,7 +44,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
         return;
       }
 
-      if (!user.full_name || !user.phone_number) {
+      if (!user.full_name) {
         setShowProfileBanner(true);
       } else {
         setShowProfileBanner(false);

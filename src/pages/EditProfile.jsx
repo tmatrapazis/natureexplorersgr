@@ -75,7 +75,7 @@ export default function EditProfilePage() {
       // Check if this is a new user (missing required fields)
       // A user is considered "new" or incomplete if essential profile fields are missing.
       // In this context, full_name and phone_number are considered essential for initial setup.
-      const newUser = !user.full_name || !user.phone_number;
+      const newUser = !user.full_name;
       setIsNewUser(newUser);
 
       setFormData({
@@ -219,8 +219,8 @@ export default function EditProfilePage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Validate required fields
-    if (!formData.full_name || !formData.phone_number) {
-      alert(language === 'el' ? "Το ονοματεπώνυμο και το κινητό τηλέφωνο είναι υποχρεωτικά πεδία." : "Full name and mobile number are required fields.");
+    if (!formData.full_name) {
+      alert(language === 'el' ? "Το ονοματεπώνυμο είναι υποχρεωτικό πεδίο." : "Full name is a required field.");
       return;
     }
     
@@ -304,14 +304,13 @@ export default function EditProfilePage() {
                   <p className="text-xs text-stone-500 mt-1">This can be used for your profile URL</p>
                 </div>
                 <div>
-                  <Label htmlFor="phone_number">Mobile Number *</Label>
+                  <Label htmlFor="phone_number">Mobile Number</Label>
                   <Input
                     id="phone_number"
                     type="tel"
                     placeholder="Your primary contact number"
                     value={formData.phone_number}
                     onChange={handleInputChange}
-                    required
                   />
                   <p className="text-xs text-stone-500 mt-1">Numbers only</p>
                 </div>
