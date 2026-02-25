@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Calendar, Mountain, PlusCircle, Bookmark, Map, User, LogOut, Edit, BarChart3, Users, Compass, Home, Globe, LogIn, X } from "lucide-react";
+import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useTranslation } from "../translations/useTranslations";

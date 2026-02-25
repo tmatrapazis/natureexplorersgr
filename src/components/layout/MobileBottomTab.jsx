@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Calendar, BookOpen, User } from "lucide-react";
+import { Home, Calendar } from "lucide-react";
 
 export default function MobileBottomTab({ user }) {
   const location = useLocation();
@@ -19,18 +19,6 @@ export default function MobileBottomTab({ user }) {
       icon: Calendar, 
       path: createPageUrl("Calendar"),
       pageName: "Calendar"
-    },
-    { 
-      name: "Bookings", 
-      icon: BookOpen, 
-      path: createPageUrl("MyBookings"),
-      pageName: "MyBookings"
-    },
-    { 
-      name: "Profile", 
-      icon: User, 
-      path: createPageUrl("MyProfile"),
-      pageName: "MyProfile"
     }
   ];
 

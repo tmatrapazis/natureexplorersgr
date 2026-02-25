@@ -60,8 +60,6 @@ import GuideProfile from './pages/GuideProfile';
 import Guides from './pages/Guides';
 import HikerProfile from './pages/HikerProfile';
 import Home from './pages/Home';
-import MyBookings from './pages/MyBookings';
-import MyProfile from './pages/MyProfile';
 import MyTrips from './pages/MyTrips';
 import OrganizerProfile from './pages/OrganizerProfile';
 import OrganizersList from './pages/OrganizersList';
@@ -88,8 +86,6 @@ export const PAGES = {
     "Guides": Guides,
     "HikerProfile": HikerProfile,
     "Home": Home,
-    "MyBookings": MyBookings,
-    "MyProfile": MyProfile,
     "MyTrips": MyTrips,
     "OrganizerProfile": OrganizerProfile,
     "OrganizersList": OrganizersList,
