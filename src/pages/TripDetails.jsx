@@ -305,11 +305,12 @@ export default function TripDetailsPage() {
       <>
         {eventSchema && <StructuredData data={eventSchema} />}
         <StructuredData data={breadcrumbSchema} />
-        <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
-          <div className="max-w-5xl mx-auto">
+        <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50">
+        <MobileHeader title={trip?.title || 'Trip Details'} />
+          <div className="max-w-5xl mx-auto p-4 md:p-8">
             <Button 
               variant="outline" 
-              className="mb-6"
+              className="mb-6 hidden md:flex"
               onClick={() => window.history.back()}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -431,11 +432,12 @@ export default function TripDetailsPage() {
     <>
       {eventSchema && <StructuredData data={eventSchema} />}
       <StructuredData data={breadcrumbSchema} />
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
-        <div className="max-w-5xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50">
+        <MobileHeader title={trip?.title || 'Trip Details'} />
+        <div className="max-w-5xl mx-auto p-4 md:p-8">
           <Button 
             variant="outline" 
-            className="mb-6"
+            className="mb-6 hidden md:flex"
             onClick={() => window.history.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

@@ -269,10 +269,14 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto pb-16 md:pb-0">
+          <div 
+            className="flex-1 overflow-auto md:pb-0"
+            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 4rem)' }}
+          >
             {children}
           </div>
         </main>
+        <MobileBottomTab user={user} />
       </div>
   );
 };
