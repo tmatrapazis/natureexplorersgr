@@ -42,6 +42,7 @@ const isSocialMediaUrl = (url) => {
 export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const navigate = useNavigate();
   
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
