@@ -80,8 +80,7 @@ export default function CalendarPage() {
 
   // Filter trips by the currently displayed month (Athens timezone)
   const tripsInCurrentMonth = activeTrips.filter((trip) => {
-    const [y, m, d] = trip.start_date.split('-').map(Number);
-    const tripDate = new Date(y, m - 1, d);
+    const tripDate = toZonedTime(new Date(trip.start_date), ATHENS_TIMEZONE);
     return tripDate.getMonth() === currentDate.getMonth() &&
     tripDate.getFullYear() === currentDate.getFullYear();
   });
@@ -129,9 +128,9 @@ export default function CalendarPage() {
     
     switch (sortBy) {
       case "date-asc":
-        return sorted.sort((a, b) => a.start_date.localeCompare(b.start_date));
+        return sorted.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
       case "date-desc":
-        return sorted.sort((a, b) => b.start_date.localeCompare(a.start_date));
+        return sorted.sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
       case "price-asc":
         return sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
       case "price-desc":

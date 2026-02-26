@@ -57,8 +57,7 @@ export default function OrganizerProfilePage() {
     today.setHours(0, 0, 0, 0); // Reset time to start of day
     
     return allTrips.filter(trip => {
-      const [y, m, d] = trip.start_date.split('-').map(Number);
-      const tripStartDate = new Date(y, m - 1, d);
+      const tripStartDate = new Date(trip.start_date);
       const isUpcoming = trip.status === 'upcoming' || trip.status === 'almost soldout';
       return tripStartDate >= today && isUpcoming;
     });

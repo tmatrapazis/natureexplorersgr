@@ -62,8 +62,7 @@ export default function GuideProfilePage() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       return allTrips.filter(trip => {
-        const [y, m, d] = trip.start_date.split('-').map(Number);
-        const tripDate = new Date(y, m - 1, d);
+        const tripDate = new Date(trip.start_date);
         return tripDate >= today && trip.status !== 'cancelled' && trip.status !== 'draft';
       }).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
     },

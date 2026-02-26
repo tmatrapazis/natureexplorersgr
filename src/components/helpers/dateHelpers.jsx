@@ -1,25 +1,35 @@
 import { format, isSameDay } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
+
+// Athens timezone (GMT+2 / GMT+3 in summer)
+const ATHENS_TIMEZONE = 'Europe/Athens';
 
 /**
- * Parse a YYYY-MM-DD date string as local midnight (avoids UTC shift off-by-one bug)
+ * Convert a date to Athens timezone
  */
-const parseLocalDate = (dateStr) => {
-  if (!dateStr) return null;
-  const [y, m, d] = dateStr.split('-').map(Number);
-  return new Date(y, m - 1, d);
+export const toAthensTime = (date) => {
+  return toZonedTime(date, ATHENS_TIMEZONE);
 };
 
 /**
  * Format a date range for display (DD/MM/YYYY format)
  */
 export const formatDateRange = (start, end) => {
-  if (!start) return "Date not specified";
-  const startDate = parseLocalDate(start);
-  if (!startDate || isNaN(startDate.getTime())) return "Invalid date";
+  if (!start) {
+    return "Date not specified";
+  }
+  const startDate = toAthensTime(new Date(start));
+  if (isNaN(startDate.getTime())) {
+    return "Invalid date";
+  }
 
-  const endDate = end ? parseLocalDate(end) : startDate;
-  if (!endDate || isNaN(endDate.getTime())) return format(startDate, "dd/MM/yyyy");
+  const endDate = end ? toAthensTime(new Date(end)) : startDate;
+  if (isNaN(endDate.getTime())) {
+    return format(startDate, "dd/MM/yyyy");
+  }
 
-  if (isSameDay(startDate, endDate)) return format(startDate, "dd/MM/yyyy");
+  if (isSameDay(startDate, endDate)) {
+    return format(startDate, "dd/MM/yyyy");
+  }
   return `${format(startDate, "dd/MM")} - ${format(endDate, "dd/MM/yyyy")}`;
 };

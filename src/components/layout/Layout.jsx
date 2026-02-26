@@ -24,30 +24,28 @@ import {
 import PublicHeader from "../layout/PublicHeader";
 import PublicFooter from "../layout/PublicFooter";
 import NotificationsBell from "../layout/NotificationsBell";
-import CompleteProfileBanner from "../layout/CompleteProfileBanner";
 
 const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
   const { setOpenMobile } = useSidebar();
-  const [showProfileBanner, setShowProfileBanner] = React.useState(false);
 
   React.useEffect(() => {
     if (user) {
       const intendedRole = localStorage.getItem('intended_role');
-
+      
       if (intendedRole && (!user.full_name || !user.phone_number)) {
         if (!location.pathname.includes('RoleSelection')) {
           navigate(createPageUrl("RoleSelection"));
         }
         return;
       }
-
-      if (!user.full_name) {
-        setShowProfileBanner(true);
-      } else {
-        setShowProfileBanner(false);
+      
+      if (!user.full_name || !user.phone_number) {
+        if (!location.pathname.includes('EditProfile') && !location.pathname.includes('RoleSelection')) {
+          navigate(createPageUrl("EditProfile"));
+        }
       }
     }
   }, [user, navigate, location.pathname]);
@@ -270,9 +268,6 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             </div>
           </header>
 
-          {showProfileBanner && (
-            <CompleteProfileBanner onDismiss={() => setShowProfileBanner(false)} />
-          )}
           <div className="flex-1 overflow-auto pb-16 md:pb-0">
             {children}
           </div>
