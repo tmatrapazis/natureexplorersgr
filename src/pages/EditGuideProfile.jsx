@@ -222,7 +222,7 @@ export default function EditGuideProfilePage() {
         <div className="flex items-center justify-between mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate(-1)}
+            onClick={() => window.history.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t('guides.back_to_guides')}
@@ -463,7 +463,7 @@ export default function EditGuideProfilePage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate(-1)}
+                  onClick={() => window.history.back()}
                 >
                   {t('common.cancel')}
                 </Button>

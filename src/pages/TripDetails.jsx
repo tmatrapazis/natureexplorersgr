@@ -1,7 +1,7 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -42,7 +42,6 @@ const isSocialMediaUrl = (url) => {
 export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
-  const navigate = useNavigate();
   
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
@@ -310,7 +309,7 @@ export default function TripDetailsPage() {
             <Button 
               variant="outline" 
               className="mb-6"
-              onClick={() => navigate(-1)}
+              onClick={() => window.history.back()}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
@@ -436,7 +435,7 @@ export default function TripDetailsPage() {
           <Button 
             variant="outline" 
             className="mb-6"
-            onClick={() => navigate(-1)}
+            onClick={() => window.history.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
