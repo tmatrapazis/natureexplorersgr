@@ -15,6 +15,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import useSEO from '../components/seo/useSEO';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
+import MobileHeader from '../components/layout/MobileHeader';
 
 export default function EditProfilePage() {
   const queryClient = useQueryClient();

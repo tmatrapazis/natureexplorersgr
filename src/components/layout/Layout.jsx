@@ -24,6 +24,7 @@ import {
 import PublicHeader from "../layout/PublicHeader";
 import PublicFooter from "../layout/PublicFooter";
 import NotificationsBell from "../layout/NotificationsBell";
+import MobileBottomTab from "../layout/MobileBottomTab";
 
 const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
   const navigate = useNavigate();
