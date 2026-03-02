@@ -42,6 +42,8 @@ const isSocialMediaUrl = (url) => {
 export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const [translatedTrip, setTranslatedTrip] = React.useState(null);
+  const [isTranslating, setIsTranslating] = React.useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
