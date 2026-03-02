@@ -290,6 +290,22 @@ export default function TripDetailsPage() {
     });
   };
 
+  const handleTranslate = async () => {
+    if (translatedTrip) {
+      setTranslatedTrip(null);
+      return;
+    }
+    setIsTranslating(true);
+    const response = await base44.functions.invoke('translateTrip', {
+      title: trip.title,
+      description: trip.description,
+      departure_from: trip.departure_from,
+      requirements: trip.requirements,
+    });
+    setTranslatedTrip(response.data?.translatedData || null);
+    setIsTranslating(false);
+  };
+
   // Handler for external link button clicks
   const handleExternalLinkClick = () => {
     trackEvent('external_link_click', {
