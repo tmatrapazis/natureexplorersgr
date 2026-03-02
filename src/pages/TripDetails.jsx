@@ -688,8 +688,18 @@ export default function TripDetailsPage() {
             </div>
           </div>
           
-          {/* Mobile Share Button - Sticky at bottom */}
-          <div className="md:hidden">
+          {/* Mobile Share + Translate Buttons */}
+          <div className="md:hidden flex gap-2 mt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleTranslate}
+              disabled={isTranslating}
+              className="flex items-center gap-1"
+            >
+              {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
+              {translatedTrip ? (language === 'el' ? 'Πρωτότυπο' : 'Original') : (language === 'el' ? 'Μετάφραση' : 'Translate')}
+            </Button>
             <ShareButton trip={trip} language={language} />
           </div>
         </div>
