@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Languages, Loader2 } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -571,14 +571,11 @@ export default function TripDetailsPage() {
                 )}
 
                 {trip.description && (
-                   <div className="mb-6">
-                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                     <div 
-                       className="text-stone-600 prose prose-stone max-w-none break-words overflow-hidden ql-editor"
-                       dangerouslySetInnerHTML={{ __html: trip.description }}
-                     />
-                   </div>
-                 )}
+                  <div className="mb-6">
+                    <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
+                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
+                  </div>
+                )}
 
                 {trip.tags && trip.tags.length > 0 && (
                   <div className="mb-6">
