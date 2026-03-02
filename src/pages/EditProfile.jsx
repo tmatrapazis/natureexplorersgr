@@ -36,28 +36,13 @@ export default function EditProfilePage() {
   });
 
   const [formData, setFormData] = useState({
-    full_name: '',
-    email: '',
-    username: '', // Added username field
+    username: '',
     profile_picture_url: '',
-    bio: '',
-    website: '',
-    phone: '',
     phone_number: '',
     training_status: '',
     health_status: '',
     medical_needs: '',
     emergency_contact_number: '',
-    years_of_experience: '',
-    certifications: '',
-    certification_files: [],
-    gemi_number: '',
-    bank_accounts: [],
-    social_profiles: {
-      facebook: '',
-      instagram: '',
-      twitter: ''
-    }
   });
 
   const [isUploading, setIsUploading] = useState(false);
