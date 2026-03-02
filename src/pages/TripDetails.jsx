@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Languages, Loader2 } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -83,6 +83,9 @@ export default function TripDetailsPage() {
     },
     enabled: !!trip?.organizer_code,
   });
+
+  const [translatedTrip, setTranslatedTrip] = React.useState(null);
+  const [isTranslating, setIsTranslating] = React.useState(false);
 
   // Track trip page view when trip data is loaded
   React.useEffect(() => {
@@ -271,33 +274,8 @@ export default function TripDetailsPage() {
     );
   }
 
-  const [translatedTrip, setTranslatedTrip] = React.useState(null);
-  const [isTranslating, setIsTranslating] = React.useState(false);
-
   const computedStatus = getComputedTripStatus(trip);
   const isSocialMedia = isSocialMediaUrl(trip.event_url);
-
-  const handleTranslate = async () => {
-    if (translatedTrip) {
-      setTranslatedTrip(null);
-      return;
-    }
-    
-    setIsTranslating(true);
-    try {
-      const { data } = await base44.functions.invoke('translateTrip', {
-        title: trip.title,
-        description: trip.description,
-        departure_from: trip.departure_from,
-        requirements: trip.requirements,
-      });
-      setTranslatedTrip(data);
-    } catch (error) {
-      console.error('Translation error:', error);
-    } finally {
-      setIsTranslating(false);
-    }
-  };
 
   // Handler for "Book Now" button clicks
   const handleBookNowClick = () => {
@@ -489,30 +467,7 @@ export default function TripDetailsPage() {
                   <ShareButton trip={trip} language={language} />
                 </div>
                 
-                <div className="flex items-start justify-between gap-4 mb-2">
-                  <h1 className="text-3xl font-bold text-stone-900 flex-1">
-                    {translatedTrip?.title || trip.title}
-                  </h1>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleTranslate}
-                    disabled={isTranslating}
-                    className="gap-2 whitespace-nowrap"
-                  >
-                    {isTranslating ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        {language === 'el' ? 'Μετάφραση...' : 'Translating...'}
-                      </>
-                    ) : (
-                      <>
-                        <Languages className="w-4 h-4" />
-                        {translatedTrip ? (language === 'el' ? 'Ελληνικά' : 'Greek') : (language === 'el' ? 'Αγγλικά' : 'English')}
-                      </>
-                    )}
-                  </Button>
-                </div>
+                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-20">{trip.title}</h1>
 
                 {organizer && (
                   <Link
@@ -618,15 +573,12 @@ export default function TripDetailsPage() {
                   </div>
                 )}
 
-                {(trip.description || translatedTrip?.description) && (
-                   <div className="mb-6">
-                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                     <div 
-                       className="text-stone-600 prose prose-stone max-w-none break-words overflow-hidden ql-editor"
-                       dangerouslySetInnerHTML={{ __html: translatedTrip?.description || trip.description }}
-                     />
-                   </div>
-                 )}
+                {trip.description && (
+                  <div className="mb-6">
+                    <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
+                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
+                  </div>
+                )}
 
                 {trip.tags && trip.tags.length > 0 && (
                   <div className="mb-6">
