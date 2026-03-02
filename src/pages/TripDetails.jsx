@@ -271,8 +271,33 @@ export default function TripDetailsPage() {
     );
   }
 
+  const [translatedTrip, setTranslatedTrip] = React.useState(null);
+  const [isTranslating, setIsTranslating] = React.useState(false);
+
   const computedStatus = getComputedTripStatus(trip);
   const isSocialMedia = isSocialMediaUrl(trip.event_url);
+
+  const handleTranslate = async () => {
+    if (translatedTrip) {
+      setTranslatedTrip(null);
+      return;
+    }
+    
+    setIsTranslating(true);
+    try {
+      const { data } = await base44.functions.invoke('translateTrip', {
+        title: trip.title,
+        description: trip.description,
+        departure_from: trip.departure_from,
+        requirements: trip.requirements,
+      });
+      setTranslatedTrip(data);
+    } catch (error) {
+      console.error('Translation error:', error);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
 
   // Handler for "Book Now" button clicks
   const handleBookNowClick = () => {
