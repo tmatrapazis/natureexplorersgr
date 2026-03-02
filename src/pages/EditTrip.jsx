@@ -380,7 +380,7 @@ export default function EditTripPage() {
 
               <div>
                 <Label htmlFor="elevation">{t('create_trip.elevation_gain')}</Label>
-                <Input id="elevation" type="number" min="0" value={tripData.elevation_gain_m || 0} onChange={(e) => handleInputChange('elevation_gain_m', parseInt(e.target.value))} />
+                <Input id="elevation" type="number" min="0" value={tripData.elevation_gain_m || 0} onChange={(e) => handleInputChange('elevation_gain_m', parseFloat(e.target.value))} />
               </div>
             </div>
 

@@ -429,7 +429,7 @@ export default function CreateTripPage() {
                   type="number"
                   min="0"
                   value={tripData.elevation_gain_m}
-                  onChange={(e) => setTripData({...tripData, elevation_gain_m: parseInt(e.target.value)})}
+                  onChange={(e) => setTripData({...tripData, elevation_gain_m: parseFloat(e.target.value)})}
                 />
               </div>
             </div>
