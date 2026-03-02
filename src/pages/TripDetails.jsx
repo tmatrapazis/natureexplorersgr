@@ -633,7 +633,7 @@ export default function TripDetailsPage() {
                   <div>
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
                     <ul className="list-disc list-inside space-y-1 text-stone-600">
-                      {trip.requirements.map((req, i) => (
+                      {(translatedTrip?.requirements || trip.requirements).map((req, i) => (
                         <li key={i}>{req}</li>
                       ))}
                     </ul>
