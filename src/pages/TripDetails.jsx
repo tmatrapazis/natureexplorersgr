@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Languages, Loader2 } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -42,8 +42,6 @@ const isSocialMediaUrl = (url) => {
 export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
-  const [translatedTrip, setTranslatedTrip] = React.useState(null);
-  const [isTranslating, setIsTranslating] = React.useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
@@ -290,22 +288,6 @@ export default function TripDetailsPage() {
     });
   };
 
-  const handleTranslate = async () => {
-    if (translatedTrip) {
-      setTranslatedTrip(null);
-      return;
-    }
-    setIsTranslating(true);
-    const response = await base44.functions.invoke('translateTrip', {
-      title: trip.title,
-      description: trip.description,
-      departure_from: trip.departure_from,
-      requirements: trip.requirements,
-    });
-    setTranslatedTrip(response.data?.translatedData || null);
-    setIsTranslating(false);
-  };
-
   // Handler for external link button clicks
   const handleExternalLinkClick = () => {
     trackEvent('external_link_click', {
@@ -478,21 +460,11 @@ export default function TripDetailsPage() {
               )}
 
               <Card className="p-6 relative">
-                <div className="absolute top-6 right-6 hidden md:flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleTranslate}
-                    disabled={isTranslating}
-                    className="flex items-center gap-1"
-                  >
-                    {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
-                    {translatedTrip ? (language === 'el' ? 'Πρωτότυπο' : 'Original') : (language === 'el' ? 'Μετάφραση' : 'Translate')}
-                  </Button>
+                <div className="absolute top-6 right-6 hidden md:block">
                   <ShareButton trip={trip} language={language} />
                 </div>
                 
-                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-40">{translatedTrip?.title || trip.title}</h1>
+                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-20">{trip.title}</h1>
 
                 {organizer && (
                   <Link
@@ -601,7 +573,7 @@ export default function TripDetailsPage() {
                 {trip.description && (
                   <div className="mb-6">
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{translatedTrip?.description || trip.description}</p>
+                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
                   </div>
                 )}
 
@@ -631,7 +603,7 @@ export default function TripDetailsPage() {
                   <div>
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
                     <ul className="list-disc list-inside space-y-1 text-stone-600">
-                      {(translatedTrip?.requirements || trip.requirements).map((req, i) => (
+                      {trip.requirements.map((req, i) => (
                         <li key={i}>{req}</li>
                       ))}
                     </ul>
@@ -691,8 +663,18 @@ export default function TripDetailsPage() {
             </div>
           </div>
           
-          {/* Mobile Share Button - Sticky at bottom */}
-          <div className="md:hidden">
+          {/* Mobile Share + Translate Buttons */}
+          <div className="md:hidden flex gap-2 mt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleTranslate}
+              disabled={isTranslating}
+              className="flex items-center gap-1"
+            >
+              {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
+              {translatedTrip ? (language === 'el' ? 'Πρωτότυπο' : 'Original') : (language === 'el' ? 'Μετάφραση' : 'Translate')}
+            </Button>
             <ShareButton trip={trip} language={language} />
           </div>
         </div>
