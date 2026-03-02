@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -17,6 +17,7 @@ export default function CreateTripPage() {
   const queryClient = useQueryClient();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const saveDraftRef = useRef(false);
 
   useSEO({ title: t('create_trip.title'), description: 'Create hiking trip', noindex: true });
 
@@ -25,31 +26,19 @@ export default function CreateTripPage() {
     queryFn: () => base44.auth.me(),
   });
 
-  // Support recreating a trip from navigation state
   const recreateData = location.state?.tripData
     ? { ...location.state.tripData, start_date: "", end_date: "", status: "draft" }
     : null;
 
-  const createTripMutation = useMutation({
-    mutationFn: async (data) => {
-      return await base44.entities.HikingTrip.create({ ...data, organizer_code: user.organizer_code });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
-      navigate(createPageUrl("MyTrips"));
-    },
-  });
+  const handleSubmit = async (data) => {
+    const dataToSave = saveDraftRef.current ? { ...data, status: "draft" } : data;
+    saveDraftRef.current = false;
+    await base44.entities.HikingTrip.create({ ...dataToSave, organizer_code: user.organizer_code });
+    queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+    navigate(createPageUrl("MyTrips"));
+  };
 
-  const saveDraftMutation = useMutation({
-    mutationFn: async (data) => {
-      return await base44.entities.HikingTrip.create({ ...data, organizer_code: user.organizer_code, status: "draft" });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
-      navigate(createPageUrl("MyTrips"));
-    },
-  });
-
+  const createMutation = useMutation({ mutationFn: handleSubmit });
   const hasOrganizerCode = user?.organizer_code;
 
   return (
@@ -76,26 +65,10 @@ export default function CreateTripPage() {
           <TripForm
             initialData={recreateData}
             isEditing={false}
-            isSubmitting={createTripMutation.isPending || saveDraftMutation.isPending}
-            onSubmit={(data) => createTripMutation.mutate(data)}
+            isSubmitting={createMutation.isPending}
+            onSubmit={(data) => createMutation.mutate(data)}
             onCancel={() => navigate(createPageUrl("MyTrips"))}
-            extraActions={
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  const form = document.querySelector('form');
-                  if (form) {
-                    const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                    // We trigger save-as-draft by temporarily overriding — instead use a ref approach below
-                  }
-                }}
-                disabled={saveDraftMutation.isPending || createTripMutation.isPending}
-                className="w-full sm:w-auto whitespace-normal"
-              >
-                {saveDraftMutation.isPending ? t('create_trip.saving') : (language === 'el' ? 'Αποθήκευση Πρόχειρου' : 'Save as Draft')}
-              </Button>
-            }
+            onSaveDraft={() => { saveDraftRef.current = true; }}
           />
         </Card>
       </div>
