@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Languages, Loader2 } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -663,18 +663,8 @@ export default function TripDetailsPage() {
             </div>
           </div>
           
-          {/* Mobile Share + Translate Buttons */}
-          <div className="md:hidden flex gap-2 mt-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleTranslate}
-              disabled={isTranslating}
-              className="flex items-center gap-1"
-            >
-              {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
-              {translatedTrip ? (language === 'el' ? 'Πρωτότυπο' : 'Original') : (language === 'el' ? 'Μετάφραση' : 'Translate')}
-            </Button>
+          {/* Mobile Share Button - Sticky at bottom */}
+          <div className="md:hidden">
             <ShareButton trip={trip} language={language} />
           </div>
         </div>
