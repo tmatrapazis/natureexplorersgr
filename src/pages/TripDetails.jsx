@@ -278,6 +278,27 @@ export default function TripDetailsPage() {
   const computedStatus = getComputedTripStatus(trip);
   const isSocialMedia = isSocialMediaUrl(trip.event_url);
 
+  // Handler for translation
+  const handleTranslate = async () => {
+    if (translatedTrip) {
+      setTranslatedTrip(null);
+      return;
+    }
+    setIsTranslating(true);
+    try {
+      const response = await base44.functions.invoke('translateTrip', {
+        title: trip?.title,
+        description: trip?.description,
+        departure_from: trip?.departure_from,
+        requirements: trip?.requirements,
+      });
+      setTranslatedTrip(response.data?.translatedData || response.data);
+    } catch (error) {
+      console.error('Translation failed:', error);
+    }
+    setIsTranslating(false);
+  };
+
   // Handler for "Book Now" button clicks
   const handleBookNowClick = () => {
     trackEvent('book_now_click', {
