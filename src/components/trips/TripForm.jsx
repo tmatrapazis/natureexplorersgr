@@ -361,9 +361,13 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft,
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3 pt-4 w-full">
         <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:w-auto">
-          {isEditing ? (language === 'el' ? 'Ακύρωση' : 'Cancel') : t('common.cancel')}
+          {t('common.cancel')}
         </Button>
-        {extraActions}
+        {!isEditing && onSaveDraft && (
+          <Button type="submit" variant="outline" onClick={() => onSaveDraft()} disabled={isSubmitting} className="w-full sm:w-auto whitespace-normal">
+            {isSubmitting ? t('create_trip.creating') : (language === 'el' ? 'Αποθήκευση Πρόχειρου' : 'Save as Draft')}
+          </Button>
+        )}
         <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto" disabled={isSubmitting}>
           {isSubmitting
             ? (isEditing ? (language === 'el' ? 'Αποθήκευση...' : 'Saving...') : t('create_trip.creating'))
