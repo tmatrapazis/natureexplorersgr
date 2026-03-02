@@ -480,11 +480,33 @@ export default function TripDetailsPage() {
               )}
 
               <Card className="p-6 relative">
-                <div className="absolute top-6 right-6 hidden md:block">
-                  <ShareButton trip={trip} language={language} />
-                </div>
-                
-                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-20">{trip.title}</h1>
+               <div className="absolute top-6 right-6 hidden md:flex items-center gap-2">
+                 <Button
+                   variant="outline"
+                   size="sm"
+                   onClick={handleTranslate}
+                   disabled={isTranslating}
+                   className="flex items-center gap-1"
+                 >
+                   {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
+                   {translatedTrip ? (language === 'el' ? 'Πρωτότυπο' : 'Original') : (language === 'el' ? 'Μετάφραση' : 'Translate')}
+                 </Button>
+                 <ShareButton trip={trip} language={language} />
+               </div>
+
+               <div className="flex items-start justify-between gap-2 mb-2 md:pr-56">
+                 <h1 className="text-3xl font-bold text-stone-900">{translatedTrip?.title || trip.title}</h1>
+                 <Button
+                   variant="outline"
+                   size="icon"
+                   onClick={handleTranslate}
+                   disabled={isTranslating}
+                   className="md:hidden flex-shrink-0 mt-1"
+                   title={translatedTrip ? 'Original' : 'Translate'}
+                 >
+                   {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
+                 </Button>
+               </div>
 
                 {organizer && (
                   <Link
