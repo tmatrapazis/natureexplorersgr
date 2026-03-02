@@ -489,7 +489,30 @@ export default function TripDetailsPage() {
                   <ShareButton trip={trip} language={language} />
                 </div>
                 
-                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-20">{trip.title}</h1>
+                <div className="flex items-start justify-between gap-4 mb-2">
+                  <h1 className="text-3xl font-bold text-stone-900 flex-1">
+                    {translatedTrip?.title || trip.title}
+                  </h1>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleTranslate}
+                    disabled={isTranslating}
+                    className="gap-2 whitespace-nowrap"
+                  >
+                    {isTranslating ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        {language === 'el' ? 'Μετάφραση...' : 'Translating...'}
+                      </>
+                    ) : (
+                      <>
+                        <Languages className="w-4 h-4" />
+                        {translatedTrip ? (language === 'el' ? 'Ελληνικά' : 'Greek') : (language === 'el' ? 'Αγγλικά' : 'English')}
+                      </>
+                    )}
+                  </Button>
+                </div>
 
                 {organizer && (
                   <Link
