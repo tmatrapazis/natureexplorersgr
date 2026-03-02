@@ -685,7 +685,7 @@ export default function TripDetailsPage() {
             </div>
           </div>
           
-          {/* Mobile Share Button - Sticky at bottom */}
+          {/* Mobile Share Button */}
           <div className="md:hidden">
             <ShareButton trip={trip} language={language} />
           </div>
