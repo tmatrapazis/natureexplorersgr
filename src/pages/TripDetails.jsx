@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Languages, Loader2 } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -307,12 +307,12 @@ export default function TripDetailsPage() {
         <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
           <div className="max-w-5xl mx-auto">
             <Button 
-            variant="outline" 
-            className="mb-6"
-            onClick={() => window.history.back()}
+              variant="outline" 
+              className="mb-6"
+              onClick={() => window.history.back()}
             >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('common.back')}
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
             </Button>
 
             <div className="grid lg:grid-cols-3 gap-6">
@@ -438,7 +438,7 @@ export default function TripDetailsPage() {
             onClick={() => window.history.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            {t('common.back')}
+            Back
           </Button>
 
           <div className="grid lg:grid-cols-3 gap-6">
@@ -523,9 +523,7 @@ export default function TripDetailsPage() {
                     <div>
                       <p className="text-sm text-stone-500">{t('trip.price')}</p>
                       <p className="font-medium text-stone-900">
-                        {trip.pricing_options && trip.pricing_options.length > 0
-                        ? trip.pricing_options.map(o => `${o.label}: €${o.price}`).join(' / ')
-                        : trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
+                        {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
                       </p>
                     </div>
                   </div>
@@ -575,7 +573,7 @@ export default function TripDetailsPage() {
                 {trip.description && (
                   <div className="mb-6">
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                    <div className="text-stone-600 break-words overflow-hidden prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: trip.description }} />
+                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
                   </div>
                 )}
 
