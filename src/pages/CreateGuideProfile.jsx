@@ -244,14 +244,14 @@ export default function CreateGuideProfilePage() {
               {/* Bio */}
               <div>
                 <Label>{language === 'el' ? 'Βιογραφικό' : 'Bio'}</Label>
-                <ReactQuill
-                  value={formData.bio}
-                  onChange={(value) => setFormData(prev => ({ ...prev, bio: value }))}
-                  className="mt-2 bg-white"
-                  placeholder={language === 'el' 
-                    ? 'Πείτε μας για την εμπειρία σας, τις ειδικότητές σας...'
-                    : 'Tell us about your experience, specializations...'}
-                />
+                <div className="mt-2" style={{ minHeight: '200px' }}>
+                  <ReactQuill
+                    value={formData.bio}
+                    onChange={(value) => setFormData(prev => ({ ...prev, bio: value }))}
+                    theme="snow"
+                    style={{ height: '150px', marginBottom: '42px' }}
+                  />
+                </div>
               </div>
 
               {/* Years of Experience */}
