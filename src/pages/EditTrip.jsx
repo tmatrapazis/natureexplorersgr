@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { ArrowLeft, Plus, X, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 import useSEO from '../components/seo/useSEO';
