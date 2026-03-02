@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Languages, Loader2 } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -42,10 +42,6 @@ const isSocialMediaUrl = (url) => {
 export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
-  
-  // Translation state (must be before any early returns)
-  const [translatedTrip, setTranslatedTrip] = React.useState(null);
-  const [isTranslating, setIsTranslating] = React.useState(false);
   
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
@@ -254,6 +250,26 @@ export default function TripDetailsPage() {
     ]
   };
 
+  // Translation state
+  const [translatedTrip, setTranslatedTrip] = React.useState(null);
+  const [isTranslating, setIsTranslating] = React.useState(false);
+
+  const handleTranslate = async () => {
+    if (translatedTrip) {
+      setTranslatedTrip(null);
+      return;
+    }
+    setIsTranslating(true);
+    const response = await base44.functions.invoke('translateTrip', {
+      title: trip?.title,
+      description: trip?.description,
+      departure_from: trip?.departure_from,
+      requirements: trip?.requirements,
+    });
+    setTranslatedTrip(response.data?.translatedData || response.data);
+    setIsTranslating(false);
+  };
+
   if (tripLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -277,27 +293,6 @@ export default function TripDetailsPage() {
 
   const computedStatus = getComputedTripStatus(trip);
   const isSocialMedia = isSocialMediaUrl(trip.event_url);
-
-  // Handler for translation
-  const handleTranslate = async () => {
-    if (translatedTrip) {
-      setTranslatedTrip(null);
-      return;
-    }
-    setIsTranslating(true);
-    try {
-      const response = await base44.functions.invoke('translateTrip', {
-        title: trip?.title,
-        description: trip?.description,
-        departure_from: trip?.departure_from,
-        requirements: trip?.requirements,
-      });
-      setTranslatedTrip(response.data?.translatedData || response.data);
-    } catch (error) {
-      console.error('Translation failed:', error);
-    }
-    setIsTranslating(false);
-  };
 
   // Handler for "Book Now" button clicks
   const handleBookNowClick = () => {
@@ -499,7 +494,7 @@ export default function TripDetailsPage() {
                   <ShareButton trip={trip} language={language} />
                 </div>
                 
-                <div className="flex items-start justify-between gap-2 mb-2 md:pr-96">
+                <div className="flex items-start justify-between gap-2 mb-2 md:pr-56">
                   <h1 className="text-3xl font-bold text-stone-900">{translatedTrip?.title || trip.title}</h1>
                   <Button
                     variant="outline"
@@ -618,11 +613,11 @@ export default function TripDetailsPage() {
                 )}
 
                 {trip.description && (
-                   <div className="mb-6">
-                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                     <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{translatedTrip?.description || trip.description}</p>
-                   </div>
-                 )}
+                  <div className="mb-6">
+                    <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
+                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{translatedTrip?.description || trip.description}</p>
+                  </div>
+                )}
 
                 {trip.tags && trip.tags.length > 0 && (
                   <div className="mb-6">
@@ -647,15 +642,15 @@ export default function TripDetailsPage() {
                 )}
 
                 {trip.requirements && trip.requirements.length > 0 && (
-                   <div>
-                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
-                     <ul className="list-disc list-inside space-y-1 text-stone-600">
-                       {(translatedTrip?.requirements || trip.requirements).map((req, i) => (
-                         <li key={i}>{req}</li>
-                       ))}
-                     </ul>
-                   </div>
-                 )}
+                  <div>
+                    <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
+                    <ul className="list-disc list-inside space-y-1 text-stone-600">
+                      {(translatedTrip?.requirements || trip.requirements).map((req, i) => (
+                        <li key={i}>{req}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 {trip.external_link && (
                   <div className="mt-6 pt-6 border-t">
