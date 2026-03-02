@@ -403,6 +403,20 @@ export const el = {
     "full_name_required": "Το όνομα είναι υποχρεωτικό",
     "error_uploading_image": "Σφάλμα μεταφόρτωσης εικόνας"
   },
+  "hiker_profile": {
+    "not_found": "Ο Πεζοπόρος Δεν Βρέθηκε",
+    "back_to_bookings": "Πίσω στις Κρατήσεις",
+    "hiker": "Πεζοπόρος",
+    "email": "Email",
+    "mobile_number": "Κινητό Τηλέφωνο",
+    "health_and_emergency": "Υγεία & Επείγουσα Ανάγκη",
+    "confidential_info": "Αυτές οι πληροφορίες είναι εμπιστευτικές",
+    "general_health": "Γενική Υγεία",
+    "not_provided": "Δεν παρέχεται",
+    "allergies_medical": "Αλλεργίες & Ιατρικές Ανάγκες",
+    "none_specified": "Δεν αναφέρεται",
+    "emergency_contact": "Επείγουσα Επαφή"
+  },
   "refuges": {
     "page_title": "Ελληνικά Ορειβατικά Καταφύγια",
     "page_subtitle": "Εξερευνήστε τα {count} ορειβατικά καταφύγια της Ελλάδας στον χάρτη και βρείτε πληροφορίες για κάθε καταφύγιο.",

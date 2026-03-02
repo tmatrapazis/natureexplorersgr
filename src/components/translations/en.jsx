@@ -401,6 +401,20 @@ export const en = {
     "full_name_required": "Full name is required",
     "error_uploading_image": "Error uploading image"
   },
+  "hiker_profile": {
+    "not_found": "Hiker Not Found",
+    "back_to_bookings": "Back to Bookings",
+    "hiker": "Hiker",
+    "email": "Email",
+    "mobile_number": "Mobile Number",
+    "health_and_emergency": "Health & Emergency Info",
+    "confidential_info": "This information is confidential",
+    "general_health": "General Health",
+    "not_provided": "Not provided",
+    "allergies_medical": "Allergies & Medical Needs",
+    "none_specified": "None specified",
+    "emergency_contact": "Emergency Contact"
+  },
   "refuges": {
     "page_title": "Greek Mountain Refuges",
     "page_subtitle": "Explore {count} mountain refuges of Greece on the map and find information for each refuge.",

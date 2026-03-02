@@ -60,9 +60,9 @@ export default function HikerProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center text-center">
         <div>
-          <h2 className="text-2xl font-bold text-stone-900 mb-2">{t('hikerNotFound')}</h2>
+          <h2 className="text-2xl font-bold text-stone-900 mb-2">{t('hiker_profile.not_found')}</h2>
           <Link to={tripId ? `${createPageUrl("ManageBookings")}?tripId=${tripId}` : createPageUrl("MyTrips")}>
-            <Button>{t('backToBookings')}</Button>
+            <Button>{t('hiker_profile.back_to_bookings')}</Button>
           </Link>
         </div>
       </div>
@@ -74,7 +74,7 @@ export default function HikerProfilePage() {
       <div className="max-w-xl mx-auto">
         <Button variant="outline" className="mb-6" onClick={() => window.history.back()}>
           <ArrowLeft className="w-4 h-4 mr-2" />
-          {t('backToBookings')}
+          {t('hiker_profile.back_to_bookings')}
         </Button>
         <div className="space-y-6">
           <Card>
@@ -87,23 +87,23 @@ export default function HikerProfilePage() {
                   )}
               </div>
               <h1 className="text-2xl font-bold text-stone-900">{hiker.username || hiker.full_name}</h1>
-              {hiker.training_status && <Badge variant="secondary" className="mt-2">{hiker.training_status} {t('hiker')}</Badge>}
+              {hiker.training_status && <Badge variant="secondary" className="mt-2">{hiker.training_status} {t('hiker_profile.hiker')}</Badge>}
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-              <InfoField icon={<Mail className="w-5 h-5 text-stone-500" />} label={t('email')} value={<a href={`mailto:${hiker.email}`} className="text-emerald-600 hover:underline">{hiker.email}</a>} />
-              <InfoField icon={<Phone className="w-5 h-5 text-stone-500" />} label={t('mobileNumber')} value={hiker.phone_number} />
+              <InfoField icon={<Mail className="w-5 h-5 text-stone-500" />} label={t('hiker_profile.email')} value={<a href={`mailto:${hiker.email}`} className="text-emerald-600 hover:underline">{hiker.email}</a>} />
+              <InfoField icon={<Phone className="w-5 h-5 text-stone-500" />} label={t('hiker_profile.mobile_number')} value={hiker.phone_number} />
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><ShieldAlert className="w-5 h-5 text-red-600"/> {t('healthAndEmergency')}</CardTitle>
-              <CardDescription>{t('confidentialInfo')}</CardDescription>
+              <CardTitle className="flex items-center gap-2"><ShieldAlert className="w-5 h-5 text-red-600"/> {t('hiker_profile.health_and_emergency')}</CardTitle>
+              <CardDescription>{t('hiker_profile.confidential_info')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <InfoField icon={<HeartPulse className="w-5 h-5 text-stone-500" />} label={t('generalHealth')} value={hiker.health_status || t('notProvided')} />
-              <InfoField icon={<AlertTriangle className="w-5 h-5 text-stone-500" />} label={t('allergiesAndMedicalNeeds')} value={hiker.medical_needs || t('noneSpecified')} />
-              <InfoField icon={<Phone className="w-5 h-5 text-stone-500" />} label={t('emergencyContact')} value={hiker.emergency_contact_number || t('notProvided')} />
+              <InfoField icon={<HeartPulse className="w-5 h-5 text-stone-500" />} label={t('hiker_profile.general_health')} value={hiker.health_status || t('hiker_profile.not_provided')} />
+              <InfoField icon={<AlertTriangle className="w-5 h-5 text-stone-500" />} label={t('hiker_profile.allergies_medical')} value={hiker.medical_needs || t('hiker_profile.none_specified')} />
+              <InfoField icon={<Phone className="w-5 h-5 text-stone-500" />} label={t('hiker_profile.emergency_contact')} value={hiker.emergency_contact_number || t('hiker_profile.not_provided')} />
             </CardContent>
           </Card>
         </div>
