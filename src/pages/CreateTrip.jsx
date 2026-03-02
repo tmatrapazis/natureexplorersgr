@@ -638,6 +638,27 @@ export default function CreateTripPage() {
               </div>
             </div>
 
+            <div>
+              <Label htmlFor="status">{language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}</Label>
+              <Select
+                value={tripData.status}
+                onValueChange={(value) => setTripData({...tripData, status: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο (δεν θα δημοσιευτεί)' : 'Draft (will not be published)'}</SelectItem>
+                  <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενη (θα δημοσιευτεί)' : 'Upcoming (will be published)'}</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-stone-500 mt-1">
+                {language === 'el' 
+                  ? 'Επιλέξτε "Πρόχειρο" για να αποθηκεύσετε την εκδρομή χωρίς να τη δημοσιεύσετε. Μπορείτε να την δημοσιεύσετε αργότερα αλλάζοντας την κατάσταση.'
+                  : 'Select "Draft" to save the trip without publishing it. You can publish it later by changing the status.'}
+              </p>
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-3 pt-4 w-full">
               <Button
                 type="button"
