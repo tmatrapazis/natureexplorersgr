@@ -526,7 +526,7 @@ export default function MyTripsPage() {
                           )}
 
                           <div className="flex flex-wrap items-center gap-2 min-w-0">
-                            <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`} className="flex-shrink-0">
+                            <Link to={`${createPageUrl("TripForm")}?id=${trip.id}`} className="flex-shrink-0">
                               <Button variant="outline" size="sm" className="min-h-[44px]"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
                             </Link>
                             <Select
