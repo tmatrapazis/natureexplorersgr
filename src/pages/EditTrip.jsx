@@ -291,7 +291,14 @@ export default function EditTripPage() {
 
             <div>
               <Label htmlFor="description">{t('create_trip.description')}</Label>
-              <Textarea id="description" value={tripData.description || ""} onChange={(e) => handleInputChange('description', e.target.value)} rows={4} />
+              <div className="mt-1" style={{ minHeight: '200px' }}>
+                <ReactQuill
+                  theme="snow"
+                  value={tripData.description || ""}
+                  onChange={(value) => handleInputChange('description', value)}
+                  style={{ height: '150px', marginBottom: '42px' }}
+                />
+              </div>
             </div>
 
             <div>

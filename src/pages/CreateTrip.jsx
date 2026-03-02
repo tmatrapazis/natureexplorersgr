@@ -304,13 +304,14 @@ export default function CreateTripPage() {
 
             <div>
               <Label htmlFor="description">{t('create_trip.description')}</Label>
-              <Textarea
-                id="description"
-                value={tripData.description}
-                onChange={(e) => setTripData({...tripData, description: e.target.value})}
-                placeholder={t('create_trip.description_placeholder')}
-                rows={4}
-              />
+              <div className="mt-1" style={{ minHeight: '200px' }}>
+                <ReactQuill
+                  theme="snow"
+                  value={tripData.description}
+                  onChange={(value) => setTripData({...tripData, description: value})}
+                  style={{ height: '150px', marginBottom: '42px' }}
+                />
+              </div>
             </div>
 
             <div>
