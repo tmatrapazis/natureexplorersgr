@@ -250,6 +250,26 @@ export default function TripDetailsPage() {
     ]
   };
 
+  // Translation state
+  const [translatedTrip, setTranslatedTrip] = React.useState(null);
+  const [isTranslating, setIsTranslating] = React.useState(false);
+
+  const handleTranslate = async () => {
+    if (translatedTrip) {
+      setTranslatedTrip(null);
+      return;
+    }
+    setIsTranslating(true);
+    const response = await base44.functions.invoke('translateTrip', {
+      title: trip?.title,
+      description: trip?.description,
+      departure_from: trip?.departure_from,
+      requirements: trip?.requirements,
+    });
+    setTranslatedTrip(response.data?.translatedData || response.data);
+    setIsTranslating(false);
+  };
+
   if (tripLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
