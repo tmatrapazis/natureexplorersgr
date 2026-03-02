@@ -116,26 +116,6 @@ export default function TripDetailsPage() {
     }
   }, [trip?.id, user?.role]);
 
-  // Translation state - MUST be before any early returns
-  const [translatedTrip, setTranslatedTrip] = React.useState(null);
-  const [isTranslating, setIsTranslating] = React.useState(false);
-
-  const handleTranslate = async () => {
-    if (translatedTrip) {
-      setTranslatedTrip(null);
-      return;
-    }
-    setIsTranslating(true);
-    const response = await base44.functions.invoke('translateTrip', {
-      title: trip?.title,
-      description: trip?.description,
-      departure_from: trip?.departure_from,
-      requirements: trip?.requirements,
-    });
-    setTranslatedTrip(response.data?.translatedData || response.data);
-    setIsTranslating(false);
-  };
-
   // SEO Configuration with keywords - Dynamic based on trip data
   React.useEffect(() => {
     if (trip) {
@@ -268,6 +248,26 @@ export default function TripDetailsPage() {
         "item": window.location.href
       }
     ]
+  };
+
+  // Translation state
+  const [translatedTrip, setTranslatedTrip] = React.useState(null);
+  const [isTranslating, setIsTranslating] = React.useState(false);
+
+  const handleTranslate = async () => {
+    if (translatedTrip) {
+      setTranslatedTrip(null);
+      return;
+    }
+    setIsTranslating(true);
+    const response = await base44.functions.invoke('translateTrip', {
+      title: trip?.title,
+      description: trip?.description,
+      departure_from: trip?.departure_from,
+      requirements: trip?.requirements,
+    });
+    setTranslatedTrip(response.data?.translatedData || response.data);
+    setIsTranslating(false);
   };
 
   if (tripLoading) {
@@ -480,11 +480,33 @@ export default function TripDetailsPage() {
               )}
 
               <Card className="p-6 relative">
-                <div className="absolute top-6 right-6 hidden md:block">
+                <div className="absolute top-6 right-6 hidden md:flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleTranslate}
+                    disabled={isTranslating}
+                    className="flex items-center gap-1"
+                  >
+                    {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
+                    {translatedTrip ? (language === 'el' ? 'Πρωτότυπο' : 'Original') : (language === 'el' ? 'Μετάφραση' : 'Translate')}
+                  </Button>
                   <ShareButton trip={trip} language={language} />
                 </div>
                 
-                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-20">{trip.title}</h1>
+                <div className="flex items-start justify-between gap-2 mb-2 md:pr-56">
+                  <h1 className="text-3xl font-bold text-stone-900">{translatedTrip?.title || trip.title}</h1>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleTranslate}
+                    disabled={isTranslating}
+                    className="md:hidden flex-shrink-0 mt-1"
+                    title={translatedTrip ? 'Original' : 'Translate'}
+                  >
+                    {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
+                  </Button>
+                </div>
 
                 {organizer && (
                   <Link
@@ -593,7 +615,7 @@ export default function TripDetailsPage() {
                 {trip.description && (
                   <div className="mb-6">
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
+                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{translatedTrip?.description || trip.description}</p>
                   </div>
                 )}
 
@@ -623,7 +645,7 @@ export default function TripDetailsPage() {
                   <div>
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
                     <ul className="list-disc list-inside space-y-1 text-stone-600">
-                      {trip.requirements.map((req, i) => (
+                      {(translatedTrip?.requirements || trip.requirements).map((req, i) => (
                         <li key={i}>{req}</li>
                       ))}
                     </ul>
