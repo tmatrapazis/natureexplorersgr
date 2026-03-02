@@ -180,7 +180,7 @@ export default function MyTripsPage() {
                 </Button>
               </Link>
             )}
-            <Link to={createPageUrl("CreateTrip")} className="w-full sm:w-auto">
+            <Link to={createPageUrl("TripForm")} className="w-full sm:w-auto">
               <Button className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto min-h-[44px]">
                 <Plus className="w-4 h-4 mr-2" />
                 {t('organizer.create_new_trip')}
