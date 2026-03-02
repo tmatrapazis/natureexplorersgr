@@ -194,7 +194,7 @@ export default function MyTripsPage() {
             <Calendar className="w-16 h-16 mx-auto text-stone-300 mb-4" />
             <h3 className="text-lg font-semibold text-stone-700 mb-2">{t('organizer.no_trips')}</h3>
             <p className="text-stone-500 mb-4">{t('organizer.no_trips_message')}</p>
-            <Link to={createPageUrl("CreateTrip")}>
+            <Link to={createPageUrl("TripForm")}>
               <Button className="bg-emerald-600 hover:bg-emerald-700">
                 {t('organizer.create_first_trip')}
               </Button>
