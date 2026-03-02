@@ -71,7 +71,10 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft,
     }
   }, [initialData?.id]);
 
-  const update = (key, value) => setTripData(prev => ({ ...prev, [key]: value }));
+  const update = (key, value) => {
+    setTripData(prev => ({ ...prev, [key]: value }));
+    if (onDirtyChange) onDirtyChange(true);
+  };
 
   const handlePricingModeChange = (checked) => {
     setUseMultiplePricing(checked);
