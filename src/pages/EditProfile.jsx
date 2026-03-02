@@ -64,28 +64,13 @@ export default function EditProfilePage() {
       setIsNewUser(newUser);
 
       setFormData({
-        full_name: user.full_name || '',
-        email: user.email || '',
-        username: user.username || '', // Set username from user data
+        username: user.username || '',
         profile_picture_url: user.profile_picture_url || '',
-        bio: user.bio || '',
-        website: user.website || '',
-        phone: user.phone || '',
         phone_number: user.phone_number || '',
         training_status: user.training_status || '',
         health_status: user.health_status || '',
         medical_needs: user.medical_needs || '',
         emergency_contact_number: user.emergency_contact_number || '',
-        years_of_experience: user.years_of_experience || '',
-        certifications: user.certifications || '',
-        certification_files: user.certification_files || [],
-        gemi_number: user.gemi_number || '',
-        bank_accounts: user.bank_accounts || [],
-        social_profiles: user.social_profiles || {
-          facebook: '',
-          instagram: '',
-          twitter: ''
-        }
       });
     }
   }, [user]);
