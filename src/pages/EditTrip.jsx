@@ -45,14 +45,10 @@ export default function EditTripPage() {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        if (base44.auth && typeof base44.auth.currentUser !== 'undefined') {
-          setUser(base44.auth.currentUser);
-        } else if (base44.auth && typeof base44.auth.getUser === 'function') {
-          const fetchedUser = await base44.auth.getUser();
-          setUser(fetchedUser);
-        }
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
       } catch (error) {
-        console.error("Failed to fetch current user from base44 auth:", error);
+        console.error("Failed to fetch current user:", error);
       }
     };
     fetchCurrentUser();

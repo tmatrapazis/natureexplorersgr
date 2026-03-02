@@ -377,7 +377,6 @@ export default function CreateTripPage() {
                 value={tripData.event_url}
                 onChange={(e) => setTripData({...tripData, event_url: e.target.value})}
                 placeholder={language === 'el' ? 'Π.χ. https://example.com/book' : 'e.g. https://example.com/book'}
-                required
               />
             </div>
 
