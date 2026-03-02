@@ -24,7 +24,6 @@ import {
 import PublicHeader from "../layout/PublicHeader";
 import PublicFooter from "../layout/PublicFooter";
 import NotificationsBell from "../layout/NotificationsBell";
-import MobileBottomTab from "../layout/MobileBottomTab";
 
 const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
   const navigate = useNavigate();
@@ -269,14 +268,10 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             </div>
           </header>
 
-          <div 
-            className="flex-1 overflow-auto md:pb-0"
-            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 4rem)' }}
-          >
+          <div className="flex-1 overflow-auto pb-16 md:pb-0">
             {children}
           </div>
         </main>
-        <MobileBottomTab user={user} />
       </div>
   );
 };

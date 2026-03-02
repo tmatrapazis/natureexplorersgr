@@ -15,7 +15,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import useSEO from '../components/seo/useSEO';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
-import MobileHeader from '../components/layout/MobileHeader';
 
 export default function EditProfilePage() {
   const queryClient = useQueryClient();
@@ -244,11 +243,10 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/30 dark:via-emerald-950/10 to-background">
-      {!isNewUser && <MobileHeader title={t('profile.edit_profile')} />}
-      <div className="max-w-2xl mx-auto p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/30 dark:via-emerald-950/10 to-background p-4 md:p-8">
+      <div className="max-w-2xl mx-auto">
         {!isNewUser && (
-          <Button variant="outline" className="mb-6 hidden md:flex" onClick={() => window.history.back()}>
+          <Button variant="outline" className="mb-6" onClick={() => window.history.back()}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
