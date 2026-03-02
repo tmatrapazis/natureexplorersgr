@@ -392,7 +392,7 @@ export default function EditTripPage() {
                   <Switch
                     id="pricing-mode"
                     checked={useMultiplePricing}
-                    onCheckedChange={setUseMultiplePricing}
+                    onCheckedChange={handlePricingModeChange}
                   />
                 </div>
               </div>

@@ -444,7 +444,7 @@ export default function CreateTripPage() {
                   <Switch
                     id="pricing-mode"
                     checked={useMultiplePricing}
-                    onCheckedChange={setUseMultiplePricing}
+                    onCheckedChange={handlePricingModeChange}
                   />
                 </div>
               </div>
