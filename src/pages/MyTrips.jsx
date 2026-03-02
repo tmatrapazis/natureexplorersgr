@@ -729,28 +729,28 @@ export default function MyTripsPage() {
                           )}
 
                           <div className="flex flex-wrap items-center gap-2 min-w-0">
-                            <Link to={`${createPageUrl("EditTrip")}?id=${trip.id}`} className="flex-shrink-0">
+                            <Link to={`${createPageUrl("TripForm")}?id=${trip.id}`} className="flex-shrink-0">
                               <Button variant="outline" size="sm" className="min-h-[44px]"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
                             </Link>
                             <Select
-                              value={trip.status}
-                              onValueChange={(value) => handleStatusChange(trip.id, value)}
-                            >
-                              <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
-                                <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
-                                <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
-                                <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
-                                <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
-                                <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
-                                <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            {(!trip.end_date || new Date(trip.end_date) >= today) && (
-                              <Button
+                               value={trip.status}
+                               onValueChange={(value) => handleStatusChange(trip.id, value)}
+                             >
+                               <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
+                                 <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
+                                 <SelectValue />
+                               </SelectTrigger>
+                               <SelectContent>
+                                 <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
+                                 <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
+                                 <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
+                                 <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
+                                 <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
+                                 <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
+                               </SelectContent>
+                             </Select>
+                             {(!trip.end_date || new Date(trip.end_date) >= today) && (
+                                                <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleDeleteTrip(trip.id)}
