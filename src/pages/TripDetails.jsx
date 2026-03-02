@@ -647,15 +647,15 @@ export default function TripDetailsPage() {
                 )}
 
                 {trip.requirements && trip.requirements.length > 0 && (
-                  <div>
-                    <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
-                    <ul className="list-disc list-inside space-y-1 text-stone-600">
-                      {trip.requirements.map((req, i) => (
-                        <li key={i}>{req}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                   <div>
+                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
+                     <ul className="list-disc list-inside space-y-1 text-stone-600">
+                       {(translatedTrip?.requirements || trip.requirements).map((req, i) => (
+                         <li key={i}>{req}</li>
+                       ))}
+                     </ul>
+                   </div>
+                 )}
 
                 {trip.external_link && (
                   <div className="mt-6 pt-6 border-t">
