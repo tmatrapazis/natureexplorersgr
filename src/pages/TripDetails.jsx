@@ -599,12 +599,12 @@ export default function TripDetailsPage() {
                   </div>
                 )}
 
-                {trip.description && (
-                  <div className="mb-6">
-                    <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
-                  </div>
-                )}
+                {(trip.description || translatedTrip?.description) && (
+                   <div className="mb-6">
+                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
+                     <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{translatedTrip?.description || trip.description}</p>
+                   </div>
+                 )}
 
                 {trip.tags && trip.tags.length > 0 && (
                   <div className="mb-6">
