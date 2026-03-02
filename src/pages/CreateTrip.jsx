@@ -70,6 +70,15 @@ export default function CreateTripPage() {
   const [currentPricingDescription, setCurrentPricingDescription] = useState("");
   const [useMultiplePricing, setUseMultiplePricing] = useState(false);
 
+  const handlePricingModeChange = (checked) => {
+    setUseMultiplePricing(checked);
+    if (checked) {
+      setTripData(prev => ({ ...prev, price: 0 }));
+    } else {
+      setTripData(prev => ({ ...prev, pricing_options: [] }));
+    }
+  };
+
   // Load data from navigation state if recreating a trip
   useEffect(() => {
     if (location.state?.tripData) {

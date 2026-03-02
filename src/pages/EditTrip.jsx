@@ -71,6 +71,16 @@ export default function EditTripPage() {
   const [currentPricingDescription, setCurrentPricingDescription] = useState("");
   const [useMultiplePricing, setUseMultiplePricing] = useState(false);
 
+  const handlePricingModeChange = (checked) => {
+    setUseMultiplePricing(checked);
+    setIsFormDirty(true);
+    if (checked) {
+      setTripData(prev => ({ ...prev, price: 0 }));
+    } else {
+      setTripData(prev => ({ ...prev, pricing_options: [] }));
+    }
+  };
+
   useEffect(() => {
     if (trip) {
       setTripData({
