@@ -137,12 +137,14 @@ export default function EditTripPage() {
   };
 
   const handleSaveAndExit = async () => {
-    const form = document.querySelector('form');
-    if (form) {
-      const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-      form.dispatchEvent(submitEvent);
-    }
     setShowExitDialog(false);
+    if (!tripData) return;
+    const { created_date, updated_date, id, created_by, view_count, organizer_name, organizer_is_verified, organizer_email, computedStatus, ...dataToSubmit } = tripData;
+    if (!dataToSubmit.end_date) {
+      dataToSubmit.end_date = dataToSubmit.start_date;
+    }
+    await updateTripMutation.mutateAsync(dataToSubmit);
+    setIsFormDirty(false);
   };
 
   const handleDiscardAndExit = () => {
