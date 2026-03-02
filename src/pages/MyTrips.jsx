@@ -146,7 +146,7 @@ export default function MyTripsPage() {
 
   const handleRecreateTrip = (trip) => {
     const { id, created_date, updated_date, created_by, start_date, end_date, ...tripData } = trip;
-    navigate(createPageUrl("CreateTrip"), { state: { tripData } });
+    navigate(createPageUrl("TripForm"), { state: { tripData } });
   };
 
   if (tripsLoading) {
