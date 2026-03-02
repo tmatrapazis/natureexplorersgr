@@ -75,7 +75,7 @@ export default function CalendarPage() {
 
   const activeTrips = trips.filter((trip) => {
     const status = getComputedTripStatus(trip);
-    return status === 'upcoming' || status === 'happening now';
+    return status === 'upcoming' || status === 'happening now' || status === 'almost soldout';
   });
 
   // Filter trips by the currently displayed month (Athens timezone)
@@ -90,10 +90,13 @@ export default function CalendarPage() {
       return false;
     }
 
-    if (filters.minPrice && trip.price < parseFloat(filters.minPrice)) {
+    const effectivePrice = trip.pricing_options && trip.pricing_options.length > 0
+      ? Math.min(...trip.pricing_options.map(o => o.price))
+      : (trip.price || 0);
+    if (filters.minPrice && effectivePrice < parseFloat(filters.minPrice)) {
       return false;
     }
-    if (filters.maxPrice && trip.price > parseFloat(filters.maxPrice)) {
+    if (filters.maxPrice && effectivePrice > parseFloat(filters.maxPrice)) {
       return false;
     }
 

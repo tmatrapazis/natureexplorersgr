@@ -532,7 +532,7 @@ export default function EditTripPage() {
                   value={currentRequirement}
                   onChange={(e) => setCurrentRequirement(e.target.value)}
                   placeholder={t('create_trip.requirements_placeholder')}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addRequirement())}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addRequirement())}
                 />
                 <Button type="button" onClick={addRequirement} variant="outline"><Plus className="w-4 h-4" /></Button>
               </div>
@@ -558,7 +558,7 @@ export default function EditTripPage() {
                   value={currentDeparture}
                   onChange={(e) => setCurrentDeparture(e.target.value)}
                   placeholder={language === 'el' ? 'π.χ. Αθήνα' : 'e.g. Athens'}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addDeparture())}
+                  onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addDeparture())}
                 />
                 <Button type="button" onClick={addDeparture} variant="outline">
                   <Plus className="w-4 h-4" />

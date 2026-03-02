@@ -43,6 +43,9 @@ export default function EditProfilePage() {
     health_status: '',
     medical_needs: '',
     emergency_contact_number: '',
+    certification_files: [],
+    bank_accounts: [],
+    social_profiles: {},
   });
 
   const [isUploading, setIsUploading] = useState(false);
@@ -71,6 +74,9 @@ export default function EditProfilePage() {
         health_status: user.health_status || '',
         medical_needs: user.medical_needs || '',
         emergency_contact_number: user.emergency_contact_number || '',
+        certification_files: user.certification_files || [],
+        bank_accounts: user.bank_accounts || [],
+        social_profiles: user.social_profiles || {},
       });
     }
   }, [user]);
@@ -189,8 +195,8 @@ export default function EditProfilePage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Validate required fields
-    if (!formData.full_name || !formData.phone_number) {
-      alert(language === 'el' ? "Το ονοματεπώνυμο και το κινητό τηλέφωνο είναι υποχρεωτικά πεδία." : "Full name and mobile number are required fields.");
+    if (!formData.phone_number) {
+      alert(language === 'el' ? "Το κινητό τηλέφωνο είναι υποχρεωτικό πεδίο." : "Mobile number is a required field.");
       return;
     }
     
@@ -252,7 +258,7 @@ export default function EditProfilePage() {
                 </div>
                 <div>
                   <Label htmlFor="email">Email *</Label>
-                  <Input id="email" value={formData.email} disabled required />
+                  <Input id="email" value={user?.email || ''} disabled required />
                 </div>
                  <div>{/*
                   <Label htmlFor="full_name">Full Name *</Label>

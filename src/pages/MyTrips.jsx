@@ -72,7 +72,7 @@ export default function MyTripsPage() {
 
   const cancelTripMutation = useMutation({
     mutationFn: async ({ trip }) => {
-      const tripBookings = allBookings.filter(b => b.trip_id === trip.id && b.status === "confirmed");
+      const tripBookings = allBookings.filter(b => b.trip_id === trip.id && (b.status === "confirmed" || b.status === "pending"));
 
       const notifications = [];
       const emailPromises = [];
@@ -162,8 +162,8 @@ export default function MyTripsPage() {
   
   const draftTrips = (trips || []).filter(t => t.status === 'draft');
   const upcomingTrips = (trips || []).filter(t => t.status === 'upcoming' && new Date(t.start_date) > today);
-  const happeningTrips = (trips || []).filter(t => (new Date(t.start_date) <= today && new Date(t.end_date) >= today) || t.status === 'happening now');
-  const completedTrips = (trips || []).filter(t => new Date(t.end_date) < today || t.status === 'completed');
+  const happeningTrips = (trips || []).filter(t => t.status !== 'cancelled' && t.status !== 'draft' && ((new Date(t.start_date) <= today && t.end_date && new Date(t.end_date) >= today) || t.status === 'happening now'));
+  const completedTrips = (trips || []).filter(t => t.status !== 'cancelled' && t.status !== 'draft' && (t.status === 'completed' || (t.end_date && new Date(t.end_date) < today)));
   const cancelledTrips = (trips || []).filter(t => t.status === 'cancelled');
 
   return (
@@ -315,18 +315,18 @@ export default function MyTripsPage() {
                                   <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
                                 </SelectContent>
                               </Select>
-                              {new Date(trip.end_date) >= today && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => handleDeleteTrip(trip.id)}
-                                  disabled={deleteTripMutation.isPending}
-                                  className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
-                                >
-                                  <Trash2 className="w-4 h-4 mr-2" />
-                                  {language === 'el' ? 'Διαγραφή' : 'Delete'}
-                                </Button>
-                              )}
+                              {(!trip.end_date || new Date(trip.end_date) >= today) && (
+                                                 <Button
+                                                   variant="outline"
+                                                   size="sm"
+                                                   onClick={() => handleDeleteTrip(trip.id)}
+                                                   disabled={deleteTripMutation.isPending}
+                                                   className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
+                                                 >
+                                                   <Trash2 className="w-4 h-4 mr-2" />
+                                                   {language === 'el' ? 'Διαγραφή' : 'Delete'}
+                                                 </Button>
+                                               )}
                             </div>
                             {!isRequiredFieldsFilled(trip) && (
                               <span className="text-xs text-red-600">
@@ -441,7 +441,7 @@ export default function MyTripsPage() {
                                     </>
                                   )}
                                 </Button>
-                                {new Date(trip.end_date) >= today && (
+                                {(!trip.end_date || new Date(trip.end_date) >= today) && (
                                   <Button
                                     variant="outline"
                                     size="sm"
@@ -562,7 +562,7 @@ export default function MyTripsPage() {
                                 </>
                               )}
                             </Button>
-                            {new Date(trip.end_date) >= today && (
+                            {(!trip.end_date || new Date(trip.end_date) >= today) && (
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -749,7 +749,7 @@ export default function MyTripsPage() {
                                 <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
                               </SelectContent>
                             </Select>
-                            {new Date(trip.end_date) >= today && (
+                            {(!trip.end_date || new Date(trip.end_date) >= today) && (
                               <Button
                                 variant="outline"
                                 size="sm"

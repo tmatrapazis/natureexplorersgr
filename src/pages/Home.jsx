@@ -77,31 +77,7 @@ export default function HomePage() {
     initialData: [],
   });
 
-  const { data: featuredTrips } = useQuery({
-    queryKey: ['featured-trips'],
-    queryFn: async () => {
-      // Fetch all trips sorted by start date
-      const trips = await base44.entities.HikingTrip.list('start_date', 50);
-      
-      // Filter to show trips starting from today + 3 days and after
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const threeDaysFromNow = new Date(today);
-      threeDaysFromNow.setDate(today.getDate() + 3);
-      
-      const upcomingTrips = trips.filter(trip => {
-        if (!trip.start_date) return false;
-        const startDate = new Date(trip.start_date);
-        startDate.setHours(0, 0, 0, 0);
-        return startDate >= threeDaysFromNow;
-      });
-      
-      // Randomly select 3 upcoming trips only
-      const shuffled = [...upcomingTrips].sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, 3);
-    },
-    initialData: [],
-  });
+
 
   // Fetch organizers for featured trips
   const { data: organizers = [] } = useQuery({
