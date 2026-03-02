@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Languages, Loader2 } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
@@ -250,26 +250,6 @@ export default function TripDetailsPage() {
     ]
   };
 
-  // Translation state
-  const [translatedTrip, setTranslatedTrip] = React.useState(null);
-  const [isTranslating, setIsTranslating] = React.useState(false);
-
-  const handleTranslate = async () => {
-    if (translatedTrip) {
-      setTranslatedTrip(null);
-      return;
-    }
-    setIsTranslating(true);
-    const response = await base44.functions.invoke('translateTrip', {
-      title: trip?.title,
-      description: trip?.description,
-      departure_from: trip?.departure_from,
-      requirements: trip?.requirements,
-    });
-    setTranslatedTrip(response.data?.translatedData || response.data);
-    setIsTranslating(false);
-  };
-
   if (tripLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -494,7 +474,19 @@ export default function TripDetailsPage() {
                   <ShareButton trip={trip} language={language} />
                 </div>
                 
-                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-48">{translatedTrip?.title || trip.title}</h1>
+                <div className="flex items-start justify-between gap-2 mb-2 md:pr-48">
+                  <h1 className="text-3xl font-bold text-stone-900">{translatedTrip?.title || trip.title}</h1>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleTranslate}
+                    disabled={isTranslating}
+                    className="md:hidden flex-shrink-0 mt-1"
+                    title={translatedTrip ? 'Original' : 'Translate'}
+                  >
+                    {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
+                  </Button>
+                </div>
 
                 {organizer && (
                   <Link
@@ -603,7 +595,7 @@ export default function TripDetailsPage() {
                 {trip.description && (
                   <div className="mb-6">
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{translatedTrip?.description || trip.description}</p>
+                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
                   </div>
                 )}
 
@@ -633,7 +625,7 @@ export default function TripDetailsPage() {
                   <div>
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
                     <ul className="list-disc list-inside space-y-1 text-stone-600">
-                      {(translatedTrip?.requirements || trip.requirements).map((req, i) => (
+                      {trip.requirements.map((req, i) => (
                         <li key={i}>{req}</li>
                       ))}
                     </ul>
@@ -693,18 +685,8 @@ export default function TripDetailsPage() {
             </div>
           </div>
           
-          {/* Mobile Translate + Share Buttons */}
-          <div className="md:hidden flex gap-2 mt-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleTranslate}
-              disabled={isTranslating}
-              className="flex items-center gap-1"
-            >
-              {isTranslating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Languages className="w-4 h-4" />}
-              {translatedTrip ? (language === 'el' ? 'Πρωτότυπο' : 'Original') : (language === 'el' ? 'Μετάφραση' : 'Translate')}
-            </Button>
+          {/* Mobile Share Button - Sticky at bottom */}
+          <div className="md:hidden">
             <ShareButton trip={trip} language={language} />
           </div>
         </div>
