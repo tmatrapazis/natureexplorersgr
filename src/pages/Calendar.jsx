@@ -115,10 +115,14 @@ export default function CalendarPage() {
 
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
+      // Strip HTML tags from description before searching
+      const plainDescription = trip.description
+        ? trip.description.replace(/<[^>]*>/g, ' ')
+        : '';
       const matchesSearch =
-      trip.title?.toLowerCase().includes(query) ||
-      trip.location?.toLowerCase().includes(query) ||
-      trip.description?.toLowerCase().includes(query);
+        trip.title?.toLowerCase().includes(query) ||
+        trip.location?.toLowerCase().includes(query) ||
+        plainDescription.toLowerCase().includes(query);
       if (!matchesSearch) return false;
     }
 
@@ -224,8 +228,8 @@ export default function CalendarPage() {
             onChange={(e) => setSortBy(e.target.value)}
             className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
-            <option value="date-asc">{language === 'el' ? 'Ημερομηνία (Νεότερη πρώτα)' : 'Date (Newest first)'}</option>
-            <option value="date-desc">{language === 'el' ? 'Ημερομηνία (Παλαιότερη πρώτα)' : 'Date (Oldest first)'}</option>
+            <option value="date-asc">{language === 'el' ? 'Ημερομηνία (Παλαιότερη πρώτα)' : 'Date (Oldest first)'}</option>
+            <option value="date-desc">{language === 'el' ? 'Ημερομηνία (Νεότερη πρώτα)' : 'Date (Newest first)'}</option>
             <option value="price-asc">{language === 'el' ? 'Τιμή (Χαμηλή → Υψηλή)' : 'Price (Low → High)'}</option>
             <option value="price-desc">{language === 'el' ? 'Τιμή (Υψηλή → Χαμηλή)' : 'Price (High → Low)'}</option>
             <option value="location">{language === 'el' ? 'Τοποθεσία (Α-Ω)' : 'Location (A-Z)'}</option>

@@ -439,7 +439,7 @@ export default function OrganizerProfilePage() {
                         </div>
 
                         {trip.description && (
-                          <div className="text-sm text-stone-600 line-clamp-2 mb-3 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: trip.description }} />
+                          <div className="ql-editor text-sm text-stone-600 line-clamp-2 mb-3 prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: trip.description }} />
                         )}
 
                         <div className="flex gap-2 mt-auto">
