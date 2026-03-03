@@ -311,7 +311,7 @@ export default function TripDetailsPage() {
             <Button 
               variant="outline" 
               className="mb-6"
-              onClick={() => window.history.back()}
+              onClick={goBack}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
@@ -437,7 +437,7 @@ export default function TripDetailsPage() {
           <Button 
             variant="outline" 
             className="mb-6"
-            onClick={() => window.history.back()}
+            onClick={goBack}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back

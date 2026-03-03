@@ -161,7 +161,7 @@ export default function EditOrganizerProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
-        <Button variant="outline" className="mb-6" onClick={() => window.history.back()}>
+        <Button variant="outline" className="mb-6" onClick={goBack}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           {t('common.back')}
         </Button>
