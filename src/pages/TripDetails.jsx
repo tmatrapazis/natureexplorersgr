@@ -50,10 +50,18 @@ export default function TripDetailsPage() {
 
   // Redirect to homepage if no trip ID provided (301 redirect)
   React.useEffect(() => {
-    if (!tripId) {
-      window.location.replace('/');
+    // Only redirect if the component is fully mounted and there is no tripId
+    let isMounted = true;
+    
+    if (!tripId && isMounted) {
+      // Use navigate with replace, rather than forcing a hard browser reload
+      navigate(createPageUrl("Calendar"), { replace: true });
     }
-  }, [tripId]);
+    
+    return () => {
+      isMounted = false; // Cleanup to prevent firing on unmount
+    };
+  }, [tripId, navigate]);
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
