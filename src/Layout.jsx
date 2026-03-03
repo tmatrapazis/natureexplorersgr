@@ -53,12 +53,10 @@ function LayoutContent({ children, currentPageName }) {
 
   const isOrganizer = user?.organizer_code && user.organizer_code.trim().length > 0;
 
-  // Home page always uses PublicLayout
   if (currentPageName === 'Home') {
     return <PublicLayout>{children}</PublicLayout>;
   }
 
-  // All other pages use AppLayout with sidebar
   return (
     <>
       {showWelcome && user && (
@@ -70,7 +68,7 @@ function LayoutContent({ children, currentPageName }) {
       <AppLayout user={user} isOrganizer={isOrganizer} location={location}>
         <AnimatePresence mode="wait">
           <motion.div
-            key={location.pathname}
+            key={location.pathname + location.search}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
