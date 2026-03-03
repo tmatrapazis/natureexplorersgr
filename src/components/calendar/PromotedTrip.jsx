@@ -130,7 +130,7 @@ export default function PromotedTrip({ trips, currentDate }) {
 
         {mostPopularTrip.description && (
           <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-            {mostPopularTrip.description}
+            {mostPopularTrip.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()}
           </p>
         )}
 
