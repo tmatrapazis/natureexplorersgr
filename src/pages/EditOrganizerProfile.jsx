@@ -17,6 +17,7 @@ import { useTranslation } from '../components/translations/useTranslations';
 export default function EditOrganizerProfilePage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const goBack = () => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("OrganizersList"));
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 

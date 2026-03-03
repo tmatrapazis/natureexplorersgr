@@ -13,7 +13,6 @@ import TripForm from '../components/trips/TripForm';
 
 export default function CreateTripPage() {
   const navigate = useNavigate();
-  const location = useLocation();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
