@@ -36,24 +36,20 @@ const PublicLayout = ({ children }) => {
 
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
-  const [user, setUser] = React.useState(null);
   const [showWelcome, setShowWelcome] = React.useState(false);
 
+  const { data: user } = useQuery({
+    queryKey: ['current-user-layout'],
+    queryFn: () => base44.auth.me(),
+    retry: false,
+    staleTime: 5 * 60 * 1000, // cache for 5 minutes
+  });
+
   React.useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-        // Show welcome modal if user hasn't accepted terms
-        if (currentUser && !currentUser.has_accepted_terms) {
-          setShowWelcome(true);
-        }
-      } catch (error) {
-        console.log('[Layout] User not authenticated');
-      }
-    };
-    fetchUser();
-  }, []);
+    if (user && !user.has_accepted_terms) {
+      setShowWelcome(true);
+    }
+  }, [user]);
 
   const isOrganizer = user?.organizer_code && user.organizer_code.trim().length > 0;
 
