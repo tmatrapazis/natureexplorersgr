@@ -42,8 +42,6 @@ const isSocialMediaUrl = (url) => {
 export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
-  const navigate = useNavigate();
-  const goBack = () => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("Calendar"));
   
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
@@ -311,7 +309,7 @@ export default function TripDetailsPage() {
             <Button 
               variant="outline" 
               className="mb-6"
-              onClick={goBack}
+              onClick={() => window.history.back()}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
@@ -437,7 +435,7 @@ export default function TripDetailsPage() {
           <Button 
             variant="outline" 
             className="mb-6"
-            onClick={goBack}
+            onClick={() => window.history.back()}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
