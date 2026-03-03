@@ -59,13 +59,15 @@ export default function EditTripPage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isFormDirty]);
 
+  const goBack = () => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("MyTrips"));
+
   const handleNavigateAway = (destination) => {
     if (isFormDirty) {
       setPendingNavigation(destination);
       setShowExitDialog(true);
     } else {
       if (destination) navigate(destination);
-      else window.history.back();
+      else goBack();
     }
   };
 
@@ -73,7 +75,7 @@ export default function EditTripPage() {
     setIsFormDirty(false);
     setShowExitDialog(false);
     if (pendingNavigation) navigate(pendingNavigation);
-    else window.history.back();
+    else goBack();
   };
 
   const handleSaveAndExit = async () => {

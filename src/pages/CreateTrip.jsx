@@ -44,7 +44,7 @@ export default function CreateTripPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8 w-full overflow-x-hidden">
       <div className="max-w-3xl mx-auto w-full min-w-0">
-        <Button variant="outline" className="mb-6" onClick={() => window.history.back()}>
+        <Button variant="outline" className="mb-6" onClick={() => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("MyTrips"))}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           {t('create_trip.back_to_trips')}
         </Button>

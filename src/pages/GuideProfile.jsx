@@ -19,6 +19,7 @@ export default function GuideProfilePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const navigate = useNavigate();
+  const goBack = () => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("Guides"));
   
   const urlParams = new URLSearchParams(window.location.search);
   const guideId = urlParams.get("id");

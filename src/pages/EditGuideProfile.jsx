@@ -30,6 +30,7 @@ export default function EditGuideProfilePage() {
   const { t } = useTranslation(language);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const goBack = () => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("Guides"));
 
   const urlParams = new URLSearchParams(window.location.search);
   const guideId = urlParams.get("id");
