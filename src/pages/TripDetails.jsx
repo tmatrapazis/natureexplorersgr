@@ -42,26 +42,27 @@ const isSocialMediaUrl = (url) => {
 export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
-  const navigate = useNavigate();
-  const goBack = () => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("Calendar"));
+  const navigate = useNavigate(); // Add this line
   
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
 
+  const handleGoBack = () => {
+    // If the browser has history (more than just landing on this page directly)
+    if (window.history.length > 2) {
+      navigate(-1); // Safely go back via React Router
+    } else {
+      // Fallback: Send them to the Calendar/Organizers list so they don't leave the site
+      navigate(createPageUrl("Calendar")); 
+    }
+  };
+
   // Redirect to homepage if no trip ID provided (301 redirect)
   React.useEffect(() => {
-    // Only redirect if the component is fully mounted and there is no tripId
-    let isMounted = true;
-    
-    if (!tripId && isMounted) {
-      // Use navigate with replace, rather than forcing a hard browser reload
-      navigate(createPageUrl("Calendar"), { replace: true });
+    if (!tripId) {
+      window.location.replace('/');
     }
-    
-    return () => {
-      isMounted = false; // Cleanup to prevent firing on unmount
-    };
-  }, [tripId, navigate]);
+  }, [tripId]);
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
@@ -319,7 +320,7 @@ export default function TripDetailsPage() {
             <Button 
               variant="outline" 
               className="mb-6"
-              onClick={goBack}
+              onClick={handleGoBack}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
@@ -445,7 +446,7 @@ export default function TripDetailsPage() {
           <Button 
             variant="outline" 
             className="mb-6"
-            onClick={goBack}
+            onClick={handleGoBack}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
