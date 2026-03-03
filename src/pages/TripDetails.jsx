@@ -6,7 +6,8 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye, Languages, Loader2 } from "lucide-react";
+import { ArrowLeft, MapPin, Clock, TrendingUp, Users, Euro, ExternalLink, User as UserIcon, LogIn, Eye } from "lucide-react";
+import 'react-quill/dist/quill.snow.css';
 import { format } from 'date-fns';
 
 import { getComputedTripStatus, statusColors, difficultyColors } from "../components/helpers/tripHelpers";
