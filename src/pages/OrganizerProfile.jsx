@@ -447,11 +447,12 @@ export default function OrganizerProfilePage() {
                             {t('trip.view_details')}
                           </Button>
                           {user && trip.external_link && (
-                            <Button size="sm" variant="outline" asChild>
-                              <a href={trip.external_link} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
-                                <ExternalLink className="w-3 h-3" />
-                              </a>
-                            </Button>
+                            <button
+                              className="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground h-8"
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(trip.external_link, '_blank', 'noopener,noreferrer'); }}
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                            </button>
                           )}
                         </div>
                       </CardContent>
