@@ -242,542 +242,71 @@ export default function MyTripsPage() {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsContent value="draft">
               <div className="grid gap-6">
-                {draftTrips.map((trip) => {
-                  const bookings = getBookingsForTrip(trip.id);
-                  const bookedSlots = bookings.reduce((sum, b) => sum + b.number_of_people, 0);
-                  const pendingBookings = getPendingBookingsForTrip(trip.id);
-                  const insights = getTripInsights(trip.id, allBookings);
-
-                  return (
-                    <Card key={trip.id} className="p-6 hover:shadow-lg transition-shadow border-dashed">
-                     <div className="flex flex-col md:flex-row gap-6">
-                       <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
-                         <img 
-                           src={getTripImage(trip.image_url, trip.id)} 
-                           alt={trip.title} 
-                           className="w-full h-full object-cover"
-                           onError={(e) => handleImageError(e, trip.id)}
-                         />
-                       </div>
-                       <div className="flex-1 min-w-0">
-                         <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
-                           <div className="min-w-0">
-                             <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
-                              <div className="flex flex-wrap gap-2">
-                                <Badge className="bg-stone-400">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</Badge>
-                                <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
-                                {trip.tags && trip.tags.slice(0, 3).map(tag => (
-                                  <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="grid sm:grid-cols-2 gap-3 mb-4 text-sm text-stone-600">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-emerald-600" />
-                              <span>{trip.location}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Users className="w-4 h-4 text-emerald-600" />
-                              <span>{bookedSlots} / {trip.total_slots} {t('organizer.confirmed_bookings')}</span>
-                            </div>
-                            {pendingBookings > 0 && (
-                                <div className="flex items-center gap-2 text-yellow-600 font-semibold">
-                                    <ListOrdered className="w-4 h-4"/>
-                                    <span>{pendingBookings} {t('organizer.pending_requests')}</span>
-                                </div>
-                            )}
-                          </div>
-
-                          {insights.total > 0 && (
-                            <div className="bg-stone-50 rounded-lg p-3 mb-4">
-                              <p className="text-xs font-semibold text-stone-600 mb-2">{t('organizer.booking_insights')}</p>
-                              <div className="flex gap-4 text-sm">
-                                <span>{t('organizer.insights_pending')}: <strong>{insights.pending}</strong></span>
-                                <span>{t('organizer.insights_confirmed')}: <strong className="text-emerald-600">{insights.confirmed}</strong></span>
-                                <span>{t('organizer.insights_declined')}: <strong className="text-red-600">{insights.declined}</strong></span>
-                              </div>
-                            </div>
-                          )}
-
-                          <div className="flex flex-col gap-2">
-                            <div className="flex flex-wrap items-center gap-2 min-w-0">
-                              <Link to={`${createPageUrl("TripForm")}?id=${trip.id}`} className="flex-shrink-0">
-                               <Button variant="outline" size="sm" className="min-h-[44px]"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
-                              </Link>
-                              <Select
-                                value={trip.status}
-                                onValueChange={(value) => handleStatusChange(trip.id, value)}
-                                disabled={!isRequiredFieldsFilled(trip)}
-                              >
-                                <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
-                                  <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
-                                  <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
-                                  <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
-                                  <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
-                                  <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
-                                  <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              {(!trip.end_date || new Date(trip.end_date) >= today) && (
-                                                 <Button
-                                                   variant="outline"
-                                                   size="sm"
-                                                   onClick={() => handleDeleteTrip(trip.id)}
-                                                   disabled={deleteTripMutation.isPending}
-                                                   className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
-                                                 >
-                                                   <Trash2 className="w-4 h-4 mr-2" />
-                                                   {language === 'el' ? 'Διαγραφή' : 'Delete'}
-                                                 </Button>
-                                               )}
-                            </div>
-                            {!isRequiredFieldsFilled(trip) && (
-                              <span className="text-xs text-red-600">
-                                {language === 'el' ? 'Συμπληρώστε τα υποχρεωτικά πεδία για να δημοσιεύσετε' : 'Fill required fields to publish'}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-                {draftTrips.length === 0 && (
-                  <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>
-                )}
+                {draftTrips.map(trip => (
+                  <OrganizerTripCard key={trip.id} trip={trip} allBookings={allBookings} language={language} t={t} today={today}
+                    onStatusChange={handleStatusChange} onCancel={handleCancelTrip} onDelete={handleDeleteTrip} onRecreate={handleRecreateTrip}
+                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancelTripMutation.variables?.trip?.id}
+                    deleteMutationPending={deleteTripMutation.isPending}
+                    showCancel={false} showRecreate={false} showDelete={true} isRequiredFieldsFilled={isRequiredFieldsFilled}
+                  />
+                ))}
+                {draftTrips.length === 0 && <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>}
               </div>
             </TabsContent>
+
             <TabsContent value="upcoming">
               <div className="grid gap-6">
-                {upcomingTrips.map((trip) => {
-                      const bookings = getBookingsForTrip(trip.id);
-                      const bookedSlots = bookings.reduce((sum, b) => sum + b.number_of_people, 0);
-                      const pendingBookings = getPendingBookingsForTrip(trip.id);
-                      const insights = getTripInsights(trip.id, allBookings);
-
-                      return (
-                        <Card key={trip.id} className="p-6 hover:shadow-lg transition-shadow">
-                          <div className="flex flex-col md:flex-row gap-6">
-                            <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
-                              <img 
-                                src={getTripImage(trip.image_url, trip.id)} 
-                                alt={trip.title} 
-                                className="w-full h-full object-cover"
-                                onError={(e) => handleImageError(e, trip.id)}
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
-                                <div className="min-w-0">
-                                  <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
-                                  <div className="flex flex-wrap gap-2">
-                                    <Badge className="bg-emerald-600">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</Badge>
-                                    <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
-                                    {trip.tags && trip.tags.slice(0, 3).map(tag => (
-                                      <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
-                                    ))}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="grid sm:grid-cols-2 gap-3 mb-4 text-sm text-stone-600">
-                                <div className="flex items-center gap-2">
-                                  <MapPin className="w-4 h-4 text-emerald-600" />
-                                  <span>{trip.location}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <Users className="w-4 h-4 text-emerald-600" />
-                                  <span>{bookedSlots} / {trip.total_slots} {t('organizer.confirmed_bookings')}</span>
-                                </div>
-                                {pendingBookings > 0 && (
-                                    <div className="flex items-center gap-2 text-yellow-600 font-semibold">
-                                        <ListOrdered className="w-4 h-4"/>
-                                        <span>{pendingBookings} {t('organizer.pending_requests')}</span>
-                                    </div>
-                                )}
-                              </div>
-
-                              {insights.total > 0 && (
-                                <div className="bg-stone-50 rounded-lg p-3 mb-4">
-                                  <p className="text-xs font-semibold text-stone-600 mb-2">{t('organizer.booking_insights')}</p>
-                                  <div className="flex gap-4 text-sm">
-                                    <span>{t('organizer.insights_pending')}: <strong>{insights.pending}</strong></span>
-                                    <span>{t('organizer.insights_confirmed')}: <strong className="text-emerald-600">{insights.confirmed}</strong></span>
-                                    <span>{t('organizer.insights_declined')}: <strong className="text-red-600">{insights.declined}</strong></span>
-                                  </div>
-                                </div>
-                              )}
-
-                              <div className="flex flex-wrap items-center gap-2 min-w-0">
-                                <Link to={`${createPageUrl("TripForm")}?id=${trip.id}`} className="flex-shrink-0">
-                                  <Button variant="outline" size="sm" className="min-h-[44px]"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
-                                </Link>
-                                <Select
-                                  value={trip.status}
-                                  onValueChange={(value) => handleStatusChange(trip.id, value)}
-                                >
-                                  <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
-                                    <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
-                                    <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
-                                    <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
-                                    <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
-                                    <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
-                                    <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  onClick={() => handleCancelTrip(trip)}
-                                  disabled={cancelTripMutation.isPending && cancelTripMutation.variables?.trip.id === trip.id}
-                                  className="flex-shrink-0 min-h-[44px]"
-                                >
-                                  {cancelTripMutation.isPending && cancelTripMutation.variables?.trip.id === trip.id ? (
-                                    <span className="flex items-center gap-2">{t('organizer.cancelling')}</span>
-                                  ) : (
-                                    <>
-                                      <XCircle className="w-4 h-4 mr-2" />
-                                      {t('organizer.cancel_trip')}
-                                    </>
-                                  )}
-                                </Button>
-                                {(!trip.end_date || new Date(trip.end_date) >= today) && (
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => handleDeleteTrip(trip.id)}
-                                    disabled={deleteTripMutation.isPending}
-                                    className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
-                                  >
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                    {language === 'el' ? 'Διαγραφή' : 'Delete'}
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </Card>
-                      );
-                    })}
-                {upcomingTrips.length === 0 && (
-                  <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>
-                )}
+                {upcomingTrips.map(trip => (
+                  <OrganizerTripCard key={trip.id} trip={trip} allBookings={allBookings} language={language} t={t} today={today}
+                    onStatusChange={handleStatusChange} onCancel={handleCancelTrip} onDelete={handleDeleteTrip} onRecreate={handleRecreateTrip}
+                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancelTripMutation.variables?.trip?.id}
+                    deleteMutationPending={deleteTripMutation.isPending}
+                    showCancel={true} showRecreate={false} showDelete={true}
+                  />
+                ))}
+                {upcomingTrips.length === 0 && <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>}
               </div>
             </TabsContent>
 
             <TabsContent value="happening">
               <div className="grid gap-6">
-                {happeningTrips.map((trip) => {
-                  const bookings = getBookingsForTrip(trip.id);
-                  const bookedSlots = bookings.reduce((sum, b) => sum + b.number_of_people, 0);
-                  const pendingBookings = getPendingBookingsForTrip(trip.id);
-                  const insights = getTripInsights(trip.id, allBookings);
-
-                  return (
-                    <Card key={trip.id} className="p-6 hover:shadow-lg transition-shadow">
-                      <div className="flex flex-col md:flex-row gap-6">
-                        <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
-                          <img 
-                            src={getTripImage(trip.image_url, trip.id)} 
-                            alt={trip.title} 
-                            className="w-full h-full object-cover"
-                            onError={(e) => handleImageError(e, trip.id)}
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
-                            <div className="min-w-0">
-                              <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
-                              <div className="flex flex-wrap gap-2">
-                                <Badge className="bg-blue-600">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</Badge>
-                                <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
-                                {trip.tags && trip.tags.slice(0, 3).map(tag => (
-                                  <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="grid sm:grid-cols-2 gap-3 mb-4 text-sm text-stone-600">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-emerald-600" />
-                              <span>{trip.location}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Users className="w-4 h-4 text-emerald-600" />
-                              <span>{bookedSlots} / {trip.total_slots} {t('organizer.confirmed_bookings')}</span>
-                            </div>
-                            {pendingBookings > 0 && (
-                                <div className="flex items-center gap-2 text-yellow-600 font-semibold">
-                                    <ListOrdered className="w-4 h-4"/>
-                                    <span>{pendingBookings} {t('organizer.pending_requests')}</span>
-                                </div>
-                            )}
-                          </div>
-
-                          {insights.total > 0 && (
-                            <div className="bg-stone-50 rounded-lg p-3 mb-4">
-                              <p className="text-xs font-semibold text-stone-600 mb-2">{t('organizer.booking_insights')}</p>
-                              <div className="flex gap-4 text-sm">
-                                <span>{t('organizer.insights_pending')}: <strong>{insights.pending}</strong></span>
-                                <span>{t('organizer.insights_confirmed')}: <strong className="text-emerald-600">{insights.confirmed}</strong></span>
-                                <span>{t('organizer.insights_declined')}: <strong className="text-red-600">{insights.declined}</strong></span>
-                              </div>
-                            </div>
-                          )}
-
-                          <div className="flex flex-wrap items-center gap-2 min-w-0">
-                            <Link to={`${createPageUrl("TripForm")}?id=${trip.id}`} className="flex-shrink-0">
-                              <Button variant="outline" size="sm" className="min-h-[44px]"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
-                            </Link>
-                            <Select
-                              value={trip.status}
-                              onValueChange={(value) => handleStatusChange(trip.id, value)}
-                            >
-                              <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
-                                <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
-                                <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
-                                <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
-                                <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
-                                <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
-                                <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleCancelTrip(trip)}
-                              disabled={cancelTripMutation.isPending && cancelTripMutation.variables?.trip.id === trip.id}
-                              className="flex-shrink-0 min-h-[44px]"
-                            >
-                              {cancelTripMutation.isPending && cancelTripMutation.variables?.trip.id === trip.id ? (
-                                <span className="flex items-center gap-2">{t('organizer.cancelling')}</span>
-                              ) : (
-                                <>
-                                  <XCircle className="w-4 h-4 mr-2" />
-                                  {t('organizer.cancel_trip')}
-                                </>
-                              )}
-                            </Button>
-                            {(!trip.end_date || new Date(trip.end_date) >= today) && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleDeleteTrip(trip.id)}
-                                disabled={deleteTripMutation.isPending}
-                                className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
-                              >
-                                <Trash2 className="w-4 h-4 mr-2" />
-                                {language === 'el' ? 'Διαγραφή' : 'Delete'}
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-                {happeningTrips.length === 0 && (
-                  <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>
-                )}
+                {happeningTrips.map(trip => (
+                  <OrganizerTripCard key={trip.id} trip={trip} allBookings={allBookings} language={language} t={t} today={today}
+                    onStatusChange={handleStatusChange} onCancel={handleCancelTrip} onDelete={handleDeleteTrip} onRecreate={handleRecreateTrip}
+                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancelTripMutation.variables?.trip?.id}
+                    deleteMutationPending={deleteTripMutation.isPending}
+                    showCancel={true} showRecreate={false} showDelete={true}
+                  />
+                ))}
+                {happeningTrips.length === 0 && <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>}
               </div>
             </TabsContent>
 
             <TabsContent value="completed">
               <div className="grid gap-6">
-                {completedTrips.map((trip) => {
-                  const bookings = getBookingsForTrip(trip.id);
-                  const bookedSlots = bookings.reduce((sum, b) => sum + b.number_of_people, 0);
-                  const pendingBookings = getPendingBookingsForTrip(trip.id);
-                  const insights = getTripInsights(trip.id, allBookings);
-
-                  return (
-                    <Card key={trip.id} className="p-6 hover:shadow-lg transition-shadow">
-                      <div className="flex flex-col md:flex-row gap-6">
-                        <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
-                          <img 
-                            src={getTripImage(trip.image_url, trip.id)} 
-                            alt={trip.title} 
-                            className="w-full h-full object-cover"
-                            onError={(e) => handleImageError(e, trip.id)}
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
-                            <div className="min-w-0">
-                              <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
-                              <div className="flex flex-wrap gap-2">
-                                <Badge className="bg-stone-600">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</Badge>
-                                <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
-                                {trip.tags && trip.tags.slice(0, 3).map(tag => (
-                                  <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="grid sm:grid-cols-2 gap-3 mb-4 text-sm text-stone-600">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-emerald-600" />
-                              <span>{trip.location}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Users className="w-4 h-4 text-emerald-600" />
-                              <span>{bookedSlots} / {trip.total_slots} {t('organizer.confirmed_bookings')}</span>
-                            </div>
-                            {pendingBookings > 0 && (
-                                <div className="flex items-center gap-2 text-yellow-600 font-semibold">
-                                    <ListOrdered className="w-4 h-4"/>
-                                    <span>{pendingBookings} {t('organizer.pending_requests')}</span>
-                                </div>
-                            )}
-                          </div>
-
-                          {insights.total > 0 && (
-                            <div className="bg-stone-50 rounded-lg p-3 mb-4">
-                              <p className="text-xs font-semibold text-stone-600 mb-2">{t('organizer.booking_insights')}</p>
-                              <div className="flex gap-4 text-sm">
-                                <span>{t('organizer.insights_pending')}: <strong>{insights.pending}</strong></span>
-                                <span>{t('organizer.insights_confirmed')}: <strong className="text-emerald-600">{insights.confirmed}</strong></span>
-                                <span>{t('organizer.insights_declined')}: <strong className="text-red-600">{insights.declined}</strong></span>
-                              </div>
-                            </div>
-                          )}
-
-                          <div className="flex flex-wrap items-center gap-2 min-w-0">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => handleRecreateTrip(trip)}
-                              className="flex-shrink-0 min-h-[44px]"
-                            >
-                              <Plus className="w-4 h-4 mr-2"/>
-                              {language === 'el' ? 'Αναδημιουργία' : 'Recreate'}
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-                {completedTrips.length === 0 && (
-                  <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>
-                )}
+                {completedTrips.map(trip => (
+                  <OrganizerTripCard key={trip.id} trip={trip} allBookings={allBookings} language={language} t={t} today={today}
+                    onStatusChange={handleStatusChange} onCancel={handleCancelTrip} onDelete={handleDeleteTrip} onRecreate={handleRecreateTrip}
+                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancelTripMutation.variables?.trip?.id}
+                    deleteMutationPending={deleteTripMutation.isPending}
+                    showCancel={false} showRecreate={true} showDelete={false} showStatusChange={false} showEdit={false}
+                  />
+                ))}
+                {completedTrips.length === 0 && <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>}
               </div>
             </TabsContent>
 
             <TabsContent value="cancelled">
               <div className="grid gap-6">
-                {cancelledTrips.map((trip) => {
-                  const bookings = getBookingsForTrip(trip.id);
-                  const bookedSlots = bookings.reduce((sum, b) => sum + b.number_of_people, 0);
-                  const pendingBookings = getPendingBookingsForTrip(trip.id);
-                  const insights = getTripInsights(trip.id, allBookings);
-
-                  return (
-                    <Card key={trip.id} className="p-6 hover:shadow-lg transition-shadow">
-                      <div className="flex flex-col md:flex-row gap-6">
-                        <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
-                          <img 
-                            src={getTripImage(trip.image_url, trip.id)} 
-                            alt={trip.title} 
-                            className="w-full h-full object-cover"
-                            onError={(e) => handleImageError(e, trip.id)}
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
-                            <div className="min-w-0">
-                              <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
-                              <div className="flex flex-wrap gap-2">
-                                <Badge className="bg-red-600">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</Badge>
-                                <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
-                                {trip.tags && trip.tags.slice(0, 3).map(tag => (
-                                  <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="grid sm:grid-cols-2 gap-3 mb-4 text-sm text-stone-600">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-emerald-600" />
-                              <span>{trip.location}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Users className="w-4 h-4 text-emerald-600" />
-                              <span>{bookedSlots} / {trip.total_slots} {t('organizer.confirmed_bookings')}</span>
-                            </div>
-                            {pendingBookings > 0 && (
-                                <div className="flex items-center gap-2 text-yellow-600 font-semibold">
-                                    <ListOrdered className="w-4 h-4"/>
-                                    <span>{pendingBookings} {t('organizer.pending_requests')}</span>
-                                </div>
-                            )}
-                          </div>
-
-                          {insights.total > 0 && (
-                            <div className="bg-stone-50 rounded-lg p-3 mb-4">
-                              <p className="text-xs font-semibold text-stone-600 mb-2">{t('organizer.booking_insights')}</p>
-                              <div className="flex gap-4 text-sm">
-                                <span>{t('organizer.insights_pending')}: <strong>{insights.pending}</strong></span>
-                                <span>{t('organizer.insights_confirmed')}: <strong className="text-emerald-600">{insights.confirmed}</strong></span>
-                                <span>{t('organizer.insights_declined')}: <strong className="text-red-600">{insights.declined}</strong></span>
-                              </div>
-                            </div>
-                          )}
-
-                          <div className="flex flex-wrap items-center gap-2 min-w-0">
-                            <Link to={`${createPageUrl("TripForm")}?id=${trip.id}`} className="flex-shrink-0">
-                              <Button variant="outline" size="sm" className="min-h-[44px]"><Edit className="w-4 h-4 mr-2"/>{t('organizer.edit_trip')}</Button>
-                            </Link>
-                            <Select
-                               value={trip.status}
-                               onValueChange={(value) => handleStatusChange(trip.id, value)}
-                             >
-                               <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
-                                 <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
-                                 <SelectValue />
-                               </SelectTrigger>
-                               <SelectContent>
-                                 <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
-                                 <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
-                                 <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
-                                 <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
-                                 <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
-                                 <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
-                               </SelectContent>
-                             </Select>
-                             {(!trip.end_date || new Date(trip.end_date) >= today) && (
-                                                <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleDeleteTrip(trip.id)}
-                                disabled={deleteTripMutation.isPending}
-                                className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
-                              >
-                                <Trash2 className="w-4 h-4 mr-2" />
-                                {language === 'el' ? 'Διαγραφή' : 'Delete'}
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-                {cancelledTrips.length === 0 && (
-                  <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>
-                )}
+                {cancelledTrips.map(trip => (
+                  <OrganizerTripCard key={trip.id} trip={trip} allBookings={allBookings} language={language} t={t} today={today}
+                    onStatusChange={handleStatusChange} onCancel={handleCancelTrip} onDelete={handleDeleteTrip} onRecreate={handleRecreateTrip}
+                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancelTripMutation.variables?.trip?.id}
+                    deleteMutationPending={deleteTripMutation.isPending}
+                    showCancel={false} showRecreate={false} showDelete={true}
+                  />
+                ))}
+                {cancelledTrips.length === 0 && <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>}
               </div>
             </TabsContent>
             </Tabs>
