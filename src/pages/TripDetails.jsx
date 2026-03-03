@@ -18,6 +18,8 @@ import { useTranslation } from "../components/translations/useTranslations";
 import StructuredData from "../components/seo/StructuredData";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 import ShareButton from "../components/trip/ShareButton";
+import DOMPurify from "dompurify";
+import DOMPurify from "dompurify";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
@@ -389,11 +391,8 @@ export default function TripDetailsPage() {
 
                   {trip.description && (
                     <div className="mb-6">
-                      <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                      <div 
-                        className="text-stone-600 break-words overflow-hidden" 
-                        dangerouslySetInnerHTML={{ __html: trip.description }} 
-                      />
+                      <h3 className="font-semibold text-stone-900 mb-2">Description</h3>
+                      <p className="text-stone-600 whitespace-pre-line line-clamp-4">{trip.description}</p>
                     </div>
                   )}
 
@@ -587,7 +586,10 @@ export default function TripDetailsPage() {
                 {trip.description && (
                   <div className="mb-6">
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
+                    <div 
+                      className="text-stone-600 break-words overflow-hidden" 
+                      dangerouslySetInnerHTML={{ __html: trip.description }} 
+                    />
                   </div>
                 )}
 
