@@ -389,9 +389,9 @@ export default function TripDetailsPage() {
 
                   {trip.description && (
                     <div className="mb-6">
-                      <h3 className="font-semibold text-stone-900 mb-2">Description</h3>
+                      <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
                       <div 
-                        className="text-stone-600 line-clamp-4" 
+                        className="text-stone-600 break-words overflow-hidden" 
                         dangerouslySetInnerHTML={{ __html: trip.description }} 
                       />
                     </div>
