@@ -53,7 +53,13 @@ export default function HomePage() {
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
+    queryFn: async () => {
+      try {
+        return await base44.auth.me();
+      } catch {
+        return null;
+      }
+    },
     retry: false,
   });
 
