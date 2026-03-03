@@ -1,7 +1,7 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -44,7 +44,7 @@ export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const navigate = useNavigate(); // Add this line
-  
+  const location = useLocation(); // Add this line right here
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
 
@@ -60,10 +60,12 @@ export default function TripDetailsPage() {
 
   // Redirect to homepage if no trip ID provided (301 redirect)
   React.useEffect(() => {
-    if (!tripId) {
-      window.location.replace('/');
+    // Only redirect if they are actually on the TripDetails page but missing an ID.
+    // This prevents the redirect from firing accidentally while the user is clicking "Back" to leave the page.
+    if (!tripId && location.pathname.toLowerCase().includes('tripdetails')) {
+      navigate('/', { replace: true });
     }
-  }, [tripId]);
+  }, [tripId, location.pathname, navigate]);
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
