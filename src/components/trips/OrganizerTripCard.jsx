@@ -39,6 +39,10 @@ export default function OrganizerTripCard({
   showStatusChange = true,
   isRequiredFieldsFilled,
 }) {
+  const plainDescription = trip.description
+    ? trip.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+    : '';
+
   const confirmedBookings = allBookings.filter(b => b.trip_id === trip.id && b.status === "confirmed");
   const bookedSlots = confirmedBookings.reduce((sum, b) => sum + b.number_of_people, 0);
   const pendingBookings = allBookings.filter(b => b.trip_id === trip.id && b.status === "pending").length;
