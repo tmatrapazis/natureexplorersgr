@@ -75,7 +75,8 @@
     "vaul": "^1.1.2",
     "zod": "^3.24.2",
     "moment-timezone": "^0.5.45",
-    "date-fns-tz": "^3.2.0"
+    "date-fns-tz": "^3.2.0",
+    "dompurify": "^3.2.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
