@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useTranslation } from "../translations/useTranslations";
 import { Button } from "@/components/ui/button";
