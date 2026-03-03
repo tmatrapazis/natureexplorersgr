@@ -19,7 +19,6 @@ import StructuredData from "../components/seo/StructuredData";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 import ShareButton from "../components/trip/ShareButton";
 import DOMPurify from "dompurify";
-import DOMPurify from "dompurify";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
