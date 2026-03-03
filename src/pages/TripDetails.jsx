@@ -250,6 +250,26 @@ export default function TripDetailsPage() {
     ]
   };
 
+  // Translation state
+  const [translatedTrip, setTranslatedTrip] = React.useState(null);
+  const [isTranslating, setIsTranslating] = React.useState(false);
+
+  const handleTranslate = async () => {
+    if (translatedTrip) {
+      setTranslatedTrip(null);
+      return;
+    }
+    setIsTranslating(true);
+    const response = await base44.functions.invoke('translateTrip', {
+      title: trip?.title,
+      description: trip?.description,
+      departure_from: trip?.departure_from,
+      requirements: trip?.requirements,
+    });
+    setTranslatedTrip(response.data?.translatedData || response.data);
+    setIsTranslating(false);
+  };
+
   if (tripLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -573,7 +593,7 @@ export default function TripDetailsPage() {
                 {trip.description && (
                   <div className="mb-6">
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
-                    <div className="text-stone-600 break-words overflow-hidden prose prose-stone max-w-none [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:list-decimal [&_ol]:ml-4 [&_a]:text-emerald-600 [&_a]:underline" dangerouslySetInnerHTML={{ __html: translatedTrip?.description || trip.description }} />
+                    <p className="text-stone-600 whitespace-pre-line break-words overflow-hidden">{trip.description}</p>
                   </div>
                 )}
 
