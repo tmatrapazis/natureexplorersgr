@@ -588,7 +588,7 @@ export default function TripDetailsPage() {
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
                     <div 
                       className="text-stone-600 break-words overflow-hidden" 
-                      dangerouslySetInnerHTML={{ __html: trip.description }} 
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(trip.description) }} 
                     />
                   </div>
                 )}
