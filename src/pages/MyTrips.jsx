@@ -18,6 +18,7 @@ import PageWrapper from '../components/layout/PageWrapper';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
+import OrganizerTripCard from "../components/trips/OrganizerTripCard";
 
 export default function MyTripsPage() {
   const queryClient = useQueryClient();
