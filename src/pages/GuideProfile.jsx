@@ -193,7 +193,7 @@ export default function GuideProfilePage() {
         
         {/* Back Button - Upper Left Corner */}
         <div className="absolute top-4 left-4 z-20">
-          <Button variant="outline" className="bg-white" onClick={() => window.history.back()}>
+          <Button variant="outline" className="bg-white" onClick={goBack}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             {language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
           </Button>

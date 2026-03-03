@@ -223,7 +223,7 @@ export default function EditGuideProfilePage() {
         <div className="flex items-center justify-between mb-6">
           <Button
             variant="ghost"
-            onClick={() => window.history.back()}
+            onClick={goBack}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {language === 'el' ? 'Πίσω στο Προφίλ' : 'Back to Profile'}
@@ -465,7 +465,7 @@ export default function EditGuideProfilePage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => window.history.back()}
+                  onClick={goBack}
                 >
                   {t('common.cancel')}
                 </Button>
