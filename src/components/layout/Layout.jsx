@@ -297,19 +297,13 @@ const PublicLayout = ({ children }) => (
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
-  const [user, setUser] = React.useState(null);
 
-  React.useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-      } catch (error) {
-        localStorage.removeItem('intended_role');
-      }
-    };
-    fetchUser();
-  }, []);
+  const { data: user } = useQuery({
+    queryKey: ['current-user-layout'],
+    queryFn: () => base44.auth.me(),
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const isOrganizer = user?.organizer_code && user.organizer_code.trim().length > 0;
   const publicPages = ['Home', 'OrganizersList', 'Calendar', 'TripDetails', 'OrganizerProfile', 'RoleSelection'];
