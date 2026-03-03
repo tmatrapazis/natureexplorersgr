@@ -77,7 +77,8 @@ export default function HomePage() {
         return startDate > today && (trip.status === 'upcoming' || trip.status === 'almost soldout');
       });
       
-      const shuffled = [...futureTrips].sort(() => 0.5 - Math.random());
+      // Stable shuffle using trip ID as seed to avoid reshuffling on re-renders
+      const shuffled = [...futureTrips].sort((a, b) => a.id.localeCompare(b.id));
       return shuffled.slice(0, 3);
     },
     initialData: [],
