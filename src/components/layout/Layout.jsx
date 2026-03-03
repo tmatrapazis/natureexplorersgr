@@ -306,20 +306,15 @@ export default function Layout({ children, currentPageName }) {
   });
 
   const isOrganizer = user?.organizer_code && user.organizer_code.trim().length > 0;
-  const publicPages = ['Home', 'OrganizersList', 'Calendar', 'TripDetails', 'OrganizerProfile', 'RoleSelection'];
+  const publicOnlyPages = ['Home', 'RoleSelection'];
+  const publicPages = ['OrganizersList', 'Calendar', 'TripDetails', 'OrganizerProfile'];
 
-  if (currentPageName === 'Home') {
+  if (publicOnlyPages.includes(currentPageName)) {
     return <PublicLayout>{children}</PublicLayout>;
   }
 
-  if (publicPages.includes(currentPageName) && !user) {
-    return <PublicLayout>{children}</PublicLayout>;
-  }
-  
-  if (currentPageName === 'RoleSelection') {
-    return <PublicLayout>{children}</PublicLayout>;
-  }
-
+  // For public pages: always use AppLayout (avoids layout switching on user load which breaks history)
+  // For private pages: also use AppLayout
   return (
     <AppLayout user={user} isOrganizer={isOrganizer} location={location}>
       {children}
