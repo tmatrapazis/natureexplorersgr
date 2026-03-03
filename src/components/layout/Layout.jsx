@@ -38,14 +38,14 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
       
       if (intendedRole && (!user.full_name || !user.phone_number)) {
         if (!location.pathname.includes('RoleSelection')) {
-          navigate(createPageUrl("RoleSelection"));
+          navigate(createPageUrl("RoleSelection"), { replace: true });
         }
         return;
       }
       
       if (!user.full_name || !user.phone_number) {
         if (!location.pathname.includes('EditProfile') && !location.pathname.includes('RoleSelection')) {
-          navigate(createPageUrl("EditProfile"));
+          navigate(createPageUrl("EditProfile"), { replace: true });
         }
       }
     }
