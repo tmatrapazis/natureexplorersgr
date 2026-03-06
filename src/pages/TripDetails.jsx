@@ -62,9 +62,12 @@ export default function TripDetailsPage() {
   // Redirect to homepage if no trip ID provided (301 redirect)
   React.useEffect(() => {
     if (!tripId) {
-      window.location.replace('/');
+      navigate('/', { replace: true });
     }
-  }, [tripId]);
+    // The empty array ensures this only checks ONCE when the page first opens, 
+    // stopping it from hijacking your back button.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
