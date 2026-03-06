@@ -295,11 +295,11 @@ export default function CalendarPage() {
           <div ref={tripsListRef}>
             {/* View switcher header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-stone-800">
+              <h1 className="text-lg font-semibold text-stone-800">
                 {selectedDate
                   ? (language === 'el' ? 'Εκδρομές της ημέρας' : 'Trips on this day')
                   : (language === 'el' ? 'Επερχόμενες Εκδρομές' : 'Upcoming Trips')}
-              </h2>
+              </h1>
               <div className="flex items-center gap-1 bg-stone-100 rounded-lg p-1">
                 <button
                   onClick={() => setTripsView("list")}
