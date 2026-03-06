@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -49,7 +50,7 @@ export default function MyTripsPage() {
 
   const { data: trips, isLoading: tripsLoading } = useQuery({
     queryKey: ['my-trips', user?.organizer_code],
-    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: user.organizer_code }, "-start_date"),
+    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: user?.organizer_code }, "-start_date"),
     enabled: !!user?.organizer_code,
     initialData: [],
   });
@@ -80,7 +81,7 @@ export default function MyTripsPage() {
 
   const cancelTripMutation = useMutation({
     mutationFn: async ({ trip }) => {
-      const tripBookings = allBookings.filter(b => b.trip_id === trip.id && (b.status === "confirmed" || b.status === "pending"));
+      const tripBookings = allBookings?.filter(b => b.trip_id === trip.id && (b.status === "confirmed" || b.status === "pending")) || [];
 
       const notifications = [];
       const emailPromises = [];
@@ -118,9 +119,14 @@ export default function MyTripsPage() {
       return await base44.entities.HikingTrip.update(trip.id, { status: "cancelled" });
     },
     onSuccess: () => {
+      toast.success(language === 'el' ? 'Η εκδρομή ακυρώθηκε με επιτυχία' : 'Trip cancelled successfully');
       queryClient.invalidateQueries({ queryKey: ['my-trips'] });
       queryClient.invalidateQueries({ queryKey: ['all-bookings'] });
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+    onError: (error) => {
+      console.error('Trip cancellation error:', error);
+      toast.error(language === 'el' ? 'Σφάλμα ακύρωσης εκδρομής' : 'Error cancelling trip');
     },
   });
 

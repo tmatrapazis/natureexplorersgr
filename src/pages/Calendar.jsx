@@ -90,7 +90,7 @@ export default function CalendarPage() {
       return false;
     }
 
-    const effectivePrice = trip.pricing_options && trip.pricing_options.length > 0
+    const effectivePrice = trip.pricing_options?.length > 0
       ? Math.min(...trip.pricing_options.map(o => o.price))
       : (trip.price || 0);
     if (filters.minPrice && effectivePrice < parseFloat(filters.minPrice)) {
@@ -107,7 +107,7 @@ export default function CalendarPage() {
     }
 
     if (filters.verifiedOnly) {
-      const organizer = organizerMap[trip.organizer_code];
+      const organizer = trip.organizer_code ? organizerMap[trip.organizer_code] : null;
       if (!organizer || !organizer.is_verified) {
         return false;
       }
@@ -144,9 +144,10 @@ export default function CalendarPage() {
         return sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
       case "location":
         return sorted.sort((a, b) => (a.location || "").localeCompare(b.location || ""));
-      case "difficulty":
+      case "difficulty": {
         const difficultyOrder = { easy: 1, moderate: 2, challenging: 3, difficult: 4 };
         return sorted.sort((a, b) => (difficultyOrder[a.difficulty] || 0) - (difficultyOrder[b.difficulty] || 0));
+      }
       default:
         return sorted;
     }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -123,7 +124,15 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft,
     setUploadingImage(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      if (!file_url) {
+        toast.error(language === 'el' ? 'Σφάλμα ανέβασμα εικόνας' : 'Error uploading image');
+        return;
+      }
       update('image_url', file_url);
+      toast.success(language === 'el' ? 'Εικόνα ανέβηκε με επιτυχία' : 'Image uploaded successfully');
+    } catch (error) {
+      console.error('Image upload error:', error);
+      toast.error(language === 'el' ? 'Σφάλμα ανέβασμα εικόνας' : 'Error uploading image');
     } finally {
       setUploadingImage(false);
     }
@@ -134,7 +143,15 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft,
     try {
       const prompt = `Beautiful hiking trail landscape for a ${tripData.difficulty} difficulty hike in ${tripData.location || 'mountains'}, scenic nature photography, high quality`;
       const result = await base44.integrations.Core.GenerateImage({ prompt });
+      if (!result || !result.url) {
+        toast.error(language === 'el' ? 'Σφάλμα δημιουργίας εικόνας' : 'Error generating image');
+        return;
+      }
       update('image_url', result.url);
+      toast.success(language === 'el' ? 'Εικόνα δημιουργήθηκε με επιτυχία' : 'Image generated successfully');
+    } catch (error) {
+      console.error('Image generation error:', error);
+      toast.error(language === 'el' ? 'Σφάλμα δημιουργίας εικόνας' : 'Error generating image');
     } finally {
       setUploadingImage(false);
     }

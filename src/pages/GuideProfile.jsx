@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import DOMPurify from "dompurify";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import { Button } from "@/components/ui/button";
@@ -278,7 +279,7 @@ export default function GuideProfilePage() {
                   <CardTitle>{language === 'el' ? 'Σχετικά με εμένα' : 'About Me'}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-stone-700 prose prose-stone max-w-none" dangerouslySetInnerHTML={{ __html: guide.bio }} />
+                  <div className="text-stone-700 prose prose-stone max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(guide.bio) }} />
                 </CardContent>
               </Card>
             )}

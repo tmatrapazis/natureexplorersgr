@@ -1,0 +1,44 @@
+# Nature Explorers - robots.txt for SEO
+# This file controls how search engines crawl and index the website
+
+# Default rules for all user agents
+User-agent: *
+
+# Allow crawling of all public pages
+Allow: /
+
+# Disallow authenticated/private routes to prevent indexing
+Disallow: /RoleSelection
+Disallow: /MyTrips
+Disallow: /CreateTrip
+Disallow: /EditTrip
+Disallow: /TripForm
+Disallow: /EditProfile
+Disallow: /HikerProfile
+Disallow: /CreateGuideProfile
+Disallow: /EditGuideProfile
+Disallow: /EditOrganizerProfile
+Disallow: /RequestVerification
+Disallow: /TempImageUploader
+
+# Disallow admin and internal routes
+Disallow: /admin
+Disallow: /api
+Disallow: /internal
+
+# Rate limiting for aggressive crawlers
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Sitemap location
+Sitemap: https://natureexplorers.gr/sitemap.xml
+
+# Crawl-delay for respectful crawling (in seconds)
+Crawl-delay: 1
+Request-rate: 1/10s

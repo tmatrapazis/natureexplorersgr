@@ -107,7 +107,7 @@ export default function TripDetailsPage() {
         event_category: 'Trip Content',
         event_label: trip.title,
         trip_id: trip.id,
-        organizer_name: organizer.username || organizer.full_name,
+        organizer_name: organizer?.username || organizer?.full_name || 'Unknown',
         difficulty: trip.difficulty,
         price: trip.price,
         location: trip.location,

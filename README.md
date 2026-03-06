@@ -222,7 +222,6 @@ npm run dev
 
 - `src/Layout.jsx` is the active layout configured in `src/pages.config.js`.
 - `src/components/layout/Layout.jsx` exists but is not wired by current page config.
-- `pages/TripDetails` (without extension) appears to be a legacy duplicate not used by Vite routing.
 - Some pages include diagnostics/logging intended for troubleshooting (for example `MyBookings`).
 
 ## Deployment Notes
