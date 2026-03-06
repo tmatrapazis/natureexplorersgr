@@ -18,7 +18,6 @@ import { useTranslation } from "../components/translations/useTranslations";
 import StructuredData from "../components/seo/StructuredData";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 import ShareButton from "../components/trip/ShareButton";
-import { getPricingOptions } from "../components/helpers/pricingHelpers";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
@@ -502,6 +501,7 @@ export default function TripDetailsPage() {
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  {/* Location */}
                   <div className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-emerald-600" />
                     <div>
@@ -510,6 +510,7 @@ export default function TripDetailsPage() {
                     </div>
                   </div>
 
+                  {/* Date */}
                   <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-emerald-600" />
                     <div>
@@ -520,16 +521,7 @@ export default function TripDetailsPage() {
                     </div>
                   </div>
 
-                  {trip.duration_hours && (
-                    <div className="flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-emerald-600" />
-                      <div>
-                        <p className="text-sm text-stone-500">{t('trip.duration')}</p>
-                        <p className="font-medium text-stone-900">{trip.duration_hours} {t('trip.hours')}</p>
-                      </div>
-                    </div>
-                  )}
-
+                  {/* Price (single or multiple) */}
                   <div className="flex items-start gap-3">
                     <Euro className="w-5 h-5 text-emerald-600 mt-0.5" />
                     <div>
@@ -543,7 +535,7 @@ export default function TripDetailsPage() {
                           return <p className="font-medium text-stone-900">€{pricingOptions[0].price} {t('trip.per_person')}</p>;
                         }
                         return (
-                          <div className="space-y-1 mt-1">
+                          <div className="space-y-1">
                             {pricingOptions.map((option, i) => (
                               <div key={i} className="flex items-center gap-2">
                                 <span className="font-medium text-stone-900">€{option.price}</span>
@@ -556,8 +548,42 @@ export default function TripDetailsPage() {
                     </div>
                   </div>
 
+                  {/* Distance */}
+                  {trip.distance_km && (
+                    <div className="flex items-center gap-3">
+                      <MapPin className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <p className="text-sm text-stone-500">{language === 'el' ? 'Απόσταση' : 'Distance'}</p>
+                        <p className="font-medium text-stone-900">{trip.distance_km} km</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Elevation Gain */}
+                  {trip.elevation_gain_m && (
+                    <div className="flex items-center gap-3">
+                      <TrendingUp className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <p className="text-sm text-stone-500">{language === 'el' ? 'Υψομετρική Διαφορά' : 'Elevation Gain'}</p>
+                        <p className="font-medium text-stone-900">{trip.elevation_gain_m} m</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Duration */}
+                  {trip.duration_hours && (
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <p className="text-sm text-stone-500">{t('trip.duration')}</p>
+                        <p className="font-medium text-stone-900">{trip.duration_hours} {t('trip.hours')}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Departure From */}
                   {trip.departure_from && trip.departure_from.length > 0 && (
-                    <div className="flex items-center gap-3 md:col-start-2">
+                    <div className="flex items-center gap-3">
                       <MapPin className="w-5 h-5 text-emerald-600" />
                       <div>
                         <p className="text-sm text-stone-500">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
