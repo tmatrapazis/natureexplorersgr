@@ -1,7 +1,7 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -44,17 +44,17 @@ const isSocialMediaUrl = (url) => {
 export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
-  const navigate = useNavigate(); // Add this line
-  
-  const urlParams = new URLSearchParams(window.location.search);
-  const tripId = urlParams.get("id");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const tripId = searchParams.get("id");
 
   const handleGoBack = () => {
-    // If the browser has history (more than just landing on this page directly)
-    if (window.history.length > 2) {
+    // 'default' key means the user landed here directly (e.g., direct link or refresh)
+    if (location.key !== "default") {
       navigate(-1); // Safely go back via React Router
     } else {
-      // Fallback: Send them to the Calendar/Organizers list so they don't leave the site
+      // Fallback: Send them to the Calendar so they don't leave the site
       navigate(createPageUrl("Calendar")); 
     }
   };
