@@ -78,14 +78,13 @@ export default function CalendarPage() {
     return status === 'upcoming' || status === 'happening now' || status === 'almost soldout';
   });
 
-  // Filter trips by the currently displayed month (Athens timezone)
-  const tripsInCurrentMonth = activeTrips.filter((trip) => {
-    const tripDate = toZonedTime(new Date(trip.start_date), ATHENS_TIMEZONE);
-    return tripDate.getMonth() === currentDate.getMonth() &&
-    tripDate.getFullYear() === currentDate.getFullYear();
-  });
-
-  const filteredTrips = React.useMemo(() => tripsInCurrentMonth.filter((trip) => {
+  const filteredTrips = React.useMemo(() => {
+    const tripsInCurrentMonth = activeTrips.filter((trip) => {
+      const tripDate = toZonedTime(new Date(trip.start_date), ATHENS_TIMEZONE);
+      return tripDate.getMonth() === currentDate.getMonth() &&
+        tripDate.getFullYear() === currentDate.getFullYear();
+    });
+    return tripsInCurrentMonth.filter((trip) => {
     if (filters.difficulty !== "all" && trip.difficulty !== filters.difficulty) {
       return false;
     }
