@@ -104,6 +104,14 @@ export default function LocationPicker({ latitude, longitude, onLocationChange, 
         </Button>
       </div>
 
+      <Input
+        placeholder="41.33364, 22.94743"
+        value={coordsInput}
+        onChange={handleCoordsInput}
+        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), applyCoords())}
+        className="font-mono text-sm"
+      />
+
       <div className="rounded-lg overflow-hidden border border-stone-200 h-[260px]">
         <MapContainer
           center={pinPos ? [pinPos.lat, pinPos.lng] : [38.5, 22.5]}
