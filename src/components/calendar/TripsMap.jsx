@@ -124,9 +124,6 @@ function ClusterLayer({ trips, organizerMap, language }) {
 
 export default function TripsMap({ trips, organizerMap }) {
   const { language } = useLanguage();
-  const [geoTrips, setGeoTrips] = useState([]);
-  const [isGeocoding, setIsGeocoding] = useState(false);
-  const [geocodedCount, setGeocodedCount] = useState(0);
 
   // Inject markercluster CSS from CDN
   useEffect(() => {
@@ -144,62 +141,14 @@ export default function TripsMap({ trips, organizerMap }) {
     });
   }, []);
 
-  // Separate trips that already have coords from those that need geocoding
-  const { tripsWithCoords, tripsNeedingGeocode } = useMemo(() => {
-    const withCoords = [];
-    const needGeocode = [];
-    trips.forEach(trip => {
-      if (trip.latitude && trip.longitude) {
-        withCoords.push({ ...trip, coords: { lat: trip.latitude, lng: trip.longitude } });
-      } else if (trip.location) {
-        needGeocode.push(trip);
-      }
-    });
-    return { tripsWithCoords: withCoords, tripsNeedingGeocode: needGeocode };
+  // Only use trips that have explicit lat/lng from the entity
+  const geoTrips = useMemo(() => {
+    return trips
+      .filter(trip => trip.latitude && trip.longitude)
+      .map(trip => ({ ...trip, coords: { lat: trip.latitude, lng: trip.longitude } }));
   }, [trips]);
 
-  // Unique locations among those needing geocoding
-  const uniqueLocations = useMemo(() => {
-    const seen = new Set();
-    return tripsNeedingGeocode.filter(t => !seen.has(t.location) && seen.add(t.location));
-  }, [tripsNeedingGeocode]);
-
-  useEffect(() => {
-    if (tripsNeedingGeocode.length === 0) {
-      setGeoTrips(tripsWithCoords);
-      return;
-    }
-
-    setIsGeocoding(true);
-    setGeocodedCount(0);
-    let cancelled = false;
-
-    async function geocodeAll() {
-      const locationCoordMap = {};
-
-      for (const trip of uniqueLocations) {
-        if (cancelled) return;
-        const coords = await geocodeLocation(trip.location);
-        locationCoordMap[trip.location] = coords;
-        setGeocodedCount(prev => prev + 1);
-        await new Promise(r => setTimeout(r, 200));
-      }
-
-      if (cancelled) return;
-
-      const geocoded = tripsNeedingGeocode
-        .map(trip => ({ ...trip, coords: locationCoordMap[trip.location] || null }))
-        .filter(t => t.coords !== null);
-
-      setGeoTrips([...tripsWithCoords, ...geocoded]);
-      setIsGeocoding(false);
-    }
-
-    geocodeAll();
-    return () => { cancelled = true; };
-  }, [trips]);
-
-  if (trips.length === 0) return null;
+  if (geoTrips.length === 0) return null;
 
   return (
     <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm">
@@ -210,20 +159,10 @@ export default function TripsMap({ trips, organizerMap }) {
           <span className="font-semibold text-stone-800 text-sm">
             {language === 'el' ? 'Χάρτης Εκδρομών' : 'Trip Map'}
           </span>
-          {geoTrips.length > 0 && (
-            <span className="text-xs text-stone-500 bg-stone-100 rounded-full px-2 py-0.5">
-              {geoTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
-            </span>
-          )}
+          <span className="text-xs text-stone-500 bg-stone-100 rounded-full px-2 py-0.5">
+            {geoTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
+          </span>
         </div>
-        {isGeocoding && (
-          <div className="flex items-center gap-1.5 text-xs text-stone-500">
-            <Loader2 className="w-3 h-3 animate-spin" />
-            {language === 'el'
-              ? `Φόρτωση χάρτη… ${geocodedCount}/${uniqueLocations.length}`
-              : `Mapping… ${geocodedCount}/${uniqueLocations.length}`}
-          </div>
-        )}
         {/* Legend */}
         <div className="hidden sm:flex items-center gap-3 text-xs text-stone-500">
           {Object.entries(difficultyColors).map(([level, color]) => (
@@ -249,17 +188,6 @@ export default function TripsMap({ trips, organizerMap }) {
           />
           <ClusterLayer trips={geoTrips} organizerMap={organizerMap} language={language} />
         </MapContainer>
-
-        {isGeocoding && geoTrips.length === 0 && (
-          <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-[1000]">
-            <div className="text-center">
-              <Loader2 className="w-8 h-8 animate-spin text-emerald-600 mx-auto mb-2" />
-              <p className="text-sm text-stone-600">
-                {language === 'el' ? 'Φόρτωση χάρτη…' : 'Loading map…'}
-              </p>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
