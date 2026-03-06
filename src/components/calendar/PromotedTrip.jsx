@@ -59,7 +59,7 @@ export default function PromotedTrip({ trips, currentDate }) {
 
   if (!mostPopularTrip) {
     return (
-      <Card className="p-6 h-full flex items-center justify-center">
+      <Card className="p-6 h-full flex items-center justify-center flex-1">
         <div className="text-center text-muted-foreground">
           <Star className="w-12 h-12 mx-auto mb-2 text-muted" />
           <p>{language === 'el' ? 'Δεν υπάρχουν διαθέσιμες εκδρομές' : 'No trips available'}</p>
