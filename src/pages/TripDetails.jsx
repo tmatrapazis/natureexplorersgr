@@ -21,6 +21,7 @@ import { getTripImage, handleImageError } from "../components/helpers/imageHelpe
 import ShareButton from "../components/trip/ShareButton";
 import DOMPurify from "dompurify";
 import { getPricingOptions } from "../components/helpers/pricingHelpers";
+import TripLocationMap from "../components/trips/TripLocationMap";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
