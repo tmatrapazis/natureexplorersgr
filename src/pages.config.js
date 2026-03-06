@@ -47,6 +47,7 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import Calendar from './pages/Calendar';
 import CookiePolicy from './pages/CookiePolicy';
 import CreateGuideProfile from './pages/CreateGuideProfile';
 import CreateTrip from './pages/CreateTrip';
@@ -69,11 +70,11 @@ import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
 import TripForm from './pages/TripForm';
-import Calendar from './pages/Calendar';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Calendar": Calendar,
     "CookiePolicy": CookiePolicy,
     "CreateGuideProfile": CreateGuideProfile,
     "CreateTrip": CreateTrip,
@@ -96,7 +97,6 @@ export const PAGES = {
     "TermsOfUse": TermsOfUse,
     "TripDetails": TripDetails,
     "TripForm": TripForm,
-    "Calendar": Calendar,
 }
 
 export const pagesConfig = {
