@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
+import "leaflet.markercluster";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MapPin, Loader2, Calendar, Mountain } from "lucide-react";
+import { MapPin, Loader2, Mountain, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { formatPriceForCard } from "../helpers/pricingHelpers";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -42,20 +45,16 @@ function createColoredIcon(color) {
   });
 }
 
-// Cache geocoded results in memory for session
+// Session-level geocode cache
 const geocodeCache = {};
 
 async function geocodeLocation(location) {
   if (!location) return null;
   const key = location.toLowerCase().trim();
-  if (geocodeCache[key]) return geocodeCache[key];
+  if (geocodeCache[key] !== undefined) return geocodeCache[key];
 
-  // Bias results towards Greece
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location + ", Greece")}&limit=1&accept-language=el,en`;
-
-  const res = await fetch(url, {
-    headers: { "User-Agent": "NatureExplorers/1.0 (hiking-app)" },
-  });
+  const res = await fetch(url, { headers: { "User-Agent": "NatureExplorers/1.0 (hiking-app)" } });
   const data = await res.json();
   if (data && data.length > 0) {
     const coords = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
@@ -66,88 +65,154 @@ async function geocodeLocation(location) {
   return null;
 }
 
+function buildPopupHTML(trip, organizer, language) {
+  const color = difficultyColors[trip.difficulty] || "#059669";
+  const price = formatPriceForCard(trip, language);
+  const dateStr = trip.start_date ? format(new Date(trip.start_date), "d MMM yyyy") : "";
+  const detailUrl = `${createPageUrl("TripDetails")}?id=${trip.id}`;
+  const orgName = organizer ? (organizer.username || organizer.full_name) : "";
+
+  return `
+    <div style="width:220px;font-family:sans-serif;font-size:13px;">
+      ${trip.image_url ? `<img src="${trip.image_url}" alt="" style="width:100%;height:90px;object-fit:cover;border-radius:6px;margin-bottom:8px;" onerror="this.style.display='none'" />` : ""}
+      <p style="font-weight:700;color:#1c1917;margin:0 0 4px;line-height:1.3;">${trip.title}</p>
+      <div style="display:flex;align-items:center;gap:4px;color:#78716c;margin-bottom:3px;font-size:11px;">
+        <span>📍</span><span>${trip.location}</span>
+      </div>
+      ${dateStr ? `<div style="display:flex;align-items:center;gap:4px;color:#78716c;margin-bottom:6px;font-size:11px;"><span>📅</span><span>${dateStr}</span></div>` : ""}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <span style="background:${color};color:white;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:600;">${trip.difficulty}</span>
+        <span style="color:#059669;font-weight:700;font-size:12px;">${price}</span>
+      </div>
+      ${orgName ? `<p style="color:#a8a29e;font-size:11px;margin:0 0 8px;">by ${orgName}</p>` : ""}
+      <a href="${detailUrl}" style="display:block;background:#059669;color:white;text-align:center;padding:6px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:600;">
+        ${language === 'el' ? 'Λεπτομέρειες' : 'View Details'}
+      </a>
+    </div>
+  `;
+}
+
+// Component that manages the marker cluster layer imperatively
+function ClusterLayer({ trips, organizerMap, language }) {
+  const map = useMap();
+  const clusterRef = useRef(null);
+
+  useEffect(() => {
+    // Remove old cluster group
+    if (clusterRef.current) {
+      map.removeLayer(clusterRef.current);
+    }
+
+    const cluster = L.markerClusterGroup({
+      maxClusterRadius: 60,
+      iconCreateFunction: (c) => {
+        const count = c.getChildCount();
+        const size = count < 10 ? 36 : count < 100 ? 44 : 52;
+        return L.divIcon({
+          html: `<div style="
+            width:${size}px;height:${size}px;
+            background:rgba(5,150,105,0.85);
+            border:3px solid white;
+            border-radius:50%;
+            display:flex;align-items:center;justify-content:center;
+            color:white;font-weight:700;font-size:${size < 44 ? 13 : 15}px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.3);
+          ">${count}</div>`,
+          className: "",
+          iconSize: [size, size],
+          iconAnchor: [size / 2, size / 2],
+        });
+      },
+    });
+
+    trips.forEach((trip) => {
+      if (!trip.coords) return;
+      const color = difficultyColors[trip.difficulty] || "#059669";
+      const icon = createColoredIcon(color);
+      const marker = L.marker([trip.coords.lat, trip.coords.lng], { icon });
+      const organizer = organizerMap?.[trip.organizer_code];
+      marker.bindPopup(buildPopupHTML(trip, organizer, language), { maxWidth: 240, minWidth: 220 });
+      cluster.addLayer(marker);
+    });
+
+    map.addLayer(cluster);
+    clusterRef.current = cluster;
+
+    return () => {
+      if (clusterRef.current) map.removeLayer(clusterRef.current);
+    };
+  }, [trips, organizerMap, language, map]);
+
+  return null;
+}
+
 export default function TripsMap({ trips, organizerMap }) {
   const { language } = useLanguage();
   const [geoTrips, setGeoTrips] = useState([]);
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [geocodedCount, setGeocodedCount] = useState(0);
 
-  // Deduplicate locations so we only geocode each unique location once
-  const uniqueLocations = useMemo(() => {
-    const seen = new Set();
-    return trips.filter(t => t.location && !seen.has(t.location) && seen.add(t.location));
+  // Separate trips that already have coords from those that need geocoding
+  const { tripsWithCoords, tripsNeedingGeocode } = useMemo(() => {
+    const withCoords = [];
+    const needGeocode = [];
+    trips.forEach(trip => {
+      if (trip.latitude && trip.longitude) {
+        withCoords.push({ ...trip, coords: { lat: trip.latitude, lng: trip.longitude } });
+      } else if (trip.location) {
+        needGeocode.push(trip);
+      }
+    });
+    return { tripsWithCoords: withCoords, tripsNeedingGeocode: needGeocode };
   }, [trips]);
 
+  // Unique locations among those needing geocoding
+  const uniqueLocations = useMemo(() => {
+    const seen = new Set();
+    return tripsNeedingGeocode.filter(t => !seen.has(t.location) && seen.add(t.location));
+  }, [tripsNeedingGeocode]);
+
   useEffect(() => {
-    if (trips.length === 0) return;
+    if (tripsNeedingGeocode.length === 0) {
+      setGeoTrips(tripsWithCoords);
+      return;
+    }
 
     setIsGeocoding(true);
     setGeocodedCount(0);
-
     let cancelled = false;
 
     async function geocodeAll() {
       const locationCoordMap = {};
 
-      // Geocode unique locations sequentially (rate-limit Nominatim: max 1 req/sec)
       for (const trip of uniqueLocations) {
         if (cancelled) return;
         const coords = await geocodeLocation(trip.location);
         locationCoordMap[trip.location] = coords;
         setGeocodedCount(prev => prev + 1);
-        await new Promise(r => setTimeout(r, 200)); // small delay to be polite
+        await new Promise(r => setTimeout(r, 200));
       }
 
       if (cancelled) return;
 
-      // Map all trips to their coordinates (including duplicates of same location)
-      const mapped = trips
-        .map(trip => ({
-          ...trip,
-          coords: locationCoordMap[trip.location] || null,
-        }))
+      const geocoded = tripsNeedingGeocode
+        .map(trip => ({ ...trip, coords: locationCoordMap[trip.location] || null }))
         .filter(t => t.coords !== null);
 
-      // Group trips at the same coordinate to avoid stacking
-      const grouped = {};
-      mapped.forEach(trip => {
-        const key = `${trip.coords.lat.toFixed(4)},${trip.coords.lng.toFixed(4)}`;
-        if (!grouped[key]) grouped[key] = [];
-        grouped[key].push(trip);
-      });
-
-      // Jitter overlapping markers slightly
-      const final = [];
-      Object.values(grouped).forEach(group => {
-        group.forEach((trip, i) => {
-          if (i === 0) {
-            final.push(trip);
-          } else {
-            final.push({
-              ...trip,
-              coords: {
-                lat: trip.coords.lat + (Math.random() - 0.5) * 0.04,
-                lng: trip.coords.lng + (Math.random() - 0.5) * 0.04,
-              },
-            });
-          }
-        });
-      });
-
-      setGeoTrips(final);
+      setGeoTrips([...tripsWithCoords, ...geocoded]);
       setIsGeocoding(false);
     }
 
     geocodeAll();
     return () => { cancelled = true; };
-  }, [trips, uniqueLocations]);
+  }, [trips]);
 
   if (trips.length === 0) return null;
 
   return (
     <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm">
       {/* Header */}
-      <div className="bg-white px-4 py-3 border-b border-stone-200 flex items-center justify-between">
+      <div className="bg-white px-4 py-3 border-b border-stone-200 flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Mountain className="w-4 h-4 text-emerald-600" />
           <span className="font-semibold text-stone-800 text-sm">
@@ -155,7 +220,7 @@ export default function TripsMap({ trips, organizerMap }) {
           </span>
           {geoTrips.length > 0 && (
             <span className="text-xs text-stone-500 bg-stone-100 rounded-full px-2 py-0.5">
-              {geoTrips.length} {language === 'el' ? 'τοποθεσίες' : 'locations'}
+              {geoTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
             </span>
           )}
         </div>
@@ -190,58 +255,7 @@ export default function TripsMap({ trips, organizerMap }) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-
-          {geoTrips.map(trip => {
-            const organizer = organizerMap?.[trip.organizer_code];
-            const color = difficultyColors[trip.difficulty] || "#059669";
-            const icon = createColoredIcon(color);
-
-            return (
-              <Marker
-                key={trip.id}
-                position={[trip.coords.lat, trip.coords.lng]}
-                icon={icon}
-              >
-                <Popup maxWidth={240} minWidth={200}>
-                  <div className="text-sm">
-                    {trip.image_url && (
-                      <img
-                        src={trip.image_url}
-                        alt={trip.title}
-                        className="w-full h-24 object-cover rounded mb-2"
-                        onError={e => e.target.style.display = 'none'}
-                      />
-                    )}
-                    <p className="font-bold text-stone-900 leading-snug mb-1 line-clamp-2">{trip.title}</p>
-                    <div className="flex items-center gap-1 text-xs text-stone-500 mb-1">
-                      <MapPin className="w-3 h-3 flex-shrink-0" />
-                      <span>{trip.location}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-stone-500 mb-2">
-                      <Calendar className="w-3 h-3 flex-shrink-0" />
-                      <span>{format(new Date(trip.start_date), "d MMM yyyy")}</span>
-                    </div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge style={{ backgroundColor: color, color: 'white', border: 'none' }} className="text-xs">
-                        {trip.difficulty}
-                      </Badge>
-                      <span className="text-xs font-bold text-emerald-700">
-                        {formatPriceForCard(trip, language)}
-                      </span>
-                    </div>
-                    {organizer && (
-                      <p className="text-xs text-stone-400 mb-2">by {organizer.username || organizer.full_name}</p>
-                    )}
-                    <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`}>
-                      <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700 text-xs h-7">
-                        {language === 'el' ? 'Λεπτομέρειες' : 'View Details'}
-                      </Button>
-                    </Link>
-                  </div>
-                </Popup>
-              </Marker>
-            );
-          })}
+          <ClusterLayer trips={geoTrips} organizerMap={organizerMap} language={language} />
         </MapContainer>
 
         {isGeocoding && geoTrips.length === 0 && (
