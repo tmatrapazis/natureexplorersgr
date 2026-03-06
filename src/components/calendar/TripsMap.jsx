@@ -184,7 +184,20 @@ export default function TripsMap({ trips, organizerMap }) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <ClusterLayer trips={geoTrips} organizerMap={organizerMap} language={language} />
+          {geoTrips.length > 0 && (
+            <ClusterLayer trips={geoTrips} organizerMap={organizerMap} language={language} />
+          )}
+          {geoTrips.length === 0 && (
+            <div style={{
+              position: "absolute", inset: 0, zIndex: 1000,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              background: "rgba(255,255,255,0.75)", backdropFilter: "blur(2px)"
+            }}>
+              <p style={{ color: "#57534e", fontSize: "14px", fontWeight: 500 }}>
+                {language === 'el' ? 'Δεν υπάρχουν εκδρομές με γεωγραφικά δεδομένα για την επιλογή σας' : 'No trips with location data for your selection'}
+              </p>
+            </div>
+          )}
         </MapContainer>
       </div>
     </div>
