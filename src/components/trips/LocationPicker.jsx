@@ -83,6 +83,7 @@ export default function LocationPicker({ latitude, longitude, onLocationChange, 
     if (data && data.length > 0) {
       const pos = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
       setPinPos(pos);
+      setCoordsInput(`${pos.lat}, ${pos.lng}`);
       onLocationChange(pos.lat, pos.lng);
       mapRef.current?.setView([pos.lat, pos.lng], 12);
     }
