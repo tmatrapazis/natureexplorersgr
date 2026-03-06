@@ -658,8 +658,8 @@ export default function TripDetailsPage() {
               </Card>
             </div>
 
-            <div>
-              <Card className="p-6 sticky top-6">
+            <div className="space-y-6">
+              <Card className="p-6">
                 <div className="text-center py-6">
                   <Users className="w-16 h-16 text-emerald-300 mx-auto mb-4" />
                   <h3 className="text-lg font-bold text-stone-900 mb-2">{t('trip.interested_in_trip')}</h3>
@@ -690,6 +690,10 @@ export default function TripDetailsPage() {
                     <p className="text-sm text-stone-500">{t('trip.no_booking_info')}</p>
                   )}
                 </div>
+              </Card>
+
+              <Card className="p-4">
+                <TripLocationMap trip={trip} />
               </Card>
             </div>
           </div>
