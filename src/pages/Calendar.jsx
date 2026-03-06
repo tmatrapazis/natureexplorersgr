@@ -285,20 +285,57 @@ export default function CalendarPage() {
                 trips={sortedTrips}
                 onDayClick={handleDayClick}
                 selectedDate={selectedDate} />
-
             </div>
 
-            <div ref={tripsListRef}>
-              <TripsMap trips={selectedDate ? selectedDayTrips : filteredTrips} organizerMap={organizerMap} />
+            <div>
+              <PromotedTrip trips={activeTrips} currentDate={currentDate} />
             </div>
           </div>
 
-          <div>
-            {isLoading ?
-            <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
-              </div> :
+          <div ref={tripsListRef}>
+            {/* View switcher header */}
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-stone-800">
+                {selectedDate
+                  ? (language === 'el' ? 'Εκδρομές της ημέρας' : 'Trips on this day')
+                  : (language === 'el' ? 'Επερχόμενες Εκδρομές' : 'Upcoming Trips')}
+              </h2>
+              <div className="flex items-center gap-1 bg-stone-100 rounded-lg p-1">
+                <button
+                  onClick={() => setTripsView("list")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                    tripsView === "list"
+                      ? "bg-white text-emerald-700 shadow-sm"
+                      : "text-stone-500 hover:text-stone-700"
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                  {language === 'el' ? 'Λίστα' : 'List'}
+                </button>
+                <button
+                  onClick={() => setTripsView("map")}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+                    tripsView === "map"
+                      ? "bg-white text-emerald-700 shadow-sm"
+                      : "text-stone-500 hover:text-stone-700"
+                  }`}
+                >
+                  <Map className="w-4 h-4" />
+                  {language === 'el' ? 'Χάρτης' : 'Map'}
+                </button>
+              </div>
+            </div>
 
+            {tripsView === "map" ? (
+              <TripsMap
+                trips={selectedDate ? selectedDayTrips : filteredTrips}
+                organizerMap={organizerMap}
+              />
+            ) : isLoading ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
+              </div>
+            ) : (
             <>
                 <TripsList trips={displayTrips} selectedDate={selectedDate} promotedTripId={!selectedDate && currentPage === 1 ? mostPopularTrip?.id : null} />
                 {!selectedDate && totalPages > 1 &&
