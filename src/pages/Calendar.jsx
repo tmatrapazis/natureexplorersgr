@@ -126,7 +126,8 @@ export default function CalendarPage() {
     }
 
     return true;
-  }), [tripsInCurrentMonth, filters, organizerMap]);
+    });
+  }, [activeTrips, currentDate, filters, organizerMap]);
 
   // Sort trips based on selected sort option
   const sortedTrips = React.useMemo(() => {
