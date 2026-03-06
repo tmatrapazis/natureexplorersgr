@@ -274,11 +274,6 @@ export default function CalendarPage() {
           }
         </div>
 
-        {/* Interactive Map */}
-        <div className="mb-8">
-          <TripsMap trips={activeTrips} organizerMap={organizerMap} />
-        </div>
-
         <div className="flex flex-col gap-8">
           <div className="grid lg:grid-cols-2 gap-6">
             <div>
