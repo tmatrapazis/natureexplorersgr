@@ -191,7 +191,28 @@ export default function CalendarPage() {
   const startIndex = (currentPage - 1) * tripsPerPage;
   const endIndex = startIndex + tripsPerPage;
   
-  const displayTrips = selectedDate ? selectedDayTrips : sortedTrips.slice(startIndex, endIndex);
+  // Find the most popular trip (highest view_count) in the current month
+  const mostPopularTrip = React.useMemo(() => {
+    if (!activeTrips.length) return null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const inMonth = activeTrips.filter(trip => {
+      const d = new Date(trip.start_date);
+      return d >= today && d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
+    });
+    if (!inMonth.length) return null;
+    return inMonth.reduce((best, trip) => (trip.view_count || 0) > (best.view_count || 0) ? trip : best, inMonth[0]);
+  }, [activeTrips, currentDate]);
+
+  const displayTrips = React.useMemo(() => {
+    if (selectedDate) return selectedDayTrips;
+    const page = sortedTrips.slice(startIndex, endIndex);
+    if (currentPage === 1 && mostPopularTrip) {
+      const withoutPopular = page.filter(t => t.id !== mostPopularTrip.id);
+      return [mostPopularTrip, ...withoutPopular];
+    }
+    return page;
+  }, [selectedDate, selectedDayTrips, sortedTrips, startIndex, endIndex, currentPage, mostPopularTrip]);
 
   const hasActiveFilters = filters.difficulty !== "all" ||
   filters.minPrice ||
