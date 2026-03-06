@@ -386,9 +386,9 @@ export default function CalendarPage() {
                       {language === 'el' ? 'Επόμενη' : 'Next'}
                     </Button>
                   </div>
-              }
-              </>
-            )}
+                  }
+                  </>
+                  )}
           </div>
         </div>
       </PageWrapper>
