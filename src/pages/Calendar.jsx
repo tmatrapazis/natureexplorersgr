@@ -277,19 +277,13 @@ export default function CalendarPage() {
         </div>
 
         <div className="flex flex-col gap-8">
-          <div className="grid lg:grid-cols-2 gap-6 items-stretch">
-            <div className="flex flex-col">
-              <CalendarGrid
-                currentDate={currentDate}
-                onDateChange={setCurrentDate}
-                trips={sortedTrips}
-                onDayClick={handleDayClick}
-                selectedDate={selectedDate} />
-            </div>
-
-            <div className="flex flex-col">
-              <PromotedTrip trips={activeTrips} currentDate={currentDate} />
-            </div>
+          <div>
+            <CalendarGrid
+              currentDate={currentDate}
+              onDateChange={setCurrentDate}
+              trips={sortedTrips}
+              onDayClick={handleDayClick}
+              selectedDate={selectedDate} />
           </div>
 
           <div ref={tripsListRef}>
