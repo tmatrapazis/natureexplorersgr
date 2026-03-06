@@ -13,6 +13,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
+import LocationPicker from './LocationPicker';
 
 const availableTags = [
   "beginner-friendly", "sunrise-hike", "sunset-hike", "pet-friendly",
@@ -23,6 +24,7 @@ const availableTags = [
 
 const emptyTrip = {
   title: "", description: "", start_date: "", end_date: "", location: "",
+  latitude: null, longitude: null,
   difficulty: "moderate", distance_km: 0, elevation_gain_m: 0, total_slots: 10,
   price: 0, pricing_options: [], external_link: "", event_url: "", image_url: "",
   requirements: [], departure_from: [], tags: [], cancel_policy: "", status: "draft"
