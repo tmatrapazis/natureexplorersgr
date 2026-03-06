@@ -287,7 +287,7 @@ export default function CalendarPage() {
             </div>
 
             <div ref={tripsListRef}>
-              <TripsMap trips={activeTrips} organizerMap={organizerMap} />
+              <TripsMap trips={filteredTrips} organizerMap={organizerMap} />
             </div>
           </div>
 
