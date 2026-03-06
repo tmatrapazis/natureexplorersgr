@@ -7,8 +7,6 @@ import { formatPriceForCard } from "../helpers/pricingHelpers";
 import { useLanguage } from "../contexts/LanguageContext";
 import { createPageUrl } from "@/utils";
 
-import "leaflet.markercluster/dist/MarkerCluster.css";
-import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import "leaflet.markercluster";
 
 // Fix Leaflet default marker icons broken by bundlers
