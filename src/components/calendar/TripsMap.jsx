@@ -148,8 +148,6 @@ export default function TripsMap({ trips, organizerMap }) {
       .map(trip => ({ ...trip, coords: { lat: trip.latitude, lng: trip.longitude } }));
   }, [trips]);
 
-  if (geoTrips.length === 0) return null;
-
   return (
     <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm">
       {/* Header */}
