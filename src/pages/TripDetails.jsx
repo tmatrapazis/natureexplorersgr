@@ -555,21 +555,22 @@ export default function TripDetailsPage() {
                     </div>
                   )}
 
-                  {(trip.distance_km || trip.elevation_gain_m) && (
-                    <div className="flex items-center gap-3 md:col-start-2 md:justify-self-end">
-                      <div className="flex gap-3 text-sm text-stone-600 bg-stone-50 rounded-lg px-3 py-2">
-                        {trip.distance_km && (
-                          <span className="flex items-center gap-1">
-                            <span className="text-stone-400">📏</span>
-                            <span className="font-medium text-stone-900">{trip.distance_km} km</span>
-                          </span>
-                        )}
-                        {trip.elevation_gain_m && (
-                          <span className="flex items-center gap-1">
-                            <span className="text-stone-400">⛰️</span>
-                            <span className="font-medium text-stone-900">+{trip.elevation_gain_m} m</span>
-                          </span>
-                        )}
+                  {trip.distance_km > 0 && (
+                    <div className="flex items-center gap-3">
+                      <TrendingUp className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <p className="text-sm text-stone-500">{language === 'el' ? 'Απόσταση' : 'Distance'}</p>
+                        <p className="font-medium text-stone-900">{trip.distance_km} km</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {trip.elevation_gain_m > 0 && (
+                    <div className="flex items-center gap-3">
+                      <TrendingUp className="w-5 h-5 text-emerald-600" />
+                      <div>
+                        <p className="text-sm text-stone-500">{language === 'el' ? 'Υψομετρική Διαφορά' : 'Elevation Gain'}</p>
+                        <p className="font-medium text-stone-900">+{trip.elevation_gain_m} m</p>
                       </div>
                     </div>
                   )}
