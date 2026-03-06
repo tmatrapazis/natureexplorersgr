@@ -53,6 +53,17 @@ export default function LocationPicker({ latitude, longitude, onLocationChange, 
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
+
+    // Detect coordinate format: (lat, lng) or "lat, lng"
+    const coordMatch = searchQuery.match(/\(?\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\)?/);
+    if (coordMatch) {
+      const pos = { lat: parseFloat(coordMatch[1]), lng: parseFloat(coordMatch[2]) };
+      setPinPos(pos);
+      onLocationChange(pos.lat, pos.lng);
+      mapRef.current?.setView([pos.lat, pos.lng], 13);
+      return;
+    }
+
     setIsSearching(true);
     const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery + ", Greece")}&limit=1&accept-language=el,en`;
     const res = await fetch(url, { headers: { "User-Agent": "NatureExplorers/1.0" } });
