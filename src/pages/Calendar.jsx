@@ -287,7 +287,7 @@ export default function CalendarPage() {
             </div>
 
             <div ref={tripsListRef}>
-              <TripsMap trips={filteredTrips} organizerMap={organizerMap} />
+              <TripsMap trips={selectedDate ? selectedDayTrips : filteredTrips} organizerMap={organizerMap} />
             </div>
           </div>
 
