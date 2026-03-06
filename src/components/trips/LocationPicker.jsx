@@ -51,7 +51,26 @@ export default function LocationPicker({ latitude, longitude, onLocationChange, 
 
   const handleMapClick = (latlng) => {
     setPinPos(latlng);
+    setCoordsInput(`${latlng.lat}, ${latlng.lng}`);
     onLocationChange(latlng.lat, latlng.lng);
+  };
+
+  const handleCoordsInput = (e) => {
+    const val = e.target.value;
+    setCoordsInput(val);
+  };
+
+  const applyCoords = () => {
+    const match = coordsInput.match(/^\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*$/);
+    if (match) {
+      const lat = parseFloat(match[1]);
+      const lng = parseFloat(match[2]);
+      if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+        setPinPos({ lat, lng });
+        onLocationChange(lat, lng);
+        mapRef.current?.setView([lat, lng], 12);
+      }
+    }
   };
 
   const handleSearch = async () => {
