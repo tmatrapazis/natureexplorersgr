@@ -266,24 +266,24 @@ export default function EditProfilePage() {
                   />
                 */} </div>
                 <div>
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="username">Username *</Label>
                   <Input
                     id="username"
                     value={formData.username}
                     onChange={handleInputChange}
                     placeholder="Choose a unique username"
+                    required
                   />
                   <p className="text-xs text-stone-500 mt-1">This can be used for your profile URL</p>
                 </div>
                 <div>
-                  <Label htmlFor="phone_number">Mobile Number *</Label>
+                  <Label htmlFor="phone_number">Mobile Number</Label>
                   <Input
                     id="phone_number"
                     type="tel"
                     placeholder="Your primary contact number"
                     value={formData.phone_number}
                     onChange={handleInputChange}
-                    required
                   />
                   <p className="text-xs text-stone-500 mt-1">Numbers only</p>
                 </div>
