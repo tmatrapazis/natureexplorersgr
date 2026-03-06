@@ -277,8 +277,8 @@ export default function CalendarPage() {
         </div>
 
         <div className="flex flex-col gap-8">
-          <div className="grid lg:grid-cols-2 gap-6">
-            <div>
+          <div className="grid lg:grid-cols-2 gap-6 items-stretch">
+            <div className="flex flex-col">
               <CalendarGrid
                 currentDate={currentDate}
                 onDateChange={setCurrentDate}
@@ -287,7 +287,7 @@ export default function CalendarPage() {
                 selectedDate={selectedDate} />
             </div>
 
-            <div>
+            <div className="flex flex-col">
               <PromotedTrip trips={activeTrips} currentDate={currentDate} />
             </div>
           </div>
