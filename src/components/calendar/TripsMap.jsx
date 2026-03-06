@@ -149,7 +149,7 @@ export default function TripsMap({ trips, organizerMap }) {
   }, [trips]);
 
   return (
-    <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm">
+    <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm relative">
       {/* Header */}
       <div className="bg-white px-4 py-3 border-b border-stone-200 flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
