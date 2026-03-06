@@ -106,9 +106,6 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, promot
   return (
     <div ref={ref}>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-stone-900">
-          {selectedDate ? `${t('calendar.trips_on')} ${format(selectedDate, "MMMM d, yyyy")}` : t('calendar.upcoming_trips')}
-        </h3>
         <Button
           variant="outline"
           size="sm"
