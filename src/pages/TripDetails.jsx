@@ -18,7 +18,6 @@ import { useTranslation } from "../components/translations/useTranslations";
 import StructuredData from "../components/seo/StructuredData";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 import ShareButton from "../components/trip/ShareButton";
-import { getPricingOptions } from "../components/helpers/pricingHelpers";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
@@ -530,33 +529,13 @@ export default function TripDetailsPage() {
                     </div>
                   )}
 
-                  <div className="flex items-start gap-3">
-                    <Euro className="w-5 h-5 text-emerald-600 mt-0.5" />
+                  <div className="flex items-center gap-3">
+                    <Euro className="w-5 h-5 text-emerald-600" />
                     <div>
                       <p className="text-sm text-stone-500">{t('trip.price')}</p>
-                      {(() => {
-                        const pricingOptions = getPricingOptions(trip);
-                        if (pricingOptions.length === 0) {
-                          return <p className="font-medium text-stone-900">TBA</p>;
-                        }
-                        if (pricingOptions.length === 1) {
-                          return (
-                            <p className="font-medium text-stone-900">
-                              €{pricingOptions[0].price} {t('trip.per_person')}
-                            </p>
-                          );
-                        }
-                        return (
-                          <div className="space-y-1 mt-1">
-                            {pricingOptions.map((option, i) => (
-                              <div key={i} className="flex items-center gap-2">
-                                <span className="font-medium text-stone-900">€{option.price}</span>
-                                <span className="text-sm text-stone-500">— {option.label}</span>
-                              </div>
-                            ))}
-                          </div>
-                        );
-                      })()}
+                      <p className="font-medium text-stone-900">
+                        {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
+                      </p>
                     </div>
                   </div>
 
@@ -572,6 +551,25 @@ export default function TripDetailsPage() {
                             </span>
                           ))}
                         </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {(trip.distance_km || trip.elevation_gain_m) && (
+                    <div className="flex items-center gap-3 md:col-start-2 md:justify-self-end">
+                      <div className="flex gap-3 text-sm text-stone-600 bg-stone-50 rounded-lg px-3 py-2">
+                        {trip.distance_km && (
+                          <span className="flex items-center gap-1">
+                            <span className="text-stone-400">📏</span>
+                            <span className="font-medium text-stone-900">{trip.distance_km} km</span>
+                          </span>
+                        )}
+                        {trip.elevation_gain_m && (
+                          <span className="flex items-center gap-1">
+                            <span className="text-stone-400">⛰️</span>
+                            <span className="font-medium text-stone-900">+{trip.elevation_gain_m} m</span>
+                          </span>
+                        )}
                       </div>
                     </div>
                   )}
