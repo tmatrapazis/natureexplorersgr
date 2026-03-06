@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
-import { MapPin, Loader2, Mountain } from "lucide-react";
+import { Mountain } from "lucide-react";
 import { format } from "date-fns";
 import { formatPriceForCard } from "../helpers/pricingHelpers";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -12,7 +12,7 @@ import "leaflet.markercluster";
 // Fix Leaflet default marker icons broken by bundlers
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png",
+  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
   iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
   shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
 });
@@ -39,26 +39,6 @@ function createColoredIcon(color) {
     popupAnchor: [0, -30],
     className: "",
   });
-}
-
-// Session-level geocode cache
-const geocodeCache = {};
-
-async function geocodeLocation(location) {
-  if (!location) return null;
-  const key = location.toLowerCase().trim();
-  if (geocodeCache[key] !== undefined) return geocodeCache[key];
-
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location + ", Greece")}&limit=1&accept-language=el,en`;
-  const res = await fetch(url, { headers: { "User-Agent": "NatureExplorers/1.0 (hiking-app)" } });
-  const data = await res.json();
-  if (data && data.length > 0) {
-    const coords = { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-    geocodeCache[key] = coords;
-    return coords;
-  }
-  geocodeCache[key] = null;
-  return null;
 }
 
 function buildPopupHTML(trip, organizer, language) {
