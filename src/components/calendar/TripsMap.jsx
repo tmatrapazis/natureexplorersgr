@@ -177,7 +177,7 @@ export default function TripsMap({ trips, organizerMap }) {
         <MapContainer
           center={[38.5, 22.5]}
           zoom={6}
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: "150%", width: "100%" }}
           scrollWheelZoom={false}
         >
           <TileLayer
