@@ -7,24 +7,9 @@ import { formatPriceForCard } from "../helpers/pricingHelpers";
 import { useLanguage } from "../contexts/LanguageContext";
 import { createPageUrl } from "@/utils";
 
-// Dynamically inject leaflet.markercluster CSS to avoid bundler issues
-if (typeof document !== "undefined") {
-  const cssUrls = [
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css",
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css",
-  ];
-  cssUrls.forEach((href) => {
-    if (!document.querySelector(`link[href="${href}"]`)) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = href;
-      document.head.appendChild(link);
-    }
-  });
-}
-
-// Load leaflet.markercluster plugin (attaches to L)
-import("leaflet.markercluster");
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import "leaflet.markercluster";
 
 // Fix Leaflet default marker icons broken by bundlers
 delete L.Icon.Default.prototype._getIconUrl;
