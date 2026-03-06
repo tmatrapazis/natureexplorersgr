@@ -91,12 +91,11 @@ export default function EditProfilePage() {
       queryClient.setQueryData(['current-user'], context.previousUser);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['current-user'] });
       setUpdateSuccess(true);
       setTimeout(() => {
-        setUpdateSuccess(false);
+        queryClient.invalidateQueries({ queryKey: ['current-user'] });
         navigate(createPageUrl("Calendar"));
-      }, 2000);
+      }, 1500);
     },
   });
 
