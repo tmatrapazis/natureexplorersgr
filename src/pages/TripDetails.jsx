@@ -531,13 +531,25 @@ export default function TripDetailsPage() {
                     </div>
                   )}
 
-                  <div className="flex items-center gap-3">
-                    <Euro className="w-5 h-5 text-emerald-600" />
+                  <div className="flex items-start gap-3">
+                    <Euro className="w-5 h-5 text-emerald-600 mt-0.5" />
                     <div>
                       <p className="text-sm text-stone-500">{t('trip.price')}</p>
-                      <p className="font-medium text-stone-900">
-                        {trip.price ? `€${trip.price} ${t('trip.per_person')}` : 'TBA'}
-                      </p>
+                      {(() => {
+                        const pricingOptions = getPricingOptions(trip);
+                        if (pricingOptions.length === 0) return <p className="font-medium text-stone-900">TBA</p>;
+                        if (pricingOptions.length === 1) return <p className="font-medium text-stone-900">€{pricingOptions[0].price} {t('trip.per_person')}</p>;
+                        return (
+                          <div className="space-y-1 mt-1">
+                            {pricingOptions.map((option, i) => (
+                              <div key={i} className="flex items-center gap-2">
+                                <span className="text-sm font-medium text-stone-900">€{option.price}</span>
+                                <span className="text-sm text-stone-500">— {option.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 
