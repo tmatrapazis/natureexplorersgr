@@ -213,8 +213,17 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft,
       {/* Location */}
       <div>
         <Label htmlFor="location">{t('create_trip.location_region')} *</Label>
-        <Input id="location" value={tripData.location} onChange={(e) => update('location', e.target.value)} placeholder={t('create_trip.location_placeholder')} required />
-        <p className="text-xs text-stone-500 mt-1">{t('create_trip.location_note')}</p>
+        <Input id="location" value={tripData.location} onChange={(e) => update('location', e.target.value)} placeholder={t('create_trip.location_placeholder')} required className="mb-2" />
+        <p className="text-xs text-stone-500 mb-3">{t('create_trip.location_note')}</p>
+        <Label className="mb-1 block text-sm text-stone-600">
+          {language === 'el' ? 'Ακριβής τοποθεσία στον χάρτη (προαιρετικό)' : 'Precise map location (optional)'}
+        </Label>
+        <LocationPicker
+          latitude={tripData.latitude}
+          longitude={tripData.longitude}
+          language={language}
+          onLocationChange={(lat, lng) => { update('latitude', lat); update('longitude', lng); }}
+        />
       </div>
 
       {/* Booking Link */}
