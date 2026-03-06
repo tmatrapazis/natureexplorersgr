@@ -246,19 +246,6 @@ export default function CalendarPage() {
 
         <div className="flex gap-3 mb-6 items-center flex-wrap">
           <TripFilters filters={filters} onFilterChange={setFilters} />
-          
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="h-9 px-3 py-2 text-sm border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-emerald-500"
-          >
-            <option value="date-asc">{language === 'el' ? 'Ημερομηνία (Παλαιότερη πρώτα)' : 'Date (Oldest first)'}</option>
-            <option value="date-desc">{language === 'el' ? 'Ημερομηνία (Νεότερη πρώτα)' : 'Date (Newest first)'}</option>
-            <option value="price-asc">{language === 'el' ? 'Τιμή (Χαμηλή → Υψηλή)' : 'Price (Low → High)'}</option>
-            <option value="price-desc">{language === 'el' ? 'Τιμή (Υψηλή → Χαμηλή)' : 'Price (High → Low)'}</option>
-            <option value="location">{language === 'el' ? 'Τοποθεσία (Α-Ω)' : 'Location (A-Z)'}</option>
-            <option value="difficulty">{language === 'el' ? 'Δυσκολία (Εύκολη → Δύσκολη)' : 'Difficulty (Easy → Hard)'}</option>
-          </select>
 
           <div className="bg-emerald-100 text-emerald-800 px-4 py-2.5 text-sm font-medium rounded-md border border-emerald-200 inline-flex items-center justify-center h-9">
             {sortedTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
