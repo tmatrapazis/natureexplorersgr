@@ -272,13 +272,7 @@ export default function CalendarPage() {
             </div>
 
             <div ref={tripsListRef}>
-              {isLoading ?
-              <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
-                </div> :
-
-              <PromotedTrip trips={activeTrips} currentDate={currentDate} />
-              }
+              <TripsMap trips={activeTrips} organizerMap={organizerMap} />
             </div>
           </div>
 
