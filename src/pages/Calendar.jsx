@@ -50,6 +50,7 @@ export default function CalendarPage() {
   });
   const [sortBy, setSortBy] = useState("date-asc");
   const [currentPage, setCurrentPage] = useState(1);
+  const [tripsView, setTripsView] = useState("list"); // "list" | "map"
   const tripsPerPage = 12;
   const tripsListRef = React.useRef(null);
 
