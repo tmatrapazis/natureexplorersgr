@@ -59,13 +59,11 @@ export default function TripDetailsPage() {
     }
   };
 
-  // Redirect to homepage if no trip ID provided (301 redirect)
+  // Redirect to homepage if no trip ID provided - only on initial mount
   React.useEffect(() => {
     if (!tripId) {
       navigate('/', { replace: true });
     }
-    // The empty array ensures this only checks ONCE when the page first opens, 
-    // stopping it from hijacking your back button.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
