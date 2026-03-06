@@ -61,9 +61,7 @@ export default function EditProfilePage() {
   useEffect(() => {
     if (user) {
       // Check if this is a new user (missing required fields)
-      // A user is considered "new" or incomplete if essential profile fields are missing.
-      // In this context, full_name and phone_number are considered essential for initial setup.
-      const newUser = !user.full_name || !user.phone_number;
+      const newUser = !user.full_name || !user.username;
       setIsNewUser(newUser);
 
       setFormData({
