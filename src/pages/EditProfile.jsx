@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,6 +22,8 @@ export default function EditProfilePage() {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+
+  console.log('🟢 [EditProfile] Component mounted/rendered');
 
   // Prevent indexing - this is an authenticated page
   useSEO({
@@ -60,11 +63,14 @@ export default function EditProfilePage() {
 
   useEffect(() => {
     if (user) {
+      console.log('🔵 [EditProfile] useEffect: User data loaded:', user);
+      
       // Check if this is a new user (missing required fields)
       const newUser = !user.full_name || !user.username;
+      console.log('🆕 [EditProfile] Is new user:', newUser, '(full_name:', user.full_name, ', username:', user.username, ')');
       setIsNewUser(newUser);
 
-      setFormData({
+      const initialFormData = {
         username: user.username || '',
         profile_picture_url: user.profile_picture_url || '',
         phone_number: user.phone_number || '',
@@ -75,60 +81,154 @@ export default function EditProfilePage() {
         certification_files: user.certification_files || [],
         bank_accounts: user.bank_accounts || [],
         social_profiles: user.social_profiles || {},
-      });
+      };
+      
+      console.log('📋 [EditProfile] Setting initial form data:', initialFormData);
+      setFormData(initialFormData);
+    } else {
+      console.log('⚠️  [EditProfile] useEffect: No user data available yet');
     }
   }, [user]);
 
   const updateProfileMutation = useMutation({
-    mutationFn: (updatedData) => base44.auth.updateMe(updatedData),
+    mutationFn: async (updatedData) => {
+      console.log('🔵 [EditProfile] Starting profile update mutation');
+      console.log('📤 [EditProfile] Payload being sent:', JSON.stringify(updatedData, null, 2));
+      
+      try {
+        const response = await base44.auth.updateMe(updatedData);
+        console.log('✅ [EditProfile] API Response SUCCESS:', response);
+        console.log('📊 [EditProfile] Response status: 200 OK');
+        return response;
+      } catch (error) {
+        console.error('❌ [EditProfile] API call failed:', error);
+        console.error('📊 [EditProfile] Error details:', {
+          message: error.message,
+          status: error.status,
+          response: error.response,
+          stack: error.stack
+        });
+        throw error;
+      }
+    },
     onMutate: async (updatedData) => {
+      console.log('🟡 [EditProfile] onMutate: Canceling queries and optimistic update');
       await queryClient.cancelQueries({ queryKey: ['current-user'] });
       const previousUser = queryClient.getQueryData(['current-user']);
       queryClient.setQueryData(['current-user'], (old) => ({ ...old, ...updatedData }));
       return { previousUser };
     },
     onError: (err, variables, context) => {
+      console.error('🔴 [EditProfile] onError triggered:', err);
+      console.error('📋 [EditProfile] Error context:', { variables, context });
+      
       queryClient.setQueryData(['current-user'], context.previousUser);
+      
+      // User-facing error messages
+      const errorMessage = err.message || 'Failed to update profile';
+      if (err.status === 400) {
+        toast.error(language === 'el' 
+          ? `Μη έγκυρα δεδομένα: ${errorMessage}` 
+          : `Invalid data: ${errorMessage}`);
+      } else if (err.status === 500) {
+        toast.error(language === 'el' 
+          ? 'Σφάλμα διακομιστή. Προσπαθήστε ξανά αργότερα.' 
+          : 'Server error. Please try again later.');
+      } else {
+        toast.error(language === 'el' 
+          ? `Αποτυχία ενημέρωσης προφίλ: ${errorMessage}` 
+          : `Failed to update profile: ${errorMessage}`);
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('🟢 [EditProfile] onSuccess triggered');
+      console.log('📦 [EditProfile] Updated user data:', data);
+      
       setUpdateSuccess(true);
+      toast.success(language === 'el' 
+        ? 'Το προφίλ ενημερώθηκε με επιτυχία!' 
+        : 'Profile updated successfully!');
+      
+      console.log('⏱️  [EditProfile] Scheduling redirect to Calendar in 1.5 seconds...');
       setTimeout(() => {
+        console.log('🔄 [EditProfile] Invalidating queries...');
         queryClient.invalidateQueries({ queryKey: ['current-user'] });
-        navigate(createPageUrl("Calendar"));
-      }, 1000);
+        
+        console.log('🚀 [EditProfile] Navigating to Calendar page...');
+        const calendarUrl = createPageUrl("Calendar");
+        console.log('🔗 [EditProfile] Target URL:', calendarUrl);
+        navigate(calendarUrl);
+        console.log('✅ [EditProfile] Navigation command issued');
+      }, 1500);
     },
   });
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file) {
+      console.log('ℹ️  [EditProfile] handleFileChange: No file selected');
+      return;
+    }
 
+    console.log('🔵 [EditProfile] Starting profile picture upload:', file.name);
     setIsUploading(true);
+    
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setFormData(prev => ({ ...prev, profile_picture_url: file_url }));
+      console.log('📤 [EditProfile] Uploading file to server...');
+      const response = await base44.integrations.Core.UploadFile({ file });
+      console.log('✅ [EditProfile] Upload response:', response);
+      
+      if (!response || !response.file_url) {
+        throw new Error('Upload response missing file_url');
+      }
+      
+      console.log('🖼️  [EditProfile] Setting profile picture URL:', response.file_url);
+      setFormData(prev => ({ ...prev, profile_picture_url: response.file_url }));
+      toast.success(language === 'el' ? 'Η εικόνα ανέβηκε με επιτυχία' : 'Image uploaded successfully');
     } catch (error) {
-      console.error("Upload failed", error);
+      console.error('❌ [EditProfile] Profile picture upload failed:', error);
+      toast.error(language === 'el' 
+        ? `Αποτυχία ανεβάσματος εικόνας: ${error.message}` 
+        : `Failed to upload image: ${error.message}`);
     } finally {
       setIsUploading(false);
+      console.log('✓ [EditProfile] Upload process completed');
     }
   };
 
   const handleCertificationUpload = async (e) => {
     const file = e.target.files[0];
-    if (!file) return;
+    if (!file) {
+      console.log('ℹ️  [EditProfile] handleCertificationUpload: No file selected');
+      return;
+    }
 
+    console.log('🔵 [EditProfile] Starting certification upload:', file.name);
     setIsUploading(true);
+    
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      console.log('📤 [EditProfile] Uploading certification file...');
+      const response = await base44.integrations.Core.UploadFile({ file });
+      console.log('✅ [EditProfile] Certification upload response:', response);
+      
+      if (!response || !response.file_url) {
+        throw new Error('Upload response missing file_url');
+      }
+      
+      console.log('📎 [EditProfile] Adding certification to list:', response.file_url);
       setFormData(prev => ({
         ...prev,
-        certification_files: [...prev.certification_files, file_url]
+        certification_files: [...prev.certification_files, response.file_url]
       }));
+      toast.success(language === 'el' ? 'Το αρχείο ανέβηκε με επιτυχία' : 'File uploaded successfully');
     } catch (error) {
-      console.error("Certification upload failed", error);
+      console.error('❌ [EditProfile] Certification upload failed:', error);
+      toast.error(language === 'el' 
+        ? `Αποτυχία ανεβάσματος αρχείου: ${error.message}` 
+        : `Failed to upload file: ${error.message}`);
     } finally {
       setIsUploading(false);
+      console.log('✓ [EditProfile] Certification upload process completed');
     }
   };
 
@@ -187,19 +287,44 @@ export default function EditProfilePage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate required fields
-    if (!formData.username) {
-      alert(language === 'el' ? "Το όνομα χρήστη είναι υποχρεωτικό πεδίο." : "Username is a required field.");
-      return;
+    
+    console.log('🔵 [EditProfile] handleSubmit triggered');
+    console.log('📋 [EditProfile] Current form data:', JSON.stringify(formData, null, 2));
+    console.log('👤 [EditProfile] Is new user:', isNewUser);
+    console.log('🌐 [EditProfile] Current language:', language);
+    
+    try {
+      // Validate required fields
+      console.log('🔍 [EditProfile] Validating username...');
+      if (!formData.username || formData.username.trim() === '') {
+        console.warn('⚠️  [EditProfile] Validation failed: Username is empty');
+        const errorMsg = language === 'el' ? "Το όνομα χρήστη είναι υποχρεωτικό πεδίο." : "Username is a required field.";
+        toast.error(errorMsg);
+        return;
+      }
+      
+      console.log('✅ [EditProfile] Validation passed');
+      
+      // Remove is_verified if present - only admins can set this
+      const { is_verified, ...dataToSubmit } = formData;
+      
+      console.log('📤 [EditProfile] Data to submit (after filtering):', JSON.stringify(dataToSubmit, null, 2));
+      console.log('🚀 [EditProfile] Calling mutation.mutate()...');
+      
+      // Send all form fields except is_verified
+      updateProfileMutation.mutate(dataToSubmit);
+      
+      console.log('⏳ [EditProfile] Mutation triggered, waiting for response...');
+      
+    } catch (error) {
+      console.error('❌ [EditProfile] Unexpected error in handleSubmit:', error);
+      console.error('📊 [EditProfile] Error stack:', error.stack);
+      toast.error(language === 'el' 
+        ? `Απρόσμενο σφάλμα: ${error.message}` 
+        : `Unexpected error: ${error.message}`);
     }
-    
-    // Remove is_verified if present - only admins can set this
-    const { is_verified, ...dataToSubmit } = formData;
-    
-    // Send all form fields except is_verified
-    updateProfileMutation.mutate(dataToSubmit);
   };
 
   const isOrganizer = false;
