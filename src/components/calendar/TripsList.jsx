@@ -126,7 +126,7 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, promot
           const organizer = organizerMap[trip.organizer_code];
           
           return (
-            <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 border-stone-200 flex flex-col h-full">
+            <Card key={trip.id} className={`overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full ${trip.id === promotedTripId ? 'border-amber-400 ring-2 ring-amber-300' : 'border-stone-200'}`}>
               <div className="w-full h-40 bg-stone-200">
                 <img 
                   src={getTripImage(trip.image_url, trip.id)} 
