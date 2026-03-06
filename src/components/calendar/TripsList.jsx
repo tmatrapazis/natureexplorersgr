@@ -114,7 +114,7 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, promot
           className="gap-1"
         >
           <Languages className="w-4 h-4" />
-          <span>{isTranslating ? '...' : translatedTitles ? 'Original' : 'Translate'}</span>
+          <span>{isTranslating ? '...' : translatedTitles ? 'Original Titles' : 'Translate Titles'}</span>
         </Button>
       </div>
       
