@@ -148,6 +148,22 @@ export default function TripsMap({ trips, organizerMap }) {
   const [isGeocoding, setIsGeocoding] = useState(false);
   const [geocodedCount, setGeocodedCount] = useState(0);
 
+  // Inject markercluster CSS from CDN
+  useEffect(() => {
+    const urls = [
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css",
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css",
+    ];
+    urls.forEach((href) => {
+      if (!document.querySelector(`link[href="${href}"]`)) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = href;
+        document.head.appendChild(link);
+      }
+    });
+  }, []);
+
   // Separate trips that already have coords from those that need geocoding
   const { tripsWithCoords, tripsNeedingGeocode } = useMemo(() => {
     const withCoords = [];
