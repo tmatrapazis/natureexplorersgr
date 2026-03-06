@@ -37,6 +37,9 @@ export default function LocationPicker({ latitude, longitude, onLocationChange, 
     latitude && longitude ? { lat: latitude, lng: longitude } : null
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [coordsInput, setCoordsInput] = useState(
+    latitude && longitude ? `${latitude}, ${longitude}` : ""
+  );
   const [isSearching, setIsSearching] = useState(false);
   const mapRef = useRef(null);
 
