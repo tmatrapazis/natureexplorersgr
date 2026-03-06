@@ -7,6 +7,7 @@ import CalendarGrid from "../components/calendar/CalendarGrid";
 import TripsList from "../components/calendar/TripsList";
 import TripFilters from "../components/calendar/TripFilters";
 import PromotedTrip from "../components/calendar/PromotedTrip.jsx";
+import TripsMap from "../components/calendar/TripsMap";
 import PullToRefresh from "../components/ui/PullToRefresh";
 import PageWrapper from "../components/layout/PageWrapper";
 import { getComputedTripStatus } from "../components/helpers/tripHelpers";
