@@ -95,7 +95,7 @@ export default function EditProfilePage() {
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ['current-user'] });
         navigate(createPageUrl("Calendar"));
-      }, 1500);
+      }, 1000);
     },
   });
 
