@@ -85,7 +85,7 @@ export default function CalendarPage() {
     tripDate.getFullYear() === currentDate.getFullYear();
   });
 
-  const filteredTrips = tripsInCurrentMonth.filter((trip) => {
+  const filteredTrips = React.useMemo(() => tripsInCurrentMonth.filter((trip) => {
     if (filters.difficulty !== "all" && trip.difficulty !== filters.difficulty) {
       return false;
     }
