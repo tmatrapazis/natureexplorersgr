@@ -3,12 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Cookie } from 'lucide-react';
 
 export default function CookieSettingsButton({ onClick }) {
-  const isTripsDetailsPage = window.location.pathname.includes('/TripDetails');
-  
-  if (isTripsDetailsPage) {
-    return null;
-  }
-
   return (
     <Button
       onClick={onClick}
