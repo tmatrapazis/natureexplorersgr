@@ -193,8 +193,8 @@ export default function EditProfilePage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Validate required fields
-    if (!formData.phone_number) {
-      alert(language === 'el' ? "Το κινητό τηλέφωνο είναι υποχρεωτικό πεδίο." : "Mobile number is a required field.");
+    if (!formData.username) {
+      alert(language === 'el' ? "Το όνομα χρήστη είναι υποχρεωτικό πεδίο." : "Username is a required field.");
       return;
     }
     
