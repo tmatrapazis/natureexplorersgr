@@ -295,17 +295,19 @@ const PublicLayout = ({ children }) => (
   </div>
 );
 
-export default function Layout({ children, currentPageName }) {
-  const location = useLocation();
+export default function Layout({ children, currentPageName, user: propUser, isOrganizer: propIsOrganizer, location: propLocation }) {
+  const location = propLocation || useLocation();
 
-  const { data: user } = useQuery({
+  const { data: queryUser } = useQuery({
     queryKey: ['current-user-layout'],
     queryFn: () => base44.auth.me(),
     retry: false,
     staleTime: 5 * 60 * 1000,
+    enabled: !propUser, // Only fetch if user not provided via props
   });
 
-  const isOrganizer = user?.organizer_code && user.organizer_code.trim().length > 0;
+  const user = propUser || queryUser;
+  const isOrganizer = propIsOrganizer ?? (user?.organizer_code && user.organizer_code.trim().length > 0);
   const publicOnlyPages = ['Home', 'RoleSelection'];
   const publicPages = ['OrganizersList', 'Calendar', 'TripDetails', 'OrganizerProfile'];
 
