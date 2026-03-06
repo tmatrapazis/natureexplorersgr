@@ -95,9 +95,7 @@ export default function EditProfilePage() {
       setUpdateSuccess(true);
       setTimeout(() => {
         setUpdateSuccess(false);
-        if (isNewUser) {
-          navigate(createPageUrl("Calendar"));
-        }
+        navigate(createPageUrl("Calendar"));
       }, 2000);
     },
   });
