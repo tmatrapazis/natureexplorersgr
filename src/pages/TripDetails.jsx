@@ -1,7 +1,7 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -19,6 +19,7 @@ import StructuredData from "../components/seo/StructuredData";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 import ShareButton from "../components/trip/ShareButton";
 import DOMPurify from "dompurify";
+import { getPricingOptions } from "../components/helpers/pricingHelpers";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
@@ -44,7 +45,7 @@ export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const navigate = useNavigate(); // Add this line
-  const location = useLocation(); // Add this line right here
+  
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
 
@@ -60,12 +61,10 @@ export default function TripDetailsPage() {
 
   // Redirect to homepage if no trip ID provided (301 redirect)
   React.useEffect(() => {
-    // Only redirect if they are actually on the TripDetails page but missing an ID.
-    // This prevents the redirect from firing accidentally while the user is clicking "Back" to leave the page.
-    if (!tripId && location.pathname.toLowerCase().includes('tripdetails')) {
-      navigate('/', { replace: true });
+    if (!tripId) {
+      window.location.replace('/');
     }
-  }, [tripId, location.pathname, navigate]);
+  }, [tripId]);
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
@@ -589,7 +588,7 @@ export default function TripDetailsPage() {
                     <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
                     <div 
                       className="text-stone-600 break-words overflow-hidden" 
-                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(trip.description) }} 
+                      dangerouslySetInnerHTML={{ __html: trip.description }} 
                     />
                   </div>
                 )}
