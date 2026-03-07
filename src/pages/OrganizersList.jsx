@@ -12,7 +12,6 @@ import PageWrapper from '../components/layout/PageWrapper';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import useSEO from '../components/seo/useSEO';
-import StructuredData from '../components/seo/StructuredData';
 
 export default function OrganizersListPage() {
   const { language } = useLanguage();
@@ -71,28 +70,8 @@ export default function OrganizersListPage() {
 
   const isLoading = organizersLoading || tripsLoading;
 
-  // ItemList structured data for the organizers directory
-  const organizersListSchema = React.useMemo(() => {
-    if (!sortedOrganizers.length) return null;
-    return {
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      "name": "Hiking Trip Organizers in Greece",
-      "description": "Directory of verified hiking trip organizers and trekking guides in Greece",
-      "url": "https://natureexplorers.gr/organizerslist",
-      "numberOfItems": sortedOrganizers.length,
-      "itemListElement": sortedOrganizers.map((org, index) => ({
-        "@type": "ListItem",
-        "position": index + 1,
-        "name": org.username || org.full_name,
-        "url": `https://natureexplorers.gr/organizerprofile?code=${org.organizer_code}`
-      }))
-    };
-  }, [sortedOrganizers]);
-
   return (
     <PageWrapper>
-      {organizersListSchema && <StructuredData data={organizersListSchema} />}
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-3">
             {language === 'el' ? 'Γνωρίστε τους Οδηγούς Πεζοπορίας' : t('organizer.meet_organizers')}

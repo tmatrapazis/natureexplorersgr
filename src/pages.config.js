@@ -68,8 +68,8 @@ import RequestVerification from './pages/RequestVerification';
 import RoleSelection from './pages/RoleSelection';
 import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
-import TripDetails from './pages/TripDetails';
 import TripForm from './pages/TripForm';
+import TripDetails from './pages/TripDetails';
 import __Layout from './Layout.jsx';
 
 
@@ -95,8 +95,8 @@ export const PAGES = {
     "RoleSelection": RoleSelection,
     "TempImageUploader": TempImageUploader,
     "TermsOfUse": TermsOfUse,
-    "TripDetails": TripDetails,
     "TripForm": TripForm,
+    "TripDetails": TripDetails,
 }
 
 export const pagesConfig = {

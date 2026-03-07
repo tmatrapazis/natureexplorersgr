@@ -349,18 +349,6 @@ export default function EditOrganizerProfilePage() {
                     rows={3}
                   />
                 </div>
-
-                <div>
-                  <Label>{language === 'el' ? 'URL Προφίλ (μόνο ανάγνωση)' : 'Profile URL (read-only)'}</Label>
-                  <Input
-                    value={`https://natureexplorers.gr/organizerprofile?code=${organizer?.organizer_code || ''}`}
-                    readOnly
-                    className="bg-stone-50 text-stone-500 cursor-default"
-                  />
-                  <p className="text-xs text-stone-400 mt-1">
-                    {language === 'el' ? 'Το URL του προφίλ σας βασίζεται στον κωδικό διοργανωτή.' : 'Your profile URL is based on your organizer code. Contact admin to change it.'}
-                  </p>
-                </div>
               </CardContent>
             </Card>
 

@@ -137,64 +137,39 @@ export default function OrganizerProfilePage() {
       updateMetaTag('og:image', organizer.profile_picture_url || 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png', true);
       updateMetaTag('og:url', window.location.href, true);
       updateMetaTag('og:type', 'profile', true);
-      updateMetaTag('og:site_name', 'Nature Explorers', true);
-      updateMetaTag('twitter:card', 'summary_large_image');
-      updateMetaTag('twitter:title', pageTitle);
-      updateMetaTag('twitter:description', description);
-      updateMetaTag('twitter:image', organizer.profile_picture_url || 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png');
-
-      // hreflang self-referencing for bilingual support
-      const addHreflang = (lang, href) => {
-        let el = document.querySelector(`link[hreflang="${lang}"]`);
-        if (!el) { el = document.createElement('link'); el.setAttribute('rel', 'alternate'); el.setAttribute('hreflang', lang); document.head.appendChild(el); }
-        el.setAttribute('href', href);
-      };
-      addHreflang('el', window.location.href);
-      addHreflang('en', window.location.href);
-      addHreflang('x-default', window.location.href);
     }
   }, [organizer, language]);
 
-  // Enhanced Structured Data for Organizer
+  // Enhanced Structured Data for Organizer with keywords
   const organizerSchema = organizer ? {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": window.location.href,
+    "@type": organizer.years_of_experience ? "Person" : "LocalBusiness",
     "name": organizer.username || organizer.full_name,
     "description": organizer.bio || (language === 'el'
       ? `Επαγγελματίας οδηγός πεζοπορίας, ορειβασίας και trekking στην Ελλάδα. Οργανωμένες εκδρομές βουνό, outdoor activities και hiking tours Greece με ομάδες πεζοπορίας.`
       : `Professional hiking guide, trekking organizer and outdoor activities leader in Greece. Organized hiking trips, mountain trekking tours and weekend hiking adventures with hiking teams Greece.`),
-    "url": window.location.href,
     "image": organizer.profile_picture_url,
     "email": organizer.email,
     "telephone": organizer.phone,
+    "url": organizer.website,
     "sameAs": [
       organizer.social_profiles?.facebook,
       organizer.social_profiles?.instagram,
-      organizer.social_profiles?.twitter,
-      organizer.website
+      organizer.social_profiles?.twitter
     ].filter(Boolean),
-    "areaServed": {
-      "@type": "Country",
-      "name": "Greece"
-    },
     ...(organizer.years_of_experience && {
-      "additionalType": "https://schema.org/Person",
       "knowsAbout": language === 'el'
         ? ["Πεζοπορία", "Ορειβασία", "Trekking", "Outdoor Activities", "Mountain Expeditions", "Εκδρομές Βουνό", "Hiking Tours Greece"]
         : ["Hiking", "Mountain Trekking", "Outdoor Adventure", "Nature Exploration", "Wilderness Guiding", "Hiking Trips Greece", "Weekend Hiking"],
       "yearsOfExperience": organizer.years_of_experience
-    })
-  } : null;
-
-  const breadcrumbSchema = organizer ? {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://natureexplorers.gr/" },
-      { "@type": "ListItem", "position": 2, "name": "Organizers", "item": "https://natureexplorers.gr/organizerslist" },
-      { "@type": "ListItem", "position": 3, "name": organizer.username || organizer.full_name, "item": window.location.href }
-    ]
+    }),
+    "areaServed": {
+      "@type": "Country",
+      "name": "Greece"
+    },
+    "keywords": language === 'el'
+      ? "οδηγός πεζοπορίας, εκδρομές, ορειβασία, trekking, outdoor, hiking greece, ομάδες πεζοπορίας, οργανωμένες εκδρομές βουνού"
+      : "hiking guide, trekking, outdoor activities, mountain guide, hiking greece, hiking teams greece, hiking tours greece, weekend hiking trips"
   } : null;
 
   const isLoading = organizerLoading || tripsLoading;
@@ -230,7 +205,6 @@ export default function OrganizerProfilePage() {
   return (
     <>
       {organizerSchema && <StructuredData data={organizerSchema} />}
-      {breadcrumbSchema && <StructuredData data={breadcrumbSchema} />}
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
           
