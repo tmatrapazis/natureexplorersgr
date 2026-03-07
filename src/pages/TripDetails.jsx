@@ -291,8 +291,7 @@ export default function TripDetailsPage() {
   const isSocialMedia = isSocialMediaUrl(trip.event_url);
 
   // Handler for "Book Now" button clicks
-  const handleBookNowClick = async () => {
-    // Track event (GA)
+  const handleBookNowClick = () => {
     trackEvent('book_now_click', {
       event_category: 'Booking',
       event_label: trip.title,
@@ -302,11 +301,6 @@ export default function TripDetailsPage() {
       is_social_media: isSocialMedia,
       price: trip.price,
       difficulty: trip.difficulty,
-    });
-
-    // Track booking click in database (fire-and-forget)
-    base44.functions.invoke('trackBookingClick', { tripId: trip.id }).catch(error => {
-      console.error('Failed to track booking click:', error);
     });
   };
 
