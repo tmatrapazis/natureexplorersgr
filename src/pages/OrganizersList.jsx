@@ -71,6 +71,25 @@ export default function OrganizersListPage() {
 
   const isLoading = organizersLoading || tripsLoading;
 
+  // ItemList structured data for the organizers directory
+  const organizersListSchema = React.useMemo(() => {
+    if (!sortedOrganizers.length) return null;
+    return {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Hiking Trip Organizers in Greece",
+      "description": "Directory of verified hiking trip organizers and trekking guides in Greece",
+      "url": "https://natureexplorers.gr/organizerslist",
+      "numberOfItems": sortedOrganizers.length,
+      "itemListElement": sortedOrganizers.map((org, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "name": org.username || org.full_name,
+        "url": `https://natureexplorers.gr/organizerprofile?code=${org.organizer_code}`
+      }))
+    };
+  }, [sortedOrganizers]);
+
   return (
     <PageWrapper>
       {organizersListSchema && <StructuredData data={organizersListSchema} />}
