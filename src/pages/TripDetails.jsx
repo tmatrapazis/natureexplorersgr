@@ -302,6 +302,8 @@ export default function TripDetailsPage() {
       price: trip.price,
       difficulty: trip.difficulty,
     });
+    // Track click server-side (excludes admins and the trip's own organizer)
+    base44.functions.invoke('trackBookClick', { trip_id: trip.id });
   };
 
   // Handler for external link button clicks
