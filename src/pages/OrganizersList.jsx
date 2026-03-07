@@ -71,6 +71,21 @@ export default function OrganizersListPage() {
 
   const isLoading = organizersLoading || tripsLoading;
 
+  // ItemList Structured Data for directory page
+  const itemListSchema = sortedOrganizers.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": language === 'el' ? "Οδηγοί Πεζοπορίας Ελλάδα" : "Hiking Guides & Trip Organizers Greece",
+    "url": "https://natureexplorers.gr/organizerslist",
+    "numberOfItems": sortedOrganizers.length,
+    "itemListElement": sortedOrganizers.map((organizer, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "url": `https://natureexplorers.gr/organizerprofile?code=${organizer.organizer_code}`,
+      "name": organizer.username || organizer.full_name
+    }))
+  } : null;
+
   return (
     <PageWrapper>
         <header className="text-center mb-8">
