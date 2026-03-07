@@ -88,6 +88,7 @@ export default function OrganizersListPage() {
 
   return (
     <PageWrapper>
+        {itemListSchema && <StructuredData data={itemListSchema} />}
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-3">
             {language === 'el' ? 'Γνωρίστε τους Οδηγούς Πεζοπορίας' : t('organizer.meet_organizers')}
