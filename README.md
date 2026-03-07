@@ -218,7 +218,33 @@ Optional:
 npm run dev
 ```
 
-## Notable Implementation Notes
+## Code Quality
+
+`npm run lint` and `npm run typecheck` both pass with 0 errors.
+
+### Type Declarations
+
+Alongside shadcn/ui source files, `.d.ts` declaration files exist to provide `React.FC<any>` types so
+TypeScript skips source-checking auto-generated component code:
+
+```
+src/components/ui/*.d.ts       # button, badge, card, tabs, select, alert, label,
+                               # alert-dialog, dialog, drawer, sheet, sidebar,
+                               # dropdown-menu, checkbox, switch, input, textarea,
+                               # separator, tooltip, MobileSelect
+src/components/calendar/TripsList.d.ts
+src/components/calendar/TripsMap.d.ts
+src/components/trips/LocationPicker.d.ts
+src/components/trips/TripLocationMap.d.ts
+src/types/react-leaflet.d.ts   # ambient module override for react-leaflet
+```
+
+### Known Bugs Fixed
+
+- **Calendar price sort** — Sort by price now uses `getLowestPrice()` (respects `pricing_options`); previously used the legacy scalar `trip.price` field only.
+- **Trip cancellation email resilience** — Cancellation flow uses `Promise.allSettled` for emails so a delivery failure no longer aborts the booking update.
+
+### Notable Implementation Notes
 
 - `src/Layout.jsx` is the active layout configured in `src/pages.config.js`.
 - `src/components/layout/Layout.jsx` exists but is not wired by current page config.

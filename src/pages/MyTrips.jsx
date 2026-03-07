@@ -62,7 +62,7 @@ export default function MyTripsPage() {
   });
 
   const deleteTripMutation = useMutation({
-    mutationFn: async (tripId) => {
+    mutationFn: async (/** @type {any} */ tripId) => {
       return await base44.entities.HikingTrip.delete(tripId);
     },
     onSuccess: () => {
@@ -71,7 +71,7 @@ export default function MyTripsPage() {
   });
 
   const updateTripStatusMutation = useMutation({
-    mutationFn: async ({ tripId, status }) => {
+    mutationFn: async (/** @type {any} */ { tripId, status }) => {
       return await base44.entities.HikingTrip.update(tripId, { status });
     },
     onSuccess: () => {
@@ -80,7 +80,7 @@ export default function MyTripsPage() {
   });
 
   const cancelTripMutation = useMutation({
-    mutationFn: async ({ trip }) => {
+    mutationFn: async (/** @type {any} */ { trip }) => {
       const tripBookings = allBookings?.filter(b => b.trip_id === trip.id && (b.status === "confirmed" || b.status === "pending")) || [];
 
       const notifications = [];
@@ -110,7 +110,14 @@ export default function MyTripsPage() {
         bookingUpdatePromises.push(base44.entities.Booking.update(booking.id, { status: 'cancelled' }));
       }
 
-      await Promise.all(emailPromises);
+      // Emails are best-effort — a delivery failure should not block the cancellation
+      const emailResults = await Promise.allSettled(emailPromises);
+      emailResults.forEach((result, i) => {
+        if (result.status === 'rejected') {
+          console.error(`Failed to send cancellation email for booking ${tripBookings[i]?.id}:`, result.reason);
+        }
+      });
+
       await Promise.all(bookingUpdatePromises);
       if (notifications.length > 0) {
         await base44.entities.Notification.bulkCreate(notifications);
@@ -179,6 +186,7 @@ export default function MyTripsPage() {
   const happeningTrips = (trips || []).filter(t => t.status !== 'cancelled' && t.status !== 'draft' && ((new Date(t.start_date) <= today && t.end_date && new Date(t.end_date) >= today) || t.status === 'happening now'));
   const completedTrips = (trips || []).filter(t => t.status !== 'cancelled' && t.status !== 'draft' && (t.status === 'completed' || (t.end_date && new Date(t.end_date) < today)));
   const cancelledTrips = (trips || []).filter(t => t.status === 'cancelled');
+  const cancellingTripId = /** @type {any} */(cancelTripMutation.variables)?.trip?.id;
 
   return (
     <PageWrapper>
@@ -251,7 +259,7 @@ export default function MyTripsPage() {
                 {draftTrips.map(trip => (
                   <OrganizerTripCard key={trip.id} trip={trip} allBookings={allBookings} language={language} t={t} today={today}
                     onStatusChange={handleStatusChange} onCancel={handleCancelTrip} onDelete={handleDeleteTrip} onRecreate={handleRecreateTrip}
-                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancelTripMutation.variables?.trip?.id}
+                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancellingTripId}
                     deleteMutationPending={deleteTripMutation.isPending}
                     showCancel={false} showRecreate={false} showDelete={true} isRequiredFieldsFilled={isRequiredFieldsFilled}
                   />
@@ -265,7 +273,7 @@ export default function MyTripsPage() {
                 {upcomingTrips.map(trip => (
                   <OrganizerTripCard key={trip.id} trip={trip} allBookings={allBookings} language={language} t={t} today={today}
                     onStatusChange={handleStatusChange} onCancel={handleCancelTrip} onDelete={handleDeleteTrip} onRecreate={handleRecreateTrip}
-                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancelTripMutation.variables?.trip?.id}
+                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancellingTripId}
                     deleteMutationPending={deleteTripMutation.isPending}
                     showCancel={true} showRecreate={false} showDelete={true}
                   />
@@ -279,7 +287,7 @@ export default function MyTripsPage() {
                 {happeningTrips.map(trip => (
                   <OrganizerTripCard key={trip.id} trip={trip} allBookings={allBookings} language={language} t={t} today={today}
                     onStatusChange={handleStatusChange} onCancel={handleCancelTrip} onDelete={handleDeleteTrip} onRecreate={handleRecreateTrip}
-                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancelTripMutation.variables?.trip?.id}
+                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancellingTripId}
                     deleteMutationPending={deleteTripMutation.isPending}
                     showCancel={true} showRecreate={false} showDelete={true}
                   />
@@ -293,7 +301,7 @@ export default function MyTripsPage() {
                 {completedTrips.map(trip => (
                   <OrganizerTripCard key={trip.id} trip={trip} allBookings={allBookings} language={language} t={t} today={today}
                     onStatusChange={handleStatusChange} onCancel={handleCancelTrip} onDelete={handleDeleteTrip} onRecreate={handleRecreateTrip}
-                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancelTripMutation.variables?.trip?.id}
+                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancellingTripId}
                     deleteMutationPending={deleteTripMutation.isPending}
                     showCancel={false} showRecreate={true} showDelete={false} showStatusChange={false} showEdit={false}
                   />
@@ -307,7 +315,7 @@ export default function MyTripsPage() {
                 {cancelledTrips.map(trip => (
                   <OrganizerTripCard key={trip.id} trip={trip} allBookings={allBookings} language={language} t={t} today={today}
                     onStatusChange={handleStatusChange} onCancel={handleCancelTrip} onDelete={handleDeleteTrip} onRecreate={handleRecreateTrip}
-                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancelTripMutation.variables?.trip?.id}
+                    cancelMutationPending={cancelTripMutation.isPending} cancelMutationTripId={cancellingTripId}
                     deleteMutationPending={deleteTripMutation.isPending}
                     showCancel={false} showRecreate={false} showDelete={true}
                   />

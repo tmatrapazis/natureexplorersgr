@@ -72,7 +72,7 @@ function LayoutContent({ children, currentPageName }) {
     if (isError && userError) {
       console.error('🔴 [Layout] User query error:', userError);
       // Only show toast for actual auth errors, not for logged-out users
-      if (userError.status && userError.status !== 401 && userError.status !== 403) {
+      if ((/** @type {any} */(userError)).status && (/** @type {any} */(userError)).status !== 401 && (/** @type {any} */(userError)).status !== 403) {
         toast.error('Failed to load user session. Please refresh the page.');
       }
     }

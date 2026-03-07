@@ -1,0 +1,16 @@
+import * as React from 'react';
+export declare const DropdownMenu: React.FC<any>;
+export declare const DropdownMenuTrigger: React.FC<any>;
+export declare const DropdownMenuContent: React.FC<any>;
+export declare const DropdownMenuItem: React.FC<any>;
+export declare const DropdownMenuCheckboxItem: React.FC<any>;
+export declare const DropdownMenuRadioItem: React.FC<any>;
+export declare const DropdownMenuLabel: React.FC<any>;
+export declare const DropdownMenuSeparator: React.FC<any>;
+export declare const DropdownMenuShortcut: React.FC<any>;
+export declare const DropdownMenuGroup: React.FC<any>;
+export declare const DropdownMenuPortal: React.FC<any>;
+export declare const DropdownMenuSub: React.FC<any>;
+export declare const DropdownMenuSubContent: React.FC<any>;
+export declare const DropdownMenuSubTrigger: React.FC<any>;
+export declare const DropdownMenuRadioGroup: React.FC<any>;

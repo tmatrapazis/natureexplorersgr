@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer as _MapContainer, TileLayer as _TileLayer, Marker as _Marker, Popup, useMap } from 'react-leaflet';
+const MapContainer = /** @type {React.FC<any>} */ (_MapContainer);
+const TileLayer = /** @type {React.FC<any>} */ (_TileLayer);
+const Marker = /** @type {React.FC<any>} */ (_Marker);
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

@@ -66,7 +66,7 @@ export default function GuideProfilePage() {
       return allTrips.filter(trip => {
         const tripDate = new Date(trip.start_date);
         return tripDate >= today && trip.status !== 'cancelled' && trip.status !== 'draft';
-      }).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+      }).sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
     },
     enabled: !!guideId,
   });

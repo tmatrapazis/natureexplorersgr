@@ -62,13 +62,13 @@ export default function CreateGuideProfilePage() {
   }, [existingGuide, navigate]);
 
   const createGuideMutation = useMutation({
-    mutationFn: (data) => base44.entities.MountainGuide.create(data),
+    mutationFn: (/** @type {any} */ data) => base44.entities.MountainGuide.create(data),
     onSuccess: async (newGuide) => {
       // Update user's mountain_guide_id
       await base44.auth.updateMe({ mountain_guide_id: newGuide.id });
       
-      queryClient.invalidateQueries(['mountain-guides']);
-      queryClient.invalidateQueries(['user-guide-profile']);
+      queryClient.invalidateQueries({ queryKey: ['mountain-guides'] });
+      queryClient.invalidateQueries({ queryKey: ['user-guide-profile'] });
       toast.success(language === 'el' ? 'Το προφίλ δημιουργήθηκε με επιτυχία!' : 'Profile created successfully!');
       navigate(createPageUrl('GuideProfile') + `?id=${newGuide.id}`);
     },

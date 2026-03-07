@@ -55,7 +55,7 @@ export default function NotificationsBell({ user, compact = false }) {
 
   // Mark single notification as read (ds_mark_notification_read)
   const markAsReadMutation = useMutation({
-    mutationFn: async (notificationId) => {
+    mutationFn: async (/** @type {any} */ notificationId) => {
       console.log('[NotificationsBell] Marking notification as read:', notificationId);
       return await base44.entities.Notification.update(notificationId, { is_read: true });
     },

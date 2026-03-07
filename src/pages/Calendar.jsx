@@ -11,6 +11,7 @@ import PromotedTrip from "../components/calendar/PromotedTrip";
 import PullToRefresh from "../components/ui/PullToRefresh";
 import PageWrapper from "../components/layout/PageWrapper";
 import { getComputedTripStatus } from "../components/helpers/tripHelpers";
+import { getLowestPrice } from "../components/helpers/pricingHelpers";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import useSEO from "../components/seo/useSEO";
@@ -77,7 +78,7 @@ export default function CalendarPage() {
 
   const activeTrips = trips.filter((trip) => {
     const status = getComputedTripStatus(trip);
-    return status === 'upcoming' || status === 'happening now' || status === 'almost soldout';
+    return status === 'upcoming' || status === 'happening now' || /** @type {string} */ (status) === 'almost soldout';
   });
 
   const filteredTrips = React.useMemo(() => {
@@ -137,13 +138,13 @@ export default function CalendarPage() {
     
     switch (sortBy) {
       case "date-asc":
-        return sorted.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+        return sorted.sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
       case "date-desc":
-        return sorted.sort((a, b) => new Date(b.start_date) - new Date(a.start_date));
+        return sorted.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
       case "price-asc":
-        return sorted.sort((a, b) => (a.price || 0) - (b.price || 0));
+        return sorted.sort((a, b) => (getLowestPrice(a) ?? 0) - (getLowestPrice(b) ?? 0));
       case "price-desc":
-        return sorted.sort((a, b) => (b.price || 0) - (a.price || 0));
+        return sorted.sort((a, b) => (getLowestPrice(b) ?? 0) - (getLowestPrice(a) ?? 0));
       case "location":
         return sorted.sort((a, b) => (a.location || "").localeCompare(b.location || ""));
       case "difficulty": {

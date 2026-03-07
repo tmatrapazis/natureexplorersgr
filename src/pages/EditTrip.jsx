@@ -38,7 +38,7 @@ export default function EditTripPage() {
   });
 
   const updateTripMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (/** @type {any} */ data) => {
       const { created_date, updated_date, id, created_by, view_count, organizer_name, organizer_is_verified, organizer_email, computedStatus, ...clean } = data;
       if (!clean.end_date) clean.end_date = clean.start_date;
       return await base44.entities.HikingTrip.update(tripId, clean);

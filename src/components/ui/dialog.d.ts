@@ -1,0 +1,11 @@
+import * as React from 'react';
+export declare const Dialog: React.FC<any>;
+export declare const DialogPortal: React.FC<any>;
+export declare const DialogOverlay: React.FC<any>;
+export declare const DialogTrigger: React.FC<any>;
+export declare const DialogClose: React.FC<any>;
+export declare const DialogContent: React.FC<any>;
+export declare const DialogHeader: React.FC<any>;
+export declare const DialogFooter: React.FC<any>;
+export declare const DialogTitle: React.FC<any>;
+export declare const DialogDescription: React.FC<any>;

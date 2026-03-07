@@ -64,8 +64,8 @@ export default function GoogleAnalytics({ enabled = false }) {
 
   // Track page views on route change (only when enabled)
   useEffect(() => {
-    if (enabled && window.gtag) {
-      window.gtag('event', 'page_view', {
+    if (enabled && window['gtag']) {
+      window['gtag']('event', 'page_view', {
         page_path: location.pathname + location.search,
         page_location: window.location.href,
       });
@@ -77,7 +77,7 @@ export default function GoogleAnalytics({ enabled = false }) {
 
 // Helper function to track custom events
 export const trackEvent = (eventName, eventParams = {}) => {
-  if (window.gtag) {
-    window.gtag('event', eventName, eventParams);
+  if (window['gtag']) {
+    window['gtag']('event', eventName, eventParams);
   }
 };

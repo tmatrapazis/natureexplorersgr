@@ -30,7 +30,7 @@ const emptyTrip = {
   requirements: [], departure_from: [], tags: [], cancel_policy: "", status: "draft"
 };
 
-export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft, onDirtyChange, isSubmitting, isEditing = false }) {
+export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft = undefined, onDirtyChange = undefined, isSubmitting, isEditing = false }) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 

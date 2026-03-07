@@ -39,7 +39,7 @@ export default function RoleSelectionPage() {
   }, [user, navigate]);
 
   const assignRoleMutation = useMutation({
-    mutationFn: async (intendedRole) => {
+    mutationFn: async (/** @type {any} */ intendedRole) => {
       console.log('[RoleSelection] 🚀 Starting role assignment for:', intendedRole);
       
       const updates = {

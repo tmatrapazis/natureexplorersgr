@@ -66,7 +66,6 @@ export default function TripDetailsPage() {
     if (!tripId) {
       navigate('/', { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { data: user } = useQuery({

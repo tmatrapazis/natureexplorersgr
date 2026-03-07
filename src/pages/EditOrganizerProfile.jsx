@@ -79,7 +79,7 @@ export default function EditOrganizerProfilePage() {
   }, [organizer]);
 
   const updateOrganizerMutation = useMutation({
-    mutationFn: async (updatedData) => {
+    mutationFn: async (/** @type {any} */ updatedData) => {
       // Remove is_verified and organizer_code - only admins can modify these
       const { is_verified, organizer_code, ...dataToUpdate } = updatedData;
       console.log('Updating organizer with data:', dataToUpdate);

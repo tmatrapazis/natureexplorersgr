@@ -21,7 +21,7 @@ export default function CookiePolicy() {
     // Trigger the cookie settings button click to open preferences modal
     const settingsButton = document.querySelector('[data-cookie-settings-button]');
     if (settingsButton) {
-      settingsButton.click();
+      /** @type {HTMLElement} */ (settingsButton).click();
     } else {
       // If button doesn't exist, user hasn't consented yet - reload to show banner
       localStorage.removeItem('cookie_consent_preferences');

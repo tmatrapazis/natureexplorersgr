@@ -1,0 +1,11 @@
+import * as React from 'react';
+export declare const Drawer: React.FC<any>;
+export declare const DrawerPortal: React.FC<any>;
+export declare const DrawerOverlay: React.FC<any>;
+export declare const DrawerTrigger: React.FC<any>;
+export declare const DrawerClose: React.FC<any>;
+export declare const DrawerContent: React.FC<any>;
+export declare const DrawerHeader: React.FC<any>;
+export declare const DrawerFooter: React.FC<any>;
+export declare const DrawerTitle: React.FC<any>;
+export declare const DrawerDescription: React.FC<any>;

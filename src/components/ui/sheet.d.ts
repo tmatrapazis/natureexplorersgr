@@ -1,0 +1,11 @@
+import * as React from 'react';
+export declare const Sheet: React.FC<any>;
+export declare const SheetPortal: React.FC<any>;
+export declare const SheetOverlay: React.FC<any>;
+export declare const SheetTrigger: React.FC<any>;
+export declare const SheetClose: React.FC<any>;
+export declare const SheetContent: React.FC<any>;
+export declare const SheetHeader: React.FC<any>;
+export declare const SheetFooter: React.FC<any>;
+export declare const SheetTitle: React.FC<any>;
+export declare const SheetDescription: React.FC<any>;

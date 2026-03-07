@@ -47,7 +47,7 @@ export default function RequestVerificationPage() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const requestVerificationMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (/** @type {any} */ data) => {
       return await base44.auth.updateMe({
         ...data,
         verification_status: 'pending'
@@ -149,7 +149,7 @@ export default function RequestVerificationPage() {
                     type="number"
                     min="0"
                     value={formData.years_of_experience}
-                    onChange={(e) => setFormData({...formData, years_of_experience: parseInt(e.target.value)})}
+                    onChange={(e) => setFormData({...formData, years_of_experience: String(parseInt(e.target.value))})}
                     required
                   />
                 </div>

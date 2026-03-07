@@ -1,0 +1,12 @@
+import * as React from 'react';
+export declare const AlertDialog: React.FC<any>;
+export declare const AlertDialogPortal: React.FC<any>;
+export declare const AlertDialogOverlay: React.FC<any>;
+export declare const AlertDialogTrigger: React.FC<any>;
+export declare const AlertDialogContent: React.FC<any>;
+export declare const AlertDialogHeader: React.FC<any>;
+export declare const AlertDialogFooter: React.FC<any>;
+export declare const AlertDialogTitle: React.FC<any>;
+export declare const AlertDialogDescription: React.FC<any>;
+export declare const AlertDialogAction: React.FC<any>;
+export declare const AlertDialogCancel: React.FC<any>;

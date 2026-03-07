@@ -1,0 +1,11 @@
+import * as React from 'react';
+export declare const Select: React.FC<any>;
+export declare const SelectGroup: React.FC<any>;
+export declare const SelectValue: React.FC<any>;
+export declare const SelectTrigger: React.FC<any>;
+export declare const SelectContent: React.FC<any>;
+export declare const SelectLabel: React.FC<any>;
+export declare const SelectItem: React.FC<any>;
+export declare const SelectSeparator: React.FC<any>;
+export declare const SelectScrollUpButton: React.FC<any>;
+export declare const SelectScrollDownButton: React.FC<any>;

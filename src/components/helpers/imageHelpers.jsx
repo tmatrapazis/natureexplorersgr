@@ -49,12 +49,13 @@ const hashString = (str) => {
 
 /**
  * Handle image load errors by setting a fallback
- * @param {Event} event - Image error event
+ * @param {any} event - Image error event
  * @param {string} tripId - Trip ID for consistent fallback
  */
 export const handleImageError = (event, tripId) => {
-  if (event.target && !event.target.dataset.fallbackApplied) {
-    event.target.dataset.fallbackApplied = 'true';
-    event.target.src = getTripImage(null, tripId);
+  const target = /** @type {HTMLImageElement} */ (event.target);
+  if (target && !target.dataset.fallbackApplied) {
+    target.dataset.fallbackApplied = 'true';
+    target.src = getTripImage(null, tripId);
   }
 };

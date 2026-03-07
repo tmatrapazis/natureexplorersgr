@@ -98,10 +98,10 @@ export default function EditGuideProfilePage() {
   }, [guide, currentUser, navigate, guideId, language]);
 
   const updateGuideMutation = useMutation({
-    mutationFn: (data) => base44.entities.MountainGuide.update(guideId, data),
+    mutationFn: (/** @type {any} */ data) => base44.entities.MountainGuide.update(guideId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['guide', guideId]);
-      queryClient.invalidateQueries(['mountain-guides']);
+      queryClient.invalidateQueries({ queryKey: ['guide', guideId] });
+      queryClient.invalidateQueries({ queryKey: ['mountain-guides'] });
       setShowSuccessDialog(true);
     },
     onError: (error) => {
@@ -118,9 +118,9 @@ export default function EditGuideProfilePage() {
       return await base44.entities.MountainGuide.delete(guideId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['mountain-guides']);
-      queryClient.invalidateQueries(['user-guide-profile']);
-      queryClient.invalidateQueries(['guide', guideId]);
+      queryClient.invalidateQueries({ queryKey: ['mountain-guides'] });
+      queryClient.invalidateQueries({ queryKey: ['user-guide-profile'] });
+      queryClient.invalidateQueries({ queryKey: ['guide', guideId] });
       toast.success(language === 'el' ? 'Το προφίλ διαγράφηκε' : 'Profile deleted successfully');
       navigate(createPageUrl('Guides'));
     },

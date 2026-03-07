@@ -5,12 +5,12 @@ import { useEffect } from 'react';
  * @param {Object} seo - SEO configuration object
  * @param {string} seo.title - Page title
  * @param {string} seo.description - Meta description
- * @param {string} seo.image - OG image URL
- * @param {string} seo.url - Canonical URL
- * @param {string} seo.type - OG type (website, article, etc.)
- * @param {boolean} seo.noindex - If true, adds noindex meta tag to prevent search engine indexing
+ * @param {string} [seo.image] - OG image URL
+ * @param {string} [seo.url] - Canonical URL
+ * @param {string} [seo.type] - OG type (website, article, etc.)
+ * @param {boolean} [seo.noindex] - If true, adds noindex meta tag to prevent search engine indexing
  */
-export const useSEO = ({ title, description, image, url, type = 'website', noindex = false }) => {
+export const useSEO = ({ title, description, image = undefined, url = undefined, type = 'website', noindex = false }) => {
   useEffect(() => {
     // Update document title
     if (title) {

@@ -296,7 +296,8 @@ const PublicLayout = ({ children }) => (
 );
 
 export default function Layout({ children, currentPageName, user: propUser, isOrganizer: propIsOrganizer, location: propLocation }) {
-  const location = propLocation || useLocation();
+  const routerLocation = useLocation();
+  const location = propLocation || routerLocation;
 
   const { data: queryUser } = useQuery({
     queryKey: ['current-user-layout'],

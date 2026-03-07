@@ -37,7 +37,7 @@ export default function OrganizerTripCard({
   showDelete = true,
   showEdit = true,
   showStatusChange = true,
-  isRequiredFieldsFilled,
+  isRequiredFieldsFilled = undefined,
 }) {
   const plainDescription = trip.description
     ? trip.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()

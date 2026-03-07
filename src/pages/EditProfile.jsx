@@ -91,7 +91,7 @@ export default function EditProfilePage() {
   }, [user]);
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (updatedData) => {
+    mutationFn: async (/** @type {any} */ updatedData) => {
       console.log('🔵 [EditProfile] Starting profile update mutation');
       console.log('📤 [EditProfile] Payload being sent:', JSON.stringify(updatedData, null, 2));
       
@@ -115,10 +115,10 @@ export default function EditProfilePage() {
       console.log('🟡 [EditProfile] onMutate: Canceling queries and optimistic update');
       await queryClient.cancelQueries({ queryKey: ['current-user'] });
       const previousUser = queryClient.getQueryData(['current-user']);
-      queryClient.setQueryData(['current-user'], (old) => ({ ...old, ...updatedData }));
+      queryClient.setQueryData(['current-user'], (old) => ({ .../** @type {any} */(old), .../** @type {any} */(updatedData) }));
       return { previousUser };
     },
-    onError: (err, variables, context) => {
+    onError: (/** @type {any} */ err, variables, context) => {
       console.error('🔴 [EditProfile] onError triggered:', err);
       console.error('📋 [EditProfile] Error context:', { variables, context });
       
@@ -308,7 +308,7 @@ export default function EditProfilePage() {
       console.log('✅ [EditProfile] Validation passed');
       
       // Remove is_verified if present - only admins can set this
-      const { is_verified, ...dataToSubmit } = formData;
+      const { is_verified, ...dataToSubmit } = /** @type {any} */ (formData);
       
       console.log('📤 [EditProfile] Data to submit (after filtering):', JSON.stringify(dataToSubmit, null, 2));
       console.log('🚀 [EditProfile] Calling mutation.mutate()...');
