@@ -12,6 +12,7 @@ import PageWrapper from '../components/layout/PageWrapper';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import useSEO from '../components/seo/useSEO';
+import StructuredData from '../components/seo/StructuredData';
 
 export default function OrganizersListPage() {
   const { language } = useLanguage();
