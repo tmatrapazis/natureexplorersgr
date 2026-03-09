@@ -243,7 +243,7 @@ export default function OrganizerProfilePage() {
           {/* Organizer Header */}
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex-shrink-0 flex items-center justify-center shadow-lg overflow-hidden">
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-white flex-shrink-0 flex items-center justify-center shadow-lg overflow-hidden">
                 {organizer.profile_picture_url ? (
                   <img 
                     src={organizer.profile_picture_url} 
