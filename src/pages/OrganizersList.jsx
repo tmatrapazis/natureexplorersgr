@@ -137,7 +137,7 @@ export default function OrganizersListPage() {
               return (
                 <Card key={organizer.id} className="text-center shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full">
                   <CardHeader className="p-0">
-                    <div className="mx-auto w-24 h-24 mt-6 border-4 border-white rounded-full overflow-hidden bg-stone-200 flex items-center justify-center">
+                    <div className="mx-auto w-24 h-24 mt-6 border-4 border-white rounded-full overflow-hidden bg-stone-100 flex items-center justify-center">
                       {organizer.profile_picture_url ? (
                         <img
                           src={organizer.profile_picture_url}
