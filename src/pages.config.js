@@ -52,6 +52,7 @@ import CookiePolicy from './pages/CookiePolicy';
 import CreateGuideProfile from './pages/CreateGuideProfile';
 import CreateTrip from './pages/CreateTrip';
 import EditGuideProfile from './pages/EditGuideProfile';
+import EditOrganizerProfile from './pages/EditOrganizerProfile';
 import EditProfile from './pages/EditProfile';
 import EditTrip from './pages/EditTrip';
 import GreekRefuges from './pages/GreekRefuges';
@@ -60,6 +61,8 @@ import Guides from './pages/Guides';
 import HikerProfile from './pages/HikerProfile';
 import Home from './pages/Home';
 import MyTrips from './pages/MyTrips';
+import OrganizerProfile from './pages/OrganizerProfile';
+import OrganizersList from './pages/OrganizersList';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RequestVerification from './pages/RequestVerification';
 import RoleSelection from './pages/RoleSelection';
@@ -67,9 +70,6 @@ import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
 import TripForm from './pages/TripForm';
-import EditOrganizerProfile from './pages/EditOrganizerProfile';
-import OrganizerProfile from './pages/OrganizerProfile';
-import OrganizersList from './pages/OrganizersList';
 import __Layout from './Layout.jsx';
 
 
@@ -79,6 +79,7 @@ export const PAGES = {
     "CreateGuideProfile": CreateGuideProfile,
     "CreateTrip": CreateTrip,
     "EditGuideProfile": EditGuideProfile,
+    "EditOrganizerProfile": EditOrganizerProfile,
     "EditProfile": EditProfile,
     "EditTrip": EditTrip,
     "GreekRefuges": GreekRefuges,
@@ -87,6 +88,8 @@ export const PAGES = {
     "HikerProfile": HikerProfile,
     "Home": Home,
     "MyTrips": MyTrips,
+    "OrganizerProfile": OrganizerProfile,
+    "OrganizersList": OrganizersList,
     "PrivacyPolicy": PrivacyPolicy,
     "RequestVerification": RequestVerification,
     "RoleSelection": RoleSelection,
@@ -94,9 +97,6 @@ export const PAGES = {
     "TermsOfUse": TermsOfUse,
     "TripDetails": TripDetails,
     "TripForm": TripForm,
-    "EditOrganizerProfile": EditOrganizerProfile,
-    "OrganizerProfile": OrganizerProfile,
-    "OrganizersList": OrganizersList,
 }
 
 export const pagesConfig = {
