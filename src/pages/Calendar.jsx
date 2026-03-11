@@ -193,8 +193,8 @@ export default function CalendarPage() {
   const startIndex = (currentPage - 1) * tripsPerPage;
   const endIndex = startIndex + tripsPerPage;
   
-  // Find the most popular trip (highest view_count) in the current month
-  const mostPopularTrip = React.useMemo(() => {
+  // Find promoted trips in the current month
+  const promotedTrip = React.useMemo(() => {
     if (!activeTrips.length) return null;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -203,18 +203,22 @@ export default function CalendarPage() {
       return d >= today && d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
     });
     if (!inMonth.length) return null;
-    return inMonth.reduce((best, trip) => (trip.view_count || 0) > (best.view_count || 0) ? trip : best, inMonth[0]);
+    // Find trips marked as promoted
+    const promoted = inMonth.filter(trip => trip.is_promoted === true);
+    if (!promoted.length) return null;
+    // Return the first promoted trip (or you could randomize here)
+    return promoted[0];
   }, [activeTrips, currentDate]);
 
   const displayTrips = React.useMemo(() => {
     if (selectedDate) return selectedDayTrips;
     const page = sortedTrips.slice(startIndex, endIndex);
-    if (currentPage === 1 && mostPopularTrip) {
-      const withoutPopular = page.filter(t => t.id !== mostPopularTrip.id);
-      return [mostPopularTrip, ...withoutPopular];
+    if (currentPage === 1 && promotedTrip) {
+      const withoutPromoted = page.filter(t => t.id !== promotedTrip.id);
+      return [promotedTrip, ...withoutPromoted];
     }
     return page;
-  }, [selectedDate, selectedDayTrips, sortedTrips, startIndex, endIndex, currentPage, mostPopularTrip]);
+  }, [selectedDate, selectedDayTrips, sortedTrips, startIndex, endIndex, currentPage, promotedTrip]);
 
   const hasActiveFilters = filters.difficulty !== "all" ||
   filters.minPrice ||
@@ -325,7 +329,7 @@ export default function CalendarPage() {
               </div>
             ) : (
             <>
-                <TripsList trips={selectedDate ? displayTrips : displayTrips.filter(t => t.id !== mostPopularTrip?.id)} selectedDate={selectedDate} promotedTripId={null} />
+                <TripsList trips={selectedDate ? displayTrips : displayTrips.filter(t => t.id !== promotedTrip?.id)} selectedDate={selectedDate} promotedTripId={null} />
                 {!selectedDate && totalPages > 1 &&
               <div className="flex justify-center items-center gap-2 mt-8">
                     <Button
