@@ -1,11 +1,12 @@
-import React, { useRef, useEffect, useMemo } from "react";
+import React, { useRef, useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
-import { Mountain } from "lucide-react";
+import { Mountain, Maximize, Minimize } from "lucide-react";
 import { format } from "date-fns";
 import { formatPriceForCard } from "../helpers/pricingHelpers";
 import { useLanguage } from "../contexts/LanguageContext";
 import { createPageUrl } from "@/utils";
+import { Button } from "@/components/ui/button";
 
 import "leaflet.markercluster";
 
@@ -124,6 +125,7 @@ function ClusterLayer({ trips, organizerMap, language }) {
 
 export default function TripsMap({ trips, organizerMap }) {
   const { language } = useLanguage();
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   // Inject markercluster CSS from CDN
   useEffect(() => {
@@ -149,7 +151,7 @@ export default function TripsMap({ trips, organizerMap }) {
   }, [trips]);
 
   return (
-    <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm relative">
+    <div className={isFullScreen ? "fixed inset-0 z-50 bg-white" : "rounded-xl overflow-hidden border border-stone-200 shadow-sm relative"}>
       {/* Header */}
       <div className="bg-white px-4 py-3 border-b border-stone-200 flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
@@ -161,19 +163,34 @@ export default function TripsMap({ trips, organizerMap }) {
             {geoTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
           </span>
         </div>
-        {/* Legend */}
-        <div className="hidden sm:flex items-center gap-3 text-xs text-stone-500">
-          {Object.entries(difficultyColors).map(([level, color]) => (
-            <span key={level} className="flex items-center gap-1">
-              <span style={{ background: color }} className="w-2.5 h-2.5 rounded-full inline-block" />
-              {level}
-            </span>
-          ))}
+        <div className="flex items-center gap-2">
+          {/* Legend */}
+          <div className="hidden sm:flex items-center gap-3 text-xs text-stone-500">
+            {Object.entries(difficultyColors).map(([level, color]) => (
+              <span key={level} className="flex items-center gap-1">
+                <span style={{ background: color }} className="w-2.5 h-2.5 rounded-full inline-block" />
+                {level}
+              </span>
+            ))}
+          </div>
+          {/* Full-screen toggle (mobile only) */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setIsFullScreen(!isFullScreen)}
+            className="md:hidden h-8 w-8 border-stone-300"
+          >
+            {isFullScreen ? (
+              <Minimize className="w-4 h-4 text-stone-700" />
+            ) : (
+              <Maximize className="w-4 h-4 text-stone-700" />
+            )}
+          </Button>
         </div>
       </div>
 
       {/* Map */}
-      <div className="h-[420px] w-full relative">
+      <div className={isFullScreen ? "h-[calc(100vh-57px)] w-full relative" : "h-[420px] w-full relative"}>
         <MapContainer
           center={[38.5, 22.5]}
           zoom={6}
