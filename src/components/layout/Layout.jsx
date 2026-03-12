@@ -95,7 +95,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
               </div>
               <div>
                 <h2 className="font-bold text-stone-900">Nature Explorers</h2>
-                <p className="text-xs text-stone-500">natureexplorers.gr</p>
+                <p className="text-xs text-stone-500">Discover the wild side of Greece</p>
               </div>
               </Link>
               <Button 
