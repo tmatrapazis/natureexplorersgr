@@ -256,7 +256,7 @@ Rules for event URLs:
 - ONLY use URLs from the list above — no exceptions
 - Must belong to the domain: ${domain}
 - Must point to a SPECIFIC event/product page (not a category, tag, or pagination page)
-- Common URL patterns for event pages: /product/..., /trip/..., /ekdromh/..., /activity/...
+- Common URL patterns for event pages: /product/..., /ekdromes/..., /ekdromh/..., /trip/..., /tour/..., /activity/...
 
 Rules for events_listing_url:
 - ONLY use a URL from the list above — no exceptions
@@ -333,7 +333,7 @@ ${listingLinks.join("\n")}
 Rules:
 - ONLY use URLs from the list above
 - Return ONLY URLs that point to a specific event or product detail page
-- Common URL patterns for event pages: /product/..., /trip/..., /ekdromh/..., /activity/...
+- Common URL patterns for event pages: /product/..., /ekdromes/..., /ekdromh/..., /trip/..., /tour/..., /activity/...
 - Only include URLs from the domain: ${listingDomain}
 - No duplicates
 - No category pages, pagination pages, or general navigation links`,
