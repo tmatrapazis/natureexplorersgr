@@ -4,7 +4,7 @@ Nature Explorers is a React + Vite web application for discovering and managing 
 It supports two primary personas:
 
 - Hikers (`user`): browse trips, view details, and manage bookings.
-- Organizers (`admin`): create/manage trips, maintain organizer profiles, and handle participant communication.
+- Organizers (`user`): create/manage trips, maintain organizer profiles, and handle participant communication.
 
 The app is built on top of the Base44 SDK for authentication, entity CRUD, file uploads, and integrations.
 
