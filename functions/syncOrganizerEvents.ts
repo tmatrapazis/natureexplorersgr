@@ -216,34 +216,51 @@ async function discoverEventUrls(
   const html = await fetchPage(websiteUrl);
   const domain = new URL(websiteUrl).hostname;
 
+  // Pre-extract all internal links from the HTML so the AI can only
+  // choose from URLs that actually exist — never fabricate or guess.
+  const internalLinks = Array.from(
+    html.matchAll(/href=["'](https?:\/\/[^"'#?]+)/g)
+  )
+    .map(m => m[1].replace(/\/+$/, "")) // strip trailing slash
+    .filter(u => u.includes(domain))
+    .filter((u, i, arr) => arr.indexOf(u) === i) // deduplicate
+    .slice(0, 300); // keep it manageable
+
   const discovery = await base44.integrations.Core.InvokeLLM({
     prompt: `You are analyzing a Greek hiking/outdoor activity organizer's website.
 Website URL: ${websiteUrl}
+
+CRITICAL RULE: You may ONLY return URLs from the list below. Never construct, guess, or modify URLs.
+
+Available internal links found on this page:
+${internalLinks.join("\n")}
+
+---
 
 Determine whether this page is the events/trips LISTING page, or a homepage/other page.
 
 An events listing page shows multiple event/trip cards or items side-by-side. Signs:
 - Multiple products or event cards displayed in a grid or list
 - Each card has a title, date, image, and a "Read more" / "Book" button
-- URL typically contains: /programma/, /events/, /ekdromees/, /trips/, /activities/, /schedule/, /shop/
+- URL path contains words like: programma, events, ekdromees, trips, activities, schedule, shop
 
 A homepage has navigation menus, hero banners, "About us", and may show a few featured events
 but does NOT show the full events catalog.
 
 Task:
 1. Decide: is_listing_page = true or false
-2. If this IS the listing page → extract all individual event/product URLs from it
-3. If this is NOT the listing page → find the URL of the events listing page
+2. If this IS the listing page → pick individual event/product URLs from the list above
+3. If this is NOT the listing page → pick the ONE URL from the list above that leads to the events/trips listing page
 
 Rules for event URLs:
-- Must be absolute URLs starting with https://
+- ONLY use URLs from the list above — no exceptions
 - Must belong to the domain: ${domain}
 - Must point to a SPECIFIC event/product page (not a category, tag, or pagination page)
 - Common URL patterns for event pages: /product/..., /trip/..., /ekdromh/..., /activity/...
-- DO NOT include old or archived event URLs — prefer currently visible links
 
-HTML content (first 50,000 chars):
-${html.substring(0, 50_000)}`,
+Rules for events_listing_url:
+- ONLY use a URL from the list above — no exceptions
+- Pick the one whose path most clearly indicates it is the events/program listing`,
     response_json_schema: {
       type: "object",
       properties: {
@@ -294,19 +311,32 @@ ${html.substring(0, 50_000)}`,
     const listingHtml = await fetchPage(listingUrl);
     const listingDomain = new URL(listingUrl).hostname;
 
+    // Pre-extract links from the listing page too
+    const listingLinks = Array.from(
+      listingHtml.matchAll(/href=["'](https?:\/\/[^"'#?]+)/g)
+    )
+      .map(m => m[1].replace(/\/+$/, ""))
+      .filter(u => u.includes(listingDomain))
+      .filter((u, i, arr) => arr.indexOf(u) === i)
+      .slice(0, 300);
+
     const listingResult = await base44.integrations.Core.InvokeLLM({
       prompt: `Extract all individual event/product page URLs from this hiking events listing page.
 
+CRITICAL RULE: You may ONLY return URLs from the list below. Never construct, guess, or modify URLs.
+
+Available internal links found on this page:
+${listingLinks.join("\n")}
+
+---
+
 Rules:
+- ONLY use URLs from the list above
 - Return ONLY URLs that point to a specific event or product detail page
 - Common URL patterns for event pages: /product/..., /trip/..., /ekdromh/..., /activity/...
-- Return absolute URLs starting with https://
 - Only include URLs from the domain: ${listingDomain}
 - No duplicates
-- No category pages, pagination pages, or general navigation links
-
-HTML content (first 50,000 chars):
-${listingHtml.substring(0, 50_000)}`,
+- No category pages, pagination pages, or general navigation links`,
       response_json_schema: {
         type: "object",
         properties: {
