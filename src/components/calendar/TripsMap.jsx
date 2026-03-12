@@ -150,11 +150,23 @@ export default function TripsMap({ trips, organizerMap }) {
       .map(trip => ({ ...trip, coords: { lat: trip.latitude, lng: trip.longitude } }));
   }, [trips]);
 
+  // Calculate date range
+  const dateRange = useMemo(() => {
+    if (geoTrips.length === 0) return null;
+    const dates = geoTrips.map(trip => new Date(trip.start_date)).sort((a, b) => a.getTime() - b.getTime());
+    const earliest = dates[0];
+    const latest = dates[dates.length - 1];
+    return {
+      start: format(earliest, "d MMM"),
+      end: format(latest, "d MMM yyyy")
+    };
+  }, [geoTrips]);
+
   return (
     <div className={isFullScreen ? "fixed inset-0 z-50 bg-white" : "rounded-xl overflow-hidden border border-stone-200 shadow-sm relative"}>
       {/* Header */}
       <div className="bg-white px-4 py-3 border-b border-stone-200 flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Mountain className="w-4 h-4 text-emerald-600" />
           <span className="font-semibold text-stone-800 text-sm">
             {language === 'el' ? 'Χάρτης Εκδρομών' : 'Trip Map'}
@@ -162,6 +174,11 @@ export default function TripsMap({ trips, organizerMap }) {
           <span className="text-xs text-stone-500 bg-stone-100 rounded-full px-2 py-0.5">
             {geoTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
           </span>
+          {dateRange && (
+            <span className="text-xs text-stone-600">
+              {dateRange.start} - {dateRange.end}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {/* Legend */}
