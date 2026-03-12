@@ -24,6 +24,16 @@ export default function WelcomeModal({ user, onClose }) {
         has_accepted_terms: true,
         newsletter_subscribed: newsletterSubscribed
       });
+      
+      // Track new user signup event
+      base44.analytics.track({
+        eventName: 'user_signed_up',
+        properties: {
+          newsletter_subscribed: newsletterSubscribed,
+          user_email: user?.email || 'unknown'
+        }
+      });
+      
       onClose();
     } catch (error) {
       console.error('Failed to update user preferences:', error);
