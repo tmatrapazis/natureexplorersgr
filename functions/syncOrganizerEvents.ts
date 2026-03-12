@@ -596,9 +596,18 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Optional: scope to one organizer — e.g. POST /syncOrganizerEvents?organizer_code=1
+    // Optional: scope to one organizer for testing.
+    // Accepted via URL query param OR request body:
+    //   URL:  POST /syncOrganizerEvents?organizer_code=1
+    //   Body: {"organizer_code": "1"}
     const url = new URL(req.url);
-    const filterCode = url.searchParams.get("organizer_code") || null;
+    let filterCode = url.searchParams.get("organizer_code") || null;
+    if (!filterCode) {
+      try {
+        const body = await req.json();
+        if (body?.organizer_code) filterCode = String(body.organizer_code);
+      } catch { /* body is empty or not JSON — that's fine */ }
+    }
 
     console.log("🚀 Nature Explorers — syncOrganizerEvents starting...");
     if (filterCode) console.log(`   Scoped to organizer_code: ${filterCode}`);
