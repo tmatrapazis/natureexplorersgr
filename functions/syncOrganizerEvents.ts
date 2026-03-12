@@ -494,7 +494,9 @@ async function processOrganizer(
   /** URL → existing HikingTrip record, keyed by external_link */
   existingByExternalLink: Map<string, Record<string, any>>,
   /** Lowercased titles already in the database — for new-event dedup */
-  existingByTitle: Set<string>
+  existingByTitle: Set<string>,
+  /** Max events to process for this organizer this run */
+  maxEvents: number
 ): Promise<{
   created: number;
   updated: number;
@@ -512,7 +514,7 @@ async function processOrganizer(
   let eventUrls: string[];
   try {
     eventUrls = await discoverEventUrls(base44, website);
-    eventUrls = eventUrls.slice(0, MAX_EVENTS_PER_ORGANIZER);
+    eventUrls = eventUrls.slice(0, maxEvents);
     console.log(`   Found ${eventUrls.length} event URL(s)`);
   } catch (e: any) {
     console.error(`   ❌ URL discovery failed: ${e.message}`);
@@ -621,21 +623,28 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Optional: scope to one organizer for testing.
-    // Accepted via URL query param OR request body:
-    //   URL:  POST /syncOrganizerEvents?organizer_code=1
-    //   Body: {"organizer_code": "1"}
+    // Optional parameters — accepted via URL query params OR request body:
+    //   organizer_code : scope to one organizer  (e.g. "1" for Trekkers)
+    //   max_events     : cap events per organizer (e.g. 3 for quick tests)
+    //
+    // Examples:
+    //   Body: {"organizer_code": "1", "max_events": 3}
+    //   URL:  ?organizer_code=1&max_events=3
     const url = new URL(req.url);
-    let filterCode = url.searchParams.get("organizer_code") || null;
-    if (!filterCode) {
-      try {
-        const body = await req.json();
-        if (body?.organizer_code) filterCode = String(body.organizer_code);
-      } catch { /* body is empty or not JSON — that's fine */ }
-    }
+    let filterCode  = url.searchParams.get("organizer_code") || null;
+    let maxEventsOverride: number | null = null;
+
+    try {
+      const body = await req.json();
+      if (body?.organizer_code && !filterCode) filterCode = String(body.organizer_code);
+      if (body?.max_events) maxEventsOverride = Number(body.max_events);
+    } catch { /* body is empty or not JSON — that's fine */ }
+
+    const maxEventsPerOrg = maxEventsOverride ?? MAX_EVENTS_PER_ORGANIZER;
 
     console.log("🚀 Nature Explorers — syncOrganizerEvents starting...");
     if (filterCode) console.log(`   Scoped to organizer_code: ${filterCode}`);
+    if (maxEventsOverride) console.log(`   Max events per organizer: ${maxEventsOverride}`);
 
     // ── 1. Load organizers that have a website ────────────────────────────────
     const allOrganizers = await base44.asServiceRole.entities.Organizer.filter({});
@@ -701,7 +710,8 @@ Deno.serve(async (req) => {
         organizers[i],
         existingByEventUrl,
         existingByExternalLink,
-        existingByTitle
+        existingByTitle,
+        maxEventsPerOrg
       );
       totals.created  += r.created;
       totals.updated  += r.updated;
