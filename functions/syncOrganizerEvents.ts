@@ -449,6 +449,10 @@ Auto-tag rules:
 ━━━ SOLD OUT ━━━
 Set is_sold_out: true if you see "Sold Out", "Εξαντλήθηκαν", or a disabled booking button.
 
+━━━ IS EVENT ━━━
+Set is_event: true if this page is a real hiking/outdoor trip or event with a specific date and destination.
+Set is_event: false if this page is a gift card, merchandise (clothing, gear), subscription, or any non-event product.
+
 HTML content (first 60,000 chars):
 ${html.substring(0, 60_000)}`,
     response_json_schema: {
@@ -501,8 +505,12 @@ ${html.substring(0, 60_000)}`,
           },
         },
         is_sold_out: { type: "boolean" },
+        is_event: {
+          type: "boolean",
+          description: "True if this page is a real hiking/outdoor event or trip. False if it is a gift card, merchandise, service, or any non-event product.",
+        },
       },
-      required: ["title", "start_date", "location", "difficulty"],
+      required: ["title", "start_date", "location", "difficulty", "is_event"],
     },
     add_context_from_internet: false,
   });
@@ -585,6 +593,12 @@ async function processOrganizer(
 
       if (!extracted?.title || !extracted?.start_date) {
         console.warn(`   ⚠️  Incomplete data, skipping: ${eventUrl}`);
+        result.skipped++;
+        continue;
+      }
+
+      if (extracted.is_event === false) {
+        console.log(`   ⏭️  Not an event (gift card / merchandise?), skipping: "${extracted.title}"`);
         result.skipped++;
         continue;
       }
