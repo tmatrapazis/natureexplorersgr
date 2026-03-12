@@ -197,11 +197,17 @@ function computeDiff(
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Given an organizer's website URL (which is typically their homepage),
- * this function first tries to extract event URLs directly from that page.
- * If none are found, it asks the AI to locate the events/program listing page,
- * then extracts URLs from there.
- * This handles both cases: website = homepage, or website = events page.
+ * Given an organizer's website URL (homepage or listing page), discovers all
+ * individual event URLs.
+ *
+ * Strategy:
+ *  1. Fetch the given URL.
+ *  2. Ask the AI whether this is a listing page or a homepage, and to find
+ *     the listing page URL if it's a homepage.
+ *  3. If a listing URL is found → navigate there first, then extract event URLs.
+ *     This avoids picking up stale/dead links that may appear on homepages.
+ *  4. If no listing URL found but the current page IS the listing page → extract
+ *     event URLs directly from it.
  */
 async function discoverEventUrls(
   base44: any,
@@ -214,57 +220,74 @@ async function discoverEventUrls(
     prompt: `You are analyzing a Greek hiking/outdoor activity organizer's website.
 Website URL: ${websiteUrl}
 
-Your task — two in one:
-1. If this page directly LISTS hiking events/trips (product cards, event items), extract all individual event URLs.
-2. If this page is a homepage or other non-listing page, find the URL that leads to the events or program listing page.
-   Events listing pages are typically at paths like: /programma/, /events/, /ekdromees/, /trips/, /activities/, /schedule/
+Determine whether this page is the events/trips LISTING page, or a homepage/other page.
+
+An events listing page shows multiple event/trip cards or items side-by-side. Signs:
+- Multiple products or event cards displayed in a grid or list
+- Each card has a title, date, image, and a "Read more" / "Book" button
+- URL typically contains: /programma/, /events/, /ekdromees/, /trips/, /activities/, /schedule/, /shop/
+
+A homepage has navigation menus, hero banners, "About us", and may show a few featured events
+but does NOT show the full events catalog.
+
+Task:
+1. Decide: is_listing_page = true or false
+2. If this IS the listing page → extract all individual event/product URLs from it
+3. If this is NOT the listing page → find the URL of the events listing page
 
 Rules for event URLs:
-- They must be absolute URLs starting with https://
-- They must belong to the domain: ${domain}
-- They must point to specific events (not category pages or the homepage)
-- Common patterns: /product/..., /event/..., /trip/..., /ekdromh/..., /listing/...
-
-If you find event URLs directly on this page, return them in event_urls.
-If this is a homepage and you can see a link to the events listing page, return it in events_listing_url.
-If neither, return empty arrays/null.
+- Must be absolute URLs starting with https://
+- Must belong to the domain: ${domain}
+- Must point to a SPECIFIC event/product page (not a category, tag, or pagination page)
+- Common URL patterns for event pages: /product/..., /trip/..., /ekdromh/..., /activity/...
+- DO NOT include old or archived event URLs — prefer currently visible links
 
 HTML content (first 50,000 chars):
 ${html.substring(0, 50_000)}`,
     response_json_schema: {
       type: "object",
       properties: {
+        is_listing_page: {
+          type: "boolean",
+          description: "True if this page shows the full events/trips listing",
+        },
         event_urls: {
           type: "array",
           items: { type: "string" },
-          description: "Absolute event detail page URLs found directly on this page",
+          description: "Individual event URLs — only populate if is_listing_page is true",
         },
         events_listing_url: {
           type: "string",
-          description: "URL of the events/program listing page (if this is a homepage). Null if not found or if this IS the listing page.",
+          description: "URL of the events listing page — only populate if is_listing_page is false",
         },
       },
-      required: ["event_urls"],
+      required: ["is_listing_page", "event_urls"],
     },
     add_context_from_internet: false,
   });
 
-  // Filter discovered event URLs to the same domain
-  let eventUrls: string[] = (discovery.event_urls || []).filter(
-    (url: string) =>
-      typeof url === "string" &&
-      url.startsWith("https://") &&
-      url.includes(domain)
-  );
+  const isListingPage = Boolean(discovery.is_listing_page);
 
-  // If we got event URLs directly from this page, we're done
-  if (eventUrls.length > 0) {
-    return eventUrls;
+  // ── Case 1: The URL we fetched IS the listing page ────────────────────────
+  if (isListingPage) {
+    const eventUrls: string[] = (discovery.event_urls || []).filter(
+      (url: string) =>
+        typeof url === "string" &&
+        url.startsWith("https://") &&
+        url.includes(domain)
+    );
+    if (eventUrls.length > 0) {
+      return eventUrls;
+    }
+    // AI said it's a listing page but returned no URLs — fall through to try listing URL
   }
 
-  // Otherwise, try to navigate to the events listing page first
+  // ── Case 2: Navigate to the events listing page ───────────────────────────
+  // Always prefer navigating to a dedicated listing page over using
+  // whatever links the homepage happens to contain — homepage links can be
+  // stale, featured, or from old plugins (e.g. /event/ WordPress taxonomy).
   const listingUrl = discovery.events_listing_url;
-  if (typeof listingUrl === "string" && listingUrl.startsWith("http")) {
+  if (typeof listingUrl === "string" && listingUrl.startsWith("http") && listingUrl.includes(domain)) {
     console.log(`   → Navigating to events listing: ${listingUrl}`);
     await sleep(REQUEST_DELAY_MS);
 
@@ -275,10 +298,12 @@ ${html.substring(0, 50_000)}`,
       prompt: `Extract all individual event/product page URLs from this hiking events listing page.
 
 Rules:
-- Return only URLs pointing to specific events (common paths: /product/, /event/, /trip/, /listing/, /ekdromh/)
+- Return ONLY URLs that point to a specific event or product detail page
+- Common URL patterns for event pages: /product/..., /trip/..., /ekdromh/..., /activity/...
 - Return absolute URLs starting with https://
 - Only include URLs from the domain: ${listingDomain}
-- No duplicates, no navigation links, no category pages
+- No duplicates
+- No category pages, pagination pages, or general navigation links
 
 HTML content (first 50,000 chars):
 ${listingHtml.substring(0, 50_000)}`,
