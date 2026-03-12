@@ -144,18 +144,6 @@ export default function EditProfilePage() {
       console.log('🟢 [EditProfile] onSuccess triggered');
       console.log('📦 [EditProfile] Updated user data:', data);
       
-      // Track profile completion for new users
-      if (isNewUser) {
-        base44.analytics.track({
-          eventName: 'user_profile_completed',
-          properties: {
-            username: formData.username,
-            has_phone: !!formData.phone_number,
-            has_profile_picture: !!formData.profile_picture_url
-          }
-        });
-      }
-      
       setUpdateSuccess(true);
       toast.success(language === 'el' 
         ? 'Το προφίλ ενημερώθηκε με επιτυχία!' 
