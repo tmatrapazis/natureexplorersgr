@@ -170,7 +170,7 @@ export default function About() {
               size="lg"
               variant="outline"
               onClick={() => navigate(createPageUrl("CreateEvent"))}
-              className="border-white text-white hover:bg-emerald-500 text-lg px-8 py-6"
+              className="border-white text-green hover:bg-emerald-500 text-lg px-8 py-6"
             >
               {t.cta.secondaryButton}
             </Button>
