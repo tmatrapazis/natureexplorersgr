@@ -50,6 +50,9 @@ export default function PublicFooter() {
             >
               <Mail className="w-5 h-5" />
             </a>
+            <Link to="/About" className="text-sm font-medium text-muted-foreground hover:text-primary">
+              {language === 'el' ? 'Σχετικά' : 'About'}
+            </Link>
             <Link to={createPageUrl("TermsOfUse")} className="text-sm font-medium text-muted-foreground hover:text-primary">
               {language === 'el' ? 'Όροι Χρήσης' : 'Terms of Use'}
             </Link>

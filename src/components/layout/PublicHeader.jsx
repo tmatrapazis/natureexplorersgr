@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { Mountain, Calendar, Users, LogIn, LogOut, Globe, User, Compass, Menu, Home } from 'lucide-react';
+import { Mountain, Calendar, Users, LogIn, LogOut, Globe, User, Compass, Menu, Home, Info } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -70,6 +70,9 @@ export default function PublicHeader() {
             </Link>
             <Link to={createPageUrl("GreekRefuges")} className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
               {t('navigation.refuges')}
+            </Link>
+            <Link to="/About" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+              {language === 'el' ? 'Σχετικά' : 'About'}
             </Link>
           </nav>
 
@@ -146,6 +149,14 @@ export default function PublicHeader() {
                   >
                     <Home className="w-5 h-5" />
                     {t('navigation.refuges')}
+                  </Link>
+                  <Link 
+                    to="/About" 
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Info className="w-5 h-5" />
+                    {language === 'el' ? 'Σχετικά' : 'About'}
                   </Link>
 
                   <div className="border-t pt-6">
