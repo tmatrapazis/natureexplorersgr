@@ -2,6 +2,10 @@ export const aboutTranslations = {
   en: {
     title: "About Nature Explorers",
     subtitle: "Your Gateway to Greek Nature Adventures",
+    whoWeAre: {
+      title: "Who We Are",
+      description: "Nature Explorers is Greece's leading platform connecting hiking enthusiasts with verified organizers and experienced mountain guides. We're passionate about making outdoor adventures accessible to everyone while promoting safety and environmental responsibility."
+    },
     mission: {
       title: "Our Mission",
       description: "Nature Explorers connects passionate hikers with verified organizers across Greece. We believe that exploring nature should be accessible, safe, and inspiring for everyone."
@@ -9,6 +13,10 @@ export const aboutTranslations = {
     story: {
       title: "Our Story",
       description: "Founded by outdoor enthusiasts who wanted to make hiking trips easier to discover and organize, Nature Explorers has grown into Greece's premier platform for nature adventures. We bring together experienced guides, certified organizers, and adventure seekers to create unforgettable experiences in Greece's stunning landscapes."
+    },
+    whyUs: {
+      title: "Why Choose Nature Explorers",
+      description: "We're more than just a platform – we're a community dedicated to making hiking in Greece safe, accessible, and unforgettable. With verified organizers, expert guides, and a commitment to quality, we ensure every adventure meets the highest standards."
     },
     features: {
       title: "What We Offer",
@@ -61,12 +69,17 @@ export const aboutTranslations = {
     cta: {
       title: "Ready to Explore?",
       description: "Join thousands of hikers discovering Greece's natural beauty",
-      button: "Browse Trips"
+      button: "Browse Trips",
+      secondaryButton: "Organize a Trip"
     }
   },
   el: {
     title: "Σχετικά με τους Nature Explorers",
     subtitle: "Η Πύλη σας για Περιπέτειες στη Ελληνική Φύση",
+    whoWeAre: {
+      title: "Ποιοι Είμαστε",
+      description: "Οι Nature Explorers είναι η κορυφαία πλατφόρμα της Ελλάδας που συνδέει λάτρεις της πεζοπορίας με επαληθευμένους διοργανωτές και έμπειρους ορειβατικούς οδηγούς. Είμαστε παθιασμένοι με το να κάνουμε τις υπαίθριες περιπέτειες προσβάσιμες σε όλους, ενώ προάγουμε την ασφάλεια και την περιβαλλοντική ευθύνη."
+    },
     mission: {
       title: "Η Αποστολή μας",
       description: "Οι Nature Explorers συνδέουν παθιασμένους ορειβάτες με επαληθευμένους διοργανωτές σε όλη την Ελλάδα. Πιστεύουμε ότι η εξερεύνηση της φύσης πρέπει να είναι προσβάσιμη, ασφαλής και εμπνευσμένη για όλους."
@@ -74,6 +87,10 @@ export const aboutTranslations = {
     story: {
       title: "Η Ιστορία μας",
       description: "Ιδρύθηκε από λάτρεις της φύσης που ήθελαν να κάνουν τις πεζοπορίες πιο εύκολες στην ανακάλυψη και διοργάνωση, οι Nature Explorers έχουν εξελιχθεί στην κορυφαία πλατφόρμα της Ελλάδας για περιπέτειες στη φύση. Φέρνουμε κοντά έμπειρους οδηγούς, πιστοποιημένους διοργανωτές και λάτρεις της περιπέτειας για να δημιουργήσουμε αξέχαστες εμπειρίες στα εκπληκτικά τοπία της Ελλάδας."
+    },
+    whyUs: {
+      title: "Γιατί να Επιλέξετε τους Nature Explorers",
+      description: "Είμαστε περισσότερο από μια απλή πλατφόρμα – είμαστε μια κοινότητα αφοσιωμένη στο να κάνουμε την πεζοπορία στην Ελλάδα ασφαλή, προσβάσιμη και αξέχαστη. Με επαληθευμένους διοργανωτές, ειδικούς οδηγούς και δέσμευση για ποιότητα, διασφαλίζουμε ότι κάθε περιπέτεια πληροί τα υψηλότερα πρότυπα."
     },
     features: {
       title: "Τι Προσφέρουμε",
@@ -126,7 +143,8 @@ export const aboutTranslations = {
     cta: {
       title: "Έτοιμοι για Εξερεύνηση;",
       description: "Ελάτε σε χιλιάδες πεζοπόρους που ανακαλύπτουν τη φυσική ομορφιά της Ελλάδας",
-      button: "Δείτε Εκδρομές"
+      button: "Δείτε Εκδρομές",
+      secondaryButton: "Διοργανώστε Εκδρομή"
     }
   }
 };
