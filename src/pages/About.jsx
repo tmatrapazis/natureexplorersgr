@@ -95,7 +95,7 @@ export default function About() {
           <h2 className="text-3xl font-bold text-stone-900 mb-12 text-center">
             {t.features.title}
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 gap-6">
             {t.features.items.map((feature, idx) => {
               const Icon = featureIcons[idx];
               return (
