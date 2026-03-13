@@ -13,31 +13,33 @@ export default function About() {
   const navigate = useNavigate();
 
   const stats = [
-    { value: "500+", label: t.stats.trips, icon: Mountain },
-    { value: "50+", label: t.stats.organizers, icon: Users },
-    { value: "5000+", label: t.stats.hikers, icon: Heart },
-    { value: "100+", label: t.stats.mountains, icon: MapPin }
+    { value: "500+",  label: t.stats.trips,       icon: Mountain },
+    { value: "50+",   label: t.stats.organizers,  icon: Users    },
+    { value: "5000+", label: t.stats.hikers,       icon: Heart    },
+    { value: "100+",  label: t.stats.mountains,    icon: MapPin   },
   ];
 
   const featureIcons = [Shield, MapPin, Globe, Users];
-  const valueIcons = [Shield, Sprout, Users, Heart];
+  const valueIcons   = [Shield, Sprout, Users, Heart];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-stone-50">
-      {/* Hero Section */}
+
+      {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <section className="relative py-20 px-4 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/10 to-stone-600/10" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
+          {/* H1 — primary SEO heading */}
           <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-4">
             {t.title}
           </h1>
-          <p className="text-xl text-stone-600">
+          <p className="text-xl text-stone-600 max-w-2xl mx-auto">
             {t.subtitle}
           </p>
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* ── Stats ───────────────────────────────────────────────────────────── */}
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -57,7 +59,19 @@ export default function About() {
         </div>
       </section>
 
-      {/* Mission & Story */}
+      {/* ── Who We Are ──────────────────────────────────────────────────────── */}
+      <section className="py-16 px-4 bg-white/50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-stone-900 mb-4">
+            {t.whoWeAre.title}
+          </h2>
+          <p className="text-lg text-stone-700 leading-relaxed">
+            {t.whoWeAre.description}
+          </p>
+        </div>
+      </section>
+
+      {/* ── Mission & Story ─────────────────────────────────────────────────── */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto space-y-12">
           <div>
@@ -75,7 +89,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* ── What We Offer (Features) ─────────────────────────────────────────── */}
       <section className="py-16 px-4 bg-white/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-stone-900 mb-12 text-center">
@@ -100,8 +114,20 @@ export default function About() {
         </div>
       </section>
 
-      {/* Values */}
+      {/* ── Why Nature Explorers ────────────────────────────────────────────── */}
       <section className="py-16 px-4">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-stone-900 mb-4">
+            {t.whyUs.title}
+          </h2>
+          <p className="text-lg text-stone-700 leading-relaxed">
+            {t.whyUs.description}
+          </p>
+        </div>
+      </section>
+
+      {/* ── Values ──────────────────────────────────────────────────────────── */}
+      <section className="py-16 px-4 bg-white/50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-stone-900 mb-12 text-center">
             {t.values.title}
@@ -127,20 +153,31 @@ export default function About() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* ── CTA ─────────────────────────────────────────────────────────────── */}
       <section className="py-20 px-4 bg-gradient-to-r from-emerald-600 to-emerald-700">
         <div className="max-w-4xl mx-auto text-center text-white">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.cta.title}</h2>
           <p className="text-xl mb-8 text-emerald-50">{t.cta.description}</p>
-          <Button
-            size="lg"
-            onClick={() => navigate(createPageUrl('Calendar'))}
-            className="bg-white text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6"
-          >
-            {t.cta.button}
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              size="lg"
+              onClick={() => navigate(createPageUrl("Calendar"))}
+              className="bg-white text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6"
+            >
+              {t.cta.button}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => navigate(createPageUrl("CreateEvent"))}
+              className="border-white text-white hover:bg-emerald-500 text-lg px-8 py-6"
+            >
+              {t.cta.secondaryButton}
+            </Button>
+          </div>
         </div>
       </section>
+
     </div>
   );
 }
