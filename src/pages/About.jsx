@@ -166,14 +166,6 @@ export default function About() {
             >
               {t.cta.button}
             </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate(createPageUrl("CreateEvent"))}
-              className="border-white text-green hover:bg-emerald-500 text-lg px-8 py-6"
-            >
-              {t.cta.secondaryButton}
-            </Button>
           </div>
         </div>
       </section>
