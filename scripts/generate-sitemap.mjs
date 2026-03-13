@@ -20,6 +20,7 @@ const STATIC_ROUTES = [
   { loc: '/Calendar', priority: 0.9, changefreq: 'daily' },
   { loc: '/Guides', priority: 0.8, changefreq: 'weekly' },
   { loc: '/OrganizersList', priority: 0.8, changefreq: 'weekly' },
+  { loc: '/About', priority: 0.8, changefreq: 'monthly' },
   { loc: '/GreekRefuges', priority: 0.7, changefreq: 'monthly' },
   { loc: '/PrivacyPolicy', priority: 0.6, changefreq: 'yearly' },
   { loc: '/CookiePolicy', priority: 0.6, changefreq: 'yearly' },
