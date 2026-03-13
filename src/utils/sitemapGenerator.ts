@@ -42,6 +42,12 @@ const STATIC_ROUTES: SitemapEntry[] = [
     priority: 0.8,
   },
   {
+    loc: `${BASE_URL}/About`,
+    lastmod: new Date().toISOString().split('T')[0],
+    changefreq: 'monthly',
+    priority: 0.8,
+  },
+  {
     loc: `${BASE_URL}/GreekRefuges`,
     lastmod: new Date().toISOString().split('T')[0],
     changefreq: 'monthly',
