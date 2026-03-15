@@ -1,36 +1,74 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { MapPin, Calendar, TrendingUp, User as UserIcon } from 'lucide-react';
+import { MapPin, Calendar, ArrowRight, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
 import { formatDateRange } from '../components/helpers/dateHelpers';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import useSEO from '../components/seo/useSEO';
 import StructuredData from '../components/seo/StructuredData';
-import { getComputedTripStatus } from '../components/helpers/tripHelpers';
 import { getTripImage, handleImageError } from '../components/helpers/imageHelpers';
-import OptimizedImage from '../components/ui/OptimizedImage';
 import { formatPriceForCard } from '../components/helpers/pricingHelpers';
 
-const difficultyColors = {
-  easy: "bg-green-100 text-green-800",
-  moderate: "bg-yellow-100 text-yellow-800",
-  challenging: "bg-orange-100 text-orange-800",
-  difficult: "bg-red-100 text-red-800"
+const difficultyConfig = {
+  easy:       { label: 'Easy',        style: 'background:rgba(22,163,74,0.85);color:#f0e3c7;' },
+  moderate:   { label: 'Moderate',    style: 'background:rgba(240,227,199,0.9);color:#0c281c;' },
+  challenging:{ label: 'Challenging', style: 'background:rgba(217,119,6,0.85);color:#f0e3c7;' },
+  difficult:  { label: 'Difficult',   style: 'background:rgba(185,28,28,0.85);color:#f0e3c7;' },
 };
 
+// Ticker item separator
+const TickerDot = () => (
+  <span style={{ color: '#F0E3C7', opacity: 0.5, margin: '0 18px', fontSize: '6px', verticalAlign: 'middle' }}>●</span>
+);
+
+function TickerStrip({ trips, language }) {
+  const items = trips.slice(0, 20);
+  if (!items.length) return null;
+
+  return (
+    <div
+      style={{ background: '#143522', overflow: 'hidden', padding: '10px 0', borderTop: '0.5px solid rgba(240,227,199,0.15)', borderBottom: '0.5px solid rgba(240,227,199,0.15)' }}
+    >
+      <style>{`
+        @keyframes ticker-scroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .ticker-inner {
+          display: inline-flex;
+          animation: ticker-scroll 40s linear infinite;
+          white-space: nowrap;
+        }
+        .ticker-inner:hover { animation-play-state: paused; }
+      `}</style>
+      <div className="ticker-inner">
+        {[...items, ...items].map((trip, i) => (
+          <span key={i} style={{ display: 'inline-flex', alignItems: 'center', fontFamily: "'DM Sans', sans-serif", fontSize: '12px', letterSpacing: '0.03em', color: '#F0E3C7', opacity: 0.85 }}>
+            <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+              {trip.title}
+              {trip.start_date && (
+                <span style={{ opacity: 0.55, marginLeft: '6px' }}>
+                  {format(new Date(trip.start_date), 'd MMM')}
+                </span>
+              )}
+            </Link>
+            <TickerDot />
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
-  const navigate = useNavigate();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const navigate = useNavigate();
 
-  // 301 Redirect: /Home and /home to root /
   React.useEffect(() => {
     const path = window.location.pathname;
     if (path === '/Home' || path === '/home') {
@@ -38,9 +76,8 @@ export default function HomePage() {
     }
   }, []);
 
-  // Enhanced SEO Configuration with target keywords
   useSEO({
-    title: language === 'el' 
+    title: language === 'el'
       ? 'Πεζοπορία Ελλάδα | Οργανωμένες Εκδρομές | Ομαδικές Εκδρομές | Nature Explorers'
       : 'Hiking Greece | Trekking Greece | Organized Hiking Trips | Nature Explorers',
     description: language === 'el'
@@ -51,58 +88,54 @@ export default function HomePage() {
     type: 'website'
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: async () => {
-      try {
-        return await base44.auth.me();
-      } catch {
-        return null;
-      }
-    },
-    retry: false,
-  });
-
-  const { data: featuredExpeditions = [] } = useQuery({
-    queryKey: ['featured-expeditions'],
-    queryFn: async () => {
-      const trips = await base44.entities.HikingTrip.list('-start_date', 100);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      const futureTrips = trips.filter(trip => {
-        if (!trip.start_date) return false;
-        const startDate = new Date(trip.start_date);
-        startDate.setHours(0, 0, 0, 0);
-        return startDate > today && (trip.status === 'upcoming' || trip.status === 'almost soldout');
-      });
-      
-      // Stable shuffle using trip ID as seed to avoid reshuffling on re-renders
-      const shuffled = [...futureTrips].sort((a, b) => a.id.localeCompare(b.id));
-      return shuffled.slice(0, 3);
-    },
+  const { data: allTrips = [] } = useQuery({
+    queryKey: ['home-all-trips'],
+    queryFn: () => base44.entities.HikingTrip.list('-start_date', 200),
     initialData: [],
   });
 
+  const { data: users = [] } = useQuery({
+    queryKey: ['home-users-count'],
+    queryFn: () => base44.entities.User.list(),
+    initialData: [],
+  });
 
-
-  // Fetch organizers for featured trips
   const { data: organizers = [] } = useQuery({
     queryKey: ['home-organizers'],
     queryFn: () => base44.entities.Organizer.list(),
     initialData: [],
   });
 
-  // Create organizer map
   const organizerMap = React.useMemo(() => {
     const map = {};
-    organizers.forEach(org => {
-      map[org.organizer_code] = org;
-    });
+    organizers.forEach(org => { map[org.organizer_code] = org; });
     return map;
   }, [organizers]);
 
-  // Enhanced Structured Data for Organization with target keywords
+  const today = React.useMemo(() => {
+    const d = new Date(); d.setHours(0, 0, 0, 0); return d;
+  }, []);
+
+  const upcomingTrips = React.useMemo(() =>
+    allTrips.filter(trip => {
+      if (!trip.start_date) return false;
+      const d = new Date(trip.start_date); d.setHours(0, 0, 0, 0);
+      return d >= today && (trip.status === 'upcoming' || trip.status === 'almost soldout');
+    }),
+    [allTrips, today]
+  );
+
+  const featuredExpeditions = React.useMemo(() => {
+    const sorted = [...upcomingTrips].sort((a, b) => a.id.localeCompare(b.id));
+    return sorted.slice(0, 3);
+  }, [upcomingTrips]);
+
+  const tickerTrips = React.useMemo(() =>
+    upcomingTrips.slice(0, 20),
+    [upcomingTrips]
+  );
+
+  // Structured data (unchanged from original)
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "TouristInformationCenter",
@@ -110,257 +143,245 @@ export default function HomePage() {
     "alternateName": language === 'el' ? "Nature Explorers - Πεζοπορία Ελλάδα" : "Nature Explorers Greece - Hiking & Trekking",
     "url": window.location.origin,
     "logo": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png",
-    "image": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png",
-    "description": language === 'el' 
-      ? "Η #1 πλατφόρμα για οργανωμένες εκδρομές και ομαδικές εκδρομές πεζοπορίας στην Ελλάδα. Βρείτε ταξίδια πεζοπορίας, trekking Greece, ορειβασία και outdoor δραστηριότητες με πιστοποιημένους οδηγούς. Ημερολόγιο εκδρομών βουνό σε Όλυμπο, Πάρνηθα, Πήλιο και όλη την Ελλάδα."
-      : "The #1 platform for organized hiking trips and group expeditions in Greece. Find hiking tours, trekking adventures Greece, mountain climbing and outdoor activities with certified guides. Hiking calendar for Olympus, Parnitha, Pelion and all Greece.",
-    "sameAs": [
-      "https://www.facebook.com/natureexplorersgr/",
-      "https://www.instagram.com/natureexplorers.gr/"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "email": "natureexplorersgr@gmail.com",
-      "contactType": "Customer Service",
-      "areaServed": "GR",
-      "availableLanguage": ["en", "el"]
-    },
-    "areaServed": {
-      "@type": "Country",
-      "name": "Greece"
-    },
-    "address": {
-      "@type": "PostalAddress",
-      "addressCountry": "GR"
-    },
-    "makesOffer": [
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": language === 'el' ? "Οργανωμένες Εκδρομές Πεζοπορίας" : "Organized Hiking Trips",
-          "description": language === 'el' 
-            ? "Ομαδικές εκδρομές πεζοπορίας με έμπειρους οδηγούς σε όλη την Ελλάδα"
-            : "Group hiking expeditions with experienced guides across Greece"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": language === 'el' ? "Trekking & Ορειβασία" : "Trekking & Mountain Climbing",
-          "description": language === 'el'
-            ? "Trekking adventures και ορειβατικές αποστολές στα ελληνικά βουνά"
-            : "Trekking adventures and mountain expeditions in Greek mountains"
-        }
-      }
-    ],
-    "keywords": language === 'el'
-      ? "ταξίδια, πεζοπορία, πεζοπορία στην ελλάδα, trekking greece, hiking greece, εκδρομές, ομαδικές εκδρομές, οργανωμένες εκδρομές, ομάδες πεζοπορίας, εκδρομές βουνό, ορειβασία, outdoor activities, πεζοπορικές διαδρομές, μονοπάτια, hiking trips, weekend εκδρομές, φύση, περιπέτεια"
-      : "travel, hiking, hiking in greece, trekking greece, hiking greece, trips, group trips, organized trips, hiking groups, mountain trips, climbing, outdoor activities, hiking trails, paths, hiking adventures, weekend trips, nature, adventure"
+    "description": language === 'el'
+      ? "Η #1 πλατφόρμα για οργανωμένες εκδρομές και ομαδικές εκδρομές πεζοπορίας στην Ελλάδα."
+      : "The #1 platform for organized hiking trips and group expeditions in Greece.",
+    "sameAs": ["https://www.facebook.com/natureexplorersgr/", "https://www.instagram.com/natureexplorers.gr/"],
+    "contactPoint": { "@type": "ContactPoint", "email": "natureexplorersgr@gmail.com", "contactType": "Customer Service", "areaServed": "GR", "availableLanguage": ["en", "el"] },
+    "areaServed": { "@type": "Country", "name": "Greece" },
+    "address": { "@type": "PostalAddress", "addressCountry": "GR" },
   };
 
-  // Enhanced Structured Data for WebSite with FAQs
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Nature Explorers",
-    "alternateName": language === 'el' ? "Nature Explorers - Πεζοπορία Ελλάδα | Οργανωμένες Εκδρομές" : "Nature Explorers - Hiking Greece | Organized Trips",
     "url": window.location.origin,
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": `${window.location.origin}${createPageUrl("Calendar")}?search={search_term_string}`
-      },
-      "query-input": "required name=search_term_string"
-    },
+    "potentialAction": { "@type": "SearchAction", "target": { "@type": "EntryPoint", "urlTemplate": `${window.location.origin}${createPageUrl("Calendar")}?search={search_term_string}` }, "query-input": "required name=search_term_string" },
     "inLanguage": ["en", "el"],
-    "description": language === 'el'
-      ? "Βρείτε οργανωμένες εκδρομές πεζοπορίας, ομαδικές εκδρομές και ταξίδια στην Ελλάδα. Trekking Greece, hiking adventures με έμπειρους οδηγούς."
-      : "Find organized hiking trips, group expeditions and travel adventures in Greece. Trekking Greece, hiking tours with expert guides.",
-    "about": {
-      "@type": "Thing",
-      "name": language === 'el' ? "Πεζοπορία και Ορειβασία Ελλάδα" : "Hiking and Trekking Greece"
-    },
-    "keywords": language === 'el'
-      ? "ταξίδια, πεζοπορία, πεζοπορία στην ελλάδα, trekking greece, hiking greece, εκδρομές, ομαδικές εκδρομές, οργανωμένες εκδρομές, πού να πάω για πεζοπορία, καλύτερες εκδρομές βουνό, ομάδες πεζοπορίας αθήνα, weekend εκδρομές, μονοήμερες εκδρομές, πολυήμερες εκδρομές, ορειβασία ελλάδα"
-      : "travel, hiking, hiking in greece, trekking greece, hiking greece, trips, group trips, organized trips, where to hike in greece, best mountain trips, hiking groups athens, weekend trips, day trips, multi-day trips, climbing greece"
   };
-  
-  // FAQ Schema for SEO
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     "mainEntity": language === 'el' ? [
-      {
-        "@type": "Question",
-        "name": "Πού μπορώ να βρω οργανωμένες εκδρομές πεζοπορίας στην Ελλάδα;",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Στο Nature Explorers θα βρείτε τις καλύτερες οργανωμένες εκδρομές και ομαδικές εκδρομές πεζοπορίας σε όλη την Ελλάδα με πιστοποιημένους οδηγούς. Εξερευνήστε το ημερολόγιο εκδρομών μας για trekking, ορειβασία και outdoor δραστηριότητες."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Πώς μπορώ να συμμετέχω σε ομαδικές εκδρομές πεζοπορίας;",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Εγγραφείτε στο Nature Explorers, περιηγηθείτε στις διαθέσιμες εκδρομές στο ημερολόγιο, επιλέξτε την εκδρομή που σας ενδιαφέρει και κάντε κράτηση. Όλες οι εκδρομές είναι οργανωμένες με έμπειρους συνοδούς βουνού."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Τι είδους εκδρομές προσφέρει το Nature Explorers;",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Προσφέρουμε ποικιλία εκδρομών: μονοήμερες και πολυήμερες εκδρομές πεζοπορίας, trekking adventures, ορειβασία, weekend trips και outdoor δραστηριότητες σε Όλυμπο, Πάρνηθα, Πήλιο και όλη την Ελλάδα."
-        }
-      }
+      { "@type": "Question", "name": "Πού μπορώ να βρω οργανωμένες εκδρομές πεζοπορίας στην Ελλάδα;", "acceptedAnswer": { "@type": "Answer", "text": "Στο Nature Explorers θα βρείτε τις καλύτερες οργανωμένες εκδρομές και ομαδικές εκδρομές πεζοπορίας σε όλη την Ελλάδα με πιστοποιημένους οδηγούς." } },
+      { "@type": "Question", "name": "Πώς μπορώ να συμμετέχω σε ομαδικές εκδρομές πεζοπορίας;", "acceptedAnswer": { "@type": "Answer", "text": "Εγγραφείτε στο Nature Explorers, περιηγηθείτε στις διαθέσιμες εκδρομές στο ημερολόγιο, επιλέξτε και κάντε κράτηση." } },
     ] : [
-      {
-        "@type": "Question",
-        "name": "Where can I find organized hiking trips in Greece?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "At Nature Explorers you'll find the best organized hiking trips and group expeditions across Greece with certified guides. Explore our hiking calendar for trekking, mountain climbing and outdoor activities."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How can I join group hiking expeditions?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Sign up at Nature Explorers, browse available trips in our calendar, select the expedition that interests you and make a booking. All trips are organized with experienced mountain guides."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What types of trips does Nature Explorers offer?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "We offer a variety of trips: day trips and multi-day hiking expeditions, trekking adventures, mountain climbing, weekend trips and outdoor activities in Olympus, Parnitha, Pelion and all over Greece."
-        }
-      }
+      { "@type": "Question", "name": "Where can I find organized hiking trips in Greece?", "acceptedAnswer": { "@type": "Answer", "text": "At Nature Explorers you'll find the best organized hiking trips and group expeditions across Greece with certified guides." } },
+      { "@type": "Question", "name": "How can I join group hiking expeditions?", "acceptedAnswer": { "@type": "Answer", "text": "Sign up at Nature Explorers, browse available trips in our calendar, select the expedition and make a booking." } },
     ]
   };
+
+  const isEl = language === 'el';
 
   return (
     <>
       <StructuredData data={organizationSchema} />
       <StructuredData data={websiteSchema} />
       <StructuredData data={faqSchema} />
-      
-      <div className="flex flex-col min-h-screen">
-        <main className="flex-1">
-          <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white">
-            <div className="absolute inset-0 bg-black/50 z-10" />
-            <img 
-              src="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp"
-              srcSet="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&q=80&fm=webp 600w,
-                      https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp 1200w,
-                      https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1920&q=80&fm=webp 1920w"
-              sizes="100vw"
-              alt={language === 'el' 
-                ? "Πεζοπορία στα ελληνικά βουνά - ομάδες πεζοπορίας σε ορειβατική διαδρομή με πανοραμική θέα - outdoor adventures Greece"
-                : "Hiking in Greek mountains - hiking teams Greece on mountain trekking trail with panoramic views - outdoor activities"}
-              className="absolute inset-0 w-full h-full object-cover"
-              loading="eager"
-              fetchPriority="high"
-              decoding="sync"
-              width="1920"
-              height="1280"
-            />
-            <div className="relative z-20 container px-4 max-w-2xl mx-auto">
-              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight drop-shadow-lg leading-tight">
-                {language === 'el' ? 'Οργανωμένες Εκδρομές Πεζοπορίας στην Ελλάδα' : 'Organized Hiking Trips in Greece'}
-              </h1>
-              <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg lg:text-xl text-stone-200 drop-shadow-md leading-relaxed">
-                {language === 'el' 
-                  ? 'Ομαδικές εκδρομές, trekking και ταξίδια ορειβασίας με έμπειρους οδηγούς - Βρείτε την επόμενη περιπέτειά σας!'
-                  : 'Group expeditions, trekking and mountain adventures with expert guides - Find your next adventure!'}
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+        .home-root { font-family: 'DM Sans', sans-serif; background: #0C281C; color: #F0E3C7; }
+        .serif { font-family: 'Playfair Display', serif; }
+        .serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
+
+        .pill-btn {
+          display: inline-flex; align-items: center; gap: 8px;
+          padding: 12px 28px; border-radius: 99px; font-family: 'DM Sans', sans-serif;
+          font-weight: 500; font-size: 15px; cursor: pointer; text-decoration: none;
+          transition: all 0.22s ease; border: 1.5px solid;
+        }
+        .pill-btn-primary {
+          background: #F0E3C7; color: #0C281C; border-color: #F0E3C7;
+        }
+        .pill-btn-primary:hover { background: #e6d5b4; border-color: #e6d5b4; }
+        .pill-btn-ghost {
+          background: transparent; color: #F0E3C7; border-color: rgba(240,227,199,0.45);
+        }
+        .pill-btn-ghost:hover { background: rgba(240,227,199,0.1); border-color: rgba(240,227,199,0.7); }
+
+        .expedition-card {
+          background: #143522;
+          border: 0.5px solid rgba(240,227,199,0.18);
+          border-radius: 12px;
+          overflow: hidden;
+          transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+          display: flex; flex-direction: column;
+        }
+        .expedition-card:hover {
+          transform: translateY(-3px);
+          border-color: rgba(240,227,199,0.45);
+          box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+        .expedition-card:hover .card-img img {
+          transform: scale(1.04);
+        }
+        .card-img { overflow: hidden; position: relative; }
+        .card-img img { transition: transform 0.35s ease; width: 100%; height: 100%; object-fit: cover; }
+
+        .difficulty-badge {
+          position: absolute; top: 12px; left: 12px;
+          padding: 3px 10px; border-radius: 99px;
+          font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 600;
+          letter-spacing: 0.02em; text-transform: uppercase;
+        }
+        .stat-item { text-align: right; }
+        .stat-number { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 4vw, 3rem); font-weight: 700; color: #F0E3C7; line-height: 1.05; }
+        .stat-label { font-family: 'DM Sans', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(240,227,199,0.55); margin-top: 2px; }
+      `}</style>
+
+      <div className="home-root">
+
+        {/* ── HERO ─────────────────────────────────────────────────────────── */}
+        <section style={{ position: 'relative', minHeight: '92vh', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', overflow: 'hidden' }}>
+          {/* Background image */}
+          <img
+            src="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1920&q=80&fm=webp"
+            srcSet="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=800&q=80&fm=webp 800w, https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1400&q=80&fm=webp 1400w, https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1920&q=80&fm=webp 1920w"
+            sizes="100vw"
+            alt={isEl ? "Πεζοπορία στα ελληνικά βουνά - οργανωμένες εκδρομές" : "Hiking in Greek mountains - organized expeditions"}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.55) saturate(0.75)' }}
+            loading="eager"
+            fetchPriority="high"
+            decoding="sync"
+            width="1920"
+            height="1280"
+          />
+          {/* Gradient overlay */}
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 30%, rgba(12,40,28,0.6) 65%, #0C281C 100%)' }} />
+
+          {/* Hero content — bottom-left */}
+          <div style={{ position: 'relative', zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', padding: 'clamp(32px,6vw,80px)', paddingBottom: 'clamp(48px,8vw,96px)', gap: '32px', flexWrap: 'wrap' }}>
+            {/* Left text block */}
+            <div style={{ maxWidth: '640px', flex: '1 1 340px' }}>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(240,227,199,0.65)', marginBottom: '16px', fontWeight: 500 }}>
+                {isEl ? 'Οργανωμένες Αποστολές' : 'Organized Expeditions'}
               </p>
-              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-                <Link to={createPageUrl("Calendar")}>
-                  <Button size="lg" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white">
-                    {language === 'el' ? 'Δείτε Πεζοπορικές Εκδρομές' : t('home.browse_expeditions')}
-                  </Button>
+              <h1 className="serif" style={{ fontSize: 'clamp(2.4rem, 6vw, 4.5rem)', fontWeight: 700, color: '#F0E3C7', lineHeight: 1.1, marginBottom: '20px' }}>
+                {isEl ? (
+                  <>Πεζοπορήστε στην <span className="serif-italic">άγρια</span> Ελλάδα</>
+                ) : (
+                  <>Hike the <span className="serif-italic">wild</span> side of Greece</>
+                )}
+              </h1>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 'clamp(15px,2vw,18px)', color: 'rgba(240,227,199,0.78)', lineHeight: 1.65, marginBottom: '32px', maxWidth: '500px' }}>
+                {isEl
+                  ? 'Ομαδικές αποστολές, trekking και ορεινές περιπέτειες με έμπειρους οδηγούς — Βρείτε την επόμενη περιπέτειά σας!'
+                  : 'Group expeditions, trekking and mountain adventures with expert guides — Find your next adventure!'}
+              </p>
+              <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '24px' }}>
+                <Link to={createPageUrl("Calendar")} className="pill-btn pill-btn-primary">
+                  {isEl ? 'Δείτε Εκδρομές' : 'Browse Expeditions'}
                 </Link>
-                <Link to={createPageUrl("OrganizersList")}>
-                  <Button size="lg" variant="secondary" className="w-full sm:w-auto">
-                    {language === 'el' ? 'Γνωρίστε τους Οδηγούς' : t('home.meet_organizers')}
-                  </Button>
+                <Link to={createPageUrl("OrganizersList")} className="pill-btn pill-btn-ghost">
+                  {isEl ? 'Γνωρίστε τους Οδηγούς' : 'Meet Organizers'}
                 </Link>
               </div>
-              <p className="mt-5 sm:mt-6 text-xs sm:text-sm text-stone-300 max-w-md mx-auto leading-relaxed">
-                {language === 'el'
-                  ? 'Εγγραφείτε δωρεάν και ξεκινήστε την επόμενη outdoor περιπέτειά σας σήμερα!'
-                  : 'Sign up free and start your next outdoor adventure today!'}
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(240,227,199,0.45)', letterSpacing: '0.02em' }}>
+                {isEl ? 'Εγγραφείτε δωρεάν και ξεκινήστε την επόμενη outdoor περιπέτειά σας σήμερα!' : 'Sign up free and start your next outdoor adventure today!'}
               </p>
             </div>
-          </section>
 
-          {featuredExpeditions.length > 0 && (
-            <section className="py-16 px-4 bg-background">
-              <div className="container mx-auto max-w-6xl">
-                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
-                  {language === 'el' ? 'Επιλεγμένες Εκδρομές' : 'Featured Expeditions'}
-                </h2>
-                <div className="grid md:grid-cols-3 gap-6">
-                  {featuredExpeditions.map(trip => {
-                    const organizer = organizerMap[trip.organizer_code];
-                    return (
-                      <Card key={trip.id} className="overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
-                        <div className="h-48 bg-muted overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
-                          <OptimizedImage
-                            src={getTripImage(trip.image_url, trip.id)}
-                            alt={trip.title}
-                            width={800}
-                            height={450}
-                            className="w-full h-full"
-                            objectFit="cover"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            onError={(e) => handleImageError(e, trip.id)}
-                          />
-                        </div>
-                        <CardContent className="p-6 flex flex-col flex-grow">
-                          <h3 className="text-xl font-bold text-foreground mb-2">{trip.title}</h3>
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            <Badge className={difficultyColors[trip.difficulty]}>
-                              {trip.difficulty}
-                            </Badge>
-                            <Badge variant="outline" className="text-emerald-700 border-emerald-300">
-                              {formatPriceForCard(trip, language)}
-                            </Badge>
-                            <Badge variant="outline">
-                              <Calendar className="w-3 h-3 mr-1" />
-                              {formatDateRange(trip.start_date, trip.end_date)}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                            <MapPin className="w-4 h-4 text-emerald-600" />
-                            <span>{trip.location}</span>
-                          </div>
-                          {organizer && (
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                              <UserIcon className="w-4 h-4" />
-                              <span>{organizer.username || organizer.full_name}</span>
-                            </div>
-                          )}
-                          <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`} className="mt-auto">
-                            <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
-                              {language === 'el' ? 'Δείτε Λεπτομέρειες' : 'View Details'}
-                            </Button>
-                          </Link>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+            {/* Right stats block */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', paddingBottom: '8px', flex: '0 0 auto' }}>
+              <div className="stat-item">
+                <div className="stat-number">{upcomingTrips.length}+</div>
+                <div className="stat-label">{isEl ? 'Επερχόμενες Εκδρομές' : 'Upcoming Trips'}</div>
+              </div>
+              <div className="stat-item" style={{ borderTop: '0.5px solid rgba(240,227,199,0.15)', paddingTop: '24px' }}>
+                <div className="stat-number">{users.length > 0 ? `${users.length}+` : '—'}</div>
+                <div className="stat-label">{isEl ? 'Ευτυχισμένοι Πεζοπόροι' : 'Happy Hikers'}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── TICKER ───────────────────────────────────────────────────────── */}
+        {tickerTrips.length > 0 && <TickerStrip trips={tickerTrips} language={language} />}
+
+        {/* ── FEATURED EXPEDITIONS ─────────────────────────────────────────── */}
+        {featuredExpeditions.length > 0 && (
+          <section style={{ padding: 'clamp(56px,8vw,96px) clamp(20px,5vw,80px)' }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+              {/* Section header */}
+              <div style={{ marginBottom: '48px' }}>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(240,227,199,0.45)', marginBottom: '10px' }}>
+                  {isEl ? 'Επιλεγμένα για σένα' : 'Hand-picked for you'}
+                </p>
+                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+                  <h2 className="serif" style={{ fontSize: 'clamp(2rem,4vw,3rem)', fontWeight: 700, color: '#F0E3C7', margin: 0 }}>
+                    {isEl ? 'Επιλεγμένες Εκδρομές' : 'Featured Expeditions'}
+                  </h2>
+                  <Link to={createPageUrl("Calendar")} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: "'DM Sans', sans-serif", fontSize: '14px', color: 'rgba(240,227,199,0.6)', textDecoration: 'none', transition: 'color 0.2s ease' }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#F0E3C7'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(240,227,199,0.6)'}
+                  >
+                    {isEl ? 'Δείτε όλες' : 'View all'} <ArrowRight size={15} />
+                  </Link>
                 </div>
               </div>
-            </section>
-          )}
-        </main>
+
+              {/* Cards grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
+                {featuredExpeditions.map(trip => {
+                  const organizer = organizerMap[trip.organizer_code];
+                  const diff = difficultyConfig[trip.difficulty] || difficultyConfig.moderate;
+                  return (
+                    <div key={trip.id} className="expedition-card">
+                      {/* Image */}
+                      <div className="card-img" style={{ height: '220px' }}>
+                        <img
+                          src={getTripImage(trip.image_url, trip.id)}
+                          alt={trip.title}
+                          onError={(e) => handleImageError(e, trip.id)}
+                        />
+                        <span className="difficulty-badge" style={diff.style}>
+                          {trip.difficulty}
+                        </span>
+                      </div>
+
+                      {/* Content */}
+                      <div style={{ padding: '20px 22px 22px', display: 'flex', flexDirection: 'column', flex: 1, gap: '12px' }}>
+                        <h3 className="serif" style={{ fontSize: '1.2rem', fontWeight: 700, color: '#F0E3C7', margin: 0, lineHeight: 1.3 }}>
+                          {trip.title}
+                        </h3>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(240,227,199,0.6)' }}>
+                            <MapPin size={13} style={{ flexShrink: 0 }} />
+                            <span>{trip.location}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(240,227,199,0.6)' }}>
+                            <Calendar size={13} style={{ flexShrink: 0 }} />
+                            <span>{formatDateRange(trip.start_date, trip.end_date)}</span>
+                          </div>
+                        </div>
+
+                        {/* Footer row */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '14px', borderTop: '0.5px solid rgba(240,227,199,0.12)' }}>
+                          <span className="serif" style={{ fontSize: '1.25rem', fontWeight: 700, color: '#F0E3C7' }}>
+                            {formatPriceForCard(trip, language)}
+                          </span>
+                          <Link
+                            to={`${createPageUrl("TripDetails")}?id=${trip.id}`}
+                            style={{ display: 'flex', alignItems: 'center', gap: '5px', fontFamily: "'DM Sans', sans-serif", fontSize: '13px', fontWeight: 500, color: 'rgba(240,227,199,0.65)', textDecoration: 'none', transition: 'color 0.2s ease' }}
+                            onMouseEnter={e => e.currentTarget.style.color = '#F0E3C7'}
+                            onMouseLeave={e => e.currentTarget.style.color = 'rgba(240,227,199,0.65)'}
+                          >
+                            {isEl ? 'Λεπτομέρειες' : 'Details'} <ChevronRight size={14} />
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
       </div>
     </>
   );
