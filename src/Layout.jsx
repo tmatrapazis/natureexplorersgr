@@ -149,8 +149,8 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   if (currentPageName === 'Home') {
-    console.log('🏠 [Layout] Rendering public layout for Home page');
-    return <PublicLayout>{children}</PublicLayout>;
+    console.log('🏠 [Layout] Rendering bare layout for Home page (has its own nav/footer)');
+    return <>{children}</>;
   }
 
   console.log('📄 [Layout] Rendering app layout for:', currentPageName);
