@@ -14,10 +14,10 @@ import { getTripImage, handleImageError } from '../components/helpers/imageHelpe
 import { formatPriceForCard } from '../components/helpers/pricingHelpers';
 
 const difficultyConfig = {
-  easy:       { label: 'Easy',        style: 'background:rgba(22,163,74,0.85);color:#f0e3c7;' },
-  moderate:   { label: 'Moderate',    style: 'background:rgba(240,227,199,0.9);color:#0c281c;' },
-  challenging:{ label: 'Challenging', style: 'background:rgba(217,119,6,0.85);color:#f0e3c7;' },
-  difficult:  { label: 'Difficult',   style: 'background:rgba(185,28,28,0.85);color:#f0e3c7;' },
+  easy:       { label: 'Easy',        style: { background: 'rgba(22,163,74,0.85)',   color: '#f0e3c7' } },
+  moderate:   { label: 'Moderate',    style: { background: 'rgba(240,227,199,0.9)',  color: '#0c281c' } },
+  challenging:{ label: 'Challenging', style: { background: 'rgba(217,119,6,0.85)',   color: '#f0e3c7' } },
+  difficult:  { label: 'Difficult',   style: { background: 'rgba(185,28,28,0.85)',   color: '#f0e3c7' } },
 };
 
 // Ticker item separator
