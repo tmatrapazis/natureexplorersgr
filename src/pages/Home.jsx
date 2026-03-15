@@ -338,7 +338,7 @@ export default function HomePage() {
                           alt={trip.title}
                           onError={(e) => handleImageError(e, trip.id)}
                         />
-                        <span className="difficulty-badge" style={diff.style}>
+                        <span className="difficulty-badge" style={{ ...diff.style }}>
                           {trip.difficulty}
                         </span>
                       </div>
