@@ -150,7 +150,14 @@ function LayoutContent({ children, currentPageName }) {
 
   if (currentPageName === 'Home') {
     console.log('🏠 [Layout] Rendering public layout for Home page');
-    return <PublicLayout>{children}</PublicLayout>;
+    // Home has its own full-bleed design with fixed header — no extra wrapper needed
+    return (
+      <div style={{ background: '#0C281C', minHeight: '100vh' }}>
+        <PublicHeader />
+        {children}
+        <PublicFooter />
+      </div>
+    );
   }
 
   console.log('📄 [Layout] Rendering app layout for:', currentPageName);
