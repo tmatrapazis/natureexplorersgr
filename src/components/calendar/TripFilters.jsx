@@ -21,6 +21,26 @@ import {
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 
+const availableTags = [
+"beginner-friendly",
+"sunrise-hike",
+"sunset-hike",
+"pet-friendly",
+"family-friendly",
+"challenging",
+"camping",
+"multi-day",
+"guided",
+"photography",
+"wildlife",
+"waterfall",
+"summit",
+"coastal",
+"forest",
+"bus",
+"organized-carpooling"];
+
+
 export default function TripFilters({ filters, onFilterChange }) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
@@ -28,7 +48,7 @@ export default function TripFilters({ filters, onFilterChange }) {
   const [open, setOpen] = useState(false);
   const [tempFilters, setTempFilters] = useState(filters);
 
-  // Fetch all trips to derive unique tags and departure locations
+  // Fetch all unique departure locations
   const { data: allTrips = [] } = useQuery({
     queryKey: ['all-trips-departure'],
     queryFn: () => base44.entities.HikingTrip.list(),
@@ -42,16 +62,6 @@ export default function TripFilters({ filters, onFilterChange }) {
       }
     });
     return Array.from(locations).sort();
-  }, [allTrips]);
-
-  const availableTags = React.useMemo(() => {
-    const tags = new Set();
-    allTrips.forEach(trip => {
-      if (trip.tags && Array.isArray(trip.tags)) {
-        trip.tags.forEach(tag => tags.add(tag));
-      }
-    });
-    return Array.from(tags).sort();
   }, [allTrips]);
 
   const toggleTag = (tag) => {
