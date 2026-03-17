@@ -28,6 +28,12 @@ export default function TripFilters({ filters, onFilterChange }) {
   const [open, setOpen] = useState(false);
   const [tempFilters, setTempFilters] = useState(filters);
 
+  // Fetch tags dynamically from the HikingTrip schema
+  const availableTags = React.useMemo(() => {
+    const schema = base44.entities.HikingTrip.schema();
+    return schema?.properties?.tags?.items?.enum ?? [];
+  }, []);
+
   // Fetch all unique departure locations
   const { data: allTrips = [] } = useQuery({
     queryKey: ['all-trips-departure'],
