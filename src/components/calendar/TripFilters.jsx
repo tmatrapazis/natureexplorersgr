@@ -29,10 +29,13 @@ export default function TripFilters({ filters, onFilterChange }) {
   const [tempFilters, setTempFilters] = useState(filters);
 
   // Fetch tags dynamically from the HikingTrip schema
-  const availableTags = React.useMemo(() => {
-    const schema = base44.entities.HikingTrip.schema();
-    return schema?.properties?.tags?.items?.enum ?? [];
-  }, []);
+  const { data: availableTags = [] } = useQuery({
+    queryKey: ['hiking-trip-schema-tags'],
+    queryFn: async () => {
+      const schema = await base44.entities.HikingTrip.schema();
+      return schema?.properties?.tags?.items?.enum ?? [];
+    },
+  });
 
   // Fetch all unique departure locations
   const { data: allTrips = [] } = useQuery({
