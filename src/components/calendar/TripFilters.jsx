@@ -21,26 +21,6 @@ import {
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 
-const availableTags = [
-"beginner-friendly",
-"sunrise-hike",
-"sunset-hike",
-"pet-friendly",
-"family-friendly",
-"challenging",
-"camping",
-"multi-day",
-"guided",
-"photography",
-"wildlife",
-"waterfall",
-"summit",
-"coastal",
-"forest",
-"bus",
-"organized-carpooling"];
-
-
 export default function TripFilters({ filters, onFilterChange }) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
