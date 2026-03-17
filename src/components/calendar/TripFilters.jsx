@@ -44,6 +44,17 @@ export default function TripFilters({ filters, onFilterChange }) {
     return Array.from(locations).sort();
   }, [allTrips]);
 
+  const availableTags = React.useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    const tags = new Set();
+    allTrips.forEach(trip => {
+      if (trip.start_date >= today && Array.isArray(trip.tags)) {
+        trip.tags.forEach(tag => tags.add(tag));
+      }
+    });
+    return Array.from(tags).sort();
+  }, [allTrips]);
+
   const toggleTag = (tag) => {
     const newTags = tempFilters.tags.includes(tag) ?
     tempFilters.tags.filter((t) => t !== tag) :
