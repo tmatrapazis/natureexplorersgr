@@ -21,21 +21,32 @@ import {
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 
+const availableTags = [
+"beginner-friendly",
+"sunrise-hike",
+"sunset-hike",
+"pet-friendly",
+"family-friendly",
+"challenging",
+"camping",
+"multi-day",
+"guided",
+"photography",
+"wildlife",
+"waterfall",
+"summit",
+"coastal",
+"forest",
+"bus",
+"organized-carpooling"];
+
+
 export default function TripFilters({ filters, onFilterChange }) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
   const [open, setOpen] = useState(false);
   const [tempFilters, setTempFilters] = useState(filters);
-
-  // Fetch tags dynamically from the HikingTrip schema
-  const { data: availableTags = [] } = useQuery({
-    queryKey: ['hiking-trip-schema-tags'],
-    queryFn: async () => {
-      const schema = await base44.entities.HikingTrip.schema();
-      return schema?.properties?.tags?.items?.enum ?? [];
-    },
-  });
 
   // Fetch all unique departure locations
   const { data: allTrips = [] } = useQuery({
