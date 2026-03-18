@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import { useLanguage } from '@/components/contexts/LanguageContext';
 export default function FollowButton({ organizer, user }) {
   const queryClient = useQueryClient();
   const { language } = useLanguage();
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = React.useState(false);
 
   // Check if user is already following this organizer
   const { data: followRecord } = useQuery({
