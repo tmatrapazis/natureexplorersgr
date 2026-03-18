@@ -13,10 +13,23 @@ import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import useSEO from '../components/seo/useSEO';
 import StructuredData from '../components/seo/StructuredData';
+import FollowButton from '../components/organizer/FollowButton';
 
 export default function OrganizersListPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+
+  const { data: user } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: async () => {
+      try {
+        return await base44.auth.me();
+      } catch (error) {
+        return null;
+      }
+    },
+    retry: false,
+  });
 
   // SEO Configuration with keywords
   useSEO({
@@ -172,9 +185,14 @@ export default function OrganizersListPage() {
                     <p className="text-muted-foreground mt-2 min-h-[60px] mb-4">
                       {organizer.bio ? `${organizer.bio.substring(0, 100)}...` : t('organizer.passionate_guide')}
                     </p>
-                    <Link to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`} className="mt-auto">
-                      <Button className="bg-emerald-600 hover:bg-emerald-700 w-full">{t('organizer.view_profile_trips')}</Button>
-                    </Link>
+                    <div className="mt-auto flex gap-2">
+                      <Link to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`} className="flex-1">
+                        <Button className="bg-emerald-600 hover:bg-emerald-700 w-full">{t('organizer.view_profile_trips')}</Button>
+                      </Link>
+                      {user && user.organizer_code !== organizer.organizer_code && (
+                        <FollowButton organizer={organizer} user={user} />
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               );
