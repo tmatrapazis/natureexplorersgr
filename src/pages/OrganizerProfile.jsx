@@ -100,8 +100,8 @@ export default function OrganizerProfilePage() {
       
       document.title = pageTitle;
 
-      // Add self-referencing canonical tag
-      const canonicalUrl = window.location.href;
+      // Add self-referencing canonical tag (stable URL, no protocol/www variations)
+      const canonicalUrl = `https://natureexplorers.gr/OrganizerProfile?code=${organizerCode}`;
       let canonicalLink = document.querySelector('link[rel="canonical"]');
       if (!canonicalLink) {
         canonicalLink = document.createElement('link');

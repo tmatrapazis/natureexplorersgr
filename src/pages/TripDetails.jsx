@@ -162,15 +162,25 @@ export default function TripDetailsPage() {
       updateMetaTag('keywords', language === 'el' 
         ? `πεζοπορία, ${trip.location}, εκδρομές, ορειβασία, trekking, outdoor activities, ${trip.difficulty}, hiking greece, οργανωμένες εκδρομές βουνού, πεζοπορικές διαδρομές`
         : `hiking, ${trip.location}, trekking, outdoor activities, mountain adventure, ${trip.difficulty}, hiking greece, hiking trips greece, weekend hiking, one day hikes`);
+      const canonicalUrl = `https://natureexplorers.gr/TripDetails?id=${trip.id}`;
       updateMetaTag('og:title', tripTitle, true);
       updateMetaTag('og:description', description, true);
       updateMetaTag('og:image', trip.image_url, true);
-      updateMetaTag('og:url', window.location.href, true);
+      updateMetaTag('og:url', canonicalUrl, true);
       updateMetaTag('og:type', 'event', true);
       updateMetaTag('twitter:card', 'summary_large_image');
       updateMetaTag('twitter:title', tripTitle);
       updateMetaTag('twitter:description', description);
       updateMetaTag('twitter:image', trip.image_url);
+
+      // Set canonical link tag
+      let canonicalLink = document.querySelector('link[rel="canonical"]');
+      if (!canonicalLink) {
+        canonicalLink = document.createElement('link');
+        canonicalLink.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonicalLink);
+      }
+      canonicalLink.setAttribute('href', canonicalUrl);
     }
   }, [trip, language]);
 

@@ -8,9 +8,10 @@ export default function TermsOfUsePage() {
 
   useSEO({
     title: language === 'el' ? 'Όροι Χρήσης | Nature Explorers' : 'Terms of Use | Nature Explorers',
-    description: language === 'el' 
+    description: language === 'el'
       ? 'Όροι Χρήσης της πλατφόρμας NatureExplorers.gr - Πληροφορίες για την λειτουργία της πλατφόρμας ως aggregator πεζοπορικών εκδρομών'
       : 'Terms of Use for NatureExplorers.gr platform - Information about platform operation as hiking trips aggregator',
+    url: 'https://natureexplorers.gr/TermsOfUse',
     noindex: false,
   });
 

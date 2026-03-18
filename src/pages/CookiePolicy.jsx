@@ -11,10 +11,11 @@ export default function CookiePolicy() {
   const [showPreferencesModal, setShowPreferencesModal] = useState(false);
 
   useSEO({
-    title: language === 'el' ? 'Πολιτική Cookies | Hiking Platform' : 'Cookie Policy | Hiking Platform',
-    description: language === 'el' 
+    title: language === 'el' ? 'Πολιτική Cookies | Nature Explorers' : 'Cookie Policy | Nature Explorers',
+    description: language === 'el'
       ? 'Μάθετε πώς χρησιμοποιούμε cookies και πώς μπορείτε να διαχειριστείτε τις προτιμήσεις σας.'
       : 'Learn about the cookies we use and how to manage your cookie preferences.',
+    url: 'https://natureexplorers.gr/CookiePolicy',
   });
 
   const handleOpenPreferences = () => {

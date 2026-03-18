@@ -6,11 +6,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mountain, Users, MapPin, Shield, Heart, Sprout, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import useSEO from "../components/seo/useSEO";
 
 export default function About() {
   const { language } = useLanguage();
   const t = aboutTranslations[language];
   const navigate = useNavigate();
+
+  useSEO({
+    title: language === 'el'
+      ? 'Σχετικά με εμάς | Nature Explorers | Πλατφόρμα Πεζοπορίας Ελλάδα'
+      : 'About Us | Nature Explorers | Hiking & Trekking Platform Greece',
+    description: language === 'el'
+      ? 'Μάθετε για την Nature Explorers - την #1 πλατφόρμα για οργανωμένες εκδρομές πεζοπορίας και trekking στην Ελλάδα. Η αποστολή μας, η ομάδα μας και οι αξίες μας.'
+      : 'Learn about Nature Explorers - the #1 platform for organized hiking trips and trekking adventures in Greece. Our mission, team, and values.',
+    url: 'https://natureexplorers.gr/About',
+    type: 'website',
+  });
 
   const stats = [
     { value: "500+",  label: t.stats.trips,       icon: Mountain },

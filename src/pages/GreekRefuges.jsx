@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '@/components/contexts/LanguageContext';
 import { useTranslation } from '@/components/translations/useTranslations';
 import PageWrapper from '../components/layout/PageWrapper';
+import useSEO from '../components/seo/useSEO';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import ReactDOMServer from 'react-dom/server';
@@ -66,6 +67,18 @@ function MapController({ center, zoom }) {
 export default function GreekRefuges() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+
+  useSEO({
+    title: language === 'el'
+      ? 'Ελληνικά Ορειβατικά Καταφύγια | Καταφύγια Βουνού Ελλάδα | Nature Explorers'
+      : 'Greek Mountain Refuges | Alpine Shelters Greece | Nature Explorers',
+    description: language === 'el'
+      ? 'Εξερευνήστε τα ορειβατικά καταφύγια της Ελλάδας. Βρείτε πληροφορίες, τοποθεσίες και χάρτη για καταφύγια σε Όλυμπο, Πάρνηθα, Πήλιο, Κρήτη και άλλα ελληνικά βουνά.'
+      : 'Explore Greek mountain refuges. Find information, locations and map for alpine shelters on Olympus, Parnitha, Pelion, Crete and other Greek mountains.',
+    url: 'https://natureexplorers.gr/GreekRefuges',
+    type: 'website',
+  });
+
   const [sortConfig, setSortConfig] = useState({ key: 'altitude', direction: 'desc' });
   const [selectedRefuge, setSelectedRefuge] = useState(null);
   const [mapCenter, setMapCenter] = useState([39.0, 22.0]);

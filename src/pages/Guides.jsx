@@ -10,17 +10,23 @@ import { Compass, Shield, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import GuideCard from "../components/guides/GuideCard";
+import useSEO from "../components/seo/useSEO";
 
 export default function GuidesPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    document.title = language === 'el' 
+  useSEO({
+    title: language === 'el'
       ? 'Οδηγοί Βουνού | Mountain Guides Directory | Nature Explorers'
-      : 'Mountain Guides | Professional Hiking Guides Greece | Nature Explorers';
-  }, [language]);
+      : 'Mountain Guides | Professional Hiking Guides Greece | Nature Explorers',
+    description: language === 'el'
+      ? 'Βρείτε πιστοποιημένους οδηγούς βουνού και trekking για εκδρομές σε όλη την Ελλάδα. Επαγγελματίες ορειβατικοί οδηγοί για ασφαλείς και αξέχαστες πεζοπορικές περιπέτειες.'
+      : 'Find certified mountain and trekking guides for hiking trips across Greece. Professional hiking guides for safe and unforgettable outdoor adventures.',
+    url: 'https://natureexplorers.gr/Guides',
+    type: 'website',
+  });
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],

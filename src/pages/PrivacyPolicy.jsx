@@ -9,10 +9,11 @@ export default function PrivacyPolicy() {
   const { language } = useLanguage();
 
   useSEO({
-    title: language === 'el' ? 'Πολιτική Απορρήτου | Hiking Platform' : 'Privacy Policy | Hiking Platform',
-    description: language === 'el' 
+    title: language === 'el' ? 'Πολιτική Απορρήτου | Nature Explorers' : 'Privacy Policy | Nature Explorers',
+    description: language === 'el'
       ? 'Μάθετε πώς συλλέγουμε, χρησιμοποιούμε και προστατεύουμε τα προσωπικά σας δεδομένα.'
       : 'Learn how we collect, use, and protect your personal data in compliance with GDPR.',
+    url: 'https://natureexplorers.gr/PrivacyPolicy',
   });
 
   return (
