@@ -495,7 +495,7 @@ export default function TripDetailsPage() {
 
                 {organizer && (
                   <Link
-                    to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
+                    to={`${createPageUrl("OrganizerProfile")}?organizer=${organizer.username}`}
                     className="inline-flex items-center gap-2 text-stone-600 hover:text-emerald-700 mb-4 transition-colors"
                   >
                     <UserIcon className="w-4 h-4" />
