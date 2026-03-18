@@ -13,7 +13,7 @@ import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import useSEO from '../components/seo/useSEO';
 import StructuredData from '../components/seo/StructuredData';
-import FollowButton from '../components/organizer/FollowButton';
+import CompactFollowButton from '../components/organizer/CompactFollowButton';
 
 export default function OrganizersListPage() {
   const { language } = useLanguage();
@@ -185,12 +185,12 @@ export default function OrganizersListPage() {
                     <p className="text-muted-foreground mt-2 min-h-[60px] mb-4">
                       {organizer.bio ? `${organizer.bio.substring(0, 100)}...` : t('organizer.passionate_guide')}
                     </p>
-                    <div className="mt-auto flex gap-2">
+                    <div className="mt-auto flex gap-2 items-center">
                       <Link to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`} className="flex-1">
                         <Button className="bg-emerald-600 hover:bg-emerald-700 w-full">{t('organizer.view_profile_trips')}</Button>
                       </Link>
                       {user && user.organizer_code !== organizer.organizer_code && (
-                        <FollowButton organizer={organizer} user={user} />
+                        <CompactFollowButton organizer={organizer} user={user} />
                       )}
                     </div>
                   </CardContent>
