@@ -15,6 +15,7 @@ import { trackEvent } from "../components/analytics/GoogleAnalytics";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import StructuredData from "../components/seo/StructuredData";
+import FollowButton from "../components/organizers/FollowButton";
 
 export default function OrganizerProfilePage() {
   const { language } = useLanguage();
@@ -285,6 +286,10 @@ export default function OrganizerProfilePage() {
           
           {/* Organizer Header */}
           <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1" />
+              <FollowButton organizer={organizer} variant="default" showCount={true} />
+            </div>
             <div className="flex flex-col md:flex-row items-center gap-6">
               <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-white flex-shrink-0 flex items-center justify-center shadow-lg overflow-hidden">
                 {organizer.profile_picture_url ? (
