@@ -184,9 +184,9 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, promot
                   </div>
                   
                   <div className="h-6 mb-2">
-                    {organizer && (
+                    {organizer && organizer.username && (
                       <Link
-                        to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
+                        to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`}
                         className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-emerald-700"
                       >
                         <User className="w-3 h-3" />
