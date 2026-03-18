@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Mail, Phone, Globe, User as UserIcon, ShieldCheck, MapPin, Calendar, Clock, TrendingUp, ExternalLink, Loader2, Facebook, Instagram, Twitter, PlusCircle, Edit } from "lucide-react";
+import FollowButton from "../components/organizer/FollowButton";
 import { format } from "date-fns";
 import { formatDateRange } from "../components/helpers/dateHelpers";
 import { difficultyColors } from "../components/helpers/tripHelpers";
@@ -385,6 +386,13 @@ export default function OrganizerProfilePage() {
                         <span className="text-sm font-medium">{t('social.twitter_x')}</span>
                       </a>
                     )}
+                  </div>
+                )}
+
+                {/* Follow Button - Visible to all users except the organizer themselves */}
+                {user?.organizer_code !== organizer?.organizer_code && (
+                  <div className="mt-4 justify-center md:justify-start flex">
+                    <FollowButton organizer={organizer} user={user} />
                   </div>
                 )}
 

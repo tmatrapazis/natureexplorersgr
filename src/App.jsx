@@ -10,6 +10,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import About from '@/pages/About';
+import MyFollowing from '@/pages/MyFollowing';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -69,6 +70,11 @@ const AuthenticatedApp = () => {
       <Route path="/OrganizerProfile/:username" element={
         <LayoutWrapper currentPageName="OrganizerProfile">
           {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
+        </LayoutWrapper>
+      } />
+      <Route path="/MyFollowing" element={
+        <LayoutWrapper currentPageName="MyFollowing">
+          <MyFollowing />
         </LayoutWrapper>
       } />
       <Route path="*" element={<PageNotFound />} />
