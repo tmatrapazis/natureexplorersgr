@@ -495,7 +495,7 @@ export default function TripDetailsPage() {
 
                 {organizer && (
                   <Link
-                    to={`${createPageUrl("OrganizerProfile")}?organizer=${organizer.username}`}
+                    to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
                     className="inline-flex items-center gap-2 text-stone-600 hover:text-emerald-700 mb-4 transition-colors"
                   >
                     <UserIcon className="w-4 h-4" />
@@ -692,7 +692,7 @@ export default function TripDetailsPage() {
                       </a>
                     </Button>
                   ) : organizer ? ( 
-                    <Link to={`${createPageUrl("OrganizerProfile")}?organizer=${organizer.username}`}> 
+                    <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}> 
                       <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
                         {t('trip.view_organizer_profile')}
                       </Button>
