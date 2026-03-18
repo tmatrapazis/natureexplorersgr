@@ -82,7 +82,7 @@ export default function OrganizerProfilePage() {
     if (organizer) {
       trackEvent('organizer_profile_view', {
         event_category: 'Organizer Discovery',
-        event_label: organizer.username || organizer.full_name,
+        event_label: organizer.full_name,
         organizer_code: organizer.organizer_code,
         is_verified: organizer.is_verified,
         upcoming_trips_count: trips.length,
@@ -97,7 +97,7 @@ export default function OrganizerProfilePage() {
         event_category: 'Trip Discovery',
         event_label: trip.title,
         trip_id: trip.id,
-        organizer_name: organizer.username || organizer.full_name,
+        organizer_name: organizer.full_name,
         difficulty: trip.difficulty,
         price: trip.price,
         source: 'organizer_profile',
@@ -109,8 +109,8 @@ export default function OrganizerProfilePage() {
   React.useEffect(() => {
     if (organizer) {
       const pageTitle = language === 'el'
-        ? `${organizer.username || organizer.full_name} | Οδηγός Πεζοπορίας Ελλάδα | Ορειβατικός Οδηγός | Hiking Teams Greece`
-        : `${organizer.username || organizer.full_name} - Hiking Guide Greece | Trekking Organizer | Nature Explorers`;
+        ? `${organizer.full_name} | Οδηγός Πεζοπορίας Ελλάδα | Ορειβατικός Οδηγός | Hiking Teams Greece`
+        : `${organizer.full_name} - Hiking Guide Greece | Trekking Organizer | Nature Explorers`;
       
       document.title = pageTitle;
 
@@ -139,13 +139,13 @@ export default function OrganizerProfilePage() {
       const description = organizer.bio 
         ? organizer.bio.substring(0, 155) 
         : language === 'el'
-          ? `Ανακαλύψτε πεζοπορικές εκδρομές από τον ${organizer.username || organizer.full_name}. ${organizer.years_of_experience ? `${organizer.years_of_experience} χρόνια εμπειρίας.` : ''} Οργανωμένες εκδρομές βουνό, outdoor περιπέτειες ορειβασίας και trekking στην Ελλάδα. Ομάδες πεζοπορίας και hiking tours Greece.`
-          : `Explore hiking trips organized by ${organizer.username || organizer.full_name}. ${organizer.years_of_experience ? `${organizer.years_of_experience} years experience.` : ''} Join their trekking adventures, hiking teams Greece, outdoor activities and weekend hiking trips.`;
+          ? `Ανακαλύψτε πεζοπορικές εκδρομές από τον ${organizer.full_name}. ${organizer.years_of_experience ? `${organizer.years_of_experience} χρόνια εμπειρίας.` : ''} Οργανωμένες εκδρομές βουνό, outdoor περιπέτειες ορειβασίας και trekking στην Ελλάδα. Ομάδες πεζοπορίας και hiking tours Greece.`
+          : `Explore hiking trips organized by ${organizer.full_name}. ${organizer.years_of_experience ? `${organizer.years_of_experience} years experience.` : ''} Join their trekking adventures, hiking teams Greece, outdoor activities and weekend hiking trips.`;
 
       updateMetaTag('description', description);
       updateMetaTag('keywords', language === 'el'
-        ? `οδηγός πεζοπορίας, ${organizer.username || organizer.full_name}, εκδρομές, ορειβασία, trekking, outdoor activities, hiking greece, ομάδες πεζοπορίας, οργανωμένες εκδρομές βουνού, hiking teams greece`
-        : `hiking guide, ${organizer.username || organizer.full_name}, trekking, outdoor activities, mountain guide, hiking greece, hiking teams greece, hiking tours greece, weekend hiking trips`);
+        ? `οδηγός πεζοπορίας, ${organizer.full_name}, εκδρομές, ορειβασία, trekking, outdoor activities, hiking greece, ομάδες πεζοπορίας, οργανωμένες εκδρομές βουνού, hiking teams greece`
+        : `hiking guide, ${organizer.full_name}, trekking, outdoor activities, mountain guide, hiking greece, hiking teams greece, hiking tours greece, weekend hiking trips`);
       updateMetaTag('og:title', pageTitle, true);
       updateMetaTag('og:description', description, true);
       updateMetaTag('og:image', organizer.profile_picture_url || 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png', true);
@@ -179,7 +179,7 @@ export default function OrganizerProfilePage() {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": window.location.href,
-    "name": organizer.username || organizer.full_name,
+    "name": organizer.full_name,
     "description": organizer.bio || (language === 'el'
       ? `Επαγγελματίας οδηγός πεζοπορίας, ορειβασίας και trekking στην Ελλάδα. Οργανωμένες εκδρομές βουνό, outdoor activities και hiking tours Greece με ομάδες πεζοπορίας.`
       : `Professional hiking guide, trekking organizer and outdoor activities leader in Greece. Organized hiking trips, mountain trekking tours and weekend hiking adventures with hiking teams Greece.`),
@@ -213,7 +213,7 @@ export default function OrganizerProfilePage() {
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://natureexplorers.gr/" },
       { "@type": "ListItem", "position": 2, "name": "Organizers", "item": "https://natureexplorers.gr/organizerslist" },
-      { "@type": "ListItem", "position": 3, "name": organizer.username || organizer.full_name, "item": window.location.href }
+      { "@type": "ListItem", "position": 3, "name": organizer.full_name, "item": window.location.href }
     ]
   } : null;
 
@@ -262,8 +262,8 @@ export default function OrganizerProfilePage() {
                   <img 
                     src={organizer.profile_picture_url} 
                     alt={language === 'el'
-                      ? `${organizer.username || organizer.full_name} - οδηγός πεζοπορίας και ορειβασίας Ελλάδα`
-                      : `${organizer.username || organizer.full_name} - professional hiking and trekking guide Greece`}
+                      ? `${organizer.full_name} - οδηγός πεζοπορίας και ορειβασίας Ελλάδα`
+                      : `${organizer.full_name} - professional hiking and trekking guide Greece`}
                     className="w-full h-full object-cover" 
                   />
                 ) : (
@@ -273,7 +273,7 @@ export default function OrganizerProfilePage() {
               
               <div className="flex-1 text-center md:text-left">
                 <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2">
-                  <h1 className="text-3xl md:text-4xl font-bold text-stone-900">{organizer.username || organizer.full_name}</h1>
+                  <h1 className="text-3xl md:text-4xl font-bold text-stone-900">{organizer.full_name}</h1>
                   {organizer.is_verified && (
                     <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 self-center md:self-start">
                       <ShieldCheck className="w-4 h-4 mr-1" />

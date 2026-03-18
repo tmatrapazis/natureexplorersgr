@@ -82,7 +82,7 @@ export default function OrganizersListPage() {
       "@type": "ListItem",
       "position": index + 1,
       "url": `https://natureexplorers.gr/OrganizerProfile/${organizer.username}`,
-      "name": organizer.username || organizer.full_name
+      "name": organizer.full_name
     }))
   } : null;
 
@@ -153,7 +153,7 @@ export default function OrganizersListPage() {
                   </CardHeader>
                   <CardContent className="p-6 flex flex-col flex-grow">
                     <div className="flex items-center justify-center gap-2 mb-2">
-                      <h2 className="text-xl font-bold">{organizer.username || organizer.full_name}</h2>
+                      <h2 className="text-xl font-bold">{organizer.full_name}</h2>
                       {organizer.is_verified && <VerifiedBadge showText={false} />}
                     </div>
                     {organizer.years_of_experience && (

@@ -190,7 +190,7 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, promot
                         className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-emerald-700"
                       >
                         <User className="w-3 h-3" />
-                        <span>by {organizer.username || organizer.full_name}</span>
+                        <span>by {organizer.full_name}</span>
                       </Link>
                     )}
                   </div>
