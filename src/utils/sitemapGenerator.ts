@@ -125,9 +125,9 @@ async function generateDynamicRoutes(base44: any): Promise<SitemapEntry[]> {
     const organizers = await base44.entities.Organizer.list();
     
     organizers.forEach((org: any) => {
-      if (org.organizer_code && org.is_verified) {
+      if (org.username && org.is_verified) {
         dynamicRoutes.push({
-          loc: `${BASE_URL}/OrganizerProfile?code=${org.organizer_code}`,
+          loc: `${BASE_URL}/OrganizerProfile/${org.username}`,
           lastmod: org.updated_date ? new Date(org.updated_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
           changefreq: 'monthly',
           priority: 0.5,
@@ -244,9 +244,9 @@ export function generateSitemapFromData(
 
   // Add organizer routes
   organizers.forEach((org) => {
-    if (org.organizer_code && org.is_verified) {
+    if (org.username && org.is_verified) {
       dynamicRoutes.push({
-        loc: `${BASE_URL}/OrganizerProfile?code=${org.organizer_code}`,
+        loc: `${BASE_URL}/OrganizerProfile/${org.username}`,
         lastmod: org.updated_date ? new Date(org.updated_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
         changefreq: 'monthly',
         priority: 0.5,
