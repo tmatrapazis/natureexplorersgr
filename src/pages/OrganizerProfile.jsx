@@ -108,14 +108,17 @@ export default function OrganizerProfilePage() {
   // SEO Configuration with keywords and canonical URL
   React.useEffect(() => {
     if (organizer) {
+      // Stable canonical URL using slug — consistent across all tags
+      const canonicalUrl = `https://natureexplorers.gr/OrganizerProfile/${organizer.username}`;
+
+      // Title includes username/slug for brand keyword indexing
       const pageTitle = language === 'el'
-        ? `${organizer.full_name} | Οδηγός Πεζοπορίας Ελλάδα | Ορειβατικός Οδηγός | Hiking Teams Greece`
-        : `${organizer.full_name} - Hiking Guide Greece | Trekking Organizer | Nature Explorers`;
-      
+        ? `${organizer.full_name} (@${organizer.username}) | Οδηγός Πεζοπορίας Ελλάδα | Nature Explorers`
+        : `${organizer.full_name} (@${organizer.username}) - Hiking Organizer Greece | Nature Explorers`;
+
       document.title = pageTitle;
 
-      // Add self-referencing canonical tag (stable URL, no protocol/www variations)
-      const canonicalUrl = `https://natureexplorers.gr/OrganizerProfile/${organizer.username}`;
+      // Canonical tag
       let canonicalLink = document.querySelector('link[rel="canonical"]');
       if (!canonicalLink) {
         canonicalLink = document.createElement('link');
@@ -123,7 +126,7 @@ export default function OrganizerProfilePage() {
         document.head.appendChild(canonicalLink);
       }
       canonicalLink.setAttribute('href', canonicalUrl);
-      
+
       const updateMetaTag = (name, content, isProperty = false) => {
         if (!content) return;
         const attribute = isProperty ? 'property' : 'name';
@@ -136,20 +139,20 @@ export default function OrganizerProfilePage() {
         element.setAttribute('content', content);
       };
 
-      const description = organizer.bio 
-        ? organizer.bio.substring(0, 155) 
+      const description = organizer.bio
+        ? organizer.bio.substring(0, 155)
         : language === 'el'
           ? `Ανακαλύψτε πεζοπορικές εκδρομές από τον ${organizer.full_name}. ${organizer.years_of_experience ? `${organizer.years_of_experience} χρόνια εμπειρίας.` : ''} Οργανωμένες εκδρομές βουνό, outdoor περιπέτειες ορειβασίας και trekking στην Ελλάδα. Ομάδες πεζοπορίας και hiking tours Greece.`
           : `Explore hiking trips organized by ${organizer.full_name}. ${organizer.years_of_experience ? `${organizer.years_of_experience} years experience.` : ''} Join their trekking adventures, hiking teams Greece, outdoor activities and weekend hiking trips.`;
 
       updateMetaTag('description', description);
       updateMetaTag('keywords', language === 'el'
-        ? `οδηγός πεζοπορίας, ${organizer.full_name}, εκδρομές, ορειβασία, trekking, outdoor activities, hiking greece, ομάδες πεζοπορίας, οργανωμένες εκδρομές βουνού, hiking teams greece`
-        : `hiking guide, ${organizer.full_name}, trekking, outdoor activities, mountain guide, hiking greece, hiking teams greece, hiking tours greece, weekend hiking trips`);
+        ? `οδηγός πεζοπορίας, ${organizer.full_name}, ${organizer.username}, εκδρομές, ορειβασία, trekking, outdoor activities, hiking greece, ομάδες πεζοπορίας, οργανωμένες εκδρομές βουνού, hiking teams greece`
+        : `hiking guide, ${organizer.full_name}, ${organizer.username}, trekking, outdoor activities, mountain guide, hiking greece, hiking teams greece, hiking tours greece, weekend hiking trips`);
       updateMetaTag('og:title', pageTitle, true);
       updateMetaTag('og:description', description, true);
       updateMetaTag('og:image', organizer.profile_picture_url || 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png', true);
-      updateMetaTag('og:url', window.location.href, true);
+      updateMetaTag('og:url', canonicalUrl, true);  // stable canonical, not window.location.href
       updateMetaTag('og:type', 'profile', true);
       updateMetaTag('og:site_name', 'Nature Explorers', true);
       updateMetaTag('twitter:card', 'summary_large_image');
@@ -157,7 +160,7 @@ export default function OrganizerProfilePage() {
       updateMetaTag('twitter:description', description);
       updateMetaTag('twitter:image', organizer.profile_picture_url || 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png');
 
-      // hreflang self-referencing for bilingual support
+      // hreflang self-referencing — use canonical URL, not window.location.href
       const addHreflang = (lang, href) => {
         let el = document.querySelector(`link[hreflang="${lang}"]`);
         if (!el) {
@@ -168,22 +171,24 @@ export default function OrganizerProfilePage() {
         }
         el.setAttribute('href', href);
       };
-      addHreflang('el', window.location.href);
-      addHreflang('en', window.location.href);
-      addHreflang('x-default', window.location.href);
+      addHreflang('el', canonicalUrl);
+      addHreflang('en', canonicalUrl);
+      addHreflang('x-default', canonicalUrl);
     }
   }, [organizer, language]);
 
   // Enhanced Structured Data for Organizer
+  const canonicalUrl = organizer ? `https://natureexplorers.gr/OrganizerProfile/${organizer.username}` : null;
+
   const organizerSchema = organizer ? {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": window.location.href,
+    "@type": ["LocalBusiness", "Organization"],  // LocalBusiness unlocks richer Knowledge Panel & local search
+    "@id": canonicalUrl,
     "name": organizer.full_name,
     "description": organizer.bio || (language === 'el'
       ? `Επαγγελματίας οδηγός πεζοπορίας, ορειβασίας και trekking στην Ελλάδα. Οργανωμένες εκδρομές βουνό, outdoor activities και hiking tours Greece με ομάδες πεζοπορίας.`
       : `Professional hiking guide, trekking organizer and outdoor activities leader in Greece. Organized hiking trips, mountain trekking tours and weekend hiking adventures with hiking teams Greece.`),
-    "url": window.location.href,
+    "url": canonicalUrl,
     "image": organizer.profile_picture_url,
     "email": organizer.email,
     "telephone": organizer.phone,
@@ -194,26 +199,50 @@ export default function OrganizerProfilePage() {
       organizer.website
     ].filter(Boolean),
     ...(organizer.years_of_experience && {
-      "additionalType": "https://schema.org/Person",
       "knowsAbout": language === 'el'
         ? ["Πεζοπορία", "Ορειβασία", "Trekking", "Outdoor Activities", "Mountain Expeditions", "Εκδρομές Βουνό", "Hiking Tours Greece"]
         : ["Hiking", "Mountain Trekking", "Outdoor Adventure", "Nature Exploration", "Wilderness Guiding", "Hiking Trips Greece", "Weekend Hiking"],
-      "yearsOfExperience": organizer.years_of_experience
+      "foundingDate": organizer.years_of_experience
+        ? String(new Date().getFullYear() - organizer.years_of_experience)
+        : undefined
     }),
     "areaServed": {
       "@type": "Country",
-      "name": "Greece"
-    }
+      "name": "Greece",
+      "alternateName": "Ελλάδα"
+    },
+    // hasOfferCatalog: lets Google associate upcoming trips with this organizer in search
+    ...(trips.length > 0 && {
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": language === 'el' ? `Εκδρομές από ${organizer.full_name}` : `Trips by ${organizer.full_name}`,
+        "itemListElement": trips.slice(0, 5).map((trip, i) => ({
+          "@type": "Offer",
+          "position": i + 1,
+          "itemOffered": {
+            "@type": "Event",
+            "name": trip.title,
+            "url": `https://natureexplorers.gr/TripDetails?id=${trip.id}`,
+            "startDate": trip.start_date,
+            "location": {
+              "@type": "Place",
+              "name": trip.location,
+              "address": { "@type": "PostalAddress", "addressCountry": "GR" }
+            }
+          }
+        }))
+      }
+    })
   } : null;
 
-  // BreadcrumbList Structured Data
+  // BreadcrumbList Structured Data — use canonical URL for last item
   const breadcrumbSchema = organizer ? {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://natureexplorers.gr/" },
-      { "@type": "ListItem", "position": 2, "name": "Organizers", "item": "https://natureexplorers.gr/organizerslist" },
-      { "@type": "ListItem", "position": 3, "name": organizer.full_name, "item": window.location.href }
+      { "@type": "ListItem", "position": 2, "name": "Organizers", "item": "https://natureexplorers.gr/OrganizersList" },
+      { "@type": "ListItem", "position": 3, "name": organizer.full_name, "item": canonicalUrl }
     ]
   } : null;
 

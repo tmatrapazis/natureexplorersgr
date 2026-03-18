@@ -129,8 +129,8 @@ async function generateDynamicRoutes(base44: any): Promise<SitemapEntry[]> {
         dynamicRoutes.push({
           loc: `${BASE_URL}/OrganizerProfile/${org.username}`,
           lastmod: org.updated_date ? new Date(org.updated_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-          changefreq: 'monthly',
-          priority: 0.5,
+          changefreq: 'weekly',   // profiles change more often now (trips added/removed)
+          priority: 0.7,          // upgraded from 0.5 — slug URLs are more indexable
         });
       }
     });
@@ -248,8 +248,8 @@ export function generateSitemapFromData(
       dynamicRoutes.push({
         loc: `${BASE_URL}/OrganizerProfile/${org.username}`,
         lastmod: org.updated_date ? new Date(org.updated_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-        changefreq: 'monthly',
-        priority: 0.5,
+        changefreq: 'weekly',
+        priority: 0.7,
       });
     }
   });
