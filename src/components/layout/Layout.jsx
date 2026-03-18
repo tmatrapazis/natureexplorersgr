@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X, Heart } from "lucide-react";
+import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -68,8 +68,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
   ];
 
   const clientNav = [
-    { title: language === 'el' ? 'Ακολουθώ' : 'Following', url: createPageUrl("MyFollowing"), icon: Heart },
-    { title: language === 'el' ? 'Επεξεργασία Προφίλ' : 'Edit Profile', url: createPageUrl("EditProfile"), icon: Edit },
+    { title: "Edit Profile", url: createPageUrl("EditProfile"), icon: Edit },
   ];
 
   const organizerNav = [
