@@ -66,6 +66,11 @@ const AuthenticatedApp = () => {
           <About />
         </LayoutWrapper>
       } />
+      <Route path="/OrganizerProfile/:username" element={
+        <LayoutWrapper currentPageName="OrganizerProfile">
+          {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
+        </LayoutWrapper>
+      } />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,9 +19,12 @@ import StructuredData from "../components/seo/StructuredData";
 export default function OrganizerProfilePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const { username } = useParams();
+  const navigate = useNavigate();
   
+  // Backward compatibility: support old ?code= format
   const urlParams = new URLSearchParams(window.location.search);
-  const organizerCode = urlParams.get("code");
+  const legacyCode = urlParams.get("code");
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
@@ -36,18 +39,29 @@ export default function OrganizerProfilePage() {
   });
 
   const { data: organizer, isLoading: organizerLoading } = useQuery({
-    queryKey: ['organizer', organizerCode],
+    queryKey: ['organizer', username, legacyCode],
     queryFn: async () => {
-      const organizers = await base44.entities.Organizer.filter({ organizer_code: organizerCode });
-      return organizers[0];
+      if (username) {
+        const organizers = await base44.entities.Organizer.filter({ username: username });
+        return organizers[0];
+      } else if (legacyCode) {
+        const organizers = await base44.entities.Organizer.filter({ organizer_code: legacyCode });
+        const org = organizers[0];
+        // Redirect to new URL format
+        if (org?.username) {
+          navigate(`/OrganizerProfile/${org.username}`, { replace: true });
+        }
+        return org;
+      }
+      return null;
     },
-    enabled: !!organizerCode,
+    enabled: !!username || !!legacyCode,
   });
 
   const { data: allTrips = [], isLoading: tripsLoading } = useQuery({
-    queryKey: ['organizer-trips', organizerCode],
-    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: organizerCode }, "start_date"),
-    enabled: !!organizerCode,
+    queryKey: ['organizer-trips', organizer?.organizer_code],
+    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: organizer.organizer_code }, "start_date"),
+    enabled: !!organizer?.organizer_code,
     initialData: [],
   });
 
@@ -101,7 +115,7 @@ export default function OrganizerProfilePage() {
       document.title = pageTitle;
 
       // Add self-referencing canonical tag (stable URL, no protocol/www variations)
-      const canonicalUrl = `https://natureexplorers.gr/OrganizerProfile?code=${organizerCode}`;
+      const canonicalUrl = `https://natureexplorers.gr/OrganizerProfile/${organizer.username}`;
       let canonicalLink = document.querySelector('link[rel="canonical"]');
       if (!canonicalLink) {
         canonicalLink = document.createElement('link');

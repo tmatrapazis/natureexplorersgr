@@ -81,7 +81,7 @@ export default function OrganizersListPage() {
     "itemListElement": sortedOrganizers.map((organizer, index) => ({
       "@type": "ListItem",
       "position": index + 1,
-      "url": `https://natureexplorers.gr/organizerprofile?code=${organizer.organizer_code}`,
+      "url": `https://natureexplorers.gr/OrganizerProfile/${organizer.username}`,
       "name": organizer.username || organizer.full_name
     }))
   } : null;
@@ -172,7 +172,7 @@ export default function OrganizersListPage() {
                     <p className="text-muted-foreground mt-2 min-h-[60px] mb-4">
                       {organizer.bio ? `${organizer.bio.substring(0, 100)}...` : t('organizer.passionate_guide')}
                     </p>
-                    <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`} className="mt-auto">
+                    <Link to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`} className="mt-auto">
                       <Button className="bg-emerald-600 hover:bg-emerald-700 w-full">{t('organizer.view_profile_trips')}</Button>
                     </Link>
                   </CardContent>
