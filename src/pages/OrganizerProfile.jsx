@@ -21,7 +21,7 @@ export default function OrganizerProfilePage() {
   const { t } = useTranslation(language);
   
   const urlParams = new URLSearchParams(window.location.search);
-  const organizerCode = urlParams.get("code");
+  const organizerUsername = urlParams.get("organizer");
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
@@ -36,18 +36,18 @@ export default function OrganizerProfilePage() {
   });
 
   const { data: organizer, isLoading: organizerLoading } = useQuery({
-    queryKey: ['organizer', organizerCode],
+    queryKey: ['organizer', organizerUsername],
     queryFn: async () => {
-      const organizers = await base44.entities.Organizer.filter({ organizer_code: organizerCode });
+      const organizers = await base44.entities.Organizer.filter({ username: organizerUsername });
       return organizers[0];
     },
-    enabled: !!organizerCode,
+    enabled: !!organizerUsername,
   });
 
   const { data: allTrips = [], isLoading: tripsLoading } = useQuery({
-    queryKey: ['organizer-trips', organizerCode],
-    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: organizerCode }, "start_date"),
-    enabled: !!organizerCode,
+    queryKey: ['organizer-trips', organizer?.organizer_code],
+    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: organizer.organizer_code }, "start_date"),
+    enabled: !!organizer?.organizer_code,
     initialData: [],
   });
 
@@ -101,7 +101,7 @@ export default function OrganizerProfilePage() {
       document.title = pageTitle;
 
       // Add self-referencing canonical tag (stable URL, no protocol/www variations)
-      const canonicalUrl = `https://natureexplorers.gr/OrganizerProfile?code=${organizerCode}`;
+      const canonicalUrl = `https://natureexplorers.gr/OrganizerProfile?organizer=${organizer.username}`;
       let canonicalLink = document.querySelector('link[rel="canonical"]');
       if (!canonicalLink) {
         canonicalLink = document.createElement('link');

@@ -692,7 +692,7 @@ export default function TripDetailsPage() {
                       </a>
                     </Button>
                   ) : organizer ? ( 
-                    <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}> 
+                    <Link to={`${createPageUrl("OrganizerProfile")}?organizer=${organizer.username}`}> 
                       <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
                         {t('trip.view_organizer_profile')}
                       </Button>
