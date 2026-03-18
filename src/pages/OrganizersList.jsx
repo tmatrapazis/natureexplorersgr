@@ -13,6 +13,7 @@ import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import useSEO from '../components/seo/useSEO';
 import StructuredData from '../components/seo/StructuredData';
+import FollowButton from '../components/organizers/FollowButton';
 
 export default function OrganizersListPage() {
   const { language } = useLanguage();
@@ -136,7 +137,10 @@ export default function OrganizersListPage() {
 
               return (
                 <Card key={organizer.id} className="text-center shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full">
-                  <CardHeader className="p-0">
+                  <CardHeader className="p-0 relative">
+                    <div className="absolute top-4 right-4 z-10">
+                      <FollowButton organizer={organizer} variant="icon" />
+                    </div>
                     <div className="mx-auto w-24 h-24 mt-6 border-4 border-white rounded-full overflow-hidden bg-stone-100 flex items-center justify-center">
                       {organizer.profile_picture_url ? (
                         <img
