@@ -31,11 +31,96 @@ export default function CreateTripPage() {
     ? { ...location.state.tripData, start_date: "", end_date: "", status: "draft" }
     : null;
 
+  // Notify all followers of this organizer about the new trip.
+  // Fire-and-forget: errors are logged but never block the user navigation.
+  const notifyFollowers = async (newTrip) => {
+    try {
+      const followers = await base44.entities.OrganizerFollow.filter({
+        organizer_code: user.organizer_code,
+      });
+
+      if (!followers || followers.length === 0) return;
+
+      const tripUrl = `https://www.natureexplorers.gr/TripDetails?id=${newTrip.id}`;
+      const organizerName = user.full_name || user.username || '';
+
+      // In-app notifications (bulk)
+      const notificationsPayload = followers.map(follow => ({
+        user_id: follow.user_id,
+        title: language === 'el'
+          ? `Νέα δραστηριότητα από ${organizerName}`
+          : `New trip from ${organizerName}`,
+        message: `"${newTrip.title}"`,
+        is_read: false,
+        link: tripUrl,
+      }));
+      await base44.entities.Notification.bulkCreate(notificationsPayload);
+
+      // Emails — best-effort, same pattern as trip cancellation in MyTrips.jsx
+      const emailPromises = followers.map(follow =>
+        base44.integrations.Core.SendEmail({
+          to: follow.user_email,
+          subject: language === 'el'
+            ? `Νέα δραστηριότητα από ${organizerName} | Nature Explorers`
+            : `New Trip from ${organizerName} | Nature Explorers`,
+          body: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <div style="background: #16a34a; padding: 20px; border-radius: 8px 8px 0 0;">
+                <h1 style="color: white; margin: 0; font-size: 20px;">🏔️ Nature Explorers</h1>
+              </div>
+              <div style="background: #f9fafb; padding: 24px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb;">
+                <p style="color: #374151; font-size: 16px;">
+                  ${language === 'el' ? `Γεια σου ${follow.user_name || ''},` : `Hello ${follow.user_name || ''},`}
+                </p>
+                <p style="color: #374151;">
+                  ${language === 'el'
+                    ? `Ο/Η <strong>${organizerName}</strong>, που ακολουθείς, ανέβασε νέα δραστηριότητα!`
+                    : `<strong>${organizerName}</strong>, an organizer you follow, just published a new trip!`}
+                </p>
+                <div style="background: white; border: 1px solid #d1fae5; border-left: 4px solid #16a34a; border-radius: 8px; padding: 16px; margin: 20px 0;">
+                  <p style="margin: 0 0 8px 0; font-weight: bold; color: #111827; font-size: 18px;">${newTrip.title}</p>
+                  ${newTrip.start_date ? `<p style="color: #374151; margin: 4px 0;">📅 ${newTrip.start_date}</p>` : ''}
+                  ${newTrip.location ? `<p style="color: #374151; margin: 4px 0;">📍 ${newTrip.location}</p>` : ''}
+                </div>
+                <a href="${tripUrl}" style="display: inline-block; background: #16a34a; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+                  ${language === 'el' ? 'Δες τη δραστηριότητα →' : 'View Trip Details →'}
+                </a>
+                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+                <p style="color: #9ca3af; font-size: 12px;">
+                  ${language === 'el'
+                    ? `Λαμβάνεις αυτό το email επειδή ακολουθείς τον/την ${organizerName} στο Nature Explorers.`
+                    : `You received this email because you follow ${organizerName} on Nature Explorers.`}
+                </p>
+              </div>
+            </div>
+          `,
+        })
+      );
+
+      const emailResults = await Promise.allSettled(emailPromises);
+      emailResults.forEach((result, i) => {
+        if (result.status === 'rejected') {
+          console.error(`[CreateTrip] Failed to send notification email to follower ${followers[i]?.user_id}:`, result.reason);
+        }
+      });
+    } catch (err) {
+      console.error('[CreateTrip] notifyFollowers error:', err);
+    }
+  };
+
   const handleSubmit = async (data) => {
-    const dataToSave = saveDraftRef.current ? { ...data, status: "draft" } : data;
+    const isDraft = saveDraftRef.current;
+    const dataToSave = isDraft ? { ...data, status: "draft" } : data;
     saveDraftRef.current = false;
-    await base44.entities.HikingTrip.create({ ...dataToSave, organizer_code: user.organizer_code });
+
+    const newTrip = await base44.entities.HikingTrip.create({ ...dataToSave, organizer_code: user.organizer_code });
     queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+
+    // Notify followers only when publishing (not saving as draft)
+    if (!isDraft && newTrip?.id) {
+      notifyFollowers(newTrip); // intentionally not awaited — runs in background
+    }
+
     navigate(createPageUrl("MyTrips"));
   };
 

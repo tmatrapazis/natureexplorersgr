@@ -1,18 +1,16 @@
-import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Heart } from 'lucide-react';
+import { Heart, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '@/components/contexts/LanguageContext';
 
 export default function FollowButton({ organizer, user }) {
   const queryClient = useQueryClient();
   const { language } = useLanguage();
-  const [isFollowing, setIsFollowing] = React.useState(false);
 
   // Check if user is already following this organizer
-  const { data: followRecord } = useQuery({
+  const { data: followRecord, isLoading: followLoading } = useQuery({
     queryKey: ['organizer-follow', user?.id, organizer.organizer_code],
     queryFn: async () => {
       if (!user) return null;
@@ -25,13 +23,12 @@ export default function FollowButton({ organizer, user }) {
     enabled: !!user,
   });
 
-  React.useEffect(() => {
-    setIsFollowing(!!followRecord);
-  }, [followRecord]);
-
+  // Derive follow state directly from server data — no local state needed.
+  // While a mutation is in flight we apply an optimistic value so the button
+  // feels instant; once the refetch completes the server value takes over.
   const followMutation = useMutation({
     mutationFn: async () => {
-      await base44.entities.OrganizerFollow.create({
+      return await base44.entities.OrganizerFollow.create({
         user_id: user.id,
         user_email: user.email,
         user_name: user.full_name || user.username,
@@ -40,16 +37,17 @@ export default function FollowButton({ organizer, user }) {
       });
     },
     onSuccess: () => {
-      setIsFollowing(true);
-      queryClient.invalidateQueries(['organizer-follow']);
-      toast.success(language === 'el' 
-        ? `Ακολουθείτε τον ${organizer.full_name}` 
+      queryClient.invalidateQueries({ queryKey: ['organizer-follow', user?.id, organizer.organizer_code] });
+      queryClient.invalidateQueries({ queryKey: ['organizer-follower-count', organizer.organizer_code] });
+      queryClient.invalidateQueries({ queryKey: ['my-follows'] });
+      toast.success(language === 'el'
+        ? `Ακολουθείτε τον ${organizer.full_name}`
         : `Following ${organizer.full_name}`
       );
     },
     onError: () => {
-      toast.error(language === 'el' 
-        ? 'Αποτυχία ακολούθησης' 
+      toast.error(language === 'el'
+        ? 'Αποτυχία ακολούθησης'
         : 'Failed to follow'
       );
     }
@@ -57,30 +55,39 @@ export default function FollowButton({ organizer, user }) {
 
   const unfollowMutation = useMutation({
     mutationFn: async () => {
-      if (followRecord) {
-        await base44.entities.OrganizerFollow.delete(followRecord.id);
-      }
+      if (!followRecord?.id) throw new Error('Follow record not found');
+      await base44.entities.OrganizerFollow.delete(followRecord.id);
     },
     onSuccess: () => {
-      setIsFollowing(false);
-      queryClient.invalidateQueries(['organizer-follow']);
-      toast.success(language === 'el' 
-        ? `Δεν ακολουθείτε πλέον τον ${organizer.full_name}` 
+      queryClient.invalidateQueries({ queryKey: ['organizer-follow', user?.id, organizer.organizer_code] });
+      queryClient.invalidateQueries({ queryKey: ['organizer-follower-count', organizer.organizer_code] });
+      queryClient.invalidateQueries({ queryKey: ['my-follows'] });
+      toast.success(language === 'el'
+        ? `Δεν ακολουθείτε πλέον τον ${organizer.full_name}`
         : `Unfollowed ${organizer.full_name}`
       );
     },
     onError: () => {
-      toast.error(language === 'el' 
-        ? 'Αποτυχία διακοπής ακολούθησης' 
+      toast.error(language === 'el'
+        ? 'Αποτυχία διακοπής ακολούθησης'
         : 'Failed to unfollow'
       );
     }
   });
 
+  // Optimistic: treat the button as already toggled while the request is in-flight
+  const isFollowing = followMutation.isPending
+    ? true
+    : unfollowMutation.isPending
+    ? false
+    : !!followRecord;
+
+  const isPending = followLoading || followMutation.isPending || unfollowMutation.isPending;
+
   const handleClick = () => {
     if (!user) {
-      toast.error(language === 'el' 
-        ? 'Συνδεθείτε για να ακολουθήσετε διοργανωτές' 
+      toast.error(language === 'el'
+        ? 'Συνδεθείτε για να ακολουθήσετε διοργανωτές'
         : 'Please log in to follow organizers'
       );
       return;
@@ -98,11 +105,15 @@ export default function FollowButton({ organizer, user }) {
       variant={isFollowing ? "default" : "outline"}
       size="sm"
       onClick={handleClick}
-      disabled={followMutation.isPending || unfollowMutation.isPending}
+      disabled={isPending}
       className="gap-2"
     >
-      <Heart className={`w-4 h-4 ${isFollowing ? 'fill-current' : ''}`} />
-      {isFollowing 
+      {isPending ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <Heart className={`w-4 h-4 ${isFollowing ? 'fill-current' : ''}`} />
+      )}
+      {isFollowing
         ? (language === 'el' ? 'Ακολουθείτε' : 'Following')
         : (language === 'el' ? 'Ακολούθηση' : 'Follow')
       }
