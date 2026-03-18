@@ -21,6 +21,8 @@ export default function FollowButton({ organizer, user }) {
       return follows.length > 0 ? follows[0] : null;
     },
     enabled: !!user,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 
   // Derive follow state directly from server data — no local state needed.

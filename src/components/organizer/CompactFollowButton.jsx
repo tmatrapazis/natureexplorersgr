@@ -21,6 +21,8 @@ export default function CompactFollowButton({ organizer, user }) {
       return follows.length > 0 ? follows[0] : null;
     },
     enabled: !!user,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 
   const followMutation = useMutation({
