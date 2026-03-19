@@ -81,10 +81,10 @@ export default function FollowButton({
   // Unfollow mutation
   const unfollowMutation = useMutation({
     mutationFn: async () => {
-      if (!followRecord?.id) {
-        throw new Error('No follow record to delete');
-      }
-      await base44.entities.OrganizerFollow.delete(followRecord.id);
+      await base44.entities.OrganizerFollow.deleteMany({
+        user_id: currentUser.id,
+        organizer_code: organizer.organizer_code
+      });
     },
     onSuccess: () => {
       queryClient.setQueryData(followQueryKey, null);
