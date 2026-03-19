@@ -51,7 +51,8 @@ export function TabNavigationProvider({ children }) {
       stacks.current[root] = newStack;
       navigate(newStack[newStack.length - 1]);
     } else {
-      navigate(-1);
+      // Fallback: go to the tab root instead of relying on browser history
+      navigate(root === "/home" ? "/" : root);
     }
   }, [navigate, location.pathname, getTabRoot]);
 

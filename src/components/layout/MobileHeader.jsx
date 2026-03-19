@@ -1,16 +1,16 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTabNavigation } from "@/components/contexts/TabNavigationContext";
 
 export default function MobileHeader({ title, onBack }) {
-  const navigate = useNavigate();
+  const { goBackInTab } = useTabNavigation();
   
   const handleBack = () => {
     if (onBack) {
       onBack();
     } else {
-      navigate(-1);
+      goBackInTab();
     }
   };
 
