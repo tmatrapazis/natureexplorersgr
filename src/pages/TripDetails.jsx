@@ -464,9 +464,10 @@ export default function TripDetailsPage() {
           <Button 
             variant="outline" 
             className="mb-6"
+            aria-label="Go back"
             onClick={handleGoBack}
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
             Back
           </Button>
 
