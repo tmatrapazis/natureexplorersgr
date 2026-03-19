@@ -50,6 +50,8 @@ export default function FollowButton({
     enabled: !!organizer.organizer_code && showCount,
   });
 
+  const followQueryKey = ['organizer-follow', organizer.organizer_code, currentUser?.id];
+
   // Follow mutation
   const followMutation = useMutation({
     mutationFn: async () => {
@@ -61,7 +63,8 @@ export default function FollowButton({
         organizer_name: organizer.full_name || organizer.username || '',
       });
     },
-    onSuccess: () => {
+    onSuccess: (newRecord) => {
+      queryClient.setQueryData(followQueryKey, newRecord);
       queryClient.invalidateQueries({ queryKey: ['organizer-follow'] });
       queryClient.invalidateQueries({ queryKey: ['organizer-followers-count'] });
       queryClient.invalidateQueries({ queryKey: ['my-follows'] });
@@ -91,6 +94,7 @@ export default function FollowButton({
       await base44.entities.OrganizerFollow.delete(follows[0].id);
     },
     onSuccess: () => {
+      queryClient.setQueryData(followQueryKey, null);
       queryClient.invalidateQueries({ queryKey: ['organizer-follow'] });
       queryClient.invalidateQueries({ queryKey: ['organizer-followers-count'] });
       queryClient.invalidateQueries({ queryKey: ['my-follows'] });
