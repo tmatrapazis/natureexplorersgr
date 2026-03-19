@@ -65,9 +65,27 @@
   * {
     @apply border-border;
   }
+  
+  html {
+    /* iOS Safe Area Support */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  
   body {
     @apply bg-background text-foreground;
     overscroll-behavior: none;
+    /* Prevent iOS Safari bounce */
+    position: fixed;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+  
+  #root {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   /* Font optimization - prevent FOIT (Flash of Invisible Text) */
@@ -108,4 +126,23 @@ img {
 /* Critical CSS for above-the-fold content */
 .hero-section {
   content-visibility: auto;
+}
+
+/* iOS Safe Area Utilities */
+@supports (padding: max(0px)) {
+  .safe-top {
+    padding-top: max(env(safe-area-inset-top), 0.5rem);
+  }
+  
+  .safe-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+  }
+  
+  .safe-left {
+    padding-left: max(env(safe-area-inset-left), 1rem);
+  }
+  
+  .safe-right {
+    padding-right: max(env(safe-area-inset-right), 1rem);
+  }
 }
