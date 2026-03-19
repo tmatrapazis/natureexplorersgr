@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { useTabNavigation } from "../components/contexts/TabNavigationContext";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,8 @@ export default function EditGuideProfilePage() {
   const { t } = useTranslation(language);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const goBack = () => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("Guides"));
+  const { goBackInTab, canGoBack } = useTabNavigation();
+  const goBack = () => canGoBack() ? goBackInTab() : navigate(createPageUrl("Guides"));
 
   const urlParams = new URLSearchParams(window.location.search);
   const guideId = urlParams.get("id");
@@ -224,8 +226,10 @@ export default function EditGuideProfilePage() {
           <Button
             variant="ghost"
             onClick={goBack}
+            className="min-h-[44px]"
+            aria-label={language === 'el' ? 'Πίσω στο Προφίλ' : 'Back to Profile'}
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
             {language === 'el' ? 'Πίσω στο Προφίλ' : 'Back to Profile'}
           </Button>
 

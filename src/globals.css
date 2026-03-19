@@ -146,6 +146,15 @@
   display: none;
 }
 
+/* Prevent horizontal overflow globally */
+* {
+  max-width: 100%;
+}
+
+html, body, #root {
+  overflow-x: hidden;
+}
+
 /* Ensure images don't cause layout shift */
 img {
   max-width: 100%;

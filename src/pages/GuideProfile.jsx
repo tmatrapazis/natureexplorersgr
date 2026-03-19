@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import DOMPurify from "dompurify";
+import { useTabNavigation } from "../components/contexts/TabNavigationContext";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,8 @@ export default function GuideProfilePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const navigate = useNavigate();
-  const goBack = () => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("Guides"));
+  const { goBackInTab, canGoBack } = useTabNavigation();
+  const goBack = () => canGoBack() ? goBackInTab() : navigate(createPageUrl("Guides"));
   
   const urlParams = new URLSearchParams(window.location.search);
   const guideId = urlParams.get("id");
@@ -194,8 +196,13 @@ export default function GuideProfilePage() {
         
         {/* Back Button - Upper Left Corner */}
         <div className="absolute top-4 left-4 z-20">
-          <Button variant="outline" className="bg-white" onClick={goBack}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
+          <Button 
+            variant="outline" 
+            className="bg-white min-h-[44px]" 
+            onClick={goBack}
+            aria-label={language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
             {language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
           </Button>
         </div>
