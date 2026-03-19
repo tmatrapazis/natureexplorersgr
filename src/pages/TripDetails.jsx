@@ -15,13 +15,13 @@ import { formatDateRange } from "../components/helpers/dateHelpers";
 import { trackEvent } from "../components/analytics/GoogleAnalytics";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
-// NEW IMPORTS FOR SEO
+import { useTabNavigation } from "../components/contexts/TabNavigationContext";
 import StructuredData from "../components/seo/StructuredData";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 import ShareButton from "../components/trip/ShareButton";
 import DOMPurify from "dompurify";
 import { getPricingOptions } from "../components/helpers/pricingHelpers";
-import TripLocationMap from "../components/trips/TripLocationMap";
+import LazyTripLocationMap from "../components/lazy/LazyTripLocationMap";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
@@ -50,14 +50,15 @@ export default function TripDetailsPage() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const tripId = searchParams.get("id");
+  const { goBackInTab, canGoBack } = useTabNavigation();
 
   const handleGoBack = () => {
-    // 'default' key means the user landed here directly (e.g., direct link or refresh)
-    if (location.key !== "default") {
-      navigate(-1); // Safely go back via React Router
+    if (canGoBack()) {
+      goBackInTab();
+    } else if (location.key !== "default") {
+      navigate(-1);
     } else {
-      // Fallback: Send them to the Calendar so they don't leave the site
-      navigate(createPageUrl("Calendar")); 
+      navigate(createPageUrl("Calendar"));
     }
   };
 
@@ -704,7 +705,7 @@ export default function TripDetailsPage() {
               </Card>
 
               <Card className="p-4">
-                <TripLocationMap trip={trip} />
+                <LazyTripLocationMap trip={trip} />
               </Card>
             </div>
           </div>
