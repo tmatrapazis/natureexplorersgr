@@ -241,6 +241,8 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" alt="Nature Explorers" className="h-8 w-auto" />
               </div>
               
+              {user && <NotificationsBell user={user} compact={true} />}
+              
               {/* Organizer actions on MyTrips page */}
               {isOrganizer && location.pathname.includes('/MyTrips') && user && (
                 <div className="flex items-center gap-1">
