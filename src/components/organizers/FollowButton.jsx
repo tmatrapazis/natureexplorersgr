@@ -65,7 +65,6 @@ export default function FollowButton({
     },
     onSuccess: (newRecord) => {
       queryClient.setQueryData(followQueryKey, newRecord);
-      queryClient.invalidateQueries({ queryKey: ['organizer-follow'] });
       queryClient.invalidateQueries({ queryKey: ['organizer-followers-count'] });
       queryClient.invalidateQueries({ queryKey: ['my-follows'] });
       toast.success(language === 'el'
@@ -88,7 +87,6 @@ export default function FollowButton({
     },
     onSuccess: () => {
       queryClient.setQueryData(followQueryKey, null);
-      queryClient.invalidateQueries({ queryKey: ['organizer-follow'] });
       queryClient.invalidateQueries({ queryKey: ['organizer-followers-count'] });
       queryClient.invalidateQueries({ queryKey: ['my-follows'] });
       toast.success(language === 'el'
