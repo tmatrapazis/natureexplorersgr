@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { createOptimisticTripUpdate } from '../lib/optimistic-mutations';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -37,15 +38,19 @@ export default function EditTripPage() {
     enabled: !!tripId,
   });
 
+  const { data: user } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: () => base44.auth.me(),
+  });
+
   const updateTripMutation = useMutation({
     mutationFn: async (/** @type {any} */ data) => {
       const { created_date, updated_date, id, created_by, view_count, organizer_name, organizer_is_verified, organizer_email, computedStatus, ...clean } = data;
       if (!clean.end_date) clean.end_date = clean.start_date;
       return await base44.entities.HikingTrip.update(tripId, clean);
     },
+    ...createOptimisticTripUpdate(queryClient, tripId, user?.organizer_code),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
-      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       setIsFormDirty(false);
       navigate(createPageUrl("MyTrips"));
     },
@@ -100,7 +105,12 @@ export default function EditTripPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8 w-full overflow-x-hidden">
       <div className="max-w-3xl mx-auto w-full min-w-0">
-        <Button variant="outline" className="mb-6" onClick={() => handleNavigateAway(null)}>
+        <Button 
+          variant="outline" 
+          className="mb-6 min-h-[44px]" 
+          onClick={() => handleNavigateAway(null)}
+          aria-label={t('create_trip.back_to_trips')}
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
           {t('create_trip.back_to_trips')}
         </Button>
@@ -127,9 +137,24 @@ export default function EditTripPage() {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel onClick={handleDiscardAndExit}>{language === 'el' ? 'Απόρριψη Αλλαγών' : 'Discard Changes'}</AlertDialogCancel>
-              <AlertDialogAction onClick={() => setShowExitDialog(false)}>{language === 'el' ? 'Ακύρωση' : 'Cancel'}</AlertDialogAction>
-              <AlertDialogAction onClick={handleSaveAndExit} className="bg-emerald-600 hover:bg-emerald-700">{language === 'el' ? 'Αποθήκευση & Έξοδος' : 'Save & Exit'}</AlertDialogAction>
+              <AlertDialogCancel 
+                onClick={handleDiscardAndExit}
+                className="min-h-[44px]"
+              >
+                {language === 'el' ? 'Απόρριψη Αλλαγών' : 'Discard Changes'}
+              </AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={() => setShowExitDialog(false)}
+                className="min-h-[44px]"
+              >
+                {language === 'el' ? 'Ακύρωση' : 'Cancel'}
+              </AlertDialogAction>
+              <AlertDialogAction 
+                onClick={handleSaveAndExit} 
+                className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+              >
+                {language === 'el' ? 'Αποθήκευση & Έξοδος' : 'Save & Exit'}
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

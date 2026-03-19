@@ -11,11 +11,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
 import { User, Upload, ArrowLeft, CheckCircle, Loader2, ShieldCheck, UserCog, Shield, Plus, X } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import useSEO from '../components/seo/useSEO';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import DeleteAccountDialog from '../components/profile/DeleteAccountDialog';
+import MobileSelect from '../components/ui/MobileSelect';
+import { createOptimisticUpdate } from '../lib/optimistic-mutations';
 
 export default function EditProfilePage() {
   const queryClient = useQueryClient();
@@ -111,18 +112,14 @@ export default function EditProfilePage() {
         throw error;
       }
     },
-    onMutate: async (updatedData) => {
-      console.log('🟡 [EditProfile] onMutate: Canceling queries and optimistic update');
-      await queryClient.cancelQueries({ queryKey: ['current-user'] });
-      const previousUser = queryClient.getQueryData(['current-user']);
-      queryClient.setQueryData(['current-user'], (old) => ({ .../** @type {any} */(old), .../** @type {any} */(updatedData) }));
-      return { previousUser };
-    },
+    ...createOptimisticUpdate(
+      queryClient,
+      ['current-user'],
+      (old, updatedData) => ({ ...old, ...updatedData })
+    ),
     onError: (/** @type {any} */ err, variables, context) => {
       console.error('🔴 [EditProfile] onError triggered:', err);
       console.error('📋 [EditProfile] Error context:', { variables, context });
-      
-      queryClient.setQueryData(['current-user'], context.previousUser);
       
       // User-facing error messages
       const errorMessage = err.message || 'Failed to update profile';
@@ -433,16 +430,31 @@ export default function EditProfilePage() {
                 <CardContent className="space-y-6">
                   <div>
                     <Label htmlFor="training_status">Fitness Level</Label>
-                    <Select id="training_status" value={formData.training_status} onValueChange={(value) => handleSelectChange('training_status', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your fitness level" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Beginner">Beginner (new to hiking)</SelectItem>
-                        <SelectItem value="Intermediate">Intermediate (hike regularly)</SelectItem>
-                        <SelectItem value="Advanced">Advanced (very experienced)</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="hidden md:block">
+                      <Select id="training_status" value={formData.training_status} onValueChange={(value) => handleSelectChange('training_status', value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your fitness level" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Beginner">Beginner (new to hiking)</SelectItem>
+                          <SelectItem value="Intermediate">Intermediate (hike regularly)</SelectItem>
+                          <SelectItem value="Advanced">Advanced (very experienced)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="md:hidden">
+                      <MobileSelect
+                        value={formData.training_status}
+                        onValueChange={(value) => handleSelectChange('training_status', value)}
+                        options={[
+                          { value: 'Beginner', label: 'Beginner (new to hiking)' },
+                          { value: 'Intermediate', label: 'Intermediate (hike regularly)' },
+                          { value: 'Advanced', label: 'Advanced (very experienced)' },
+                        ]}
+                        placeholder="Select your fitness level"
+                        label="Fitness Level"
+                      />
+                    </div>
                   </div>
                   <div>
                     <Label htmlFor="health_status">General Health</Label>

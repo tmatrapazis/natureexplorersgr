@@ -2,7 +2,7 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import MobileSelect from "@/components/ui/MobileSelect";
 import { MapPin, Users, ListOrdered, Edit, XCircle, Trash2, Plus, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -118,31 +118,33 @@ export default function OrganizerTripCard({
             <div className="flex flex-wrap items-center gap-2 min-w-0">
               {showEdit && (
                 <Link to={`${createPageUrl("TripForm")}?id=${trip.id}`} className="flex-shrink-0">
-                  <Button variant="outline" size="sm" className="min-h-[44px]">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="min-h-[44px]"
+                    aria-label={`${t('organizer.edit_trip')} ${trip.title}`}
+                  >
                     <Edit className="w-4 h-4 mr-2" />{t('organizer.edit_trip')}
                   </Button>
                 </Link>
               )}
 
               {showStatusChange && (
-                <Select
+                <MobileSelect
                   value={trip.status}
                   onValueChange={(value) => onStatusChange(trip.id, value)}
+                  options={[
+                    { value: 'draft', label: language === 'el' ? 'Πρόχειρο' : 'Draft' },
+                    { value: 'upcoming', label: language === 'el' ? 'Επερχόμενο' : 'Upcoming' },
+                    { value: 'happening now', label: language === 'el' ? 'Σε εξέλιξη' : 'Happening Now' },
+                    { value: 'completed', label: language === 'el' ? 'Ολοκληρωμένο' : 'Completed' },
+                    { value: 'cancelled', label: language === 'el' ? 'Ακυρωμένο' : 'Cancelled' },
+                    { value: 'almost soldout', label: language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout' },
+                  ]}
+                  placeholder={language === 'el' ? 'Αλλαγή κατάστασης' : 'Change status'}
+                  label={language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}
                   disabled={isRequiredFieldsFilled && !isRequiredFieldsFilled(trip)}
-                >
-                  <SelectTrigger className="w-[140px] sm:w-[160px] h-9 min-h-[44px]">
-                    <RefreshCw className="w-4 h-4 mr-2 flex-shrink-0" />
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο' : 'Draft'}</SelectItem>
-                    <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενο' : 'Upcoming'}</SelectItem>
-                    <SelectItem value="happening now">{language === 'el' ? 'Σε εξέλιξη' : 'Happening Now'}</SelectItem>
-                    <SelectItem value="completed">{language === 'el' ? 'Ολοκληρωμένο' : 'Completed'}</SelectItem>
-                    <SelectItem value="cancelled">{language === 'el' ? 'Ακυρωμένο' : 'Cancelled'}</SelectItem>
-                    <SelectItem value="almost soldout">{language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Soldout'}</SelectItem>
-                  </SelectContent>
-                </Select>
+                />
               )}
 
               {showCancel && (
@@ -152,6 +154,7 @@ export default function OrganizerTripCard({
                   onClick={() => onCancel(trip)}
                   disabled={isCancelling}
                   className="flex-shrink-0 min-h-[44px]"
+                  aria-label={`${t('organizer.cancel_trip')} ${trip.title}`}
                 >
                   {isCancelling ? (
                     <span className="flex items-center gap-2">{t('organizer.cancelling')}</span>
@@ -170,6 +173,7 @@ export default function OrganizerTripCard({
                   size="sm"
                   onClick={() => onRecreate(trip)}
                   className="flex-shrink-0 min-h-[44px]"
+                  aria-label={`${language === 'el' ? 'Αναδημιουργία' : 'Recreate'} ${trip.title}`}
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   {language === 'el' ? 'Αναδημιουργία' : 'Recreate'}
@@ -183,6 +187,7 @@ export default function OrganizerTripCard({
                   onClick={() => onDelete(trip.id)}
                   disabled={deleteMutationPending}
                   className="text-red-600 hover:text-red-700 flex-shrink-0 min-h-[44px]"
+                  aria-label={`${language === 'el' ? 'Διαγραφή' : 'Delete'} ${trip.title}`}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   {language === 'el' ? 'Διαγραφή' : 'Delete'}
