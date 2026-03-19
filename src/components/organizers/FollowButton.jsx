@@ -78,9 +78,17 @@ export default function FollowButton({
   // Unfollow mutation
   const unfollowMutation = useMutation({
     mutationFn: async () => {
-      // Guard: followRecord must exist before attempting delete
-      if (!followRecord?.id) throw new Error('Follow record not found');
-      await base44.entities.OrganizerFollow.delete(followRecord.id);
+      // Fetch the latest follow record to ensure we have the correct ID
+      const follows = await base44.entities.OrganizerFollow.filter({
+        user_id: currentUser.id,
+        organizer_code: organizer.organizer_code
+      });
+      
+      if (follows.length === 0) {
+        throw new Error('No follow record found');
+      }
+      
+      await base44.entities.OrganizerFollow.delete(follows[0].id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organizer-follow'] });
