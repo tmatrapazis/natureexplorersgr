@@ -201,9 +201,11 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <LanguageProvider>
-      <GoogleAnalytics enabled={analyticsEnabled} />
-      {currentPageName !== 'TripDetails' && <CookieConsent onConsentChange={handleConsentChange} />}
-      <LayoutContent children={children} currentPageName={currentPageName} />
+      <TabNavigationProvider>
+        <GoogleAnalytics enabled={analyticsEnabled} />
+        {currentPageName !== 'TripDetails' && <CookieConsent onConsentChange={handleConsentChange} />}
+        <LayoutContent children={children} currentPageName={currentPageName} />
+      </TabNavigationProvider>
     </LanguageProvider>
   );
 }
