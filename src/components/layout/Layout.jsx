@@ -1,7 +1,8 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X } from "lucide-react";
+import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X, ArrowLeft } from "lucide-react";
+import { useTabNavigation } from "@/lib/TabNavigationContext";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -31,6 +32,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
   const { setOpenMobile } = useSidebar();
+  const { canGoBack, goBackInTab, isTabRoot, navigateToTab } = useTabNavigation();
 
   React.useEffect(() => {
     if (user) {
@@ -237,7 +239,16 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <SidebarTrigger className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]" />
+                {canGoBack() && !isTabRoot() ? (
+                  <button
+                    onClick={goBackInTab}
+                    className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]"
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                  </button>
+                ) : (
+                  <SidebarTrigger className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]" />
+                )}
                 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" alt="Nature Explorers" className="h-8 w-auto" />
               </div>
               
@@ -292,9 +303,9 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                 const isActive = location.pathname.startsWith(item.url.split('?')[0]);
                 
                 return (
-                  <Link
+                  <button
                     key={item.title}
-                    to={item.url}
+                    onClick={() => navigateToTab(item.url)}
                     className={`flex flex-col items-center justify-center py-1 px-3 min-h-[48px] min-w-[48px] transition-colors rounded-lg ${
                       isActive 
                         ? "text-emerald-600 bg-emerald-50" 
@@ -303,7 +314,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                   >
                     <Icon className="w-5 h-5 mb-1" />
                     <span className="text-[10px] font-medium">{item.title}</span>
-                  </Link>
+                  </button>
                 );
               })}
               

@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/components/contexts/LanguageContext';
+import { createOptimisticCreate, createOptimisticDelete } from '@/lib/optimistic-mutations';
 
 export default function FollowButton({
   organizer,
@@ -52,7 +53,7 @@ export default function FollowButton({
 
   const followQueryKey = ['organizer-follow', organizer.organizer_code, currentUser?.id];
 
-  // Follow mutation
+  // Follow mutation with optimistic updates
   const followMutation = useMutation({
     mutationFn: async () => {
       return await base44.entities.OrganizerFollow.create({
@@ -64,6 +65,15 @@ export default function FollowButton({
         organizer_name: organizer.full_name || organizer.username || '',
       });
     },
+    ...createOptimisticCreate(
+      queryClient,
+      followQueryKey,
+      (data) => ({
+        id: 'temp-' + Date.now(),
+        ...data,
+        created_date: new Date().toISOString(),
+      })
+    ),
     onSuccess: (newRecord) => {
       queryClient.setQueryData(followQueryKey, newRecord);
       queryClient.invalidateQueries({ queryKey: ['organizer-followers-count'] });
@@ -78,7 +88,7 @@ export default function FollowButton({
     }
   });
 
-  // Unfollow mutation
+  // Unfollow mutation with optimistic updates
   const unfollowMutation = useMutation({
     mutationFn: async () => {
       await base44.entities.OrganizerFollow.deleteMany({
@@ -86,6 +96,11 @@ export default function FollowButton({
         organizer_code: organizer.organizer_code
       });
     },
+    ...createOptimisticDelete(
+      queryClient,
+      followQueryKey,
+      () => false // Always filter out (delete)
+    ),
     onSuccess: () => {
       queryClient.setQueryData(followQueryKey, null);
       queryClient.invalidateQueries({ queryKey: ['organizer-followers-count'] });
