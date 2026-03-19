@@ -298,7 +298,12 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
             <Label htmlFor="pricing-mode" className="text-sm font-normal">
               {language === 'el' ? 'Πολλαπλές επιλογές τιμών' : 'Multiple pricing options'}
             </Label>
-            <Switch id="pricing-mode" checked={useMultiplePricing} onCheckedChange={handlePricingModeChange} />
+            <Switch 
+              id="pricing-mode" 
+              checked={useMultiplePricing} 
+              onCheckedChange={handlePricingModeChange}
+              aria-label={language === 'el' ? 'Ενεργοποίηση πολλαπλών επιλογών τιμών' : 'Enable multiple pricing options'}
+            />
           </div>
         </div>
         {useMultiplePricing ? (
