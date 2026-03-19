@@ -102,7 +102,12 @@ export default function NotificationsBell({ user, compact = false }) {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className={`relative ${compact ? 'rounded-lg min-h-[44px] min-w-[44px]' : 'rounded-full'}`}>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className={`relative ${compact ? 'rounded-lg min-h-[44px] min-w-[44px]' : 'rounded-full min-h-[44px] min-w-[44px]'}`}
+          aria-label={`Notifications${unreadCount > 0 ? ` (${displayCount} unread)` : ''}`}
+        >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-xs font-medium text-white">
@@ -118,9 +123,10 @@ export default function NotificationsBell({ user, compact = false }) {
             <Button 
               variant="link" 
               size="sm" 
-              className="h-auto p-0 text-xs" 
+              className="h-auto p-0 text-xs min-h-[24px]" 
               onClick={handleMarkAllAsRead}
               disabled={markAllAsReadMutation.isPending}
+              aria-label="Mark all notifications as read"
             >
               {markAllAsReadMutation.isPending ? (
                 <Loader2 className="w-3 h-3 animate-spin mr-1" />
@@ -142,8 +148,12 @@ export default function NotificationsBell({ user, compact = false }) {
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                className="flex items-start gap-3 p-3 border-b border-stone-100 last:border-0 hover:bg-stone-50 cursor-pointer transition-colors"
+                className="flex items-start gap-3 p-3 border-b border-stone-100 last:border-0 hover:bg-stone-50 cursor-pointer transition-colors min-h-[60px]"
                 onClick={() => handleNotificationClick(notification)}
+                role="button"
+                tabIndex={0}
+                aria-label={`${notification.title}: ${notification.message}`}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), handleNotificationClick(notification))}
               >
                 {!notification.is_read ? (
                   <Circle className="h-2 w-2 mt-2 text-emerald-500 fill-current flex-shrink-0" />

@@ -152,14 +152,14 @@ export default function FollowButton({
         onClick={handleClick}
         disabled={isPending || isLoading}
         className={cn(
-          "p-2 rounded-full transition-all",
+          "p-2 rounded-full transition-all min-h-[44px] min-w-[44px] flex items-center justify-center",
           isFollowing
             ? "text-red-500 hover:bg-red-50"
             : "text-stone-400 hover:text-red-500 hover:bg-stone-50",
           isPending && "opacity-50 cursor-wait",
           className
         )}
-        title={isFollowing
+        aria-label={isFollowing
           ? (language === 'el' ? 'Διακοπή ακολούθησης' : 'Unfollow')
           : (language === 'el' ? 'Ακολούθηση' : 'Follow')
         }
@@ -181,10 +181,11 @@ export default function FollowButton({
       onClick={handleClick}
       disabled={isPending || isLoading}
       className={cn(
-        "gap-2",
+        "gap-2 min-h-[44px]",
         isFollowing && "border-red-200 hover:bg-red-50",
         className
       )}
+      aria-label={`${isFollowing ? (language === 'el' ? 'Ακολουθείτε' : 'Following') : (language === 'el' ? 'Ακολούθηση' : 'Follow')} ${showCount && followerCount > 0 ? `(${followerCount} followers)` : ''}`}
     >
       {isPending ? (
         <Loader2 className="w-4 h-4 animate-spin" />

@@ -194,7 +194,11 @@ export default function MyTripsPage() {
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             {user && (
               <Link to={`${createPageUrl("OrganizerProfile")}?code=${user.organizer_code}`} className="w-full sm:w-auto">
-                <Button variant="outline" className="w-full sm:w-auto min-h-[44px]">
+                <Button 
+                  variant="outline" 
+                  className="w-full sm:w-auto min-h-[44px]"
+                  aria-label={t('organizer.view_profile')}
+                >
                   <UserIcon className="w-4 h-4 mr-2" />
                   {t('organizer.view_profile')}
                 </Button>

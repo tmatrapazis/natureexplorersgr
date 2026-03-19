@@ -102,7 +102,11 @@ export default function TripFilters({ filters, onFilterChange }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="px-4 py-2.5 text-sm font-medium rounded-md inline-flex items-center justify-center h-9">
+        <Button 
+          variant="outline" 
+          className="px-4 py-2.5 text-sm font-medium rounded-md inline-flex items-center justify-center min-h-[44px]"
+          aria-label={`${t('filters.filter_trips')}${activeFiltersCount > 0 ? ` (${activeFiltersCount} active)` : ''}`}
+        >
           <Filter className="w-4 h-4 mr-2" />
           {t('filters.filter_trips')}
           {activeFiltersCount > 0 &&
@@ -224,10 +228,14 @@ export default function TripFilters({ filters, onFilterChange }) {
               <Badge
                 key={tag}
                 variant={tempFilters.tags.includes(tag) ? "default" : "outline"}
-                className={`cursor-pointer ${tempFilters.tags.includes(tag) ? 'bg-emerald-600' : ''}`}
-                onClick={() => toggleTag(tag)}>
-
-                  {tag} {/* Tags themselves are not translated, they are identifiers */}
+                className={`cursor-pointer min-h-[44px] px-4 flex items-center ${tempFilters.tags.includes(tag) ? 'bg-emerald-600' : ''}`}
+                onClick={() => toggleTag(tag)}
+                role="button"
+                tabIndex={0}
+                aria-label={`${tempFilters.tags.includes(tag) ? 'Remove' : 'Add'} tag ${tag}`}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), toggleTag(tag))}
+              >
+                  {tag}
                 </Badge>
               )}
             </div>
@@ -242,9 +250,13 @@ export default function TripFilters({ filters, onFilterChange }) {
                 <Badge
                   key={location}
                   variant={tempFilters.departureFrom?.includes(location) ? "default" : "outline"}
-                  className={`cursor-pointer ${tempFilters.departureFrom?.includes(location) ? 'bg-blue-600' : ''}`}
-                  onClick={() => toggleDepartureLocation(location)}>
-
+                  className={`cursor-pointer min-h-[44px] px-4 flex items-center ${tempFilters.departureFrom?.includes(location) ? 'bg-blue-600' : ''}`}
+                  onClick={() => toggleDepartureLocation(location)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${tempFilters.departureFrom?.includes(location) ? 'Remove' : 'Add'} departure from ${location}`}
+                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), toggleDepartureLocation(location))}
+                >
                     {location}
                   </Badge>
                 )}
@@ -254,11 +266,20 @@ export default function TripFilters({ filters, onFilterChange }) {
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={handleClearFilters}>
+          <Button 
+            variant="outline" 
+            onClick={handleClearFilters}
+            className="min-h-[44px]"
+            aria-label={t('filters.clear')}
+          >
             <X className="w-4 h-4 mr-2" />
             {t('filters.clear')}
           </Button>
-          <Button onClick={handleApplyFilters} className="bg-emerald-600 hover:bg-emerald-700">
+          <Button 
+            onClick={handleApplyFilters} 
+            className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+            aria-label={t('filters.apply')}
+          >
             {t('filters.apply')}
           </Button>
         </DialogFooter>

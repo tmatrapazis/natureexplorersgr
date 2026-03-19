@@ -193,9 +193,16 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         <Label>{t('create_trip.tags')}</Label>
         <div className="flex flex-wrap gap-2 mt-2 w-full min-w-0">
           {availableTags.map(tag => (
-            <Badge key={tag} variant={tripData.tags.includes(tag) ? "default" : "outline"}
-              className={`cursor-pointer whitespace-normal break-words text-center ${tripData.tags.includes(tag) ? 'bg-emerald-600' : ''}`}
-              onClick={() => toggleTag(tag)}>
+            <Badge 
+              key={tag} 
+              variant={tripData.tags.includes(tag) ? "default" : "outline"}
+              className={`cursor-pointer whitespace-normal break-words text-center min-h-[44px] px-4 flex items-center ${tripData.tags.includes(tag) ? 'bg-emerald-600' : ''}`}
+              onClick={() => toggleTag(tag)}
+              role="button"
+              tabIndex={0}
+              aria-label={`${tripData.tags.includes(tag) ? (language === 'el' ? 'Αφαίρεση ετικέτας' : 'Remove tag') : (language === 'el' ? 'Προσθήκη ετικέτας' : 'Add tag')} ${tag}`}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), toggleTag(tag))}
+            >
               {tag}
             </Badge>
           ))}
@@ -303,7 +310,15 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
               <Input placeholder={language === 'el' ? 'Κατηγορία' : 'Label'} value={currentPricingLabel} onChange={(e) => setCurrentPricingLabel(e.target.value)} className="md:col-span-3" />
               <Input type="number" min="0" step="0.01" placeholder={language === 'el' ? 'Τιμή' : 'Price'} value={currentPricingPrice} onChange={(e) => setCurrentPricingPrice(e.target.value)} className="md:col-span-2" />
               <Input placeholder={language === 'el' ? 'Περιγραφή (προαιρετικό)' : 'Description (optional)'} value={currentPricingDescription} onChange={(e) => setCurrentPricingDescription(e.target.value)} className="md:col-span-6" />
-              <Button type="button" onClick={addPricingOption} variant="outline" className="md:col-span-1"><Plus className="w-4 h-4" /></Button>
+              <Button 
+                type="button" 
+                onClick={addPricingOption} 
+                variant="outline" 
+                className="md:col-span-1 min-h-[44px] min-w-[44px]"
+                aria-label={language === 'el' ? 'Προσθήκη επιλογής τιμής' : 'Add pricing option'}
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
             </div>
             <div className="space-y-2">
               {tripData.pricing_options.map((option, i) => (
@@ -312,7 +327,16 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
                     <span className="font-medium text-sm">{option.label}: €{option.price}</span>
                     {option.description && <p className="text-xs text-stone-500">{option.description}</p>}
                   </div>
-                  <Button type="button" variant="ghost" size="sm" onClick={() => removePricingOption(i)}><X className="w-4 h-4" /></Button>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => removePricingOption(i)} 
+                    className="min-h-[44px] min-w-[44px]"
+                    aria-label={`${language === 'el' ? 'Αφαίρεση' : 'Remove'} ${option.label}`}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
                 </div>
               ))}
             </div>
@@ -348,7 +372,14 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         <Label htmlFor="image-upload">{t('create_trip.upload_primary_image')}</Label>
         <div className="flex gap-2">
           <Input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} disabled={uploadingImage} className="flex-1" />
-          <Button type="button" variant="outline" onClick={handleImageGeneration} disabled={uploadingImage}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={handleImageGeneration} 
+            disabled={uploadingImage}
+            className="min-h-[44px]"
+            aria-label={t('create_trip.generate_ai_image')}
+          >
             {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : t('create_trip.generate_ai_image')}
           </Button>
         </div>
@@ -362,13 +393,30 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         <div className="flex gap-2 mb-2">
           <Input value={currentRequirement} onChange={(e) => setCurrentRequirement(e.target.value)} placeholder={t('create_trip.requirements_placeholder')}
             onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addRequirement())} />
-          <Button type="button" onClick={addRequirement} variant="outline"><Plus className="w-4 h-4" /></Button>
+          <Button 
+            type="button" 
+            onClick={addRequirement} 
+            variant="outline" 
+            className="min-h-[44px] min-w-[44px]"
+            aria-label={language === 'el' ? 'Προσθήκη απαίτησης' : 'Add requirement'}
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
         </div>
         <div className="space-y-2">
           {tripData.requirements.map((req, i) => (
             <div key={i} className="flex items-center justify-between bg-stone-50 p-2 rounded">
               <span className="text-sm">{req}</span>
-              <Button type="button" variant="ghost" size="sm" onClick={() => removeRequirement(i)}><X className="w-4 h-4" /></Button>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => removeRequirement(i)} 
+                className="min-h-[44px] min-w-[44px]"
+                aria-label={`${language === 'el' ? 'Αφαίρεση' : 'Remove'} ${req}`}
+              >
+                <X className="w-4 h-4" />
+              </Button>
             </div>
           ))}
         </div>
@@ -384,13 +432,30 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
           <Input value={currentDeparture} onChange={(e) => setCurrentDeparture(e.target.value)}
             placeholder={language === 'el' ? 'π.χ. Αθήνα' : 'e.g. Athens'}
             onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addDeparture())} />
-          <Button type="button" onClick={addDeparture} variant="outline"><Plus className="w-4 h-4" /></Button>
+          <Button 
+            type="button" 
+            onClick={addDeparture} 
+            variant="outline" 
+            className="min-h-[44px] min-w-[44px]"
+            aria-label={language === 'el' ? 'Προσθήκη σημείου αναχώρησης' : 'Add departure location'}
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
         </div>
         <div className="space-y-2">
           {tripData.departure_from.map((dep, i) => (
             <div key={i} className="flex items-center justify-between bg-stone-50 p-2 rounded">
               <span className="text-sm">{dep}</span>
-              <Button type="button" variant="ghost" size="sm" onClick={() => removeDeparture(i)}><X className="w-4 h-4" /></Button>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => removeDeparture(i)} 
+                className="min-h-[44px] min-w-[44px]"
+                aria-label={`${language === 'el' ? 'Αφαίρεση' : 'Remove'} ${dep}`}
+              >
+                <X className="w-4 h-4" />
+              </Button>
             </div>
           ))}
         </div>
