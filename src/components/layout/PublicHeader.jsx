@@ -39,8 +39,19 @@ export default function PublicHeader() {
   };
 
   return (
-    <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
-      <div className="w-full py-4 pl-5 pr-5">
+    <header 
+      className="bg-white border-b border-stone-200 sticky top-0 z-50"
+      style={{ 
+        paddingTop: 'max(env(safe-area-inset-top), 0.5rem)'
+      }}
+    >
+      <div 
+        className="w-full py-4"
+        style={{ 
+          paddingLeft: 'max(env(safe-area-inset-left), 1.25rem)',
+          paddingRight: 'max(env(safe-area-inset-right), 1.25rem)'
+        }}
+      >
         <div className="flex items-center justify-between gap-8">
           {/* Logo on the left */}
           <Link to={createPageUrl("Home")} className="flex items-center gap-3 flex-shrink-0">
