@@ -53,17 +53,19 @@ export default function CalendarGrid({ currentDate, onDateChange, trips, onDayCl
             variant="outline"
             size="icon"
             onClick={previousMonth}
-            className="hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200"
+            className="hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 min-h-[44px] min-w-[44px]"
+            aria-label="Previous month"
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="w-4 h-4" aria-hidden="true" />
           </Button>
           <Button
             variant="outline"
             size="icon"
             onClick={nextMonth}
-            className="hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200"
+            className="hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 min-h-[44px] min-w-[44px]"
+            aria-label="Next month"
           >
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-4 h-4" aria-hidden="true" />
           </Button>
         </div>
       </div>
@@ -85,12 +87,13 @@ export default function CalendarGrid({ currentDate, onDateChange, trips, onDayCl
               key={index}
               onClick={() => day && onDayClick(day, dayTrips)}
               disabled={!day}
+              aria-label={day ? `${format(day, 'MMMM d, yyyy')}${hasTrips ? ` - ${dayTrips.length} trip${dayTrips.length > 1 ? 's' : ''}` : ''}` : undefined}
               className={`
-                aspect-square p-2 rounded-xl transition-all duration-200 relative
+                aspect-square p-2 rounded-xl transition-all duration-200 relative min-h-[44px] min-w-[44px] touch-manipulation
                 ${!day ? "invisible" : ""}
                 ${isSelected ? "bg-orange-200 border-2 border-orange-500" : ""}
                 ${isToday(day || new Date()) && !isSelected ? "bg-emerald-100 border-2 border-emerald-500" : ""}
-                ${!isSelected && !isToday(day || new Date()) ? "hover:bg-muted" : ""}
+                ${!isSelected && !isToday(day || new Date()) ? "hover:bg-muted active:bg-muted" : ""}
                 ${!isSameMonth(day || new Date(), currentDate) ? "opacity-40" : ""}
                 ${hasTrips ? "cursor-pointer" : "cursor-default"}
               `}

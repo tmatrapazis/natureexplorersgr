@@ -174,7 +174,8 @@ export default function About() {
             <Button
               size="lg"
               onClick={() => navigate(createPageUrl("Calendar"))}
-              className="bg-white text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6"
+              className="bg-white text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6 min-h-[44px]"
+              aria-label={t.cta.button}
             >
               {t.cta.button}
             </Button>

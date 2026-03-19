@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, X, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import ReactQuill from 'react-quill';
+const ReactQuill = React.lazy(() => import('react-quill'));
 import 'react-quill/dist/quill.snow.css';
 import {
   AlertDialog,
@@ -352,14 +352,20 @@ export default function EditGuideProfilePage() {
               {/* Bio */}
               <div>
                 <Label>{language === 'el' ? 'Βιογραφικό' : 'Bio'}</Label>
-                <ReactQuill
-                  value={formData.bio}
-                  onChange={(value) => setFormData(prev => ({ ...prev, bio: value }))}
-                  className="mt-2 bg-white"
-                  placeholder={language === 'el' 
-                    ? 'Πείτε μας για την εμπειρία σας, τις ειδικότητές σας...'
-                    : 'Tell us about your experience, specializations...'}
-                />
+                <React.Suspense fallback={
+                  <div className="flex items-center justify-center h-[150px] bg-stone-50 rounded-md border border-stone-200 mt-2">
+                    <Loader2 className="w-6 h-6 animate-spin text-stone-400" />
+                  </div>
+                }>
+                  <ReactQuill
+                    value={formData.bio}
+                    onChange={(value) => setFormData(prev => ({ ...prev, bio: value }))}
+                    className="mt-2 bg-white"
+                    placeholder={language === 'el' 
+                      ? 'Πείτε μας για την εμπειρία σας, τις ειδικότητές σας...'
+                      : 'Tell us about your experience, specializations...'}
+                  />
+                </React.Suspense>
               </div>
 
               {/* Years of Experience */}

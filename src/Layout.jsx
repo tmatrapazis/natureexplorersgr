@@ -44,6 +44,9 @@ function LayoutContent({ children, currentPageName }) {
   const [authCheckComplete, setAuthCheckComplete] = React.useState(false);
 
   console.log('🟢 [Layout] Rendering LayoutContent for page:', currentPageName, 'path:', location.pathname);
+  
+  // Global page transition key for AnimatePresence
+  const pageKey = location.pathname + location.search;
 
   const { data: user, isLoading: userLoading, error: userError, isError } = useQuery({
     queryKey: ['current-user'], // Unified with EditProfile for cache consistency
@@ -173,14 +176,17 @@ function LayoutContent({ children, currentPageName }) {
         isOrganizer={isOrganizer} 
         location={location}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key={location.pathname + location.search}
-            initial={{ opacity: 0, x: 24 }}
+            key={pageKey}
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -24 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            style={{ willChange: "transform, opacity" }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ 
+              duration: 0.25, 
+              ease: [0.23, 1, 0.32, 1] // easeOutExpo for smoother feel
+            }}
+            style={{ willChange: "transform, opacity", height: "100%" }}
           >
             {children}
           </motion.div>

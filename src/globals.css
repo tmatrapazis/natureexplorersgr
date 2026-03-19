@@ -126,8 +126,14 @@
   }
   
   /* Improve touch feedback */
-  input:active, textarea:active, button:active, [role="button"]:active {
-    opacity: 0.8;
+  button:active, [role="button"]:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+  
+  /* Prevent input zoom flash on active */
+  input:active, textarea:active, select:active {
+    opacity: 1;
   }
 }
 

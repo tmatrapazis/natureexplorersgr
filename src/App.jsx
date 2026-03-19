@@ -6,11 +6,12 @@ import { queryClientInstance } from '@/lib/query-client'
 import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { TabNavigationProvider } from '@/lib/TabNavigationContext';
+import { AnimatePresence } from 'framer-motion';
 
 const About = lazy(() => import('@/pages/About'));
 
@@ -62,39 +63,50 @@ const AuthenticatedApp = () => {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <TabNavigationProvider tabRoutes={tabRoutes}>
-        <Routes>
-          <Route path="/" element={
-            <LayoutWrapper currentPageName={mainPageKey}>
-              <MainPage />
-            </LayoutWrapper>
-          } />
-          {Object.entries(Pages).map(([path, Page]) => (
-            <Route
-              key={path}
-              path={`/${path}`}
-              element={
-                <LayoutWrapper currentPageName={path}>
-                  <Page />
-                </LayoutWrapper>
-              }
-            />
-          ))}
-          <Route path="/About" element={
-            <LayoutWrapper currentPageName="About">
-              <About />
-            </LayoutWrapper>
-          } />
-          <Route path="/OrganizerProfile/:username" element={
-            <LayoutWrapper currentPageName="OrganizerProfile">
-              {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
-            </LayoutWrapper>
-          } />
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
+        <RoutesWithAnimation />
       </TabNavigationProvider>
     </Suspense>
   );
 };
+
+// Separate component to access useLocation() inside Router context
+function RoutesWithAnimation() {
+  const location = useLocation();
+  
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={
+          <LayoutWrapper currentPageName={mainPageKey}>
+            <MainPage />
+          </LayoutWrapper>
+        } />
+        {Object.entries(Pages).map(([path, Page]) => (
+          <Route
+            key={path}
+            path={`/${path}`}
+            element={
+              <LayoutWrapper currentPageName={path}>
+                <Page />
+              </LayoutWrapper>
+            }
+          />
+        ))}
+        <Route path="/About" element={
+          <LayoutWrapper currentPageName="About">
+            <About />
+          </LayoutWrapper>
+        } />
+        <Route path="/OrganizerProfile/:username" element={
+          <LayoutWrapper currentPageName="OrganizerProfile">
+            {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
+          </LayoutWrapper>
+        } />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
 
 
 function App() {
