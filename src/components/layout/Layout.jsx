@@ -111,7 +111,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             </div>
           </SidebarHeader>
           
-          <SidebarContent className="p-3">
+          <SidebarContent className="p-3 scrollbar-hide">
             {/* Public Navigation */}
             <SidebarGroup>
               <SidebarGroupLabel className="text-xs font-semibold text-stone-500 uppercase tracking-wider px-3 py-2">
