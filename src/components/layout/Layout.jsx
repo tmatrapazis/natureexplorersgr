@@ -104,9 +104,10 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                 variant="ghost" 
                 size="icon" 
                 className="md:hidden"
+                aria-label="Close menu"
                 onClick={() => setOpenMobile(false)}
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </Button>
             </div>
           </SidebarHeader>
@@ -211,9 +212,10 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                 </div>
                 <button
                   onClick={handleLogout}
+                  aria-label={t('common.logout')}
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-4 h-4" aria-hidden="true" />
                   {t('common.logout')}
                 </button>
               </div>
@@ -267,16 +269,16 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                     size="icon"
                     onClick={() => navigate(createPageUrl("CreateTrip"))}
                     className="min-h-[44px] min-w-[44px] text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
-                    title={t('create_trip.title')}
+                    aria-label={t('create_trip.title')}
                   >
-                    <PlusCircle className="w-5 h-5" />
+                    <PlusCircle className="w-5 h-5" aria-hidden="true" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => navigate(createPageUrl("EditProfile"))}
                     className="min-h-[44px] min-w-[44px] hover:bg-stone-100"
-                    title="Profile"
+                    aria-label="Edit profile"
                   >
                     {user.profile_picture_url ? (
                       <img src={user.profile_picture_url} alt="" className="w-8 h-8 rounded-full object-cover" />
