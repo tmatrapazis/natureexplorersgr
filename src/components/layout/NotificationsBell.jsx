@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -16,6 +16,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 export default function NotificationsBell({ user, compact = false }) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   // Fetch unread count (ds_notifications_unread_count) - poll every 30s
@@ -86,6 +87,10 @@ export default function NotificationsBell({ user, compact = false }) {
     if (!notification.is_read) {
       markAsReadMutation.mutate(notification.id);
     }
+    if (notification.link) {
+      setIsOpen(false);
+      navigate(notification.link);
+    }
   };
 
   const handleMarkAllAsRead = () => {
@@ -135,36 +140,30 @@ export default function NotificationsBell({ user, compact = false }) {
         ) : notifications.length > 0 ? (
           <div className="max-h-[400px] overflow-y-auto">
             {notifications.map((notification) => (
-              <DropdownMenuItem 
-                key={notification.id} 
-                asChild 
-                className="cursor-pointer focus:bg-stone-100"
+              <div
+                key={notification.id}
+                className="flex items-start gap-3 p-3 border-b border-stone-100 last:border-0 hover:bg-stone-50 cursor-pointer transition-colors"
+                onClick={() => handleNotificationClick(notification)}
               >
-                <div
-                  className="flex items-start gap-3 p-3 border-b border-stone-100 last:border-0"
-                  onClick={() => handleNotificationClick(notification)}
-                >
-                  {!notification.is_read && (
-                    <Circle className="h-2 w-2 mt-2 text-blue-500 fill-current flex-shrink-0" />
-                  )}
-                  {notification.is_read && (
-                    <div className="h-2 w-2 mt-2 flex-shrink-0" />
-                  )}
-                  <div className="flex-1 min-w-0">
-                    {notification.title && (
-                      <p className={`text-sm mb-0.5 ${!notification.is_read ? 'font-semibold text-stone-900' : 'font-medium text-stone-700'}`}>
-                        {notification.title}
-                      </p>
-                    )}
-                    <p className="text-sm text-stone-600 line-clamp-2">
-                      {notification.message}
+                {!notification.is_read ? (
+                  <Circle className="h-2 w-2 mt-2 text-emerald-500 fill-current flex-shrink-0" />
+                ) : (
+                  <div className="h-2 w-2 mt-2 flex-shrink-0" />
+                )}
+                <div className="flex-1 min-w-0">
+                  {notification.title && (
+                    <p className={`text-sm mb-0.5 ${!notification.is_read ? 'font-semibold text-stone-900' : 'font-medium text-stone-700'}`}>
+                      {notification.title}
                     </p>
-                    <p className="text-xs text-stone-500 mt-1">
-                      {formatDistanceToNow(new Date(notification.created_date), { addSuffix: true })}
-                    </p>
-                  </div>
+                  )}
+                  <p className="text-sm text-stone-600 line-clamp-2">
+                    {notification.message}
+                  </p>
+                  <p className="text-xs text-stone-500 mt-1">
+                    {formatDistanceToNow(new Date(notification.created_date), { addSuffix: true })}
+                  </p>
                 </div>
-              </DropdownMenuItem>
+              </div>
             ))}
           </div>
         ) : (
