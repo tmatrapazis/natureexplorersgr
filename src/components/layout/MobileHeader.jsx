@@ -17,9 +17,11 @@ export default function MobileHeader({ title, onBack }) {
   return (
     <header 
       className="md:hidden sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border"
-      style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      style={{ 
+        paddingTop: 'max(env(safe-area-inset-top), 0.5rem)'
+      }}
     >
-      <div className="flex items-center h-14 px-4">
+      <div className="flex items-center h-14 px-4" style={{ paddingLeft: 'max(env(safe-area-inset-left), 1rem)', paddingRight: 'max(env(safe-area-inset-right), 1rem)' }}>
         <Button
           variant="ghost"
           size="icon"

@@ -229,8 +229,11 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
 
         <main className="flex-1 flex flex-col">
           <header 
-            className="bg-white border-b border-stone-200 px-4 py-4 md:hidden sticky top-0 z-40"
-            style={{ paddingTop: 'calc(env(safe-area-inset-top) + 1rem)' }}
+            className="bg-white border-b border-stone-200 px-4 md:hidden sticky top-0 z-40"
+            style={{ 
+              paddingTop: 'max(env(safe-area-inset-top), 1rem)',
+              paddingBottom: '1rem'
+            }}
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -269,9 +272,58 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto pb-16 md:pb-0">
+          <div className="flex-1 overflow-auto pb-0 md:pb-0" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 4rem)' }}>
             {children}
           </div>
+
+          {/* Mobile Bottom Navigation */}
+          <nav 
+            className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-50 select-none shadow-lg"
+            style={{ 
+              paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)',
+              paddingTop: '0.5rem'
+            }}
+          >
+            <div className="flex items-center justify-around px-2">
+              {publicNav.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname.startsWith(item.url.split('?')[0]);
+                
+                return (
+                  <Link
+                    key={item.title}
+                    to={item.url}
+                    className={`flex flex-col items-center justify-center py-1 px-3 min-h-[48px] min-w-[48px] transition-colors rounded-lg ${
+                      isActive 
+                        ? "text-emerald-600 bg-emerald-50" 
+                        : "text-stone-500 hover:text-stone-700 hover:bg-stone-50"
+                    }`}
+                  >
+                    <Icon className="w-5 h-5 mb-1" />
+                    <span className="text-[10px] font-medium">{item.title}</span>
+                  </Link>
+                );
+              })}
+              
+              {user && (
+                <Link
+                  to={createPageUrl("EditProfile")}
+                  className={`flex flex-col items-center justify-center py-1 px-3 min-h-[48px] min-w-[48px] transition-colors rounded-lg ${
+                    location.pathname.includes('/EditProfile')
+                      ? "text-emerald-600 bg-emerald-50" 
+                      : "text-stone-500 hover:text-stone-700 hover:bg-stone-50"
+                  }`}
+                >
+                  {user.profile_picture_url ? (
+                    <img src={user.profile_picture_url} alt="" className="w-6 h-6 rounded-full object-cover mb-1" />
+                  ) : (
+                    <User className="w-5 h-5 mb-1" />
+                  )}
+                  <span className="text-[10px] font-medium">Profile</span>
+                </Link>
+              )}
+            </div>
+          </nav>
         </main>
       </div>
   );

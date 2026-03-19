@@ -33,7 +33,10 @@ export default function MobileBottomTab({ user }) {
   return (
     <nav 
       className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border z-50 select-none"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{ 
+        paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)',
+        paddingTop: '0.5rem'
+      }}
     >
       <div className="flex items-center justify-around px-2">
         {tabs.map((tab) => {
