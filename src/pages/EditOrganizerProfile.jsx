@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useTabNavigation } from '../components/contexts/TabNavigationContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,7 +18,8 @@ import { useTranslation } from '../components/translations/useTranslations';
 export default function EditOrganizerProfilePage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const goBack = () => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("OrganizersList"));
+  const { goBackInTab, canGoBack } = useTabNavigation();
+  const goBack = () => canGoBack() ? goBackInTab() : navigate(createPageUrl("OrganizersList"));
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
@@ -161,8 +163,13 @@ export default function EditOrganizerProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
-        <Button variant="outline" className="mb-6" onClick={goBack}>
-          <ArrowLeft className="w-4 h-4 mr-2" />
+        <Button 
+          variant="outline" 
+          className="mb-6 min-h-[44px]" 
+          onClick={goBack}
+          aria-label={t('common.back')}
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
           {t('common.back')}
         </Button>
 

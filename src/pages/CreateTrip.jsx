@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createOptimisticTripCreate } from '../lib/optimistic-mutations';
+import { useTabNavigation } from '../components/contexts/TabNavigationContext';
 
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ export default function CreateTripPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
+  const { goBackInTab, canGoBack } = useTabNavigation();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const saveDraftRef = useRef(false);
@@ -137,10 +139,10 @@ export default function CreateTripPage() {
         <Button 
           variant="outline" 
           className="mb-6 min-h-[44px]" 
-          onClick={() => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("MyTrips"))}
+          onClick={() => canGoBack() ? goBackInTab() : navigate(createPageUrl("MyTrips"))}
           aria-label={t('create_trip.back_to_trips')}
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
           {t('create_trip.back_to_trips')}
         </Button>
 
