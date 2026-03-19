@@ -1,5 +1,8 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer as _MapContainer, TileLayer as _TileLayer, Marker as _Marker, Popup } from 'react-leaflet';
+const MapContainer = /** @type {React.FC<any>} */ (_MapContainer);
+const TileLayer = /** @type {React.FC<any>} */ (_TileLayer);
+const Marker = /** @type {React.FC<any>} */ (_Marker);
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
