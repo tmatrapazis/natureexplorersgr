@@ -60,6 +60,7 @@ export default function FollowButton({
         user_email: currentUser.email,
         user_name: currentUser.full_name || currentUser.username || '',
         organizer_code: organizer.organizer_code,
+        organizer_username: organizer.username || organizer.organizer_code,
         organizer_name: organizer.full_name || organizer.username || '',
       });
     },
