@@ -208,7 +208,7 @@ export default function TripsMap({ trips, organizerMap }) {
       </div>
 
       {/* Map */}
-      <div className={isFullScreen ? "h-[calc(100vh-57px)] w-full relative" : "h-[420px] w-full relative"}>
+      <div className={isFullScreen ? "h-[calc(100dvh-57px)] w-full relative" : "h-[420px] w-full relative"}>
         <MapContainer
           center={[38.5, 22.5]}
           zoom={6}

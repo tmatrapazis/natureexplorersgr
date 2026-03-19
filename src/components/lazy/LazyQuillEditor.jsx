@@ -9,20 +9,22 @@ const ReactQuill = lazy(() => import('react-quill'));
  */
 export default function LazyQuillEditor({ value, onChange, theme = 'snow', style, placeholder }) {
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center h-[150px] bg-stone-50 rounded-md border border-stone-200">
-          <Loader2 className="w-6 h-6 animate-spin text-stone-400" />
-        </div>
-      }
-    >
-      <ReactQuill
-        theme={theme}
-        value={value}
-        onChange={onChange}
-        style={style}
-        placeholder={placeholder}
-      />
-    </Suspense>
+    <div className="min-h-[150px]" style={{ willChange: 'contents' }}>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center h-[150px] bg-stone-50 rounded-md border border-stone-200">
+            <Loader2 className="w-6 h-6 animate-spin text-stone-400" />
+          </div>
+        }
+      >
+        <ReactQuill
+          theme={theme}
+          value={value}
+          onChange={onChange}
+          style={style}
+          placeholder={placeholder}
+        />
+      </Suspense>
+    </div>
   );
 }

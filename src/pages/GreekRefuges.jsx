@@ -72,7 +72,7 @@ export default function GreekRefuges() {
     setSelectedRefuge(refuge);
     setMapCenter([refuge.lat, refuge.lng]);
     setMapZoom(14);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    (document.getElementById('root') || window).scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (isLoading) {

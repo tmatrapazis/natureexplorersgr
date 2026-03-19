@@ -14,8 +14,10 @@ const LoadingFallback = () => (
 
 export default function LazyLocationPicker(props) {
   return (
-    <Suspense fallback={<LoadingFallback />}>
-      <LocationPicker {...props} />
-    </Suspense>
+    <div className="min-h-[400px]" style={{ willChange: 'contents' }}>
+      <Suspense fallback={<LoadingFallback />}>
+        <LocationPicker {...props} />
+      </Suspense>
+    </div>
   );
 }

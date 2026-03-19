@@ -62,24 +62,33 @@ export function TabNavigationProvider({ children, tabRoutes }) {
     }
   }, [location.pathname, tabRoutes]);
 
+  // Helper: get the real scroll container.
+  // body is position:fixed on iOS so window.scrollY is always 0.
+  // All page scrolling happens on #root instead.
+  const getScrollEl = () => document.getElementById('root') || window;
+
   // Save scroll position before navigation
   useEffect(() => {
     return () => {
-      scrollPositions.current[location.pathname] = window.scrollY;
+      const el = getScrollEl();
+      scrollPositions.current[location.pathname] =
+        el === window ? window.scrollY : el.scrollTop;
     };
   }, [location.pathname]);
 
   // Restore scroll position after navigation
   useEffect(() => {
     const savedPosition = scrollPositions.current[location.pathname];
-    if (savedPosition !== undefined) {
-      // Use setTimeout to ensure DOM is ready
-      setTimeout(() => {
-        window.scrollTo(0, savedPosition);
-      }, 0);
-    } else {
-      window.scrollTo(0, 0);
-    }
+    // Use setTimeout to ensure DOM is ready
+    setTimeout(() => {
+      const el = getScrollEl();
+      const top = savedPosition ?? 0;
+      if (el === window) {
+        window.scrollTo(0, top);
+      } else {
+        el.scrollTop = top;
+      }
+    }, 0);
   }, [location.pathname]);
 
   /**
@@ -87,7 +96,9 @@ export function TabNavigationProvider({ children, tabRoutes }) {
    */
   const navigateToTab = (tabPath) => {
     // Save current scroll position
-    scrollPositions.current[location.pathname] = window.scrollY;
+    const el = getScrollEl();
+    scrollPositions.current[location.pathname] =
+      el === window ? window.scrollY : el.scrollTop;
     
     const stack = tabStacks[tabPath];
     const targetPath = stack?.[stack.length - 1] || tabPath;
@@ -102,7 +113,9 @@ export function TabNavigationProvider({ children, tabRoutes }) {
     
     if (currentStack.length > 1) {
       // Save current scroll position
-      scrollPositions.current[location.pathname] = window.scrollY;
+      const el = getScrollEl();
+      scrollPositions.current[location.pathname] =
+        el === window ? window.scrollY : el.scrollTop;
       
       // Navigate to previous page in stack
       const newStack = currentStack.slice(0, -1);

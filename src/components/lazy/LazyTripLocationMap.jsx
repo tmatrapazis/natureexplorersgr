@@ -19,17 +19,19 @@ export default function LazyTripLocationMap({ trip }) {
   }
 
   return (
-    <Suspense
-      fallback={
-        <div className="w-full h-64 bg-stone-50 rounded-lg border border-stone-200 flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="w-6 h-6 animate-spin text-stone-400 mx-auto mb-2" />
-            <p className="text-sm text-stone-500">Loading map...</p>
+    <div className="min-h-[16rem]" style={{ willChange: 'contents' }}>
+      <Suspense
+        fallback={
+          <div className="w-full h-64 bg-stone-50 rounded-lg border border-stone-200 flex items-center justify-center">
+            <div className="text-center">
+              <Loader2 className="w-6 h-6 animate-spin text-stone-400 mx-auto mb-2" />
+              <p className="text-sm text-stone-500">Loading map...</p>
+            </div>
           </div>
-        </div>
-      }
-    >
-      <TripLocationMap trip={trip} />
-    </Suspense>
+        }
+      >
+        <TripLocationMap trip={trip} />
+      </Suspense>
+    </div>
   );
 }
