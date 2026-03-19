@@ -9,6 +9,7 @@ import PublicHeader from "./components/layout/PublicHeader";
 import PublicFooter from "./components/layout/PublicFooter";
 import AppLayout from "./components/layout/Layout";
 import { LanguageProvider } from "./components/contexts/LanguageContext";
+import { TabNavigationProvider } from "./components/contexts/TabNavigationContext";
 import GoogleAnalytics from "./components/analytics/GoogleAnalytics";
 import WelcomeModal from "./components/welcome/WelcomeModal";
 import CookieConsent from "./components/cookie/CookieConsent";

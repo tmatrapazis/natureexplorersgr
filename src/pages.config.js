@@ -47,35 +47,35 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import { lazy } from 'react';
+import About from './pages/About';
+import Calendar from './pages/Calendar';
+import CookiePolicy from './pages/CookiePolicy';
+import CreateGuideProfile from './pages/CreateGuideProfile';
+import CreateTrip from './pages/CreateTrip';
+import EditGuideProfile from './pages/EditGuideProfile';
+import EditOrganizerProfile from './pages/EditOrganizerProfile';
+import EditProfile from './pages/EditProfile';
+import EditTrip from './pages/EditTrip';
+import GreekRefuges from './pages/GreekRefuges';
+import GuideProfile from './pages/GuideProfile';
+import Guides from './pages/Guides';
+import HikerProfile from './pages/HikerProfile';
+import Home from './pages/Home';
+import MyTrips from './pages/MyTrips';
+import OrganizerProfile from './pages/OrganizerProfile';
+import OrganizersList from './pages/OrganizersList';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import RequestVerification from './pages/RequestVerification';
+import RoleSelection from './pages/RoleSelection';
+import TempImageUploader from './pages/TempImageUploader';
+import TermsOfUse from './pages/TermsOfUse';
+import TripDetails from './pages/TripDetails';
+import TripForm from './pages/TripForm';
 import __Layout from './Layout.jsx';
 
-// Lazy-loaded pages for code splitting and performance
-const Calendar = lazy(() => import('./pages/Calendar'));
-const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
-const CreateGuideProfile = lazy(() => import('./pages/CreateGuideProfile'));
-const CreateTrip = lazy(() => import('./pages/CreateTrip'));
-const EditGuideProfile = lazy(() => import('./pages/EditGuideProfile'));
-const EditOrganizerProfile = lazy(() => import('./pages/EditOrganizerProfile'));
-const EditProfile = lazy(() => import('./pages/EditProfile'));
-const EditTrip = lazy(() => import('./pages/EditTrip'));
-const GreekRefuges = lazy(() => import('./pages/GreekRefuges'));
-const GuideProfile = lazy(() => import('./pages/GuideProfile'));
-const Guides = lazy(() => import('./pages/Guides'));
-const HikerProfile = lazy(() => import('./pages/HikerProfile'));
-const Home = lazy(() => import('./pages/Home'));
-const MyTrips = lazy(() => import('./pages/MyTrips'));
-const OrganizerProfile = lazy(() => import('./pages/OrganizerProfile'));
-const OrganizersList = lazy(() => import('./pages/OrganizersList'));
-const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
-const RequestVerification = lazy(() => import('./pages/RequestVerification'));
-const RoleSelection = lazy(() => import('./pages/RoleSelection'));
-const TempImageUploader = lazy(() => import('./pages/TempImageUploader'));
-const TermsOfUse = lazy(() => import('./pages/TermsOfUse'));
-const TripDetails = lazy(() => import('./pages/TripDetails'));
-const TripForm = lazy(() => import('./pages/TripForm'));
 
 export const PAGES = {
+    "About": About,
     "Calendar": Calendar,
     "CookiePolicy": CookiePolicy,
     "CreateGuideProfile": CreateGuideProfile,
