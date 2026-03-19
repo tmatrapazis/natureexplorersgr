@@ -108,9 +108,9 @@ export default function ShareButton({ trip, language, className = "" }) {
     return (
       <Button
         onClick={handleNativeShare}
-        className={`fixed bottom-6 right-6 z-50 shadow-lg bg-emerald-600 hover:bg-emerald-700 h-14 w-14 rounded-full ${className}`}
+        className={`fixed bottom-6 right-6 z-50 shadow-lg bg-emerald-600 hover:bg-emerald-700 min-h-[56px] min-w-[56px] rounded-full ${className}`}
         size="icon"
-        aria-label="Share trip"
+        aria-label={language === 'el' ? 'Κοινοποίηση εκδρομής' : 'Share trip'}
       >
         <Share2 className="w-6 h-6" />
       </Button>
@@ -123,8 +123,8 @@ export default function ShareButton({ trip, language, className = "" }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className={className}
-          aria-label="Share trip"
+          className={`min-h-[44px] ${className}`}
+          aria-label={language === 'el' ? 'Κοινοποίηση εκδρομής' : 'Share trip'}
         >
           <Share2 className="w-4 h-4 mr-2" />
           {language === 'el' ? 'Κοινοποίηση' : 'Share'}

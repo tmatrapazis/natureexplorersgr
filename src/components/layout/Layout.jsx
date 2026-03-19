@@ -243,11 +243,15 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                   <button
                     onClick={goBackInTab}
                     className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]"
+                    aria-label="Go back"
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </button>
                 ) : (
-                  <SidebarTrigger className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]" />
+                  <SidebarTrigger 
+                    className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]"
+                    aria-label="Open menu"
+                  />
                 )}
                 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" alt="Nature Explorers" className="h-8 w-auto" />
               </div>
@@ -311,6 +315,8 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                         ? "text-emerald-600 bg-emerald-50" 
                         : "text-stone-500 hover:text-stone-700 hover:bg-stone-50"
                     }`}
+                    aria-label={`Navigate to ${item.title}`}
+                    aria-current={isActive ? 'page' : undefined}
                   >
                     <Icon className="w-5 h-5 mb-1" />
                     <span className="text-[10px] font-medium">{item.title}</span>

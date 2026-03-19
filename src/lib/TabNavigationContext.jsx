@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const TabNavigationContext = createContext(undefined);
@@ -31,6 +31,9 @@ export function TabNavigationProvider({ children, tabRoutes }) {
     return matchedTab?.path || tabRoutes[0]?.path;
   });
 
+  // Store scroll positions for each path
+  const scrollPositions = useRef({});
+
   // Update tab stack when location changes
   useEffect(() => {
     const matchedTab = tabRoutes.find(tab => 
@@ -59,22 +62,48 @@ export function TabNavigationProvider({ children, tabRoutes }) {
     }
   }, [location.pathname, tabRoutes]);
 
+  // Save scroll position before navigation
+  useEffect(() => {
+    return () => {
+      scrollPositions.current[location.pathname] = window.scrollY;
+    };
+  }, [location.pathname]);
+
+  // Restore scroll position after navigation
+  useEffect(() => {
+    const savedPosition = scrollPositions.current[location.pathname];
+    if (savedPosition !== undefined) {
+      // Use setTimeout to ensure DOM is ready
+      setTimeout(() => {
+        window.scrollTo(0, savedPosition);
+      }, 0);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname]);
+
   /**
-   * Navigate to a tab, restoring its last known position
+   * Navigate to a tab, restoring its last known position and scroll state
    */
   const navigateToTab = (tabPath) => {
+    // Save current scroll position
+    scrollPositions.current[location.pathname] = window.scrollY;
+    
     const stack = tabStacks[tabPath];
     const targetPath = stack?.[stack.length - 1] || tabPath;
     navigate(targetPath);
   };
 
   /**
-   * Go back within the current tab's stack
+   * Go back within the current tab's stack, preserving scroll position
    */
   const goBackInTab = () => {
     const currentStack = tabStacks[currentTab] || [];
     
     if (currentStack.length > 1) {
+      // Save current scroll position
+      scrollPositions.current[location.pathname] = window.scrollY;
+      
       // Navigate to previous page in stack
       const newStack = currentStack.slice(0, -1);
       const previousPath = newStack[newStack.length - 1];

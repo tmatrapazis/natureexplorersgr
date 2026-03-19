@@ -27,6 +27,7 @@ export default function MobileHeader({ title, onBack }) {
           size="icon"
           onClick={handleBack}
           className="mr-2 min-h-[44px] min-w-[44px] select-none"
+          aria-label="Go back"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
