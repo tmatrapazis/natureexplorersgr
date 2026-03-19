@@ -91,7 +91,12 @@ export default function PublicHeader() {
           <div className="hidden md:flex items-center gap-3 flex-shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" aria-label="Change language">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="min-h-[44px]"
+                  aria-label={`Change language (current: ${language === 'en' ? 'English' : 'Greek'})`}
+                >
                   <Globe className="w-4 h-4 mr-2" aria-hidden="true" />
                   <span>{language === 'en' ? 'EN' : 'ΕΛ'}</span>
                 </Button>
@@ -107,12 +112,24 @@ export default function PublicHeader() {
             </DropdownMenu>
             
             {!user ? (
-              <Button onClick={handleLogin} variant="outline" size="sm">
+              <Button 
+                onClick={handleLogin} 
+                variant="outline" 
+                size="sm"
+                className="min-h-[44px]"
+                aria-label={t('common.login')}
+              >
                 <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
                 <span>{t('common.login')}</span>
               </Button>
             ) : (
-              <Button onClick={handleLogout} variant="outline" size="sm">
+              <Button 
+                onClick={handleLogout} 
+                variant="outline" 
+                size="sm"
+                className="min-h-[44px]"
+                aria-label={t('common.logout')}
+              >
                 <LogOut className="w-4 h-4 mr-2" aria-hidden="true" />
                 <span>{t('common.logout')}</span>
               </Button>
@@ -123,7 +140,12 @@ export default function PublicHeader() {
           <div className="md:hidden">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm" aria-label="Open menu">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="min-h-[44px] min-w-[44px]"
+                  aria-label="Open menu"
+                >
                   <Menu className="w-6 h-6" />
                 </Button>
               </SheetTrigger>
@@ -178,7 +200,8 @@ export default function PublicHeader() {
                           variant={language === 'en' ? 'default' : 'outline'} 
                           size="sm"
                           onClick={() => setLanguage('en')}
-                          className="flex-1"
+                          className="flex-1 min-h-[44px]"
+                          aria-label="Switch to English"
                         >
                           English
                         </Button>
@@ -186,7 +209,8 @@ export default function PublicHeader() {
                           variant={language === 'el' ? 'default' : 'outline'} 
                           size="sm"
                           onClick={() => setLanguage('el')}
-                          className="flex-1"
+                          className="flex-1 min-h-[44px]"
+                          aria-label="Αλλαγή σε Ελληνικά"
                         >
                           Ελληνικά
                         </Button>
@@ -196,7 +220,8 @@ export default function PublicHeader() {
                     {!user ? (
                       <Button 
                         onClick={handleLogin}
-                        className="w-full bg-emerald-600 hover:bg-emerald-700"
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                        aria-label={t('common.login')}
                       >
                         <LogIn className="w-4 h-4 mr-2" />
                         {t('common.login')}
@@ -205,7 +230,8 @@ export default function PublicHeader() {
                       <Button 
                         onClick={handleLogout}
                         variant="outline"
-                        className="w-full"
+                        className="w-full min-h-[44px]"
+                        aria-label={t('common.logout')}
                       >
                         <LogOut className="w-4 h-4 mr-2" />
                         {t('common.logout')}
