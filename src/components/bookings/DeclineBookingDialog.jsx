@@ -52,13 +52,19 @@ export default function DeclineBookingDialog({ open, onOpenChange, onConfirm, is
           />
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={handleCancel} disabled={isPending}>
+          <Button 
+            variant="outline" 
+            onClick={handleCancel} 
+            disabled={isPending}
+            className="min-h-[44px]"
+          >
             Cancel
           </Button>
           <Button
             variant="destructive"
             onClick={handleConfirm}
             disabled={isPending}
+            className="min-h-[44px]"
           >
             {isPending ? "Declining..." : "Decline Booking"}
           </Button>

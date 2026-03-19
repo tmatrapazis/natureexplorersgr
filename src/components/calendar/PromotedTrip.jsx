@@ -14,10 +14,10 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 
 const difficultyColors = {
-  easy: "bg-green-100 text-green-800 border-green-200",
-  moderate: "bg-yellow-100 text-yellow-800 border-yellow-200",
-  challenging: "bg-orange-100 text-orange-800 border-orange-200",
-  difficult: "bg-red-100 text-red-800 border-red-200"
+  easy: "bg-emerald-100 text-emerald-800 border-emerald-300",
+  moderate: "bg-amber-100 text-amber-800 border-amber-300",
+  challenging: "bg-orange-100 text-orange-800 border-orange-300",
+  difficult: "bg-red-100 text-red-800 border-red-300"
 };
 
 export default function PromotedTrip({ trips, currentDate }) {

@@ -4,6 +4,7 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { createOptimisticTripUpdate } from '../lib/optimistic-mutations';
+import { useTabNavigation } from '../components/contexts/TabNavigationContext';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -16,6 +17,7 @@ import TripForm from '../components/trips/TripForm';
 export default function EditTripPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { goBackInTab, canGoBack } = useTabNavigation();
   const urlParams = new URLSearchParams(window.location.search);
   const tripId = urlParams.get("id");
 
@@ -64,7 +66,7 @@ export default function EditTripPage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isFormDirty]);
 
-  const goBack = () => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("MyTrips"));
+  const goBack = () => canGoBack() ? goBackInTab() : navigate(createPageUrl("MyTrips"));
 
   const handleNavigateAway = (destination) => {
     if (isFormDirty) {
@@ -111,7 +113,7 @@ export default function EditTripPage() {
           onClick={() => handleNavigateAway(null)}
           aria-label={t('create_trip.back_to_trips')}
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
           {t('create_trip.back_to_trips')}
         </Button>
 
