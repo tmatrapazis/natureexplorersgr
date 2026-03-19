@@ -1,19 +1,21 @@
 import React from 'react';
-import { Heart } from 'lucide-react';
+import { Heart, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/components/contexts/LanguageContext';
 
-export default function FollowButton({ 
-  organizer, 
+export default function FollowButton({
+  organizer,
   variant = 'default',
   showCount = false,
   size = 'default',
-  className 
+  className
 }) {
   const queryClient = useQueryClient();
+  const { language } = useLanguage();
 
   // Get current user
   const { data: currentUser } = useQuery({
@@ -36,7 +38,7 @@ export default function FollowButton({
     enabled: !!currentUser && !!organizer.organizer_code,
   });
 
-  // Get follower count
+  // Get follower count (only fetched when showCount=true)
   const { data: followerCount = 0 } = useQuery({
     queryKey: ['organizer-followers-count', organizer.organizer_code],
     queryFn: async () => {
@@ -54,58 +56,77 @@ export default function FollowButton({
       return await base44.entities.OrganizerFollow.create({
         user_id: currentUser.id,
         user_email: currentUser.email,
-        user_name: currentUser.full_name,
+        user_name: currentUser.full_name || currentUser.username || '',
         organizer_code: organizer.organizer_code,
-        organizer_username: organizer.username,
-        organizer_name: organizer.full_name
+        organizer_name: organizer.full_name || organizer.username || '',
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organizer-follow'] });
       queryClient.invalidateQueries({ queryKey: ['organizer-followers-count'] });
-      toast.success(`You're now following ${organizer.full_name}!`);
+      queryClient.invalidateQueries({ queryKey: ['my-follows'] });
+      toast.success(language === 'el'
+        ? `Ακολουθείτε τον ${organizer.full_name}!`
+        : `You're now following ${organizer.full_name}!`
+      );
     },
-    onError: (error) => {
-      console.error('Follow error:', error);
-      toast.error('Failed to follow organizer');
+    onError: () => {
+      toast.error(language === 'el' ? 'Αποτυχία ακολούθησης' : 'Failed to follow organizer');
     }
   });
 
   // Unfollow mutation
   const unfollowMutation = useMutation({
     mutationFn: async () => {
-      return await base44.entities.OrganizerFollow.delete(followRecord.id);
+      // Guard: followRecord must exist before attempting delete
+      if (!followRecord?.id) throw new Error('Follow record not found');
+      await base44.entities.OrganizerFollow.delete(followRecord.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organizer-follow'] });
       queryClient.invalidateQueries({ queryKey: ['organizer-followers-count'] });
-      toast.success(`You unfollowed ${organizer.full_name}`);
+      queryClient.invalidateQueries({ queryKey: ['my-follows'] });
+      toast.success(language === 'el'
+        ? `Δεν ακολουθείτε πλέον τον ${organizer.full_name}`
+        : `You unfollowed ${organizer.full_name}`
+      );
     },
-    onError: (error) => {
-      console.error('Unfollow error:', error);
-      toast.error('Failed to unfollow organizer');
+    onError: () => {
+      toast.error(language === 'el' ? 'Αποτυχία διακοπής ακολούθησης' : 'Failed to unfollow organizer');
     }
   });
+
+  // Derive follow state optimistically so the button toggles immediately on click,
+  // without waiting for the server round-trip and query refetch.
+  // No useState/useEffect needed — this is always in sync with reality.
+  const isFollowing = followMutation.isPending ? true
+    : unfollowMutation.isPending ? false
+    : !!followRecord;
+
+  const isPending = followMutation.isPending || unfollowMutation.isPending;
 
   const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!currentUser) {
-      toast.error('Please log in to follow organizers');
+      toast.error(language === 'el'
+        ? 'Συνδεθείτε για να ακολουθήσετε διοργανωτές'
+        : 'Please log in to follow organizers'
+      );
       return;
     }
 
-    if (followRecord) {
+    // Use derived isFollowing (not raw followRecord) so the click
+    // always reflects the current optimistic state
+    if (isFollowing) {
       unfollowMutation.mutate();
     } else {
       followMutation.mutate();
     }
   };
 
-  const isFollowing = !!followRecord;
-  const isPending = followMutation.isPending || unfollowMutation.isPending;
-
+  // ── Icon-only variant (used on organizer list cards) ──────────────────────
   if (variant === 'icon') {
     return (
       <button
@@ -113,24 +134,27 @@ export default function FollowButton({
         disabled={isPending || isLoading}
         className={cn(
           "p-2 rounded-full transition-all",
-          isFollowing 
-            ? "text-red-500 hover:bg-red-50" 
+          isFollowing
+            ? "text-red-500 hover:bg-red-50"
             : "text-stone-400 hover:text-red-500 hover:bg-stone-50",
           isPending && "opacity-50 cursor-wait",
           className
         )}
-        title={isFollowing ? "Unfollow" : "Follow"}
+        title={isFollowing
+          ? (language === 'el' ? 'Διακοπή ακολούθησης' : 'Unfollow')
+          : (language === 'el' ? 'Ακολούθηση' : 'Follow')
+        }
       >
-        <Heart 
-          className={cn(
-            "w-5 h-5 transition-all",
-            isFollowing && "fill-current"
-          )}
-        />
+        {isPending ? (
+          <Loader2 className="w-5 h-5 animate-spin" />
+        ) : (
+          <Heart className={cn("w-5 h-5 transition-all", isFollowing && "fill-current")} />
+        )}
       </button>
     );
   }
 
+  // ── Default text button variant (used on organizer profile page) ──────────
   return (
     <Button
       variant={isFollowing ? "outline" : variant}
@@ -143,13 +167,15 @@ export default function FollowButton({
         className
       )}
     >
-      <Heart 
-        className={cn(
-          "w-4 h-4",
-          isFollowing && "fill-red-500 text-red-500"
-        )}
-      />
-      {isFollowing ? 'Following' : 'Follow'}
+      {isPending ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <Heart className={cn("w-4 h-4", isFollowing && "fill-red-500 text-red-500")} />
+      )}
+      {isFollowing
+        ? (language === 'el' ? 'Ακολουθείτε' : 'Following')
+        : (language === 'el' ? 'Ακολούθηση' : 'Follow')
+      }
       {showCount && followerCount > 0 && (
         <span className="text-xs text-stone-500">({followerCount})</span>
       )}
