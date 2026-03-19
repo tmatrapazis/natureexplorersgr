@@ -289,7 +289,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto pb-0 md:pb-0" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 4rem)' }}>
+          <div className="flex-1 overflow-auto scrollbar-hide pb-0 md:pb-0" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 4rem)' }}>
             {children}
           </div>
 
