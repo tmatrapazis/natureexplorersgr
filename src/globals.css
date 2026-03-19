@@ -155,6 +155,21 @@ html, body, #root {
   overflow-x: hidden;
 }
 
+/* iOS Native Scroll Momentum for scrollable containers */
+.scroll-container,
+[role="tabpanel"],
+.overflow-auto,
+.overflow-y-auto,
+.overflow-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Smooth momentum scrolling for all scrollable areas */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Ensure images don't cause layout shift */
 img {
   max-width: 100%;

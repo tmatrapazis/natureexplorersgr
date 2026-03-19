@@ -13,7 +13,7 @@ import 'react-quill/dist/quill.snow.css';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 import LazyQuillEditor from '../lazy/LazyQuillEditor';
-import LazyLocationPicker from '../lazy/LazyLocationPicker';
+const LazyLocationPicker = React.lazy(() => import('../lazy/LazyLocationPicker'));
 import MobileSelect from '../ui/MobileSelect';
 
 const availableTags = [
@@ -231,12 +231,21 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         <Label className="mb-1 block text-sm text-stone-600">
           {language === 'el' ? 'Ακριβής τοποθεσία στον χάρτη (προαιρετικό)' : 'Precise map location (optional)'}
         </Label>
-        <LazyLocationPicker
-          latitude={tripData.latitude}
-          longitude={tripData.longitude}
-          language={language}
-          onLocationChange={(lat, lng) => { update('latitude', lat); update('longitude', lng); }}
-        />
+        <React.Suspense fallback={
+          <div className="h-[400px] flex items-center justify-center bg-stone-50 rounded-lg border border-stone-200">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-2" />
+              <p className="text-sm text-stone-500">Loading map...</p>
+            </div>
+          </div>
+        }>
+          <LazyLocationPicker
+            latitude={tripData.latitude}
+            longitude={tripData.longitude}
+            language={language}
+            onLocationChange={(lat, lng) => { update('latitude', lat); update('longitude', lng); }}
+          />
+        </React.Suspense>
       </div>
 
       {/* Booking Link */}
