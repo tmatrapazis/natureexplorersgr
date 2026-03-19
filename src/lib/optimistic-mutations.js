@@ -150,3 +150,149 @@ export function createOptimisticMutation(queryClient, queryKey, options = {}) {
     },
   };
 }
+
+/**
+ * Optimistic trip creation handler for instant UI feedback
+ * @param {object} queryClient - React Query client instance
+ * @param {string} organizerCode - Organizer code for filtering
+ * @returns {object} - Mutation handlers with optimistic updates
+ */
+export function createOptimisticTripCreate(queryClient, organizerCode) {
+  return {
+    onMutate: async (newTrip) => {
+      await queryClient.cancelQueries({ queryKey: ['my-trips', organizerCode] });
+      await queryClient.cancelQueries({ queryKey: ['hiking-trips'] });
+      
+      const previousMyTrips = queryClient.getQueryData(['my-trips', organizerCode]);
+      const previousAllTrips = queryClient.getQueryData(['hiking-trips']);
+      
+      const optimisticTrip = {
+        ...newTrip,
+        id: 'temp-' + Date.now(),
+        created_date: new Date().toISOString(),
+        updated_date: new Date().toISOString(),
+        view_count: 0,
+        booked_clicks: 0,
+      };
+      
+      queryClient.setQueryData(['my-trips', organizerCode], (old) =>
+        Array.isArray(old) ? [optimisticTrip, ...old] : [optimisticTrip]
+      );
+      
+      queryClient.setQueryData(['hiking-trips'], (old) =>
+        Array.isArray(old) ? [optimisticTrip, ...old] : [optimisticTrip]
+      );
+      
+      return { previousMyTrips, previousAllTrips };
+    },
+    onError: (err, newTrip, context) => {
+      if (context?.previousMyTrips) {
+        queryClient.setQueryData(['my-trips', organizerCode], context.previousMyTrips);
+      }
+      if (context?.previousAllTrips) {
+        queryClient.setQueryData(['hiking-trips'], context.previousAllTrips);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-trips', organizerCode] });
+      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+    },
+  };
+}
+
+/**
+ * Optimistic trip update handler for instant UI feedback
+ * @param {object} queryClient - React Query client instance
+ * @param {string} tripId - Trip ID being updated
+ * @param {string} organizerCode - Organizer code for filtering
+ * @returns {object} - Mutation handlers with optimistic updates
+ */
+export function createOptimisticTripUpdate(queryClient, tripId, organizerCode) {
+  return {
+    onMutate: async (updatedData) => {
+      await queryClient.cancelQueries({ queryKey: ['my-trips', organizerCode] });
+      await queryClient.cancelQueries({ queryKey: ['hiking-trips'] });
+      await queryClient.cancelQueries({ queryKey: ['trip', tripId] });
+      
+      const previousMyTrips = queryClient.getQueryData(['my-trips', organizerCode]);
+      const previousAllTrips = queryClient.getQueryData(['hiking-trips']);
+      const previousTrip = queryClient.getQueryData(['trip', tripId]);
+      
+      const updateFn = (old) => {
+        if (Array.isArray(old)) {
+          return old.map((trip) =>
+            trip.id === tripId ? { ...trip, ...updatedData, updated_date: new Date().toISOString() } : trip
+          );
+        }
+        return old;
+      };
+      
+      queryClient.setQueryData(['my-trips', organizerCode], updateFn);
+      queryClient.setQueryData(['hiking-trips'], updateFn);
+      queryClient.setQueryData(['trip', tripId], (old) =>
+        old ? { ...old, ...updatedData, updated_date: new Date().toISOString() } : old
+      );
+      
+      return { previousMyTrips, previousAllTrips, previousTrip };
+    },
+    onError: (err, updatedData, context) => {
+      if (context?.previousMyTrips) {
+        queryClient.setQueryData(['my-trips', organizerCode], context.previousMyTrips);
+      }
+      if (context?.previousAllTrips) {
+        queryClient.setQueryData(['hiking-trips'], context.previousAllTrips);
+      }
+      if (context?.previousTrip) {
+        queryClient.setQueryData(['trip', tripId], context.previousTrip);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-trips', organizerCode] });
+      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
+    },
+  };
+}
+
+/**
+ * Optimistic trip deletion handler for instant UI feedback
+ * @param {object} queryClient - React Query client instance
+ * @param {string} tripId - Trip ID being deleted
+ * @param {string} organizerCode - Organizer code for filtering
+ * @returns {object} - Mutation handlers with optimistic updates
+ */
+export function createOptimisticTripDelete(queryClient, tripId, organizerCode) {
+  return {
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['my-trips', organizerCode] });
+      await queryClient.cancelQueries({ queryKey: ['hiking-trips'] });
+      
+      const previousMyTrips = queryClient.getQueryData(['my-trips', organizerCode]);
+      const previousAllTrips = queryClient.getQueryData(['hiking-trips']);
+      
+      const filterFn = (old) => {
+        if (Array.isArray(old)) {
+          return old.filter((trip) => trip.id !== tripId);
+        }
+        return old;
+      };
+      
+      queryClient.setQueryData(['my-trips', organizerCode], filterFn);
+      queryClient.setQueryData(['hiking-trips'], filterFn);
+      
+      return { previousMyTrips, previousAllTrips };
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousMyTrips) {
+        queryClient.setQueryData(['my-trips', organizerCode], context.previousMyTrips);
+      }
+      if (context?.previousAllTrips) {
+        queryClient.setQueryData(['hiking-trips'], context.previousAllTrips);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-trips', organizerCode] });
+      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+    },
+  };
+}

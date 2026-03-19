@@ -9,11 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Plus, X, Loader2 } from "lucide-react";
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
-import LocationPicker from './LocationPicker';
+import LazyQuillEditor from '../lazy/LazyQuillEditor';
+import LazyLocationPicker from '../lazy/LazyLocationPicker';
+import MobileSelect from '../ui/MobileSelect';
 
 const availableTags = [
   "beginner-friendly", "sunrise-hike", "sunset-hike", "pet-friendly",
@@ -178,7 +179,12 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
       <div>
         <Label htmlFor="description">{t('create_trip.description')}</Label>
         <div className="mt-1" style={{ minHeight: '200px' }}>
-          <ReactQuill theme="snow" value={tripData.description || ""} onChange={(v) => update('description', v)} style={{ height: '150px', marginBottom: '42px' }} />
+          <LazyQuillEditor 
+            value={tripData.description || ""} 
+            onChange={(v) => update('description', v)} 
+            style={{ height: '150px', marginBottom: '42px' }}
+            placeholder={t('create_trip.description_placeholder') || ''}
+          />
         </div>
       </div>
 
@@ -218,7 +224,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         <Label className="mb-1 block text-sm text-stone-600">
           {language === 'el' ? 'Ακριβής τοποθεσία στον χάρτη (προαιρετικό)' : 'Precise map location (optional)'}
         </Label>
-        <LocationPicker
+        <LazyLocationPicker
           latitude={tripData.latitude}
           longitude={tripData.longitude}
           language={language}
@@ -237,15 +243,31 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
       <div className="grid md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="difficulty">{t('create_trip.difficulty_level')}</Label>
-          <Select value={tripData.difficulty} onValueChange={(v) => update('difficulty', v)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="easy">{t('trip.difficulty_easy')}</SelectItem>
-              <SelectItem value="moderate">{t('trip.difficulty_moderate')}</SelectItem>
-              <SelectItem value="challenging">{t('trip.difficulty_challenging')}</SelectItem>
-              <SelectItem value="difficult">{t('trip.difficulty_difficult')}</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="hidden md:block">
+            <Select value={tripData.difficulty} onValueChange={(v) => update('difficulty', v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="easy">{t('trip.difficulty_easy')}</SelectItem>
+                <SelectItem value="moderate">{t('trip.difficulty_moderate')}</SelectItem>
+                <SelectItem value="challenging">{t('trip.difficulty_challenging')}</SelectItem>
+                <SelectItem value="difficult">{t('trip.difficulty_difficult')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="md:hidden">
+            <MobileSelect
+              value={tripData.difficulty}
+              onValueChange={(v) => update('difficulty', v)}
+              options={[
+                { value: 'easy', label: t('trip.difficulty_easy') },
+                { value: 'moderate', label: t('trip.difficulty_moderate') },
+                { value: 'challenging', label: t('trip.difficulty_challenging') },
+                { value: 'difficult', label: t('trip.difficulty_difficult') },
+              ]}
+              placeholder={t('create_trip.difficulty_level')}
+              label={t('create_trip.difficulty_level')}
+            />
+          </div>
         </div>
       </div>
 
@@ -377,13 +399,27 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
       {/* Trip Status */}
       <div>
         <Label htmlFor="status">{language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}</Label>
-        <Select value={tripData.status} onValueChange={(v) => update('status', v)}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο (δεν θα δημοσιευτεί)' : 'Draft (will not be published)'}</SelectItem>
-            <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενη (θα δημοσιευτεί)' : 'Upcoming (will be published)'}</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="hidden md:block">
+          <Select value={tripData.status} onValueChange={(v) => update('status', v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο (δεν θα δημοσιευτεί)' : 'Draft (will not be published)'}</SelectItem>
+              <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενη (θα δημοσιευτεί)' : 'Upcoming (will be published)'}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="md:hidden">
+          <MobileSelect
+            value={tripData.status}
+            onValueChange={(v) => update('status', v)}
+            options={[
+              { value: 'draft', label: language === 'el' ? 'Πρόχειρο (δεν θα δημοσιευτεί)' : 'Draft (will not be published)' },
+              { value: 'upcoming', label: language === 'el' ? 'Επερχόμενη (θα δημοσιευτεί)' : 'Upcoming (will be published)' },
+            ]}
+            placeholder={language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}
+            label={language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}
+          />
+        </div>
         <p className="text-xs text-stone-500 mt-1">
           {language === 'el' ? 'Επιλέξτε "Πρόχειρο" για να αποθηκεύσετε χωρίς δημοσίευση.' : 'Select "Draft" to save without publishing.'}
         </p>
@@ -391,15 +427,35 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3 pt-4 w-full">
-        <Button type="button" variant="outline" onClick={onCancel} className="w-full sm:w-auto">
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={onCancel} 
+          className="w-full sm:w-auto min-h-[44px]"
+          aria-label={t('common.cancel')}
+        >
           {t('common.cancel')}
         </Button>
         {!isEditing && onSaveDraft && (
-          <Button type="submit" variant="outline" onClick={() => onSaveDraft()} disabled={isSubmitting} className="w-full sm:w-auto whitespace-normal">
+          <Button 
+            type="submit" 
+            variant="outline" 
+            onClick={() => onSaveDraft()} 
+            disabled={isSubmitting} 
+            className="w-full sm:w-auto min-h-[44px] whitespace-normal"
+            aria-label={language === 'el' ? 'Αποθήκευση Πρόχειρου' : 'Save as Draft'}
+          >
             {isSubmitting ? t('create_trip.creating') : (language === 'el' ? 'Αποθήκευση Πρόχειρου' : 'Save as Draft')}
           </Button>
         )}
-        <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto" disabled={isSubmitting}>
+        <Button 
+          type="submit" 
+          className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto min-h-[44px]" 
+          disabled={isSubmitting}
+          aria-label={isEditing 
+            ? (language === 'el' ? 'Αποθήκευση Αλλαγών' : 'Save Changes')
+            : t('create_trip.create_trip_button')}
+        >
           {isSubmitting
             ? (isEditing ? (language === 'el' ? 'Αποθήκευση...' : 'Saving...') : t('create_trip.creating'))
             : (isEditing ? (language === 'el' ? 'Αποθήκευση Αλλαγών' : 'Save Changes') : t('create_trip.create_trip_button'))

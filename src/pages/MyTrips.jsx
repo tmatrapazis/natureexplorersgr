@@ -3,6 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { toast } from "sonner";
+import { createOptimisticTripDelete, createOptimisticTripUpdate } from "../lib/optimistic-mutations";
+import MobileSelect from '../components/ui/MobileSelect';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -65,18 +67,14 @@ export default function MyTripsPage() {
     mutationFn: async (/** @type {any} */ tripId) => {
       return await base44.entities.HikingTrip.delete(tripId);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-trips'] });
-    },
+    ...createOptimisticTripDelete(queryClient, '', user?.organizer_code),
   });
 
   const updateTripStatusMutation = useMutation({
     mutationFn: async (/** @type {any} */ { tripId, status }) => {
       return await base44.entities.HikingTrip.update(tripId, { status });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['my-trips'] });
-    },
+    ...createOptimisticTripUpdate(queryClient, '', user?.organizer_code),
   });
 
   const cancelTripMutation = useMutation({
@@ -203,10 +201,13 @@ export default function MyTripsPage() {
               </Link>
             )}
             <Link to={createPageUrl("TripForm")} className="w-full sm:w-auto">
-              <Button className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto min-h-[44px]">
-                <Plus className="w-4 h-4 mr-2" />
-                {t('organizer.create_new_trip')}
-              </Button>
+            <Button 
+              className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto min-h-[44px]"
+              aria-label={t('organizer.create_new_trip')}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t('organizer.create_new_trip')}
+            </Button>
             </Link>
           </div>
         </div>
@@ -217,7 +218,10 @@ export default function MyTripsPage() {
             <h3 className="text-lg font-semibold text-stone-700 mb-2">{t('organizer.no_trips')}</h3>
             <p className="text-stone-500 mb-4">{t('organizer.no_trips_message')}</p>
             <Link to={createPageUrl("TripForm")}>
-              <Button className="bg-emerald-600 hover:bg-emerald-700">
+              <Button 
+                className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                aria-label={t('organizer.create_first_trip')}
+              >
                 {t('organizer.create_first_trip')}
               </Button>
             </Link>
@@ -239,18 +243,19 @@ export default function MyTripsPage() {
 
             {/* Mobile Select Dropdown */}
             <div className="md:hidden mb-4">
-              <Select value={activeTab} onValueChange={setActiveTab}>
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="draft">{language === 'el' ? 'Πρόχειρα' : 'Drafts'}</SelectItem>
-                  <SelectItem value="upcoming">{t('organizer.tab_upcoming')}</SelectItem>
-                  <SelectItem value="happening">{t('organizer.tab_happening')}</SelectItem>
-                  <SelectItem value="completed">{t('organizer.tab_completed')}</SelectItem>
-                  <SelectItem value="cancelled">{t('organizer.tab_cancelled')}</SelectItem>
-                </SelectContent>
-              </Select>
+              <MobileSelect
+                value={activeTab}
+                onValueChange={setActiveTab}
+                options={[
+                  { value: 'draft', label: language === 'el' ? 'Πρόχειρα' : 'Drafts' },
+                  { value: 'upcoming', label: t('organizer.tab_upcoming') },
+                  { value: 'happening', label: t('organizer.tab_happening') },
+                  { value: 'completed', label: t('organizer.tab_completed') },
+                  { value: 'cancelled', label: t('organizer.tab_cancelled') },
+                ]}
+                placeholder={language === 'el' ? 'Επιλέξτε κατηγορία' : 'Select category'}
+                label={language === 'el' ? 'Κατηγορία Εκδρομών' : 'Trip Category'}
+              />
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

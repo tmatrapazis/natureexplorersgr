@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
+import { createOptimisticTripCreate } from '../lib/optimistic-mutations';
 
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -114,7 +115,6 @@ export default function CreateTripPage() {
     saveDraftRef.current = false;
 
     const newTrip = await base44.entities.HikingTrip.create({ ...dataToSave, organizer_code: user.organizer_code });
-    queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
 
     // Notify followers only when publishing — drafts are silent
     if (!isDraft && newTrip?.id) {
@@ -122,15 +122,24 @@ export default function CreateTripPage() {
     }
 
     navigate(createPageUrl("MyTrips"));
+    return newTrip;
   };
 
-  const createMutation = useMutation({ mutationFn: handleSubmit });
+  const createMutation = useMutation({
+    mutationFn: handleSubmit,
+    ...createOptimisticTripCreate(queryClient, user?.organizer_code),
+  });
   const hasOrganizerCode = user?.organizer_code;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8 w-full overflow-x-hidden">
       <div className="max-w-3xl mx-auto w-full min-w-0">
-        <Button variant="outline" className="mb-6" onClick={() => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("MyTrips"))}>
+        <Button 
+          variant="outline" 
+          className="mb-6 min-h-[44px]" 
+          onClick={() => window.history.length > 2 ? navigate(-1) : navigate(createPageUrl("MyTrips"))}
+          aria-label={t('create_trip.back_to_trips')}
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
           {t('create_trip.back_to_trips')}
         </Button>
