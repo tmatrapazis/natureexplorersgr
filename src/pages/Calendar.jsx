@@ -6,7 +6,7 @@ import { X, List, Map } from "lucide-react";
 import CalendarGrid from "../components/calendar/CalendarGrid";
 import TripsList from "../components/calendar/TripsList";
 import TripFilters from "../components/calendar/TripFilters";
-import TripsMap from "../components/calendar/TripsMap";
+import LazyTripsMap from "../components/lazy/LazyTripsMap";
 import PromotedTrip from "../components/calendar/PromotedTrip";
 import PullToRefresh from "../components/ui/PullToRefresh";
 import PageWrapper from "../components/layout/PageWrapper";
@@ -292,8 +292,11 @@ export default function CalendarPage() {
                   ? (language === 'el' ? 'Εκδρομές της ημέρας' : 'Trips on this day')
                   : (language === 'el' ? 'Επερχόμενες Εκδρομές' : 'Upcoming Trips')}
               </h1>
-              <div className="flex items-center gap-1 bg-stone-100 rounded-lg p-1">
+              <div className="flex items-center gap-1 bg-stone-100 rounded-lg p-1" role="tablist" aria-label="Trip view mode">
                 <button
+                  role="tab"
+                  aria-selected={tripsView === "list"}
+                  aria-label={language === 'el' ? 'Προβολή λίστας' : 'List view'}
                   onClick={() => setTripsView("list")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                     tripsView === "list"
@@ -301,10 +304,13 @@ export default function CalendarPage() {
                       : "text-stone-500 hover:text-stone-700"
                   }`}
                 >
-                  <List className="w-4 h-4" />
+                  <List className="w-4 h-4" aria-hidden="true" />
                   {language === 'el' ? 'Λίστα' : 'List'}
                 </button>
                 <button
+                  role="tab"
+                  aria-selected={tripsView === "map"}
+                  aria-label={language === 'el' ? 'Προβολή χάρτη' : 'Map view'}
                   onClick={() => setTripsView("map")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                     tripsView === "map"
@@ -312,14 +318,14 @@ export default function CalendarPage() {
                       : "text-stone-500 hover:text-stone-700"
                   }`}
                 >
-                  <Map className="w-4 h-4" />
+                  <Map className="w-4 h-4" aria-hidden="true" />
                   {language === 'el' ? 'Χάρτης' : 'Map'}
                 </button>
               </div>
             </div>
 
             {tripsView === "map" ? (
-              <TripsMap
+              <LazyTripsMap
                 trips={selectedDate ? selectedDayTrips : filteredTrips}
                 organizerMap={organizerMap}
               />
