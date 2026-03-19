@@ -176,10 +176,11 @@ function LayoutContent({ children, currentPageName }) {
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname + location.search}
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, x: -24 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            style={{ willChange: "transform, opacity" }}
           >
             {children}
           </motion.div>
