@@ -112,6 +112,15 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Scrollbar hide utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Ensure images don't cause layout shift */
 img {
   max-width: 100%;
