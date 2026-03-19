@@ -196,11 +196,12 @@ export default function TripsMap({ trips, organizerMap }) {
             size="icon"
             onClick={() => setIsFullScreen(!isFullScreen)}
             className="md:hidden h-8 w-8 border-stone-300"
+            aria-label={isFullScreen ? 'Exit full screen' : 'Enter full screen'}
           >
             {isFullScreen ? (
-              <Minimize className="w-4 h-4 text-stone-700" />
+              <Minimize className="w-4 h-4 text-stone-700" aria-hidden="true" />
             ) : (
-              <Maximize className="w-4 h-4 text-stone-700" />
+              <Maximize className="w-4 h-4 text-stone-700" aria-hidden="true" />
             )}
           </Button>
         </div>
