@@ -51,7 +51,7 @@ export default function MobileSelect({ value, onValueChange, options, placeholde
             <DrawerTitle>{label || placeholder}</DrawerTitle>
             <DrawerDescription>Select an option</DrawerDescription>
           </DrawerHeader>
-          <div className="px-4 pb-4 max-h-[60vh] overflow-y-auto">
+          <div className="px-4 pb-4 max-h-[60vh] overflow-y-auto scrollbar-hide">
             <div className="space-y-2">
               {options.map((option) => (
                 <button
