@@ -23,12 +23,16 @@ export default function NotificationsBell({ user, compact = false }) {
   const { data: unreadCount = 0 } = useQuery({
     queryKey: ['notifications-unread-count', user?.id],
     queryFn: async () => {
-      if (!user?.id) return 0;
+      if (!user?.id) {
+        console.log('[NotificationsBell] No user ID, skipping unread count fetch');
+        return 0;
+      }
+      console.log('[NotificationsBell] Fetching unread notifications for user:', user.id);
       const notifications = await base44.entities.Notification.filter({ 
         user_id: user.id, 
         is_read: false 
       });
-      console.log('[NotificationsBell] Unread count:', notifications.length);
+      console.log('[NotificationsBell] Unread notifications found:', notifications.length, notifications);
       return notifications.length;
     },
     enabled: !!user?.id,
@@ -41,12 +45,13 @@ export default function NotificationsBell({ user, compact = false }) {
     queryKey: ['notifications-list', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
+      console.log('[NotificationsBell] Fetching notifications list for user:', user.id);
       const result = await base44.entities.Notification.filter(
         { user_id: user.id },
         "-created_date",
         30
       );
-      console.log('[NotificationsBell] Fetched notifications:', result.length);
+      console.log('[NotificationsBell] Fetched notifications list:', result.length, result);
       return result;
     },
     enabled: !!user?.id && isOpen,
