@@ -65,6 +65,7 @@ export default function CreateTripPage() {
         link: tripPath,   // relative — navigable by React Router
       }));
       await base44.entities.Notification.bulkCreate(notificationsPayload);
+      console.log('[CreateTrip] Created notifications for', followers.length, 'followers');
 
       // Emails — best-effort with Promise.allSettled so one failure doesn't block others
       const emailPromises = followers.map(follow =>
@@ -127,7 +128,10 @@ export default function CreateTripPage() {
 
     // Notify followers only when publishing — drafts are silent
     if (!isDraft && newTrip?.id) {
-      notifyFollowers(newTrip); // intentionally not awaited — runs in background
+      await notifyFollowers(newTrip); // Wait for notifications to be created
+      // Invalidate notification queries so the bell updates immediately
+      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
     }
 
     navigate(createPageUrl("MyTrips"));
