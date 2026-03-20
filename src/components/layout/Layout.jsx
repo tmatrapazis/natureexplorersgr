@@ -128,8 +128,14 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                           location.pathname.startsWith(item.url.split('?')[0]) ? 'bg-emerald-50 text-emerald-700 font-medium' : ''
                         }`}
                       >
-                        <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5" onClick={handleNavClick}>
-                          <item.icon className="w-4 h-4" />
+                        <Link 
+                          to={item.url} 
+                          className="flex items-center gap-3 px-3 py-2.5 min-h-[44px]" 
+                          onClick={handleNavClick}
+                          aria-label={`Navigate to ${item.title}`}
+                          aria-current={location.pathname.startsWith(item.url.split('?')[0]) ? 'page' : undefined}
+                        >
+                          <item.icon className="w-4 h-4" aria-hidden="true" />
                           <span>{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
@@ -155,8 +161,14 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                             location.pathname.startsWith(item.url.split('?')[0]) ? 'bg-emerald-50 text-emerald-700 font-medium' : ''
                           }`}
                         >
-                          <Link to={item.url} className="flex items-center gap-3 px-3 py-2.5" onClick={handleNavClick}>
-                            <item.icon className="w-4 h-4" />
+                          <Link 
+                            to={item.url} 
+                            className="flex items-center gap-3 px-3 py-2.5 min-h-[44px]" 
+                            onClick={handleNavClick}
+                            aria-label={`Navigate to ${item.title}`}
+                            aria-current={location.pathname.startsWith(item.url.split('?')[0]) ? 'page' : undefined}
+                          >
+                            <item.icon className="w-4 h-4" aria-hidden="true" />
                             <span>{item.title}</span>
                           </Link>
                         </SidebarMenuButton>
@@ -178,7 +190,9 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                     variant={language === 'en' ? 'default' : 'outline'} 
                     size="sm"
                     onClick={() => setLanguage('en')}
-                    className="flex-1"
+                    className="flex-1 min-h-[44px]"
+                    aria-label="Switch to English"
+                    aria-pressed={language === 'en'}
                   >
                     EN
                   </Button>
@@ -186,7 +200,9 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                     variant={language === 'el' ? 'default' : 'outline'} 
                     size="sm"
                     onClick={() => setLanguage('el')}
-                    className="flex-1"
+                    className="flex-1 min-h-[44px]"
+                    aria-label="Αλλαγή σε Ελληνικά"
+                    aria-pressed={language === 'el'}
                   >
                     ΕΛ
                   </Button>
@@ -213,7 +229,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                 <button
                   onClick={handleLogout}
                   aria-label={t('common.logout')}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors min-h-[44px]"
                 >
                   <LogOut className="w-4 h-4" aria-hidden="true" />
                   {t('common.logout')}
@@ -222,9 +238,10 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             ) : (
               <Button 
                 onClick={handleLogin}
-                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                aria-label={t('common.login')}
               >
-                <LogIn className="w-4 h-4 mr-2" />
+                <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
                 {t('common.login')}
               </Button>
             )}
@@ -334,6 +351,8 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                       ? "text-emerald-600 bg-emerald-50" 
                       : "text-stone-500 hover:text-stone-700 hover:bg-stone-50"
                   }`}
+                  aria-label="View and edit profile"
+                  aria-current={location.pathname.includes('/EditProfile') ? 'page' : undefined}
                 >
                   {user.profile_picture_url ? (
                     <img src={user.profile_picture_url} alt="" className="w-6 h-6 rounded-full object-cover mb-1" />

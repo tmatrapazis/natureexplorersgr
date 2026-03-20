@@ -199,8 +199,11 @@ export default function EditOrganizerProfilePage() {
                       variant={photoInputMode === 'url' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setPhotoInputMode('url')}
+                      className="min-h-[44px]"
+                      aria-label={language === 'el' ? 'Εισαγωγή URL φωτογραφίας' : 'Enter photo URL'}
+                      aria-pressed={photoInputMode === 'url'}
                     >
-                      <LinkIcon className="w-4 h-4 mr-2" />
+                      <LinkIcon className="w-4 h-4 mr-2" aria-hidden="true" />
                       {language === 'el' ? 'Σύνδεσμος' : 'URL'}
                     </Button>
                     <Button
@@ -208,8 +211,11 @@ export default function EditOrganizerProfilePage() {
                       variant={photoInputMode === 'upload' ? 'default' : 'outline'}
                       size="sm"
                       onClick={() => setPhotoInputMode('upload')}
+                      className="min-h-[44px]"
+                      aria-label={language === 'el' ? 'Μεταφόρτωση φωτογραφίας' : 'Upload photo'}
+                      aria-pressed={photoInputMode === 'upload'}
                     >
-                      <Upload className="w-4 h-4 mr-2" />
+                      <Upload className="w-4 h-4 mr-2" aria-hidden="true" />
                       {language === 'el' ? 'Μεταφόρτωση' : 'Upload'}
                     </Button>
                   </div>
@@ -361,8 +367,13 @@ export default function EditOrganizerProfilePage() {
 
             <Card>
               <CardContent className="p-6">
-                <Button type="submit" disabled={updateOrganizerMutation.isPending} className="w-full">
-                  {updateOrganizerMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Button 
+                  type="submit" 
+                  disabled={updateOrganizerMutation.isPending} 
+                  className="w-full min-h-[44px]"
+                  aria-label={t('profile.save_changes')}
+                >
+                  {updateOrganizerMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />}
                   {t('profile.save_changes')}
                 </Button>
               </CardContent>

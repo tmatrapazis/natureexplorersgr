@@ -29,26 +29,26 @@ export default function PublicFooter() {
               href="https://www.instagram.com/natureexplorers.gr/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-stone-600 hover:text-emerald-600 transition-colors"
-              aria-label="Instagram"
+              className="text-stone-600 hover:text-emerald-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Visit Nature Explorers on Instagram"
             >
-              <Instagram className="w-5 h-5" />
+              <Instagram className="w-5 h-5" aria-hidden="true" />
             </a>
             <a
               href="https://www.facebook.com/natureexplorersgr/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-stone-600 hover:text-emerald-600 transition-colors"
-              aria-label="Facebook"
+              className="text-stone-600 hover:text-emerald-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Visit Nature Explorers on Facebook"
             >
-              <Facebook className="w-5 h-5" />
+              <Facebook className="w-5 h-5" aria-hidden="true" />
             </a>
             <a
               href="mailto:natureexplorersgr@gmail.com"
-              className="text-stone-600 hover:text-emerald-600 transition-colors"
-              aria-label="Email"
+              className="text-stone-600 hover:text-emerald-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Email Nature Explorers at natureexplorersgr@gmail.com"
             >
-              <Mail className="w-5 h-5" />
+              <Mail className="w-5 h-5" aria-hidden="true" />
             </a>
             <Link to="/About" className="text-sm font-medium text-muted-foreground hover:text-primary">
               {language === 'el' ? 'Σχετικά' : 'About'}

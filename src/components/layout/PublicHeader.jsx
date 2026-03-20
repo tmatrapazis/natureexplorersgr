@@ -7,6 +7,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
+import { useTabNavigation } from '../contexts/TabNavigationContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +24,7 @@ export default function PublicHeader() {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const { pushInTab } = useTabNavigation();
 
   const { data: user } = useQuery({
     queryKey: ['current-user-public-header'],
@@ -36,6 +38,12 @@ export default function PublicHeader() {
 
   const handleLogout = () => {
     base44.auth.logout(createPageUrl("Home"));
+  };
+  
+  const handleNavClick = (url) => (e) => {
+    e.preventDefault();
+    pushInTab(url);
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -70,19 +78,44 @@ export default function PublicHeader() {
 
           {/* Desktop Navigation in center */}
           <nav className="hidden md:flex items-center gap-8 flex-1 justify-center" aria-label="Main navigation">
-            <Link to={createPageUrl("Calendar")} className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+            <Link 
+              to={createPageUrl("Calendar")} 
+              onClick={handleNavClick(createPageUrl("Calendar"))}
+              className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+              aria-label={t('navigation.calendar')}
+            >
               {t('navigation.calendar')}
             </Link>
-            <Link to={createPageUrl("OrganizersList")} className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+            <Link 
+              to={createPageUrl("OrganizersList")} 
+              onClick={handleNavClick(createPageUrl("OrganizersList"))}
+              className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+              aria-label={t('navigation.organizers')}
+            >
               {t('navigation.organizers')}
             </Link>
-            <Link to={createPageUrl("Guides")} className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+            <Link 
+              to={createPageUrl("Guides")} 
+              onClick={handleNavClick(createPageUrl("Guides"))}
+              className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+              aria-label={t('navigation.guides')}
+            >
               {t('navigation.guides')}
             </Link>
-            <Link to={createPageUrl("GreekRefuges")} className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+            <Link 
+              to={createPageUrl("GreekRefuges")} 
+              onClick={handleNavClick(createPageUrl("GreekRefuges"))}
+              className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+              aria-label={t('navigation.refuges')}
+            >
               {t('navigation.refuges')}
             </Link>
-            <Link to="/About" className="text-stone-700 hover:text-emerald-600 transition-colors font-medium">
+            <Link 
+              to="/About" 
+              onClick={handleNavClick("/About")}
+              className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+              aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
+            >
               {language === 'el' ? 'Σχετικά' : 'About'}
             </Link>
           </nav>
@@ -153,42 +186,47 @@ export default function PublicHeader() {
                 <div className="flex flex-col gap-6 mt-8">
                   <Link 
                     to={createPageUrl("Calendar")} 
-                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={handleNavClick(createPageUrl("Calendar"))}
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    aria-label={t('navigation.calendar')}
                   >
-                    <Calendar className="w-5 h-5" />
+                    <Calendar className="w-5 h-5" aria-hidden="true" />
                     {t('navigation.calendar')}
                   </Link>
                   <Link 
                     to={createPageUrl("OrganizersList")} 
-                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={handleNavClick(createPageUrl("OrganizersList"))}
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    aria-label={t('navigation.organizers')}
                   >
-                    <Users className="w-5 h-5" />
+                    <Users className="w-5 h-5" aria-hidden="true" />
                     {t('navigation.organizers')}
                   </Link>
                   <Link 
                     to={createPageUrl("Guides")} 
-                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={handleNavClick(createPageUrl("Guides"))}
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    aria-label={t('navigation.guides')}
                   >
-                    <Compass className="w-5 h-5" />
+                    <Compass className="w-5 h-5" aria-hidden="true" />
                     {t('navigation.guides')}
                   </Link>
                   <Link 
                     to={createPageUrl("GreekRefuges")} 
-                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={handleNavClick(createPageUrl("GreekRefuges"))}
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    aria-label={t('navigation.refuges')}
                   >
-                    <Home className="w-5 h-5" />
+                    <Home className="w-5 h-5" aria-hidden="true" />
                     {t('navigation.refuges')}
                   </Link>
                   <Link 
                     to="/About" 
-                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={handleNavClick("/About")}
+                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
                   >
-                    <Info className="w-5 h-5" />
+                    <Info className="w-5 h-5" aria-hidden="true" />
                     {language === 'el' ? 'Σχετικά' : 'About'}
                   </Link>
 
