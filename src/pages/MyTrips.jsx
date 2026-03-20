@@ -58,8 +58,18 @@ export default function MyTripsPage() {
   });
 
   const { data: allBookings = [] } = useQuery({
-    queryKey: ['all-bookings'],
-    queryFn: () => base44.entities.Booking.list(),
+    queryKey: ['all-bookings', user?.organizer_code],
+    queryFn: async () => {
+      if (!user?.organizer_code) return [];
+      // Fetch only bookings for trips owned by this organizer to avoid loading
+      // every booking in the system (privacy + performance).
+      const orgTrips = await base44.entities.HikingTrip.filter({ organizer_code: user.organizer_code });
+      if (!orgTrips || orgTrips.length === 0) return [];
+      const tripIds = new Set(orgTrips.map(t => t.id));
+      const allB = await base44.entities.Booking.list();
+      return allB.filter(b => tripIds.has(b.trip_id));
+    },
+    enabled: !!user?.organizer_code,
     initialData: [],
   });
 
@@ -67,14 +77,51 @@ export default function MyTripsPage() {
     mutationFn: async (/** @type {any} */ tripId) => {
       return await base44.entities.HikingTrip.delete(tripId);
     },
-    ...createOptimisticTripDelete(queryClient, '', user?.organizer_code),
+    // Optimistic: remove the trip from the cache immediately so the UI updates
+    // without waiting for the server round-trip.
+    onMutate: async (tripId) => {
+      await queryClient.cancelQueries({ queryKey: ['my-trips', user?.organizer_code] });
+      const previous = queryClient.getQueryData(['my-trips', user?.organizer_code]);
+      queryClient.setQueryData(['my-trips', user?.organizer_code], (old) =>
+        Array.isArray(old) ? old.filter(t => t.id !== tripId) : old
+      );
+      return { previous };
+    },
+    onError: (_err, _tripId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(['my-trips', user?.organizer_code], context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-trips', user?.organizer_code] });
+      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+    },
   });
 
   const updateTripStatusMutation = useMutation({
     mutationFn: async (/** @type {any} */ { tripId, status }) => {
       return await base44.entities.HikingTrip.update(tripId, { status });
     },
-    ...createOptimisticTripUpdate(queryClient, '', user?.organizer_code),
+    // Optimistic: update the status in cache immediately.
+    onMutate: async ({ tripId, status }) => {
+      await queryClient.cancelQueries({ queryKey: ['my-trips', user?.organizer_code] });
+      const previous = queryClient.getQueryData(['my-trips', user?.organizer_code]);
+      queryClient.setQueryData(['my-trips', user?.organizer_code], (old) =>
+        Array.isArray(old)
+          ? old.map(t => t.id === tripId ? { ...t, status } : t)
+          : old
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(['my-trips', user?.organizer_code], context.previous);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-trips', user?.organizer_code] });
+      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+    },
   });
 
   const cancelTripMutation = useMutation({

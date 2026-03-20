@@ -89,7 +89,14 @@ export default function NotificationsBell({ user, compact = false }) {
     }
     if (notification.link) {
       setIsOpen(false);
-      navigate(notification.link);
+      // If the link is an absolute URL (e.g. legacy notifications stored https://…)
+      // use window.location instead of React Router's navigate() which would treat
+      // the full URL as a relative path and navigate to a nonexistent route.
+      if (notification.link.startsWith('http://') || notification.link.startsWith('https://')) {
+        window.location.href = notification.link;
+      } else {
+        navigate(notification.link);
+      }
     }
   };
 

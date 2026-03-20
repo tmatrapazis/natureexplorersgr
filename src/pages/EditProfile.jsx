@@ -27,8 +27,6 @@ export default function EditProfilePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
-  console.log('🟢 [EditProfile] Component mounted/rendered');
-
   // Prevent indexing - this is an authenticated page
   useSEO({
     title: t('profile.edit_profile'),
@@ -67,14 +65,11 @@ export default function EditProfilePage() {
 
   useEffect(() => {
     if (user) {
-      console.log('🔵 [EditProfile] useEffect: User data loaded:', user);
-      
       // Check if this is a new user (missing required fields)
       const newUser = !user.full_name || !user.username;
-      console.log('🆕 [EditProfile] Is new user:', newUser, '(full_name:', user.full_name, ', username:', user.username, ')');
       setIsNewUser(newUser);
 
-      const initialFormData = {
+      setFormData({
         username: user.username || '',
         profile_picture_url: user.profile_picture_url || '',
         phone_number: user.phone_number || '',
@@ -85,33 +80,15 @@ export default function EditProfilePage() {
         certification_files: user.certification_files || [],
         bank_accounts: user.bank_accounts || [],
         social_profiles: user.social_profiles || {},
-      };
-      
-      console.log('📋 [EditProfile] Setting initial form data:', initialFormData);
-      setFormData(initialFormData);
-    } else {
-      console.log('⚠️  [EditProfile] useEffect: No user data available yet');
+      });
     }
   }, [user]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (/** @type {any} */ updatedData) => {
-      console.log('🔵 [EditProfile] Starting profile update mutation');
-      console.log('📤 [EditProfile] Payload being sent:', JSON.stringify(updatedData, null, 2));
-      
       try {
-        const response = await base44.auth.updateMe(updatedData);
-        console.log('✅ [EditProfile] API Response SUCCESS:', response);
-        console.log('📊 [EditProfile] Response status: 200 OK');
-        return response;
+        return await base44.auth.updateMe(updatedData);
       } catch (error) {
-        console.error('❌ [EditProfile] API call failed:', error);
-        console.error('📊 [EditProfile] Error details:', {
-          message: error.message,
-          status: error.status,
-          response: error.response,
-          stack: error.stack
-        });
         throw error;
       }
     },
@@ -120,115 +97,77 @@ export default function EditProfilePage() {
       ['current-user'],
       (old, updatedData) => ({ ...old, ...updatedData })
     ),
-    onError: (/** @type {any} */ err, variables, context) => {
-      console.error('🔴 [EditProfile] onError triggered:', err);
-      console.error('📋 [EditProfile] Error context:', { variables, context });
-      
-      // User-facing error messages
+    onError: (/** @type {any} */ err) => {
       const errorMessage = err.message || 'Failed to update profile';
       if (err.status === 400) {
-        toast.error(language === 'el' 
-          ? `Μη έγκυρα δεδομένα: ${errorMessage}` 
+        toast.error(language === 'el'
+          ? `Μη έγκυρα δεδομένα: ${errorMessage}`
           : `Invalid data: ${errorMessage}`);
       } else if (err.status === 500) {
-        toast.error(language === 'el' 
-          ? 'Σφάλμα διακομιστή. Προσπαθήστε ξανά αργότερα.' 
+        toast.error(language === 'el'
+          ? 'Σφάλμα διακομιστή. Προσπαθήστε ξανά αργότερα.'
           : 'Server error. Please try again later.');
       } else {
-        toast.error(language === 'el' 
-          ? `Αποτυχία ενημέρωσης προφίλ: ${errorMessage}` 
+        toast.error(language === 'el'
+          ? `Αποτυχία ενημέρωσης προφίλ: ${errorMessage}`
           : `Failed to update profile: ${errorMessage}`);
       }
     },
-    onSuccess: (data) => {
-      console.log('🟢 [EditProfile] onSuccess triggered');
-      console.log('📦 [EditProfile] Updated user data:', data);
-      
+    onSuccess: () => {
       setUpdateSuccess(true);
-      toast.success(language === 'el' 
-        ? 'Το προφίλ ενημερώθηκε με επιτυχία!' 
+      toast.success(language === 'el'
+        ? 'Το προφίλ ενημερώθηκε με επιτυχία!'
         : 'Profile updated successfully!');
-      
-      console.log('⏱️  [EditProfile] Scheduling redirect to Calendar in 1.5 seconds...');
+
       setTimeout(() => {
-        console.log('🔄 [EditProfile] Invalidating queries...');
         queryClient.invalidateQueries({ queryKey: ['current-user'] });
-        
-        console.log('🚀 [EditProfile] Navigating to Calendar page...');
-        const calendarUrl = createPageUrl("Calendar");
-        console.log('🔗 [EditProfile] Target URL:', calendarUrl);
-        navigate(calendarUrl);
-        console.log('✅ [EditProfile] Navigation command issued');
+        navigate(createPageUrl("Calendar"));
       }, 1500);
     },
   });
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    if (!file) {
-      console.log('ℹ️  [EditProfile] handleFileChange: No file selected');
-      return;
-    }
+    if (!file) return;
 
-    console.log('🔵 [EditProfile] Starting profile picture upload:', file.name);
     setIsUploading(true);
-    
     try {
-      console.log('📤 [EditProfile] Uploading file to server...');
       const response = await base44.integrations.Core.UploadFile({ file });
-      console.log('✅ [EditProfile] Upload response:', response);
-      
       if (!response || !response.file_url) {
         throw new Error('Upload response missing file_url');
       }
-      
-      console.log('🖼️  [EditProfile] Setting profile picture URL:', response.file_url);
       setFormData(prev => ({ ...prev, profile_picture_url: response.file_url }));
       toast.success(language === 'el' ? 'Η εικόνα ανέβηκε με επιτυχία' : 'Image uploaded successfully');
     } catch (error) {
-      console.error('❌ [EditProfile] Profile picture upload failed:', error);
-      toast.error(language === 'el' 
-        ? `Αποτυχία ανεβάσματος εικόνας: ${error.message}` 
+      toast.error(language === 'el'
+        ? `Αποτυχία ανεβάσματος εικόνας: ${error.message}`
         : `Failed to upload image: ${error.message}`);
     } finally {
       setIsUploading(false);
-      console.log('✓ [EditProfile] Upload process completed');
     }
   };
 
   const handleCertificationUpload = async (e) => {
     const file = e.target.files[0];
-    if (!file) {
-      console.log('ℹ️  [EditProfile] handleCertificationUpload: No file selected');
-      return;
-    }
+    if (!file) return;
 
-    console.log('🔵 [EditProfile] Starting certification upload:', file.name);
     setIsUploading(true);
-    
     try {
-      console.log('📤 [EditProfile] Uploading certification file...');
       const response = await base44.integrations.Core.UploadFile({ file });
-      console.log('✅ [EditProfile] Certification upload response:', response);
-      
       if (!response || !response.file_url) {
         throw new Error('Upload response missing file_url');
       }
-      
-      console.log('📎 [EditProfile] Adding certification to list:', response.file_url);
       setFormData(prev => ({
         ...prev,
         certification_files: [...prev.certification_files, response.file_url]
       }));
       toast.success(language === 'el' ? 'Το αρχείο ανέβηκε με επιτυχία' : 'File uploaded successfully');
     } catch (error) {
-      console.error('❌ [EditProfile] Certification upload failed:', error);
-      toast.error(language === 'el' 
-        ? `Αποτυχία ανεβάσματος αρχείου: ${error.message}` 
+      toast.error(language === 'el'
+        ? `Αποτυχία ανεβάσματος αρχείου: ${error.message}`
         : `Failed to upload file: ${error.message}`);
     } finally {
       setIsUploading(false);
-      console.log('✓ [EditProfile] Certification upload process completed');
     }
   };
 
@@ -289,42 +228,15 @@ export default function EditProfilePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    console.log('🔵 [EditProfile] handleSubmit triggered');
-    console.log('📋 [EditProfile] Current form data:', JSON.stringify(formData, null, 2));
-    console.log('👤 [EditProfile] Is new user:', isNewUser);
-    console.log('🌐 [EditProfile] Current language:', language);
-    
-    try {
-      // Validate required fields
-      console.log('🔍 [EditProfile] Validating username...');
-      if (!formData.username || formData.username.trim() === '') {
-        console.warn('⚠️  [EditProfile] Validation failed: Username is empty');
-        const errorMsg = language === 'el' ? "Το όνομα χρήστη είναι υποχρεωτικό πεδίο." : "Username is a required field.";
-        toast.error(errorMsg);
-        return;
-      }
-      
-      console.log('✅ [EditProfile] Validation passed');
-      
-      // Remove is_verified if present - only admins can set this
-      const { is_verified, ...dataToSubmit } = /** @type {any} */ (formData);
-      
-      console.log('📤 [EditProfile] Data to submit (after filtering):', JSON.stringify(dataToSubmit, null, 2));
-      console.log('🚀 [EditProfile] Calling mutation.mutate()...');
-      
-      // Send all form fields except is_verified
-      updateProfileMutation.mutate(dataToSubmit);
-      
-      console.log('⏳ [EditProfile] Mutation triggered, waiting for response...');
-      
-    } catch (error) {
-      console.error('❌ [EditProfile] Unexpected error in handleSubmit:', error);
-      console.error('📊 [EditProfile] Error stack:', error.stack);
-      toast.error(language === 'el' 
-        ? `Απρόσμενο σφάλμα: ${error.message}` 
-        : `Unexpected error: ${error.message}`);
+
+    if (!formData.username || formData.username.trim() === '') {
+      toast.error(language === 'el' ? "Το όνομα χρήστη είναι υποχρεωτικό πεδίο." : "Username is a required field.");
+      return;
     }
+
+    // Remove is_verified — only admins can set this field
+    const { is_verified, ...dataToSubmit } = /** @type {any} */ (formData);
+    updateProfileMutation.mutate(dataToSubmit);
   };
 
   const isOrganizer = false;
@@ -342,9 +254,9 @@ export default function EditProfilePage() {
     <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/30 dark:via-emerald-950/10 to-background p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
         {!isNewUser && (
-          <Button 
-            variant="outline" 
-            className="mb-6 min-h-[44px]" 
+          <Button
+            variant="outline"
+            className="mb-6 min-h-[44px]"
             onClick={() => canGoBack() ? goBackInTab() : navigate(-1)}
             aria-label={language === 'el' ? 'Πίσω' : 'Back'}
           >
@@ -385,15 +297,6 @@ export default function EditProfilePage() {
                   <Label htmlFor="email">Email *</Label>
                   <Input id="email" value={user?.email || ''} disabled required />
                 </div>
-                 <div>{/*
-                  <Label htmlFor="full_name">Full Name *</Label>
-                  <Input
-                    id="full_name"
-                    value={formData.full_name}
-                    onChange={handleInputChange}
-                    required
-                  />
-                */} </div>
                 <div>
                   <Label htmlFor="username">Username *</Label>
                   <Input
@@ -482,8 +385,6 @@ export default function EditProfilePage() {
               </Card>
             )}
 
-
-
             {updateSuccess && (
               <Alert variant="default" className="bg-emerald-50 border-emerald-200 text-emerald-800">
                 <CheckCircle className="h-4 w-4" />
@@ -495,20 +396,20 @@ export default function EditProfilePage() {
 
             <Card>
               <CardFooter className="p-6 flex-col gap-3">
-                <Button 
-                  type="submit" 
-                  disabled={updateProfileMutation.isPending} 
+                <Button
+                  type="submit"
+                  disabled={updateProfileMutation.isPending}
                   className="w-full min-h-[44px]"
-                  aria-label={isNewUser 
+                  aria-label={isNewUser
                     ? (language === 'el' ? 'Ολοκλήρωση Προφίλ' : 'Complete Profile')
                     : (language === 'el' ? 'Αποθήκευση Αλλαγών' : 'Save Changes')}
                 >
                   {updateProfileMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isNewUser 
+                  {isNewUser
                     ? (language === 'el' ? 'Ολοκλήρωση Προφίλ' : 'Complete Profile')
                     : (language === 'el' ? 'Αποθήκευση Αλλαγών' : 'Save Changes')}
                 </Button>
-                
+
                 {!isNewUser && <DeleteAccountDialog user={user} language={language} />}
               </CardFooter>
             </Card>

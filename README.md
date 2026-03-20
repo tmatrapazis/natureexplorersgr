@@ -47,7 +47,7 @@ src/
   components/
     analytics/            # Google Analytics integration
     calendar/             # Calendar subcomponents
-    contexts/             # Language context
+    contexts/             # Language context + outdated TabNavigationContext duplicate (see Notes)
     cookie/               # Cookie consent banner/preferences
     guides/               # Guide cards/share
     helpers/              # Domain helpers (trip, booking, pricing, timezone)
@@ -56,10 +56,12 @@ src/
     translations/         # en/el dictionaries + translator helper
     ui/                   # shadcn/ui components
   lib/
-    AuthContext.jsx       # Auth + app public settings flow
-    NavigationTracker.jsx # URL sync + app log tracking
-    query-client.js       # React Query client config
-    app-params.js         # Runtime app params from URL/env/localStorage
+    AuthContext.jsx           # Auth + app public settings flow
+    TabNavigationContext.jsx  # Tab-aware navigation stacks (canonical — import from here)
+    NavigationTracker.jsx     # URL sync + app log tracking
+    query-client.js           # React Query client config
+    optimistic-mutations.js   # Reusable optimistic update helpers for React Query
+    app-params.js             # Runtime app params from URL/env/localStorage
   pages/                  # Route pages
   Layout.jsx              # Active app layout wrapper from pages.config
   pages.config.js         # Auto-generated page registry + main page
@@ -75,7 +77,8 @@ Routes are auto-registered in `src/pages.config.js`, then mounted in `src/App.js
   - `/createtrip`
   - `/edittrip` (expects `?id=<tripId>`)
   - `/tripdetails` (expects `?id=<tripId>`)
-  - `/organizerprofile` (expects `?code=<organizerCode>`)
+  - `/organizerprofile/:username` (preferred slug-based URL)
+- `/organizerprofile` (legacy; expects `?code=<organizerCode>`; auto-redirects to slug URL if organizer has a username)
   - `/guides`
   - `/guideprofile` (expects `?id=<guideId>`)
   - `/createguideprofile`
@@ -132,6 +135,7 @@ Entities used via `base44.entities.*`:
 - `HikingTrip`
 - `Booking`
 - `Notification`
+- `OrganizerFollow` (follow/unfollow organizers; delete permission must be **No Restrictions** in base44 Security panel)
 - `MountainGuide`
 - `Refuge`
 - `Query` (exported, not central in current pages)
@@ -243,12 +247,26 @@ src/types/react-leaflet.d.ts   # ambient module override for react-leaflet
 
 - **Calendar price sort** — Sort by price now uses `getLowestPrice()` (respects `pricing_options`); previously used the legacy scalar `trip.price` field only.
 - **Trip cancellation email resilience** — Cancellation flow uses `Promise.allSettled` for emails so a delivery failure no longer aborts the booking update.
+- **Unfollow button 404** — `OrganizerFollow.delete(id)` was returning 404 due to base44 row-level security. Fixed by switching to `OrganizerFollow.deleteMany({ user_id, organizer_code })` and setting entity delete permission to "No Restrictions" in the base44 Security panel.
+- **Follow/unfollow cache flicker** — Added `queryClient.setQueryData(followQueryKey, newRecord|null)` in both mutation `onSuccess` handlers to eliminate the flash between optimistic state and refetch.
+- **iOS scroll tracking** — `body: position:fixed` makes `window.scrollY` always 0. All scroll save/restore in `TabNavigationContext.jsx` now routes through `document.getElementById('root')` instead of `window`.
+- **iOS `100vh` layout jump** — `TripsMap.jsx` full-screen map container changed from `calc(100vh-57px)` to `calc(100dvh-57px)`.
+- **Lazy component layout shift** — All five lazy wrappers (`LazyTripsMap`, `LazyGreekRefugesMap`, `LazyTripLocationMap`, `LazyQuillEditor`, `LazyLocationPicker`) now wrap Suspense in a `min-h` container with `willChange: 'contents'` to prevent surrounding content from shifting during load.
+- **`EditProfile.jsx` back button bypassed tab stack** — Replaced `window.history.back()` with `canGoBack() ? goBackInTab() : navigate(-1)`.
+- **Notification links broken** — `CreateTrip.jsx` was storing absolute `https://…` URLs in `notification.link`. React Router's `navigate()` treats these as relative paths, causing silent navigation failures. Fixed by storing a relative path (`/TripDetails?id=…`) in `notification.link` (absolute URL kept only for the email button href). `NotificationsBell.jsx` also hardened to fall back to `window.location.href` for any pre-existing absolute-URL notifications.
+- **Optimistic delete/update no-ops in `MyTrips.jsx`** — `deleteTripMutation` and `updateTripStatusMutation` were calling the shared optimistic helpers with `''` as `tripId`, so no cache entry ever matched and the optimistic update was silently skipped. Replaced with inline `onMutate` handlers that capture the real `tripId` from mutation variables at call time.
+- **`MyTrips.jsx` fetched all bookings** — `Booking.list()` was loading every booking in the system. Replaced with a scoped query that first fetches the organizer's own trips, then filters bookings to only those trip IDs.
+- **Raw HTML in unauthenticated `TripDetails`** — The logged-out description view rendered Quill-generated HTML as plain text (visible `<p>` and `<strong>` tags). Fixed by applying `DOMPurify.sanitize` + `dangerouslySetInnerHTML`, consistent with the authenticated view.
+- **Wrong `TabNavigationContext` import in `CreateTrip.jsx`** — Was importing `useTabNavigation` from `components/contexts/TabNavigationContext` (a standalone no-op context), not from the provider-matched `lib/TabNavigationContext`. Fixed the import path so the back button now correctly uses the active tab stack.
+- **`notifyFollowers` missing `organizer_code` guard** — Added an early-return guard so the function is a no-op when `user.organizer_code` is falsy, preventing an unscoped query that would return all followers.
+- **Debug `console.log` statements** — Removed ~20 verbose debug `console.log` calls that were left in `EditProfile.jsx`.
+- **`remainingAttendeeCapacity` always showing max** — Removed the inaccurate `remainingAttendeeCapacity` field from the TripDetails schema.org structured data (booking count is not fetched on that page, so the field cannot be computed accurately; omission is preferable to a wrong value).
 
 ### Notable Implementation Notes
 
 - `src/Layout.jsx` is the active layout configured in `src/pages.config.js`.
 - `src/components/layout/Layout.jsx` exists but is not wired by current page config.
-- Some pages include diagnostics/logging intended for troubleshooting (for example `MyBookings`).
+- **Two `TabNavigationContext` files exist.** The canonical provider is `src/lib/TabNavigationContext.jsx` — always import from there. `src/components/contexts/TabNavigationContext.jsx` is an outdated duplicate with a different context instance; it returns silent no-ops and must not be used.
 
 ## Deployment Notes
 

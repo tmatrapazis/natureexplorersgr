@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createOptimisticTripCreate } from '../lib/optimistic-mutations';
-import { useTabNavigation } from '../components/contexts/TabNavigationContext';
+import { useTabNavigation } from '../lib/TabNavigationContext';
 
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,9 @@ export default function CreateTripPage() {
   // Notify all followers of this organizer about the new trip.
   // Fire-and-forget: errors are logged but never block navigation.
   const notifyFollowers = async (newTrip) => {
+    // Guard: without an organizer_code the filter would return all follows
+    if (!user?.organizer_code) return;
+
     try {
       const followers = await base44.entities.OrganizerFollow.filter({
         organizer_code: user.organizer_code,
@@ -44,7 +47,11 @@ export default function CreateTripPage() {
 
       if (!followers || followers.length === 0) return;
 
-      const tripUrl = `https://www.natureexplorers.gr/TripDetails?id=${newTrip.id}`;
+      // Use a relative path so React Router's navigate() works correctly when
+      // the user clicks the notification in NotificationsBell.
+      const tripPath = `/TripDetails?id=${newTrip.id}`;
+      // Absolute URL kept only for the email CTA button href
+      const tripUrl = `https://www.natureexplorers.gr${tripPath}`;
       const organizerName = user.full_name || user.username || '';
 
       // In-app notifications — bulk create, same pattern as trip cancellation in MyTrips.jsx
@@ -55,7 +62,7 @@ export default function CreateTripPage() {
           : `New trip from ${organizerName}`,
         message: `"${newTrip.title}"`,
         is_read: false,
-        link: tripUrl,
+        link: tripPath,   // relative — navigable by React Router
       }));
       await base44.entities.Notification.bulkCreate(notificationsPayload);
 

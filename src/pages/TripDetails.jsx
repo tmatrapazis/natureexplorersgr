@@ -245,7 +245,8 @@ export default function TripDetailsPage() {
     "inLanguage": language === 'el' ? "el" : "en",
     "typicalAgeRange": "18-65",
     "maximumAttendeeCapacity": trip.max_participants,
-    "remainingAttendeeCapacity": trip.max_participants,
+    // remainingAttendeeCapacity omitted: booking count not fetched on this page,
+    // so we cannot compute it accurately. Omission is better than a wrong value.
     "isAccessibleForFree": trip.price === 0 || !trip.price,
     "url": window.location.href
   } : null;
@@ -408,7 +409,12 @@ export default function TripDetailsPage() {
                   {trip.description && (
                     <div className="mb-6">
                       <h3 className="font-semibold text-stone-900 mb-2">Description</h3>
-                      <p className="text-stone-600 whitespace-pre-line line-clamp-4">{trip.description}</p>
+                      {/* Sanitise before rendering so Quill-generated HTML is displayed
+                          correctly for logged-out users instead of showing raw tags. */}
+                      <div
+                        className="text-stone-600 break-words overflow-hidden line-clamp-4"
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(trip.description) }}
+                      />
                     </div>
                   )}
 
