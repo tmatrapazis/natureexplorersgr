@@ -280,7 +280,6 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
               {/* Organizer actions on MyTrips page */}
               {isOrganizer && location.pathname.includes('/MyTrips') && user && (
                 <div className="flex items-center gap-1">
-                  <NotificationsBell user={user} compact={true} />
                   <Button
                     variant="ghost"
                     size="icon"
