@@ -41,12 +41,7 @@ export default function NotificationsBell({ user, compact = false }) {
 
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId) => {
-      try {
-        await base44.entities.Notification.update(notificationId, { is_read: true });
-      } catch (e) {
-        console.warn('[NotificationsBell] Could not mark as read:', e);
-        throw e;
-      }
+      await base44.functions.invoke('markNotificationsRead', { notification_ids: [notificationId] });
     },
     onSuccess: (data, notificationId) => {
       // Immediately update the cache so the badge reflects the change
@@ -60,9 +55,8 @@ export default function NotificationsBell({ user, compact = false }) {
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
       const unread = notifications.filter(n => !n.is_read);
-      await Promise.allSettled(
-        unread.map(n => base44.entities.Notification.update(n.id, { is_read: true }))
-      );
+      if (unread.length === 0) return;
+      await base44.functions.invoke('markNotificationsRead', { notification_ids: unread.map(n => n.id) });
     },
     onSuccess: () => {
       // Immediately mark all as read in the cache so the badge clears instantly
