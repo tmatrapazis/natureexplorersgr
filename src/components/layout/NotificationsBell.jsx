@@ -20,31 +20,25 @@ export default function NotificationsBell({ user, compact = false }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Fetch all notifications - RLS handles user scoping automatically
   const { data: notifications = [], isLoading, refetch } = useQuery({
     queryKey: ['notifications-list', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      console.log('[NotificationsBell] Fetching notifications for user:', user.id);
       const result = await base44.entities.Notification.filter({ user_id: user.id }, "-created_date");
-      console.log('[NotificationsBell] Fetched notifications:', result.length, result);
       return result;
     },
     enabled: !!user?.id,
     refetchOnWindowFocus: true,
   });
 
-  // Calculate unread count from fetched notifications
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
-  // Mark single notification as read
   const markAsReadMutation = useMutation({
-    mutationFn: async (/** @type {any} */ notificationId) => {
-      console.log('[NotificationsBell] Marking notification as read:', notificationId);
+    mutationFn: async (notificationId) => {
       try {
         return await base44.entities.Notification.update(notificationId, { is_read: true });
       } catch (e) {
-        console.warn('[NotificationsBell] Could not mark notification as read:', e);
+        console.warn('[NotificationsBell] Could not mark as read:', e);
       }
     },
     onSuccess: () => {
@@ -52,15 +46,11 @@ export default function NotificationsBell({ user, compact = false }) {
     },
   });
 
-  // Mark all notifications as read
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      console.log('[NotificationsBell] Marking all notifications as read');
-      const unreadNotifications = notifications.filter(n => !n.is_read);
+      const unread = notifications.filter(n => !n.is_read);
       await Promise.allSettled(
-        unreadNotifications.map(n => 
-          base44.entities.Notification.update(n.id, { is_read: true })
-        )
+        unread.map(n => base44.entities.Notification.update(n.id, { is_read: true }))
       );
     },
     onSuccess: () => {
@@ -74,9 +64,6 @@ export default function NotificationsBell({ user, compact = false }) {
     }
     if (notification.link) {
       setIsOpen(false);
-      // If the link is an absolute URL (e.g. legacy notifications stored https://…)
-      // use window.location instead of React Router's navigate() which would treat
-      // the full URL as a relative path and navigate to a nonexistent route.
       if (notification.link.startsWith('http://') || notification.link.startsWith('https://')) {
         window.location.href = notification.link;
       } else {
@@ -85,26 +72,19 @@ export default function NotificationsBell({ user, compact = false }) {
     }
   };
 
-  const handleMarkAllAsRead = () => {
-    markAllAsReadMutation.mutate();
-  };
-
   const displayCount = unreadCount > 99 ? '99+' : unreadCount;
 
-  // Refetch when dropdown opens
   const handleOpenChange = (open) => {
     setIsOpen(open);
-    if (open) {
-      refetch();
-    }
+    if (open) refetch();
   };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon" 
+        <Button
+          variant="ghost"
+          size="icon"
           className={`relative ${compact ? 'rounded-lg min-h-[44px] min-w-[44px]' : 'rounded-full min-h-[44px] min-w-[44px]'}`}
           aria-label={`Notifications${unreadCount > 0 ? ` (${displayCount} unread)` : ''}`}
         >
@@ -120,13 +100,12 @@ export default function NotificationsBell({ user, compact = false }) {
         <div className="flex justify-between items-center px-2 py-1.5">
           <DropdownMenuLabel>Ειδοποιήσεις</DropdownMenuLabel>
           {unreadCount > 0 && (
-            <Button 
-              variant="link" 
-              size="sm" 
-              className="h-auto p-0 text-xs min-h-[24px]" 
-              onClick={handleMarkAllAsRead}
+            <Button
+              variant="link"
+              size="sm"
+              className="h-auto p-0 text-xs min-h-[24px]"
+              onClick={() => markAllAsReadMutation.mutate()}
               disabled={markAllAsReadMutation.isPending}
-              aria-label="Σήμανση όλων ως αναγνωσμένων"
             >
               {markAllAsReadMutation.isPending ? (
                 <Loader2 className="w-3 h-3 animate-spin mr-1" />
@@ -152,7 +131,6 @@ export default function NotificationsBell({ user, compact = false }) {
                 onClick={() => handleNotificationClick(notification)}
                 role="button"
                 tabIndex={0}
-                aria-label={`${notification.title}: ${notification.message}`}
                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), handleNotificationClick(notification))}
               >
                 {!notification.is_read ? (
@@ -166,9 +144,7 @@ export default function NotificationsBell({ user, compact = false }) {
                       {notification.title}
                     </p>
                   )}
-                  <p className="text-sm text-stone-600 line-clamp-2">
-                    {notification.message}
-                  </p>
+                  <p className="text-sm text-stone-600 line-clamp-2">{notification.message}</p>
                   <p className="text-xs text-stone-500 mt-1">
                     {formatDistanceToNow(new Date(notification.created_date), { addSuffix: true, locale: el })}
                   </p>
