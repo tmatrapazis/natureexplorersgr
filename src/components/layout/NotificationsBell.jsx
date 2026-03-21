@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Bell, Check, Circle, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { el } from 'date-fns/locale';
 
 export default function NotificationsBell({ user, compact = false }) {
   const queryClient = useQueryClient();
@@ -130,7 +131,7 @@ export default function NotificationsBell({ user, compact = false }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-80 md:w-96" align="end">
         <div className="flex justify-between items-center px-2 py-1.5">
-          <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+          <DropdownMenuLabel>Ειδοποιήσεις</DropdownMenuLabel>
           {unreadCount > 0 && (
             <Button 
               variant="link" 
@@ -138,14 +139,14 @@ export default function NotificationsBell({ user, compact = false }) {
               className="h-auto p-0 text-xs min-h-[24px]" 
               onClick={handleMarkAllAsRead}
               disabled={markAllAsReadMutation.isPending}
-              aria-label="Mark all notifications as read"
+              aria-label="Σήμανση όλων ως αναγνωσμένων"
             >
               {markAllAsReadMutation.isPending ? (
                 <Loader2 className="w-3 h-3 animate-spin mr-1" />
               ) : (
                 <Check className="w-3 h-3 mr-1" />
               )}
-              Mark all as read
+              Σήμανση όλων ως αναγνωσμένων
             </Button>
           )}
         </div>
@@ -160,7 +161,7 @@ export default function NotificationsBell({ user, compact = false }) {
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                className="flex items-start gap-3 p-3 border-b border-stone-100 last:border-0 hover:bg-stone-50 cursor-pointer transition-colors min-h-[60px]"
+                className={`flex items-start gap-3 p-3 border-b border-stone-100 last:border-0 hover:bg-stone-50 cursor-pointer transition-colors min-h-[60px] ${!notification.is_read ? 'bg-blue-50/50' : ''}`}
                 onClick={() => handleNotificationClick(notification)}
                 role="button"
                 tabIndex={0}
@@ -182,7 +183,7 @@ export default function NotificationsBell({ user, compact = false }) {
                     {notification.message}
                   </p>
                   <p className="text-xs text-stone-500 mt-1">
-                    {formatDistanceToNow(new Date(notification.created_date), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(notification.created_date), { addSuffix: true, locale: el })}
                   </p>
                 </div>
               </div>
@@ -191,7 +192,7 @@ export default function NotificationsBell({ user, compact = false }) {
         ) : (
           <div className="p-8 text-center">
             <Bell className="w-12 h-12 mx-auto text-stone-300 mb-2" />
-            <p className="text-sm text-stone-500">No notifications yet</p>
+            <p className="text-sm text-stone-500">Δεν έχεις νέες ειδοποιήσεις</p>
           </div>
         )}
       </DropdownMenuContent>
