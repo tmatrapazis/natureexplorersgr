@@ -20,59 +20,35 @@ export default function NotificationsBell({ user, compact = false }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Fetch unread count (ds_notifications_unread_count) - poll every 30s
-  const { data: unreadCount = 0 } = useQuery({
-    queryKey: ['notifications-unread-count', user?.id],
-    queryFn: async () => {
-      if (!user?.id) {
-        console.log('[NotificationsBell] No user ID, skipping unread count fetch');
-        return 0;
-      }
-      console.log('[NotificationsBell] Fetching unread notifications for user:', user.id);
-      const notifications = await base44.entities.Notification.filter({ 
-        user_id: user.id, 
-        is_read: false 
-      });
-      console.log('[NotificationsBell] Unread notifications found:', notifications.length, notifications);
-      return notifications.length;
-    },
-    enabled: !!user?.id,
-    refetchInterval: 30000, // Poll every 30 seconds
-    refetchOnWindowFocus: true,
-  });
-
-  // Fetch notifications list (ds_notifications_list) - poll every 60s
-  const { data: notifications = [], isLoading } = useQuery({
+  // Fetch all notifications - RLS handles user scoping automatically
+  const { data: notifications = [], isLoading, refetch } = useQuery({
     queryKey: ['notifications-list', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      console.log('[NotificationsBell] Fetching notifications list for user:', user.id);
-      const result = await base44.entities.Notification.filter(
-        { user_id: user.id },
-        "-created_date",
-        30
-      );
-      console.log('[NotificationsBell] Fetched notifications list:', result.length, result);
+      console.log('[NotificationsBell] Fetching notifications for user:', user.id);
+      const result = await base44.entities.Notification.list("-created_date", 50);
+      console.log('[NotificationsBell] Fetched notifications:', result.length, result);
       return result;
     },
-    enabled: !!user?.id && isOpen,
-    refetchInterval: 60000, // Poll every 60 seconds
+    enabled: !!user?.id,
     refetchOnWindowFocus: true,
   });
 
-  // Mark single notification as read (ds_mark_notification_read)
+  // Calculate unread count from fetched notifications
+  const unreadCount = notifications.filter(n => !n.is_read).length;
+
+  // Mark single notification as read
   const markAsReadMutation = useMutation({
     mutationFn: async (/** @type {any} */ notificationId) => {
       console.log('[NotificationsBell] Marking notification as read:', notificationId);
       return await base44.entities.Notification.update(notificationId, { is_read: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
       queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
     },
   });
 
-  // Mark all notifications as read (ds_mark_all_notifications_read)
+  // Mark all notifications as read
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
       console.log('[NotificationsBell] Marking all notifications as read');
@@ -84,7 +60,6 @@ export default function NotificationsBell({ user, compact = false }) {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
       queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
     },
   });
@@ -112,8 +87,16 @@ export default function NotificationsBell({ user, compact = false }) {
 
   const displayCount = unreadCount > 99 ? '99+' : unreadCount;
 
+  // Refetch when dropdown opens
+  const handleOpenChange = (open) => {
+    setIsOpen(open);
+    if (open) {
+      refetch();
+    }
+  };
+
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
