@@ -48,24 +48,28 @@ export default function NotificationsBell({ user, compact = false }) {
         throw e;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications-list', user?.id] });
+    onSuccess: (data, notificationId) => {
+      // Immediately update the cache so the badge reflects the change
+      queryClient.setQueryData(['notifications-list', user?.id], (old) => {
+        if (!old) return old;
+        return old.map(n => n.id === notificationId ? { ...n, is_read: true } : n);
+      });
     },
   });
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
       const unread = notifications.filter(n => !n.is_read);
-      const results = await Promise.allSettled(
+      await Promise.allSettled(
         unread.map(n => base44.entities.Notification.update(n.id, { is_read: true }))
       );
-      const failed = results.filter(r => r.status === 'rejected').length;
-      if (failed > 0) {
-        console.warn(`[NotificationsBell] ${failed} notifications failed to mark as read`);
-      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications-list', user?.id] });
+      // Immediately mark all as read in the cache so the badge clears instantly
+      queryClient.setQueryData(['notifications-list', user?.id], (old) => {
+        if (!old) return old;
+        return old.map(n => ({ ...n, is_read: true }));
+      });
     },
   });
 
