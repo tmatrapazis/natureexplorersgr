@@ -13,12 +13,17 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Bell, Check, Circle, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { el } from 'date-fns/locale';
+import { el, enUS } from 'date-fns/locale';
+import { useLanguage } from '@/components/contexts/LanguageContext';
+import { useTranslation } from '@/components/translations/useTranslations';
 
 export default function NotificationsBell({ user, compact = false }) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
+  const dateLocale = language === 'el' ? el : enUS;
 
   const { data: notifications = [], isLoading, refetch } = useQuery({
     queryKey: ['notifications-list', user?.id],
@@ -37,25 +42,30 @@ export default function NotificationsBell({ user, compact = false }) {
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId) => {
       try {
-        return await base44.entities.Notification.update(notificationId, { is_read: true });
+        await base44.entities.Notification.update(notificationId, { is_read: true });
       } catch (e) {
         console.warn('[NotificationsBell] Could not mark as read:', e);
+        throw e;
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-list', user?.id] });
     },
   });
 
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
       const unread = notifications.filter(n => !n.is_read);
-      await Promise.allSettled(
+      const results = await Promise.allSettled(
         unread.map(n => base44.entities.Notification.update(n.id, { is_read: true }))
       );
+      const failed = results.filter(r => r.status === 'rejected').length;
+      if (failed > 0) {
+        console.warn(`[NotificationsBell] ${failed} notifications failed to mark as read`);
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-list', user?.id] });
     },
   });
 
@@ -99,13 +109,16 @@ export default function NotificationsBell({ user, compact = false }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-80 md:w-96" align="end">
         <div className="flex justify-between items-center px-2 py-1.5">
-          <DropdownMenuLabel>Ειδοποιήσεις</DropdownMenuLabel>
+          <DropdownMenuLabel>{t('notifications.title')}</DropdownMenuLabel>
           {unreadCount > 0 && (
             <Button
               variant="link"
               size="sm"
               className="h-auto p-0 text-xs min-h-[24px]"
-              onClick={() => markAllAsReadMutation.mutate()}
+              onClick={(e) => {
+                e.stopPropagation();
+                markAllAsReadMutation.mutate();
+              }}
               disabled={markAllAsReadMutation.isPending}
             >
               {markAllAsReadMutation.isPending ? (
@@ -113,7 +126,7 @@ export default function NotificationsBell({ user, compact = false }) {
               ) : (
                 <Check className="w-3 h-3 mr-1" />
               )}
-              Σήμανση όλων ως αναγνωσμένων
+              {t('notifications.mark_all_read')}
             </Button>
           )}
         </div>
@@ -147,7 +160,7 @@ export default function NotificationsBell({ user, compact = false }) {
                   )}
                   <p className="text-sm text-stone-600 line-clamp-2">{notification.message}</p>
                   <p className="text-xs text-stone-500 mt-1">
-                    {formatDistanceToNow(new Date(notification.created_date), { addSuffix: true, locale: el })}
+                    {formatDistanceToNow(new Date(notification.created_date), { addSuffix: true, locale: dateLocale })}
                   </p>
                 </div>
               </div>
@@ -156,7 +169,7 @@ export default function NotificationsBell({ user, compact = false }) {
         ) : (
           <div className="p-8 text-center">
             <Bell className="w-12 h-12 mx-auto text-stone-300 mb-2" />
-            <p className="text-sm text-stone-500">Δεν έχεις νέες ειδοποιήσεις</p>
+            <p className="text-sm text-stone-500">{t('notifications.no_notifications')}</p>
           </div>
         )}
       </DropdownMenuContent>
