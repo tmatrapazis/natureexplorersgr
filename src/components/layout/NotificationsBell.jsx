@@ -24,7 +24,8 @@ export default function NotificationsBell({ user, compact = false }) {
     queryKey: ['notifications-list', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const result = await base44.entities.Notification.filter({ user_id: user.id }, "-created_date");
+      const result = await base44.entities.Notification.filter({ user_id: user.id });
+      result.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
       return result;
     },
     enabled: !!user?.id,
