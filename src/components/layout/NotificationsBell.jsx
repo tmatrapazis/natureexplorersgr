@@ -26,7 +26,7 @@ export default function NotificationsBell({ user, compact = false }) {
     queryFn: async () => {
       if (!user?.id) return [];
       console.log('[NotificationsBell] Fetching notifications for user:', user.id);
-      const result = await base44.entities.Notification.list("-created_date", 50);
+      const result = await base44.entities.Notification.filter({ user_id: user.id }, "-created_date");
       console.log('[NotificationsBell] Fetched notifications:', result.length, result);
       return result;
     },
@@ -41,7 +41,11 @@ export default function NotificationsBell({ user, compact = false }) {
   const markAsReadMutation = useMutation({
     mutationFn: async (/** @type {any} */ notificationId) => {
       console.log('[NotificationsBell] Marking notification as read:', notificationId);
-      return await base44.entities.Notification.update(notificationId, { is_read: true });
+      try {
+        return await base44.entities.Notification.update(notificationId, { is_read: true });
+      } catch (e) {
+        console.warn('[NotificationsBell] Could not mark notification as read:', e);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
@@ -53,7 +57,7 @@ export default function NotificationsBell({ user, compact = false }) {
     mutationFn: async () => {
       console.log('[NotificationsBell] Marking all notifications as read');
       const unreadNotifications = notifications.filter(n => !n.is_read);
-      await Promise.all(
+      await Promise.allSettled(
         unreadNotifications.map(n => 
           base44.entities.Notification.update(n.id, { is_read: true })
         )
