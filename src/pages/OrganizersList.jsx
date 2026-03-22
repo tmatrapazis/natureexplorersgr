@@ -22,13 +22,13 @@ export default function OrganizersListPage() {
   // SEO Configuration with keywords
   useSEO({
     title: language === 'el'
-      ? 'Οδηγοί Πεζοπορίας Ελλάδα | Ομάδες Πεζοπορίας | Διοργανωτές Εκδρομών Ορειβασία | Nature Explorers'
-      : 'Hiking Teams Greece | Hiking Guides & Trip Organizers | Trekking Groups | Nature Explorers',
+      ? 'Ομάδες Πεζοπορίας Ελλάδα | Οδηγοί & Διοργανωτές Εκδρομών | Nature Explorers'
+      : 'Hiking Groups Greece | Hiking Guides & Trip Organizers | Nature Explorers',
     description: language === 'el'
-      ? 'Ανακαλύψτε έμπειρους και πιστοποιημένους οδηγούς πεζοπορίας σε όλη την Ελλάδα. Ομάδες πεζοπορίας, οργανωμένες εκδρομές βουνό, hiking teams Greece. Περιηγηθείτε σε προφίλ και βρείτε τον ιδανικό οδηγό για την επόμενη ορειβατική σας περιπέτεια.'
-      : 'Discover experienced and verified hiking guides across Greece. Browse hiking teams Greece, trekking organizers, outdoor activity leaders. Find the perfect guide for your next mountain adventure, hiking trips and weekend expeditions.',
+      ? 'Ανακαλύψτε 14+ ομάδες πεζοπορίας και πιστοποιημένους οδηγούς σε όλη την Ελλάδα. Εκδρομές βουνό, trekking & outdoor περιπέτειες. Βρείτε τη σωστή ομάδα για εσάς!'
+      : 'Discover 14+ hiking groups and certified guides across Greece. Browse trekking organizers, outdoor leaders and find your perfect hiking team for mountain adventures.',
     image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb4/01040e5a0_logo.png',
-    url: window.location.href,
+    url: 'https://natureexplorers.gr/OrganizersList',
     type: 'website'
   });
 
@@ -72,12 +72,22 @@ export default function OrganizersListPage() {
 
   const isLoading = organizersLoading || tripsLoading;
 
+  // Breadcrumb structured data
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Nature Explorers", "item": "https://natureexplorers.gr/" },
+      { "@type": "ListItem", "position": 2, "name": language === 'el' ? "Ομάδες Πεζοπορίας" : "Hiking Groups", "item": "https://natureexplorers.gr/OrganizersList" }
+    ]
+  };
+
   // ItemList Structured Data for directory page
   const itemListSchema = sortedOrganizers.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "name": language === 'el' ? "Οδηγοί Πεζοπορίας Ελλάδα" : "Hiking Guides & Trip Organizers Greece",
-    "url": "https://natureexplorers.gr/organizerslist",
+    "url": "https://natureexplorers.gr/OrganizersList",
     "numberOfItems": sortedOrganizers.length,
     "itemListElement": sortedOrganizers.map((organizer, index) => ({
       "@type": "ListItem",
@@ -89,6 +99,7 @@ export default function OrganizersListPage() {
 
   return (
     <PageWrapper>
+        <StructuredData data={breadcrumbSchema} />
         {itemListSchema && <StructuredData data={itemListSchema} />}
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-3">

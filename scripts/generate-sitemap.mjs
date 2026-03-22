@@ -27,6 +27,28 @@ const STATIC_ROUTES = [
   { loc: '/TermsOfUse', priority: 0.6, changefreq: 'yearly' },
 ];
 
+// Known organizer profile pages (clean slug URLs) — update when new organizers join
+const ORGANIZER_ROUTES = [
+  'trekkers',
+  'activesundays',
+  'themovers',
+  'drastiriokatsiki',
+  'hikershellas',
+  'cooladventures',
+  'ourvibeismountains',
+  'hikewave',
+  'backpackongreece',
+  'eop',
+  'swentravel',
+  'youthtrekkin',
+  'wade',
+  'exploroloco',
+].map(username => ({
+  loc: `/OrganizerProfile/${username}`,
+  priority: 0.7,
+  changefreq: 'weekly',
+}));
+
 /**
  * Escape special XML characters
  */
@@ -113,7 +135,7 @@ async function generateSitemap() {
 
     // Generate static and dynamic routes
     const dynamicRoutes = await generateDynamicRoutes();
-    const allRoutes = [...STATIC_ROUTES, ...dynamicRoutes];
+    const allRoutes = [...STATIC_ROUTES, ...ORGANIZER_ROUTES, ...dynamicRoutes];
 
     // Sort by priority (highest first)
     allRoutes.sort((a, b) => (b.priority || 0.5) - (a.priority || 0.5));
@@ -128,6 +150,7 @@ async function generateSitemap() {
     console.log(`✅ Sitemap generated successfully!`);
     console.log(`📊 Total entries: ${allRoutes.length}`);
     console.log(`   - Static routes: ${STATIC_ROUTES.length}`);
+    console.log(`   - Organizer profiles: ${ORGANIZER_ROUTES.length}`);
     console.log(`   - Dynamic routes: ${dynamicRoutes.length}`);
     console.log(`📁 File location: ${sitemapPath}`);
 
