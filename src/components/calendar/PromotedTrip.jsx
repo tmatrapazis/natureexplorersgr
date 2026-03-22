@@ -122,12 +122,6 @@ export default function PromotedTrip({ trips, currentDate }) {
           </div>
         </div>
 
-        {promotedTrip.description && (
-          <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-            {promotedTrip.description.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()}
-          </p>
-        )}
-
         <div className="mt-auto">
           <Link to={`${createPageUrl("TripDetails")}?id=${promotedTrip.id}`}>
             <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
