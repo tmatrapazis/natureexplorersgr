@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useInView } from '@/lib/useInView';
 
 const LocationPicker = lazy(() => import('../trips/LocationPicker'));
 
@@ -12,12 +13,31 @@ const LoadingFallback = () => (
   </div>
 );
 
+/**
+ * Code-split wrapper for the LocationPicker (uses Leaflet click-to-place).
+ *
+ * Two-stage lazy loading:
+ * 1. React.lazy: Leaflet bundle only downloaded when component first mounts.
+ * 2. IntersectionObserver: uses a tighter 100px margin since the picker is
+ *    always in a form — it will almost always be in view quickly, so we don't
+ *    need to pre-fetch far in advance.
+ */
 export default function LazyLocationPicker(props) {
+  const [containerRef, isInView] = useInView('100px 0px');
+
   return (
-    <div className="min-h-[400px]" style={{ willChange: 'contents' }}>
-      <Suspense fallback={<LoadingFallback />}>
-        <LocationPicker {...props} />
-      </Suspense>
+    <div
+      ref={containerRef}
+      className="min-h-[400px]"
+      style={{ willChange: 'contents' }}
+    >
+      {isInView ? (
+        <Suspense fallback={<LoadingFallback />}>
+          <LocationPicker {...props} />
+        </Suspense>
+      ) : (
+        <LoadingFallback />
+      )}
     </div>
   );
 }

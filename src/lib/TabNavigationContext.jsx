@@ -3,6 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 const TabNavigationContext = createContext(undefined);
 
+/** sessionStorage key for persisting tab stacks across iOS app suspend/resume */
+const SESSION_KEY = 'ne_tab_stacks';
+
 /**
  * TabNavigationProvider
  *
@@ -15,13 +18,33 @@ const TabNavigationContext = createContext(undefined);
  *
  * Stack entries use the full path including query-string (pathname + search)
  * so that parametrised pages like TripDetails restore to the right item.
+ *
+ * Resilience features:
+ * - tabStacks are persisted to sessionStorage so they survive iOS WebView
+ *   suspend/resume cycles where the JS context may be discarded.
+ * - A visibilitychange listener flushes current state when the app goes
+ *   to the background, ensuring the sessionStorage copy is always fresh.
+ * - Scroll positions are saved/restored against the `.page-transition-layer`
+ *   element (the actual scroll host in the animated layout), not #root.
  */
 export function TabNavigationProvider({ children, tabRoutes }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Store navigation history for each tab
+  // ─── Tab stacks ────────────────────────────────────────────────────────────
+  // Initialise from sessionStorage when available (survives iOS app suspend).
   const [tabStacks, setTabStacks] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem(SESSION_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Validate: every expected tab must have an array entry
+        const valid = tabRoutes.every(r => Array.isArray(parsed[r.path]) && parsed[r.path].length > 0);
+        if (valid) return parsed;
+      }
+    } catch {
+      // sessionStorage may be unavailable in some privacy modes — silent fallback
+    }
     const stacks = {};
     tabRoutes.forEach(route => {
       stacks[route.path] = [route.path];
@@ -29,7 +52,19 @@ export function TabNavigationProvider({ children, tabRoutes }) {
     return stacks;
   });
 
-  // Track current active tab
+  // Keep a ref so closures (visibilitychange, scroll save) always read latest value
+  const tabStacksRef = useRef(tabStacks);
+  useEffect(() => {
+    tabStacksRef.current = tabStacks;
+    // Sync to sessionStorage on every change
+    try {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(tabStacks));
+    } catch {
+      // silent — sessionStorage failure is non-fatal
+    }
+  }, [tabStacks]);
+
+  // ─── Current active tab ────────────────────────────────────────────────────
   const [currentTab, setCurrentTab] = useState(() => {
     const matchedTab = tabRoutes.find(tab =>
       location.pathname === tab.path || location.pathname.startsWith(tab.path + '/')
@@ -37,19 +72,35 @@ export function TabNavigationProvider({ children, tabRoutes }) {
     return matchedTab?.path || tabRoutes[0]?.path;
   });
 
-  // Keep a ref so effects can read currentTab without going stale
   const currentTabRef = useRef(currentTab);
   useEffect(() => {
     currentTabRef.current = currentTab;
   }, [currentTab]);
 
-  // Store scroll positions for each full path (pathname + search)
+  // ─── Scroll positions ──────────────────────────────────────────────────────
   const scrollPositions = useRef({});
 
-  // Helper: build the full path string used as stack entry key
-  const fullPath = location.pathname + location.search;
+  // Keep a ref for the current location so async handlers never capture stale state
+  const locationRef = useRef(location);
+  useEffect(() => {
+    locationRef.current = location;
+  }, [location]);
 
-  // Update tab stack when location changes
+  // Helper: find the real scroll container.
+  //
+  // The layout uses a position:absolute motion.div as the scroll host
+  // (class="page-transition-layer").  body is position:fixed on iOS so
+  // window.scrollY is always 0, and #root is overflow:hidden during transitions.
+  // Query the page-transition-layer first; fall back through #root → window.
+  const getScrollEl = () => {
+    const layer = document.querySelector('.page-transition-layer');
+    if (layer) return layer;
+    const root = document.getElementById('root');
+    if (root && root.scrollHeight > root.clientHeight) return root;
+    return window;
+  };
+
+  // ─── Location change → update tab stack ───────────────────────────────────
   useEffect(() => {
     const fullLocation = location.pathname + location.search;
 
@@ -58,51 +109,37 @@ export function TabNavigationProvider({ children, tabRoutes }) {
     );
 
     if (matchedTab) {
-      // Navigation is within a known tab — update that tab's stack
       const tabPath = matchedTab.path;
-
       setTabStacks(prev => {
         const currentStack = prev[tabPath] || [tabPath];
         const lastInStack = currentStack[currentStack.length - 1];
-        // Deduplicate: only add if the incoming path differs from top of stack
         if (lastInStack !== fullLocation) {
-          return {
-            ...prev,
-            [tabPath]: [...currentStack, fullLocation],
-          };
+          return { ...prev, [tabPath]: [...currentStack, fullLocation] };
         }
         return prev;
       });
-
       setCurrentTab(tabPath);
     } else {
-      // Dynamic / parameterised route (e.g. /TripDetails?id=…, /OrganizerProfile/:username)
-      // — attribute it to whichever tab was active when the user navigated here
+      // Dynamic / parameterised route — attribute to whichever tab was active
       const activeTab = currentTabRef.current;
       if (activeTab) {
         setTabStacks(prev => {
           const currentStack = prev[activeTab] || [];
           const lastInStack = currentStack[currentStack.length - 1];
-          // Deduplicate: pushInTab may have already added this entry
           if (lastInStack !== fullLocation) {
-            return {
-              ...prev,
-              [activeTab]: [...currentStack, fullLocation],
-            };
+            return { ...prev, [activeTab]: [...currentStack, fullLocation] };
           }
           return prev;
         });
       }
-      // currentTab intentionally not changed — user is still "in" the same tab
     }
   }, [location.pathname, location.search, tabRoutes]);
 
-  // Helper: get the real scroll container.
-  // body is position:fixed on iOS so window.scrollY is always 0.
-  // All page scrolling happens on #root instead.
-  const getScrollEl = () => document.getElementById('root') || window;
+  // ─── Scroll save / restore ─────────────────────────────────────────────────
+  const fullPath = location.pathname + location.search;
 
-  // Save scroll position before navigating away from current path
+  // Save scroll position when navigating away from the current path.
+  // Use a cleanup function so it fires when the path changes.
   useEffect(() => {
     const savedPath = fullPath;
     return () => {
@@ -110,29 +147,54 @@ export function TabNavigationProvider({ children, tabRoutes }) {
       scrollPositions.current[savedPath] =
         el === window ? window.scrollY : el.scrollTop;
     };
-  }, [fullPath]);
+  }, [fullPath]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Restore scroll position after navigation
+  // Restore scroll position after navigation.
+  // A short delay ensures the new page's DOM is ready before we set scrollTop.
   useEffect(() => {
     const savedPosition = scrollPositions.current[fullPath];
-    // Use setTimeout to ensure DOM is ready before scrolling
     const id = setTimeout(() => {
       const el = getScrollEl();
       const top = savedPosition ?? 0;
       if (el === window) {
-        window.scrollTo(0, top);
+        window.scrollTo({ top, behavior: 'instant' });
       } else {
         el.scrollTop = top;
       }
-    }, 0);
+    }, 50); // 50ms gives the entering animation a head-start before scroll restore
     return () => clearTimeout(id);
-  }, [fullPath]);
+  }, [fullPath]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ─── Flush state when app goes to background (iOS WebView suspend) ─────────
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        // Save current scroll position immediately
+        const el = getScrollEl();
+        const loc = locationRef.current;
+        const currentFullPath = loc.pathname + loc.search;
+        scrollPositions.current[currentFullPath] =
+          el === window ? window.scrollY : el.scrollTop;
+
+        // Flush tab stacks to sessionStorage
+        try {
+          sessionStorage.setItem(SESSION_KEY, JSON.stringify(tabStacksRef.current));
+        } catch {
+          // silent
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ─── Public API ────────────────────────────────────────────────────────────
 
   /**
    * Navigate to a tab, restoring its last known screen and scroll position.
    */
   const navigateToTab = (tabPath) => {
-    // Save current scroll position before leaving
     const el = getScrollEl();
     scrollPositions.current[fullPath] =
       el === window ? window.scrollY : el.scrollTop;
@@ -144,13 +206,13 @@ export function TabNavigationProvider({ children, tabRoutes }) {
 
   /**
    * Go back within the current tab's stack, preserving scroll position.
+   * Returns true if a back navigation occurred, false if already at tab root.
    */
   const goBackInTab = () => {
     const tab = currentTabRef.current;
     const currentStack = tabStacks[tab] || [];
 
     if (currentStack.length > 1) {
-      // Save current scroll position
       const el = getScrollEl();
       scrollPositions.current[fullPath] =
         el === window ? window.scrollY : el.scrollTop;
@@ -158,12 +220,7 @@ export function TabNavigationProvider({ children, tabRoutes }) {
       const newStack = currentStack.slice(0, -1);
       const previousPath = newStack[newStack.length - 1];
 
-      // Update the stack first so the location-change effect sees the right state
-      setTabStacks(prev => ({
-        ...prev,
-        [tab]: newStack,
-      }));
-
+      setTabStacks(prev => ({ ...prev, [tab]: newStack }));
       navigate(previousPath);
       return true;
     }
@@ -172,8 +229,7 @@ export function TabNavigationProvider({ children, tabRoutes }) {
   };
 
   /**
-   * Boolean: true when the current tab's stack has a previous entry to go back to.
-   * Memoised so consuming components only re-render when the value actually changes.
+   * Boolean: true when the current tab's stack has a previous entry.
    */
   const canGoBack = React.useMemo(() => {
     const currentStack = tabStacks[currentTab] || [];
@@ -189,9 +245,7 @@ export function TabNavigationProvider({ children, tabRoutes }) {
 
   /**
    * Programmatically push a URL onto the current tab's stack.
-   * Use this when a plain <Link> cannot be used (e.g. imperative navigation).
-   * The duplicate check in the location-change effect ensures the path is not
-   * added twice if both pushInTab and the effect run for the same URL.
+   * Use this for imperative navigation where a plain <Link> cannot be used.
    */
   const pushInTab = (url) => {
     const tab = currentTabRef.current || tabRoutes[0]?.path;

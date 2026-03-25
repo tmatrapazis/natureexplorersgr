@@ -117,10 +117,38 @@
     user-select: none;
   }
   
-  /* Ensure minimum tap target size */
-  button, a, [role="button"], input[type="checkbox"], input[type="radio"] {
+  /* Ensure minimum tap target size on all interactive elements */
+  button,
+  a,
+  [role="button"],
+  [role="tab"],
+  [role="switch"],
+  [role="slider"],
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"],
+  select {
     min-height: 44px;
+  }
+
+  /* Icon buttons and checkboxes also need min-width */
+  button, [role="button"], [role="switch"],
+  input[type="checkbox"], input[type="radio"] {
     min-width: 44px;
+  }
+
+  /* Remove 300ms tap delay in WebView — critical for perceived performance */
+  button,
+  a,
+  [role="button"],
+  [role="tab"],
+  [role="switch"],
+  [role="slider"],
+  input,
+  textarea,
+  select,
+  label {
+    touch-action: manipulation;
   }
   
   /* Mobile-optimized form inputs */
