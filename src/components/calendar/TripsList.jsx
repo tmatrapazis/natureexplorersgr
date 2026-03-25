@@ -12,6 +12,7 @@ import { trackEvent } from "../analytics/GoogleAnalytics";
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 import { getTripImage, handleImageError } from '../helpers/imageHelpers';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import { formatPriceForCard } from '../helpers/pricingHelpers';
 
 const difficultyColors = {
@@ -125,17 +126,16 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
           
           return (
             <Card key={trip.id} className={`overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full ${trip.id === promotedTripId ? 'border-amber-400 ring-2 ring-amber-300' : 'border-stone-200'}`}>
-              <div className="w-full h-40 bg-stone-200 relative">
-                <img 
-                  src={getTripImage(trip.image_url, trip.id)} 
+              <div className="w-full h-40 bg-stone-200 relative overflow-hidden">
+                <OptimizedImage
+                  src={getTripImage(trip.image_url, trip.id)}
                   alt={language === 'el'
                     ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} - ορειβασία trekking outdoor adventure Ελλάδα`
                     : `${trip.title} - hiking trip ${trip.location} - mountain trekking outdoor activity Greece`}
-                  className="w-full h-full object-cover"
                   onError={(e) => handleImageError(e, trip.id)}
                 />
                 {trip.id === promotedTripId && (
-                  <div className="absolute top-2 left-2 flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow">
+                  <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow">
                     <Star className="w-3 h-3 fill-white" />
                     {language === 'el' ? 'Δημοφιλής' : 'Popular'}
                   </div>

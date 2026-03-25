@@ -16,6 +16,7 @@ import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import StructuredData from "../components/seo/StructuredData";
 import FollowButton from "../components/organizers/FollowButton";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 export default function OrganizerProfilePage() {
   const { language } = useLanguage();
@@ -449,13 +450,12 @@ export default function OrganizerProfilePage() {
                       className="flex flex-col h-full"
                     >
                       {trip.image_url && (
-                        <div className="w-full h-48 bg-stone-200">
-                          <img 
-                            src={trip.image_url} 
+                        <div className="w-full h-48 bg-stone-200 overflow-hidden">
+                          <OptimizedImage
+                            src={trip.image_url}
                             alt={language === 'el'
                               ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} Ελλάδα outdoor trekking`
                               : `${trip.title} - ${trip.location} hiking trekking expedition Greece outdoor adventure`}
-                            className="w-full h-full object-cover"
                           />
                         </div>
                       )}

@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { formatDateRange } from "../helpers/dateHelpers";
 import { getTripImage, handleImageError } from "../helpers/imageHelpers";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 import { getTripInsights } from "../helpers/bookingHelpers";
 
 const STATUS_BADGE = {
@@ -63,10 +64,9 @@ function OrganizerTripCard({
     <Card className={`p-6 hover:shadow-lg transition-shadow ${trip.status === 'draft' ? 'border-dashed' : ''}`}>
       <div className="flex flex-col md:flex-row gap-6">
         <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
-          <img
+          <OptimizedImage
             src={getTripImage(trip.image_url, trip.id)}
             alt={trip.title}
-            className="w-full h-full object-cover"
             onError={(e) => handleImageError(e, trip.id)}
           />
         </div>

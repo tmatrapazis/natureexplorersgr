@@ -9,6 +9,7 @@ import { createPageUrl } from "@/utils";
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 import { getTripImage, handleImageError } from '../helpers/imageHelpers';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import { formatPriceForCard } from '../helpers/pricingHelpers';
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -77,12 +78,12 @@ function PromotedTrip({ trips, currentDate }) {
         )}
       </div>
 
-      <div className="relative w-full h-48 bg-muted">
-        <img 
-          src={getTripImage(promotedTrip.image_url, promotedTrip.id)} 
+      <div className="relative w-full h-48 bg-muted overflow-hidden">
+        <OptimizedImage
+          src={getTripImage(promotedTrip.image_url, promotedTrip.id)}
           alt={promotedTrip.title}
-          className="w-full h-full object-cover"
           onError={(e) => handleImageError(e, promotedTrip.id)}
+          priority
         />
       </div>
       

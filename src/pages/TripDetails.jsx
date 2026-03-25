@@ -18,6 +18,7 @@ import { useTranslation } from "../components/translations/useTranslations";
 import { useTabNavigation } from "../components/contexts/TabNavigationContext";
 import StructuredData from "../components/seo/StructuredData";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
+import OptimizedImage from "@/components/ui/OptimizedImage";
 import ShareButton from "../components/trip/ShareButton";
 import DOMPurify from "dompurify";
 import { getPricingOptions } from "../components/helpers/pricingHelpers";
@@ -349,15 +350,15 @@ export default function TripDetailsPage() {
               <div className="lg:col-span-2 space-y-6">
                 {trip.image_url && (
                   <div className="relative w-full h-64 md:h-96 rounded-2xl overflow-hidden shadow-lg">
-                    <img
+                    <OptimizedImage
                       src={getTripImage(trip.image_url, trip.id)}
                       alt={language === 'el'
                         ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} Ελλάδα, outdoor ορειβασία trekking`
                         : `${trip.title} - hiking trekking expedition in ${trip.location} Greece, outdoor mountain adventure`}
-                      className="w-full h-full object-cover"
                       onError={(e) => handleImageError(e, trip.id)}
+                      priority
                     />
-                    <Badge className={`absolute top-4 right-4 text-base px-3 py-1 ${statusColors[computedStatus]}`}>
+                    <Badge className={`absolute top-4 right-4 z-10 text-base px-3 py-1 ${statusColors[computedStatus]}`}>
                       {computedStatus}
                     </Badge>
                   </div>

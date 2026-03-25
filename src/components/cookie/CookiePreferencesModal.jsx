@@ -62,8 +62,8 @@ export default function CookiePreferencesModal({ preferences, onSave, onClose })
               Manage your cookie settings and privacy preferences
             </p>
           </div>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="w-5 h-5" />
+          <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close cookie preferences">
+            <X className="w-5 h-5" aria-hidden="true" />
           </Button>
         </div>
 
