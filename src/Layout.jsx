@@ -57,6 +57,11 @@ function LayoutContent({ children, currentPageName }) {
   // Handle errors from user query
   React.useEffect(() => {
     if (isError && userError) {
+      if (userError.status && userError.status !== 401 && userError.status !== 403) {
+        toast.error('Failed to load user session. Please refresh the page.');
+      }
+    }
+  }, [isError, userError]);
 
   // Handle successful auth check completion
   React.useEffect(() => {
