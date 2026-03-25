@@ -6,7 +6,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Mail, Phone, Globe, User as UserIcon, ShieldCheck, MapPin, Calendar, Clock, TrendingUp, ExternalLink, Loader2, Facebook, Instagram, Twitter, PlusCircle, Edit } from "lucide-react";
+import { Mail, Phone, Globe, User as UserIcon, ShieldCheck, MapPin, Calendar, Clock, TrendingUp, ExternalLink, Loader2, Facebook, Instagram, Twitter, PlusCircle, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { formatDateRange } from "../components/helpers/dateHelpers";
 import { difficultyColors } from "../components/helpers/tripHelpers";
@@ -528,7 +528,11 @@ export default function OrganizerProfilePage() {
 
 
                         <div className="flex gap-2 mt-auto">
-                          <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 flex-1 min-h-[44px]">
+                          <Button
+                            size="sm"
+                            className="bg-emerald-600 hover:bg-emerald-700 flex-1 min-h-[44px]"
+                            aria-label={`${t('trip.view_details')}: ${trip.title}`}
+                          >
                             {t('trip.view_details')}
                           </Button>
                           {user && trip.external_link && (

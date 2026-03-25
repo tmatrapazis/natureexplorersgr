@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { useTabNavigation } from '../components/contexts/TabNavigationContext';
+import { useBackNavigation } from '../lib/useBackNavigation';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Loader2 } from "lucide-react";
@@ -17,7 +17,7 @@ export default function TripFormPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const { goBackInTab, canGoBack } = useTabNavigation();
+  const { goBack: navigateBack } = useBackNavigation(createPageUrl("MyTrips"));
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
@@ -108,7 +108,7 @@ export default function TripFormPage() {
       setShowExitDialog(true);
     } else {
       if (destination) navigate(destination);
-      else canGoBack() ? goBackInTab() : navigate(createPageUrl("MyTrips"));
+      else navigateBack();
     }
   };
 
@@ -116,7 +116,7 @@ export default function TripFormPage() {
     setIsFormDirty(false);
     setShowExitDialog(false);
     if (pendingNavigation) navigate(pendingNavigation);
-    else canGoBack() ? goBackInTab() : navigate(createPageUrl("MyTrips"));
+    else navigateBack();
   };
 
   const handleSaveAndExit = async () => {

@@ -230,10 +230,11 @@ export default function GreekRefuges() {
                               href={refuge.facebook}
                               target="_blank"
                               rel="noopener noreferrer"
+                              aria-label={`${refuge.name} on Facebook`}
                               className="text-xs text-blue-700 hover:underline inline-flex items-center gap-1"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Facebook className="w-3 h-3" />
+                              <Facebook className="w-3 h-3" aria-hidden="true" />
                             </a>
                           )}
                           {refuge.instagram && (
@@ -241,10 +242,11 @@ export default function GreekRefuges() {
                               href={refuge.instagram}
                               target="_blank"
                               rel="noopener noreferrer"
+                              aria-label={`${refuge.name} on Instagram`}
                               className="text-xs text-pink-600 hover:underline inline-flex items-center gap-1"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Instagram className="w-3 h-3" />
+                              <Instagram className="w-3 h-3" aria-hidden="true" />
                             </a>
                           )}
                         </div>
@@ -375,10 +377,11 @@ export default function GreekRefuges() {
                           href={refuge.facebook}
                           target="_blank"
                           rel="noopener noreferrer"
+                          aria-label={`${refuge.name} on Facebook`}
                           className="text-xs text-blue-700 hover:underline inline-flex items-center gap-1"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Facebook className="w-3 h-3" />
+                          <Facebook className="w-3 h-3" aria-hidden="true" />
                         </a>
                       )}
                       {refuge.instagram && (
@@ -386,10 +389,11 @@ export default function GreekRefuges() {
                           href={refuge.instagram}
                           target="_blank"
                           rel="noopener noreferrer"
+                          aria-label={`${refuge.name} on Instagram`}
                           className="text-xs text-pink-600 hover:underline inline-flex items-center gap-1"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Instagram className="w-3 h-3" />
+                          <Instagram className="w-3 h-3" aria-hidden="true" />
                         </a>
                       )}
                     </div>
