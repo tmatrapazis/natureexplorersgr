@@ -289,7 +289,7 @@ export default function EditGuideProfilePage() {
                     <button
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, profile_photo_url: "" }))}
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 min-h-[32px] min-w-[32px]"
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
                       aria-label={language === 'el' ? 'Αφαίρεση φωτογραφίας προφίλ' : 'Remove profile photo'}
                     >
                       <X className="w-4 h-4" aria-hidden="true" />
@@ -321,7 +321,7 @@ export default function EditGuideProfilePage() {
                     <button
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, cover_photo_url: "" }))}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 min-h-[32px] min-w-[32px]"
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 min-h-[44px] min-w-[44px] flex items-center justify-center"
                       aria-label={language === 'el' ? 'Αφαίρεση εικόνας εξωφύλλου' : 'Remove cover photo'}
                     >
                       <X className="w-4 h-4" aria-hidden="true" />
@@ -404,7 +404,7 @@ export default function EditGuideProfilePage() {
                       <button
                         type="button"
                         onClick={() => handleRemoveCertification(index)}
-                        className="hover:text-red-600 min-h-[24px] min-w-[24px] flex items-center justify-center"
+                        className="hover:text-red-600 min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
                         aria-label={`${language === 'el' ? 'Αφαίρεση πιστοποίησης' : 'Remove certification'}: ${cert}`}
                       >
                         <X className="w-3 h-3" aria-hidden="true" />
