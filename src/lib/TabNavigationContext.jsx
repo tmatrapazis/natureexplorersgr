@@ -172,12 +172,13 @@ export function TabNavigationProvider({ children, tabRoutes }) {
   };
 
   /**
-   * Check if the current tab's stack has a previous entry to go back to.
+   * Boolean: true when the current tab's stack has a previous entry to go back to.
+   * Memoised so consuming components only re-render when the value actually changes.
    */
-  const canGoBack = () => {
+  const canGoBack = React.useMemo(() => {
     const currentStack = tabStacks[currentTab] || [];
     return currentStack.length > 1;
-  };
+  }, [tabStacks, currentTab]);
 
   /**
    * Check if the given path (default: current location) is a tab root page.

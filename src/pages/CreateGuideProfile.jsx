@@ -3,7 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { useTabNavigation } from "../components/contexts/TabNavigationContext";
+import { useBackNavigation } from '../lib/useBackNavigation';
+import { createOptimisticCreate } from '../lib/optimistic-mutations';
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,7 @@ export default function CreateGuideProfilePage() {
   const { t } = useTranslation(language);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { goBackInTab, canGoBack } = useTabNavigation();
+  const { goBack } = useBackNavigation(createPageUrl('Guides'));
 
   const [formData, setFormData] = useState({
     full_name: "",
@@ -65,10 +66,11 @@ export default function CreateGuideProfilePage() {
 
   const createGuideMutation = useMutation({
     mutationFn: (/** @type {any} */ data) => base44.entities.MountainGuide.create(data),
+    ...createOptimisticCreate(queryClient, ['mountain-guides'], (data) => ({ ...data, id: 'temp-' + Date.now(), created_date: new Date().toISOString() })),
     onSuccess: async (newGuide) => {
       // Update user's mountain_guide_id
       await base44.auth.updateMe({ mountain_guide_id: newGuide.id });
-      
+
       queryClient.invalidateQueries({ queryKey: ['mountain-guides'] });
       queryClient.invalidateQueries({ queryKey: ['user-guide-profile'] });
       toast.success(language === 'el' ? 'Το προφίλ δημιουργήθηκε με επιτυχία!' : 'Profile created successfully!');
@@ -151,7 +153,7 @@ export default function CreateGuideProfilePage() {
       <div className="container mx-auto max-w-4xl">
         <Button
           variant="ghost"
-          onClick={() => canGoBack() ? goBackInTab() : navigate(createPageUrl('Guides'))}
+          onClick={goBack}
           className="mb-6 min-h-[44px]"
           aria-label={language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
         >

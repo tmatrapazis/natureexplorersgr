@@ -3,7 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { useTabNavigation } from '../components/contexts/TabNavigationContext';
+import { useBackNavigation } from '../lib/useBackNavigation';
+import { createOptimisticUpdate } from '../lib/optimistic-mutations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,8 +19,7 @@ import { useTranslation } from '../components/translations/useTranslations';
 export default function EditOrganizerProfilePage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { goBackInTab, canGoBack } = useTabNavigation();
-  const goBack = () => canGoBack() ? goBackInTab() : navigate(createPageUrl("OrganizersList"));
+  const { goBack } = useBackNavigation(createPageUrl("OrganizersList"));
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
@@ -89,6 +89,11 @@ export default function EditOrganizerProfilePage() {
       console.log('Update successful:', result);
       return result;
     },
+    ...createOptimisticUpdate(
+      queryClient,
+      ['organizer', user?.organizer_code],
+      (old, updated) => old ? { ...old, ...updated } : old
+    ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['organizer'] });
       setShowSuccessDialog(true);

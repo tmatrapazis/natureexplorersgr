@@ -132,14 +132,14 @@ function NotificationsBell({ user, compact = false }) {
 
         {isLoading ? (
           <div className="p-8 flex justify-center">
-            <Loader2 className="w-6 h-6 animate-spin text-stone-400" />
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
           </div>
         ) : notifications.length > 0 ? (
           <div className="max-h-[400px] overflow-y-auto">
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`flex items-start gap-3 p-3 border-b border-stone-100 last:border-0 hover:bg-stone-50 cursor-pointer transition-colors min-h-[60px] ${!notification.is_read ? 'bg-blue-50/50' : ''}`}
+                className={`flex items-start gap-3 p-3 border-b border-border last:border-0 hover:bg-accent cursor-pointer transition-colors min-h-[60px] ${!notification.is_read ? 'bg-primary/5' : ''}`}
                 onClick={() => handleNotificationClick(notification)}
                 role="button"
                 tabIndex={0}
@@ -152,12 +152,12 @@ function NotificationsBell({ user, compact = false }) {
                 )}
                 <div className="flex-1 min-w-0">
                   {notification.title && (
-                    <p className={`text-sm mb-0.5 ${!notification.is_read ? 'font-semibold text-stone-900' : 'font-medium text-stone-700'}`}>
+                    <p className={`text-sm mb-0.5 ${!notification.is_read ? 'font-semibold text-foreground' : 'font-medium text-foreground'}`}>
                       {notification.title}
                     </p>
                   )}
-                  <p className="text-sm text-stone-600 line-clamp-2">{notification.message}</p>
-                  <p className="text-xs text-stone-500 mt-1">
+                  <p className="text-sm text-muted-foreground line-clamp-2">{notification.message}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
                     {formatDistanceToNow(new Date(notification.created_date), { addSuffix: true, locale: dateLocale })}
                   </p>
                 </div>
@@ -166,8 +166,8 @@ function NotificationsBell({ user, compact = false }) {
           </div>
         ) : (
           <div className="p-8 text-center">
-            <Bell className="w-12 h-12 mx-auto text-stone-300 mb-2" />
-            <p className="text-sm text-stone-500">{t('notifications.no_notifications')}</p>
+            <Bell className="w-12 h-12 mx-auto text-muted-foreground/40 mb-2" />
+            <p className="text-sm text-muted-foreground">{t('notifications.no_notifications')}</p>
           </div>
         )}
       </DropdownMenuContent>

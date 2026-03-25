@@ -87,17 +87,17 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
   };
 
   return (
-      <div className="min-h-screen flex w-full bg-stone-50">
-        <Sidebar className="border-r border-stone-200">
-         <SidebarHeader className="border-b border-stone-200 p-6">
+      <div className="min-h-screen flex w-full bg-background">
+        <Sidebar className="border-r border-border">
+         <SidebarHeader className="border-b border-border p-6">
            <div className="flex items-center justify-between">
              <Link to={createPageUrl("Home")} className="flex items-center gap-3" onClick={handleNavClick}>
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+              <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
                 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" alt="Nature Explorers" className="w-full h-full object-contain" />
               </div>
               <div>
-                <h2 className="font-bold text-stone-900">Nature Explorers</h2>
-                <p className="text-xs text-stone-500">Discover the wild side of Greece</p>
+                <h2 className="font-bold text-foreground">Nature Explorers</h2>
+                <p className="text-xs text-muted-foreground">Discover the wild side of Greece</p>
               </div>
               </Link>
               <Button 
@@ -211,7 +211,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             </SidebarGroup>
           </SidebarContent>
 
-          <SidebarFooter className="border-t border-stone-200 p-4">
+          <SidebarFooter className="border-t border-border p-4">
             {user ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-3 p-2">
@@ -220,8 +220,8 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                       {user.profile_picture_url ? <img src={user.profile_picture_url} alt=" " className="w-full h-full object-cover rounded-full" /> : <User className="w-5 h-5 text-white" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-stone-900 text-sm truncate">{user.full_name}</p>
-                      <p className="text-xs text-stone-500 truncate">{isOrganizer ? "Organizer" : "Hiker"}</p>
+                      <p className="font-medium text-foreground text-sm truncate">{user.full_name}</p>
+                      <p className="text-xs text-muted-foreground truncate">{isOrganizer ? "Organizer" : "Hiker"}</p>
                     </div>
                   </Link>
                   <NotificationsBell user={user} />
@@ -229,7 +229,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                 <button
                   onClick={handleLogout}
                   aria-label={t('common.logout')}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors min-h-[44px]"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors min-h-[44px]"
                 >
                   <LogOut className="w-4 h-4" aria-hidden="true" />
                   {t('common.logout')}
@@ -249,26 +249,26 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
         </Sidebar>
 
         <main className="flex-1 flex flex-col">
-          <header 
-            className="bg-white border-b border-stone-200 px-4 md:hidden sticky top-0 z-40"
-            style={{ 
+          <header
+            className="bg-background border-b border-border px-4 md:hidden sticky top-0 z-40"
+            style={{
               paddingTop: 'max(env(safe-area-inset-top), 1rem)',
               paddingBottom: '1rem'
             }}
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                {canGoBack() && !isTabRoot() ? (
+                {canGoBack && !isTabRoot() ? (
                   <button
                     onClick={goBackInTab}
-                    className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]"
+                    className="hover:bg-accent p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]"
                     aria-label="Go back"
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </button>
                 ) : (
-                  <SidebarTrigger 
-                    className="hover:bg-stone-100 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]"
+                  <SidebarTrigger
+                    className="hover:bg-accent p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]"
                     aria-label="Open menu"
                   />
                 )}
@@ -293,7 +293,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                     variant="ghost"
                     size="icon"
                     onClick={() => navigate(createPageUrl("EditProfile"))}
-                    className="min-h-[44px] min-w-[44px] hover:bg-stone-100"
+                    className="min-h-[44px] min-w-[44px] hover:bg-accent"
                     aria-label="Edit profile"
                   >
                     {user.profile_picture_url ? (
@@ -314,7 +314,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
           {/* Mobile Bottom Navigation */}
           <nav
             aria-label="Main navigation"
-            className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-50 select-none shadow-lg"
+            className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50 select-none shadow-lg"
             style={{
               paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)',
               paddingTop: '0.5rem'
@@ -324,15 +324,15 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
               {publicNav.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname.startsWith(item.url.split('?')[0]);
-                
+
                 return (
                   <button
                     key={item.title}
                     onClick={() => navigateToTab(item.url)}
                     className={`flex flex-col items-center justify-center py-1 px-3 min-h-[48px] min-w-[48px] transition-colors rounded-lg ${
-                      isActive 
-                        ? "text-emerald-600 bg-emerald-50" 
-                        : "text-stone-500 hover:text-stone-700 hover:bg-stone-50"
+                      isActive
+                        ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-950"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
                     }`}
                     aria-label={`Navigate to ${item.title}`}
                     aria-current={isActive ? 'page' : undefined}
@@ -342,14 +342,14 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
                   </button>
                 );
               })}
-              
+
               {user && (
                 <Link
                   to={createPageUrl("EditProfile")}
                   className={`flex flex-col items-center justify-center py-1 px-3 min-h-[48px] min-w-[48px] transition-colors rounded-lg ${
                     location.pathname.includes('/EditProfile')
-                      ? "text-emerald-600 bg-emerald-50" 
-                      : "text-stone-500 hover:text-stone-700 hover:bg-stone-50"
+                      ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-950"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
                   }`}
                   aria-label="View and edit profile"
                   aria-current={location.pathname.includes('/EditProfile') ? 'page' : undefined}

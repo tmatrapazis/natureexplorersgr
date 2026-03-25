@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createOptimisticTripCreate } from '../lib/optimistic-mutations';
-import { useTabNavigation } from '../lib/TabNavigationContext';
+import { useBackNavigation } from '../lib/useBackNavigation';
 
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ export default function CreateTripPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const { goBackInTab, canGoBack } = useTabNavigation();
+  const { goBack } = useBackNavigation(createPageUrl("MyTrips"));
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const saveDraftRef = useRef(false);
@@ -169,10 +169,10 @@ export default function CreateTripPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8 w-full overflow-x-hidden">
       <div className="max-w-3xl mx-auto w-full min-w-0">
-        <Button 
-          variant="outline" 
-          className="mb-6 min-h-[44px]" 
-          onClick={() => canGoBack() ? goBackInTab() : navigate(createPageUrl("MyTrips"))}
+        <Button
+          variant="outline"
+          className="mb-6 min-h-[44px]"
+          onClick={goBack}
           aria-label={t('create_trip.back_to_trips')}
         >
           <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />

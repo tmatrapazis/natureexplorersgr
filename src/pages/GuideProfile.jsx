@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import DOMPurify from "dompurify";
-import { useTabNavigation } from "../components/contexts/TabNavigationContext";
+import { useBackNavigation } from '../lib/useBackNavigation';
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import { Button } from "@/components/ui/button";
@@ -21,8 +21,7 @@ export default function GuideProfilePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const navigate = useNavigate();
-  const { goBackInTab, canGoBack } = useTabNavigation();
-  const goBack = () => canGoBack() ? goBackInTab() : navigate(createPageUrl("Guides"));
+  const { goBack } = useBackNavigation(createPageUrl("Guides"));
   
   const urlParams = new URLSearchParams(window.location.search);
   const guideId = urlParams.get("id");

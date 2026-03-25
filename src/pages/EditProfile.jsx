@@ -17,12 +17,12 @@ import { useTranslation } from '../components/translations/useTranslations';
 import DeleteAccountDialog from '../components/profile/DeleteAccountDialog';
 import MobileSelect from '../components/ui/MobileSelect';
 import { createOptimisticUpdate } from '../lib/optimistic-mutations';
-import { useTabNavigation } from '../lib/TabNavigationContext';
+import { useBackNavigation } from '../lib/useBackNavigation';
 
 export default function EditProfilePage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { goBackInTab, canGoBack } = useTabNavigation();
+  const { goBack } = useBackNavigation(null);
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
@@ -256,7 +256,7 @@ export default function EditProfilePage() {
           <Button
             variant="outline"
             className="mb-6 min-h-[44px]"
-            onClick={() => canGoBack() ? goBackInTab() : navigate(-1)}
+            onClick={goBack}
             aria-label={language === 'el' ? 'Πίσω' : 'Back'}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { useTabNavigation } from '../components/contexts/TabNavigationContext';
+import { useBackNavigation } from '../lib/useBackNavigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { User, Mail, Phone, HeartPulse, ShieldAlert, AlertTriangle, ArrowLeft, Loader2 } from 'lucide-react';
@@ -28,7 +28,7 @@ const InfoField = ({ icon, label, value }) => {
 export default function HikerProfilePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
-  const { goBackInTab, canGoBack } = useTabNavigation();
+  const { goBack } = useBackNavigation(null);
 
   // Prevent indexing - this is an authenticated page
   useSEO({
@@ -74,10 +74,10 @@ export default function HikerProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-xl mx-auto">
-        <Button 
-          variant="outline" 
-          className="mb-6 min-h-[44px]" 
-          onClick={() => goBackInTab()}
+        <Button
+          variant="outline"
+          className="mb-6 min-h-[44px]"
+          onClick={goBack}
           aria-label={t('hiker_profile.back_to_bookings')}
         >
           <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />

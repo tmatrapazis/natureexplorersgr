@@ -3,7 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { useTabNavigation } from "../components/contexts/TabNavigationContext";
+import { useBackNavigation } from '../lib/useBackNavigation';
+import { createOptimisticUpdate } from '../lib/optimistic-mutations';
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import { Button } from "@/components/ui/button";
@@ -31,8 +32,7 @@ export default function EditGuideProfilePage() {
   const { t } = useTranslation(language);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { goBackInTab, canGoBack } = useTabNavigation();
-  const goBack = () => canGoBack() ? goBackInTab() : navigate(createPageUrl("Guides"));
+  const { goBack } = useBackNavigation(createPageUrl("Guides"));
 
   const urlParams = new URLSearchParams(window.location.search);
   const guideId = urlParams.get("id");
@@ -101,6 +101,9 @@ export default function EditGuideProfilePage() {
 
   const updateGuideMutation = useMutation({
     mutationFn: (/** @type {any} */ data) => base44.entities.MountainGuide.update(guideId, data),
+    ...createOptimisticUpdate(queryClient, ['guide', guideId], (old, updated) =>
+      old ? { ...old, ...updated } : old
+    ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['guide', guideId] });
       queryClient.invalidateQueries({ queryKey: ['mountain-guides'] });

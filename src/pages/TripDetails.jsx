@@ -15,7 +15,7 @@ import { formatDateRange } from "../components/helpers/dateHelpers";
 import { trackEvent } from "../components/analytics/GoogleAnalytics";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
-import { useTabNavigation } from "../components/contexts/TabNavigationContext";
+import { useBackNavigation } from '../lib/useBackNavigation';
 import StructuredData from "../components/seo/StructuredData";
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 import OptimizedImage from "@/components/ui/OptimizedImage";
@@ -51,17 +51,7 @@ export default function TripDetailsPage() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const tripId = searchParams.get("id");
-  const { goBackInTab, canGoBack } = useTabNavigation();
-
-  const handleGoBack = () => {
-    if (canGoBack()) {
-      goBackInTab();
-    } else if (location.key !== "default") {
-      navigate(-1);
-    } else {
-      navigate(createPageUrl("Calendar"));
-    }
-  };
+  const { goBack: handleGoBack } = useBackNavigation(createPageUrl("Calendar"));
 
   // Redirect to homepage if no trip ID provided - only on initial mount
   React.useEffect(() => {

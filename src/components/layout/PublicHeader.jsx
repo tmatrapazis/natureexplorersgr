@@ -48,7 +48,7 @@ export default function PublicHeader() {
 
   return (
     <header 
-      className="bg-white border-b border-stone-200 sticky top-0 z-50"
+      className="bg-background border-b border-border sticky top-0 z-50"
       style={{ 
         paddingTop: 'max(env(safe-area-inset-top), 0.5rem)'
       }}
@@ -71,8 +71,8 @@ export default function PublicHeader() {
               className="h-10 w-auto" 
             />
             <div>
-              <h1 className="font-bold text-xl text-stone-900">{t('header.app_name')}</h1>
-              <p className="text-xs text-stone-500">{t('header.tagline')}</p>
+              <h1 className="font-bold text-xl text-foreground">{t('header.app_name')}</h1>
+              <p className="text-xs text-muted-foreground">{t('header.tagline')}</p>
             </div>
           </Link>
 
@@ -81,7 +81,7 @@ export default function PublicHeader() {
             <Link 
               to={createPageUrl("Calendar")} 
               onClick={handleNavClick(createPageUrl("Calendar"))}
-              className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+              className="text-foreground hover:text-emerald-600 transition-colors font-medium"
               aria-label={t('navigation.calendar')}
             >
               {t('navigation.calendar')}
@@ -89,7 +89,7 @@ export default function PublicHeader() {
             <Link 
               to={createPageUrl("OrganizersList")} 
               onClick={handleNavClick(createPageUrl("OrganizersList"))}
-              className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+              className="text-foreground hover:text-emerald-600 transition-colors font-medium"
               aria-label={t('navigation.organizers')}
             >
               {t('navigation.organizers')}
@@ -97,7 +97,7 @@ export default function PublicHeader() {
             <Link 
               to={createPageUrl("Guides")} 
               onClick={handleNavClick(createPageUrl("Guides"))}
-              className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+              className="text-foreground hover:text-emerald-600 transition-colors font-medium"
               aria-label={t('navigation.guides')}
             >
               {t('navigation.guides')}
@@ -105,7 +105,7 @@ export default function PublicHeader() {
             <Link 
               to={createPageUrl("GreekRefuges")} 
               onClick={handleNavClick(createPageUrl("GreekRefuges"))}
-              className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+              className="text-foreground hover:text-emerald-600 transition-colors font-medium"
               aria-label={t('navigation.refuges')}
             >
               {t('navigation.refuges')}
@@ -113,7 +113,7 @@ export default function PublicHeader() {
             <Link 
               to="/About" 
               onClick={handleNavClick("/About")}
-              className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+              className="text-foreground hover:text-emerald-600 transition-colors font-medium"
               aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
             >
               {language === 'el' ? 'Σχετικά' : 'About'}
@@ -182,12 +182,12 @@ export default function PublicHeader() {
                   <Menu className="w-6 h-6" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[280px] bg-white">
+              <SheetContent side="right" className="w-[280px] bg-background">
                 <div className="flex flex-col gap-6 mt-8">
                   <Link 
                     to={createPageUrl("Calendar")} 
                     onClick={handleNavClick(createPageUrl("Calendar"))}
-                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={t('navigation.calendar')}
                   >
                     <Calendar className="w-5 h-5" aria-hidden="true" />
@@ -196,7 +196,7 @@ export default function PublicHeader() {
                   <Link 
                     to={createPageUrl("OrganizersList")} 
                     onClick={handleNavClick(createPageUrl("OrganizersList"))}
-                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={t('navigation.organizers')}
                   >
                     <Users className="w-5 h-5" aria-hidden="true" />
@@ -205,7 +205,7 @@ export default function PublicHeader() {
                   <Link 
                     to={createPageUrl("Guides")} 
                     onClick={handleNavClick(createPageUrl("Guides"))}
-                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={t('navigation.guides')}
                   >
                     <Compass className="w-5 h-5" aria-hidden="true" />
@@ -214,7 +214,7 @@ export default function PublicHeader() {
                   <Link 
                     to={createPageUrl("GreekRefuges")} 
                     onClick={handleNavClick(createPageUrl("GreekRefuges"))}
-                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={t('navigation.refuges')}
                   >
                     <Home className="w-5 h-5" aria-hidden="true" />
@@ -223,7 +223,7 @@ export default function PublicHeader() {
                   <Link 
                     to="/About" 
                     onClick={handleNavClick("/About")}
-                    className="text-stone-700 hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
                   >
                     <Info className="w-5 h-5" aria-hidden="true" />
@@ -232,7 +232,7 @@ export default function PublicHeader() {
 
                   <div className="border-t pt-6">
                     <div className="mb-4">
-                      <p className="text-sm text-stone-500 mb-2">{language === 'el' ? 'Γλώσσα' : 'Language'}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{language === 'el' ? 'Γλώσσα' : 'Language'}</p>
                       <div className="flex gap-2">
                         <Button 
                           variant={language === 'en' ? 'default' : 'outline'} 
