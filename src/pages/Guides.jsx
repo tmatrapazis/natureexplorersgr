@@ -6,93 +6,21 @@ import { createPageUrl } from "@/utils";
 import { useLanguage } from "../components/contexts/LanguageContext";
 import { useTranslation } from "../components/translations/useTranslations";
 import PageWrapper from "../components/layout/PageWrapper";
-import { Compass, Shield, Plus } from "lucide-react";
+import { Compass, Shield, Plus, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import GuideCard from "../components/guides/GuideCard";
 import useSEO from "../components/seo/useSEO";
-import { FixedSizeList } from "react-window";
 
-// ---------------------------------------------------------------------------
-// Responsive column count hook for the virtualized grid
-// ---------------------------------------------------------------------------
-function useGridColumns() {
-  const getColumns = () => {
-    if (typeof window === "undefined") return 3;
-    if (window.innerWidth >= 1024) return 3;
-    if (window.innerWidth >= 768) return 2;
-    return 1;
-  };
-  const [columns, setColumns] = React.useState(getColumns);
-  React.useEffect(() => {
-    const handle = () => setColumns(getColumns());
-    window.addEventListener("resize", handle);
-    return () => window.removeEventListener("resize", handle);
-  }, []);
-  return columns;
-}
-
-// ---------------------------------------------------------------------------
-// Virtualized guides grid — renders row-by-row via react-window FixedSizeList
-// ---------------------------------------------------------------------------
-const GUIDE_CARD_HEIGHT = 380; // px — approximate rendered height of GuideCard
-const GUIDE_ROW_GAP = 24;     // px — matches gap-6 (1.5rem)
-const OVERSCAN = 2;
-
-function VirtualizedGuidesGrid({ guides, organizers, language }) {
-  const columns = useGridColumns();
-
-  // Split flat array of guides into rows
-  const rows = React.useMemo(() => {
-    const result = [];
-    for (let i = 0; i < guides.length; i += columns) {
-      result.push(guides.slice(i, i + columns));
-    }
-    return result;
-  }, [guides, columns]);
-
-  const totalHeight = rows.length * (GUIDE_CARD_HEIGHT + GUIDE_ROW_GAP);
-  // Cap the list height to 80vh so the page doesn't become one giant scroll-lock
-  const listHeight = typeof window !== "undefined"
-    ? Math.min(totalHeight, window.innerHeight * 0.8)
-    : 600;
-
-  const Row = React.useCallback(({ index, style }) => (
-    <div
-      style={{ ...style, display: "flex", gap: GUIDE_ROW_GAP, alignItems: "stretch" }}
-      role="row"
-    >
-      {rows[index].map((guide) => (
-        <div key={guide.id} style={{ flex: 1, minWidth: 0 }}>
-          <GuideCard guide={guide} organizers={organizers} language={language} />
-        </div>
-      ))}
-      {/* Phantom cells to keep last row aligned in a full-width flex container */}
-      {Array.from({ length: columns - rows[index].length }).map((_, i) => (
-        <div key={`phantom-${i}`} style={{ flex: 1, minWidth: 0 }} aria-hidden="true" />
-      ))}
-    </div>
-  ), [rows, columns, organizers, language]);
-
-  return (
-    <div role="grid" aria-label={language === "el" ? "Λίστα οδηγών" : "Guides list"}>
-      <FixedSizeList
-        height={listHeight}
-        itemCount={rows.length}
-        itemSize={GUIDE_CARD_HEIGHT + GUIDE_ROW_GAP}
-        width="100%"
-        overscanCount={OVERSCAN}
-      >
-        {Row}
-      </FixedSizeList>
-    </div>
-  );
-}
+// Number of guide cards to show per "page" — incremental load-more keeps
+// the initial render fast without requiring a third-party virtualization lib.
+const GUIDES_PER_PAGE = 9;
 
 export default function GuidesPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const navigate = useNavigate();
+  const [visibleCount, setVisibleCount] = React.useState(GUIDES_PER_PAGE);
 
   useSEO({
     title: language === 'el'
@@ -130,10 +58,17 @@ export default function GuidesPage() {
 
   const hasGuideProfile = userGuideProfile && userGuideProfile.length > 0;
 
+  // Guides visible in current "page" — incremental rendering keeps initial paint fast
+  const visibleGuides = React.useMemo(
+    () => guides.slice(0, visibleCount),
+    [guides, visibleCount]
+  );
+  const hasMore = visibleCount < guides.length;
+
   if (guidesLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" />
+      <div className="min-h-screen flex items-center justify-center" role="status" aria-label={language === 'el' ? 'Φόρτωση οδηγών…' : 'Loading guides…'}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" aria-hidden="true" />
       </div>
     );
   }
@@ -145,13 +80,13 @@ export default function GuidesPage() {
         <div className="absolute inset-0 bg-emerald-900/70 z-0"></div>
         <div className="container mx-auto max-w-6xl relative z-10">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
-            <Compass className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" />
+            <Compass className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" aria-hidden="true" />
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold break-words min-w-0">
               {language === 'el' ? 'Συνοδοί Βουνού' : 'Mountain Guides'}
             </h1>
           </div>
           <p className="text-base md:text-lg text-emerald-100 max-w-2xl mx-auto text-center px-2 break-words">
-            {language === 'el' 
+            {language === 'el'
               ? 'Γνωρίστε τους πιστοποιημένους επαγγελματίες συνοδούς που κάνουν κάθε εκδρομή ασφαλή και αξέχαστη'
               : 'Meet the certified professionals who make every adventure safe and unforgettable'
             }
@@ -161,7 +96,7 @@ export default function GuidesPage() {
 
       {/* Guides Grid */}
       <PageWrapper>
-        
+
         {/* Create Profile CTA - shown to all users */}
         {(!user || !hasGuideProfile) && (
           <Card className="mb-8 border-2 border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50">
@@ -169,8 +104,8 @@ export default function GuidesPage() {
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-emerald-900 mb-2">
-                    {language === 'el' 
-                        ? 'Είστε Συνοδός Βουνού;' 
+                    {language === 'el'
+                        ? 'Είστε Συνοδός Βουνού;'
                         : 'Are You a Mountain Guide?'}
                   </h3>
                   <p className="text-foreground">
@@ -179,7 +114,7 @@ export default function GuidesPage() {
                       : 'Create your profile and share your expertise with the community'}
                   </p>
                 </div>
-                <Button 
+                <Button
                   onClick={() => {
                     if (!user) {
                       base44.auth.redirectToLogin(createPageUrl('CreateGuideProfile'));
@@ -187,9 +122,10 @@ export default function GuidesPage() {
                       navigate(createPageUrl('CreateGuideProfile'));
                     }
                   }}
-                  className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2"
+                  className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2 min-h-[44px]"
+                  aria-label={language === 'el' ? 'Δημιουργία προφίλ οδηγού' : 'Create guide profile'}
                 >
-                  <Plus className="w-5 h-5" />
+                  <Plus className="w-5 h-5" aria-hidden="true" />
                   {language === 'el' ? 'Δημιουργία Προφίλ' : 'Create Profile'}
                 </Button>
               </div>
@@ -211,11 +147,47 @@ export default function GuidesPage() {
             </p>
           </div>
         ) : (
-          <VirtualizedGuidesGrid
-            guides={guides}
-            organizers={organizers}
-            language={language}
-          />
+          <>
+            {/* content-visibility:auto on each card wrapper lets the browser skip
+                layout/paint for off-screen cards — browser-native rendering optimisation */}
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              role="list"
+              aria-label={language === 'el' ? 'Λίστα οδηγών' : 'Guides list'}
+            >
+              {visibleGuides.map(guide => (
+                <div
+                  key={guide.id}
+                  role="listitem"
+                  style={{ contentVisibility: 'auto', containIntrinsicSize: '0 380px' }}
+                >
+                  <GuideCard
+                    guide={guide}
+                    organizers={organizers}
+                    language={language}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Load More button — avoids rendering all guides on initial paint */}
+            {hasMore && (
+              <div className="flex justify-center mt-8">
+                <Button
+                  variant="outline"
+                  onClick={() => setVisibleCount(c => c + GUIDES_PER_PAGE)}
+                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 gap-2 min-h-[44px]"
+                  aria-label={language === 'el' ? 'Φόρτωση περισσότερων οδηγών' : 'Load more guides'}
+                >
+                  <ChevronDown className="w-4 h-4" aria-hidden="true" />
+                  {language === 'el' ? 'Περισσότεροι Οδηγοί' : 'Load More Guides'}
+                  <span className="text-xs text-muted-foreground ml-1">
+                    ({guides.length - visibleCount} {language === 'el' ? 'ακόμα' : 'remaining'})
+                  </span>
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </PageWrapper>
     </>
