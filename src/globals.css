@@ -103,8 +103,18 @@
   }
   
   /* Prevent text selection on interactive elements */
-  button, .badge, [role="button"] {
+  button,
+  .badge,
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  nav a,
+  nav button,
+  label[for] {
     @apply select-none;
+    -webkit-user-select: none;
+    user-select: none;
   }
   
   /* Ensure minimum tap target size */
