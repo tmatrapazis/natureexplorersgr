@@ -14,8 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, X, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-const ReactQuill = React.lazy(() => import('react-quill'));
-import 'react-quill/dist/quill.snow.css';
+import LazyQuillEditor from '../components/lazy/LazyQuillEditor';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -358,20 +357,15 @@ export default function EditGuideProfilePage() {
               {/* Bio */}
               <div>
                 <Label>{language === 'el' ? 'Βιογραφικό' : 'Bio'}</Label>
-                <React.Suspense fallback={
-                  <div className="flex items-center justify-center h-[150px] bg-muted/30 rounded-md border border-border mt-2">
-                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                  </div>
-                }>
-                  <ReactQuill
+                <div className="mt-2">
+                  <LazyQuillEditor
                     value={formData.bio}
                     onChange={(value) => setFormData(prev => ({ ...prev, bio: value }))}
-                    className="mt-2 bg-card"
-                    placeholder={language === 'el' 
+                    placeholder={language === 'el'
                       ? 'Πείτε μας για την εμπειρία σας, τις ειδικότητές σας...'
                       : 'Tell us about your experience, specializations...'}
                   />
-                </React.Suspense>
+                </div>
               </div>
 
               {/* Years of Experience */}

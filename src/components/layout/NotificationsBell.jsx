@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
+import { createOptimisticUpdate } from '@/lib/optimistic-mutations';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -43,13 +44,12 @@ function NotificationsBell({ user, compact = false }) {
     mutationFn: async (notificationId) => {
       await base44.functions.invoke('markNotificationsRead', { notification_ids: [notificationId] });
     },
-    onSuccess: (data, notificationId) => {
-      // Immediately update the cache so the badge reflects the change
-      queryClient.setQueryData(['notifications-list', user?.id], (old) => {
-        if (!old) return old;
-        return old.map(n => n.id === notificationId ? { ...n, is_read: true } : n);
-      });
-    },
+    ...createOptimisticUpdate(
+      queryClient,
+      ['notifications-list', user?.id],
+      (notification, notificationId) =>
+        notification.id === notificationId ? { ...notification, is_read: true } : notification
+    ),
   });
 
   const markAllAsReadMutation = useMutation({
@@ -58,13 +58,11 @@ function NotificationsBell({ user, compact = false }) {
       if (unread.length === 0) return;
       await base44.functions.invoke('markNotificationsRead', { notification_ids: unread.map(n => n.id) });
     },
-    onSuccess: () => {
-      // Immediately mark all as read in the cache so the badge clears instantly
-      queryClient.setQueryData(['notifications-list', user?.id], (old) => {
-        if (!old) return old;
-        return old.map(n => ({ ...n, is_read: true }));
-      });
-    },
+    ...createOptimisticUpdate(
+      queryClient,
+      ['notifications-list', user?.id],
+      (notification) => ({ ...notification, is_read: true })
+    ),
   });
 
   const handleNotificationClick = (notification) => {

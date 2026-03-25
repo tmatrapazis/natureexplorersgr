@@ -3,11 +3,13 @@ import { useLanguage } from '@/components/contexts/LanguageContext';
 import { useSEO } from '@/components/seo/useSEO';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useBackNavigation } from '../lib/useBackNavigation';
 import { ArrowLeft, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function CookiePolicy() {
   const { language } = useLanguage();
+  const { goBack } = useBackNavigation(createPageUrl('Home'));
   const [showPreferencesModal, setShowPreferencesModal] = useState(false);
 
   useSEO({
@@ -34,13 +36,13 @@ export default function CookiePolicy() {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
         {/* Back Navigation */}
-        <Link 
-          to={createPageUrl('Home')} 
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
+        <button
+          onClick={goBack}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors min-h-[44px]"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           {language === 'el' ? 'Επιστροφή στην Αρχική' : 'Back to Home'}
-        </Link>
+        </button>
 
         {/* Header */}
         <div className="mb-8">

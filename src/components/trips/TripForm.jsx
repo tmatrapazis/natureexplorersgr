@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Plus, X, Loader2 } from "lucide-react";
-import 'react-quill/dist/quill.snow.css';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 import LazyQuillEditor from '../lazy/LazyQuillEditor';

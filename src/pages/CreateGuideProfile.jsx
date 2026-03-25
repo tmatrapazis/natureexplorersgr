@@ -15,8 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-const ReactQuill = React.lazy(() => import('react-quill'));
-import 'react-quill/dist/quill.snow.css';
+import LazyQuillEditor from '../components/lazy/LazyQuillEditor';
 
 export default function CreateGuideProfilePage() {
   const { language } = useLanguage();
@@ -252,20 +251,11 @@ export default function CreateGuideProfilePage() {
               {/* Bio */}
               <div>
                 <Label>{language === 'el' ? 'Βιογραφικό' : 'Bio'}</Label>
-                <div className="mt-2" style={{ minHeight: '200px' }}>
-                  <React.Suspense fallback={
-                    <div className="flex items-center justify-center h-[150px] bg-muted/30 rounded-md border border-border">
-                      <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-                    </div>
-                  }>
-                    <ReactQuill
-                      value={formData.bio}
-                      onChange={(value) => setFormData(prev => ({ ...prev, bio: value }))}
-                      theme="snow"
-                      style={{ height: '150px', marginBottom: '42px' }}
-                    />
-                  </React.Suspense>
-                </div>
+                <LazyQuillEditor
+                  value={formData.bio}
+                  onChange={(value) => setFormData(prev => ({ ...prev, bio: value }))}
+                  style={{ height: '150px', marginBottom: '42px' }}
+                />
               </div>
 
               {/* Years of Experience */}
