@@ -82,6 +82,9 @@ function PromotedTrip({ trips, currentDate }) {
         <OptimizedImage
           src={getTripImage(promotedTrip.image_url, promotedTrip.id)}
           alt={promotedTrip.title}
+          width={800}
+          height={384}
+          sizes="(max-width: 1024px) 100vw, 50vw"
           onError={(e) => handleImageError(e, promotedTrip.id)}
           priority
         />

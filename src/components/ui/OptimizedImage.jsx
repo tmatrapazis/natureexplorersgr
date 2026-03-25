@@ -44,8 +44,9 @@ export default function OptimizedImage({
     setIsLoaded(true);
   };
 
-  // Calculate aspect ratio for CLS prevention
-  const aspectRatio = width && height ? `${width}/${height}` : 'auto';
+  // Calculate aspect ratio for CLS prevention — default 16/9 prevents layout shift
+  // when explicit width/height props are not provided by the caller.
+  const aspectRatio = width && height ? `${width}/${height}` : '16/9';
 
   return (
     <div

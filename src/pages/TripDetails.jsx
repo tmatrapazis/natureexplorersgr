@@ -345,6 +345,9 @@ export default function TripDetailsPage() {
                       alt={language === 'el'
                         ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} Ελλάδα, outdoor ορειβασία trekking`
                         : `${trip.title} - hiking trekking expedition in ${trip.location} Greece, outdoor mountain adventure`}
+                      width={1200}
+                      height={600}
+                      sizes="(max-width: 1024px) 100vw, 66vw"
                       onError={(e) => handleImageError(e, trip.id)}
                       priority
                     />

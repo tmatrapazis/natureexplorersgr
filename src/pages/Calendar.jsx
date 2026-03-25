@@ -343,8 +343,8 @@ export default function CalendarPage() {
                 organizerMap={organizerMap}
               />
             ) : isLoading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" />
+              <div className="text-center py-8" role="status" aria-label={language === 'el' ? 'Φόρτωση εκδρομών…' : 'Loading trips…'}>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto" aria-hidden="true" />
               </div>
             ) : (
             <>

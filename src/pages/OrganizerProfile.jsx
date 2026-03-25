@@ -456,6 +456,9 @@ export default function OrganizerProfilePage() {
                             alt={language === 'el'
                               ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} Ελλάδα outdoor trekking`
                               : `${trip.title} - ${trip.location} hiking trekking expedition Greece outdoor adventure`}
+                            width={800}
+                            height={384}
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           />
                         </div>
                       )}

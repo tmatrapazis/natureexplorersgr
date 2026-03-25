@@ -14,6 +14,9 @@ import { useTranslation } from '../translations/useTranslations';
 import { getTripImage, handleImageError } from '../helpers/imageHelpers';
 import OptimizedImage from '@/components/ui/OptimizedImage';
 import { formatPriceForCard } from '../helpers/pricingHelpers';
+import { FixedSizeList } from "react-window";
+
+const TRIP_ROW_HEIGHT = 468; // px — approximate height of a single trip card row
 
 const difficultyColors = {
   easy: "bg-emerald-100 text-emerald-800 border-emerald-300",
@@ -94,8 +97,8 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
 
   if (trips.length === 0) {
     return (
-      <div className="text-center py-12">
-        <Calendar className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+      <div className="text-center py-12" role="status">
+        <Calendar className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" aria-hidden="true" />
         <h3 className="text-lg font-semibold text-foreground mb-2">{t('calendar.no_trips')}</h3>
         <p className="text-muted-foreground">
           {selectedDate ? `${t('calendar.no_trips_scheduled')} ${format(selectedDate, "MMMM d, yyyy")}` : t('calendar.select_date')}
@@ -120,23 +123,82 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
         </Button>
       </div>
       
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {trips.map((trip) => {
+      <VirtualizedTripGrid
+        trips={trips}
+        organizerMap={organizerMap}
+        promotedTripId={promotedTripId}
+        translatedTitles={translatedTitles}
+        language={language}
+        t={t}
+        user={user}
+        handleViewDetailsClick={handleViewDetailsClick}
+      />
+    </div>
+  );
+}));
+
+// ---------------------------------------------------------------------------
+// Virtualized grid for trip cards using react-window FixedSizeList
+// ---------------------------------------------------------------------------
+function useGridColumns() {
+  const getColumns = () => {
+    if (typeof window === "undefined") return 4;
+    if (window.innerWidth >= 1280) return 4;
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 640) return 2;
+    return 1;
+  };
+  const [columns, setColumns] = React.useState(getColumns);
+  React.useEffect(() => {
+    const handle = () => setColumns(getColumns());
+    window.addEventListener("resize", handle);
+    return () => window.removeEventListener("resize", handle);
+  }, []);
+  return columns;
+}
+
+function VirtualizedTripGrid({
+  trips, organizerMap, promotedTripId, translatedTitles,
+  language, t, user, handleViewDetailsClick
+}) {
+  const columns = useGridColumns();
+  const GAP = 16; // gap-4 = 1rem = 16px
+
+  const rows = React.useMemo(() => {
+    const result = [];
+    for (let i = 0; i < trips.length; i += columns) {
+      result.push(trips.slice(i, i + columns));
+    }
+    return result;
+  }, [trips, columns]);
+
+  // Make the list exactly tall enough to render all rows without internal scroll.
+  // The page's own scroll handles navigation — react-window still virtualises DOM nodes.
+  const listHeight = rows.length * (TRIP_ROW_HEIGHT + GAP);
+
+  const Row = React.useCallback(({ index, style }) => {
+    const rowTrips = rows[index];
+    return (
+      <div style={{ ...style, display: "flex", gap: GAP, alignItems: "stretch" }}>
+        {rowTrips.map((trip) => {
           const organizer = organizerMap[trip.organizer_code];
-          
           return (
-            <Card key={trip.id} className={`overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full ${trip.id === promotedTripId ? 'border-amber-400 ring-2 ring-amber-300' : 'border-border'}`}>
+            <div key={trip.id} style={{ flex: 1, minWidth: 0 }}>
+              <Card role="article" aria-label={trip.title} className={`overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full ${trip.id === promotedTripId ? 'border-amber-400 ring-2 ring-amber-300' : 'border-border'}`}>
               <div className="w-full h-40 bg-muted relative overflow-hidden">
                 <OptimizedImage
                   src={getTripImage(trip.image_url, trip.id)}
                   alt={language === 'el'
                     ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} - ορειβασία trekking outdoor adventure Ελλάδα`
                     : `${trip.title} - hiking trip ${trip.location} - mountain trekking outdoor activity Greece`}
+                  width={800}
+                  height={320}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                   onError={(e) => handleImageError(e, trip.id)}
                 />
                 {trip.id === promotedTripId && (
                   <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow">
-                    <Star className="w-3 h-3 fill-white" />
+                    <Star className="w-3 h-3 fill-white" aria-hidden="true" />
                     {language === 'el' ? 'Δημοφιλής' : 'Popular'}
                   </div>
                 )}
@@ -146,7 +208,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-base font-bold text-foreground mb-2 line-clamp-2 h-12">{translatedTitles?.[trip.id] || trip.title}</h4>
+                      <h4 className="text-base font-bold text-foreground mb-2 line-clamp-2 h-12" id={`trip-title-${trip.id}`}>{translatedTitles?.[trip.id] || trip.title}</h4>
                       <div className="flex flex-wrap items-center gap-1.5 mb-2">
                         <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
                           {trip.difficulty}
@@ -190,7 +252,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                         to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`}
                         className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-emerald-700"
                       >
-                        <User className="w-3 h-3" />
+                        <User className="w-3 h-3" aria-hidden="true" />
                         <span>by {organizer.full_name}</span>
                       </Link>
                     )}
@@ -199,7 +261,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                   <div className="space-y-1 text-xs text-muted-foreground mb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                        <Calendar className="w-3 h-3 text-emerald-600 flex-shrink-0" aria-hidden="true" />
                         <span>{format(new Date(trip.start_date), "MMM d, yyyy")}</span>
                       </div>
                       <span className="font-bold text-emerald-700">
@@ -208,7 +270,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                     </div>
                     
                     <div className="flex items-center gap-1.5">
-                      <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" />
+                      <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" aria-hidden="true" />
                       <span className="line-clamp-1">{trip.location}</span>
                     </div>
                   </div>
@@ -241,11 +303,28 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                 </div>
               </div>
             </Card>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
+      {/* Phantom cells so the last incomplete row fills the full width */}
+      {Array.from({ length: columns - rowTrips.length }).map((_, i) => (
+        <div key={`phantom-${i}`} style={{ flex: 1, minWidth: 0 }} aria-hidden="true" />
+      ))}
     </div>
   );
-}));
+  }, [rows, columns, organizerMap, promotedTripId, translatedTitles, language, t, user, handleViewDetailsClick]);
+
+  return (
+    <FixedSizeList
+      height={listHeight}
+      itemCount={rows.length}
+      itemSize={TRIP_ROW_HEIGHT + GAP}
+      width="100%"
+      overscanCount={2}
+    >
+      {Row}
+    </FixedSizeList>
+  );
+}
 
 export default TripsList;

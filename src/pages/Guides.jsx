@@ -11,6 +11,83 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import GuideCard from "../components/guides/GuideCard";
 import useSEO from "../components/seo/useSEO";
+import { FixedSizeList } from "react-window";
+
+// ---------------------------------------------------------------------------
+// Responsive column count hook for the virtualized grid
+// ---------------------------------------------------------------------------
+function useGridColumns() {
+  const getColumns = () => {
+    if (typeof window === "undefined") return 3;
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 768) return 2;
+    return 1;
+  };
+  const [columns, setColumns] = React.useState(getColumns);
+  React.useEffect(() => {
+    const handle = () => setColumns(getColumns());
+    window.addEventListener("resize", handle);
+    return () => window.removeEventListener("resize", handle);
+  }, []);
+  return columns;
+}
+
+// ---------------------------------------------------------------------------
+// Virtualized guides grid — renders row-by-row via react-window FixedSizeList
+// ---------------------------------------------------------------------------
+const GUIDE_CARD_HEIGHT = 380; // px — approximate rendered height of GuideCard
+const GUIDE_ROW_GAP = 24;     // px — matches gap-6 (1.5rem)
+const OVERSCAN = 2;
+
+function VirtualizedGuidesGrid({ guides, organizers, language }) {
+  const columns = useGridColumns();
+
+  // Split flat array of guides into rows
+  const rows = React.useMemo(() => {
+    const result = [];
+    for (let i = 0; i < guides.length; i += columns) {
+      result.push(guides.slice(i, i + columns));
+    }
+    return result;
+  }, [guides, columns]);
+
+  const totalHeight = rows.length * (GUIDE_CARD_HEIGHT + GUIDE_ROW_GAP);
+  // Cap the list height to 80vh so the page doesn't become one giant scroll-lock
+  const listHeight = typeof window !== "undefined"
+    ? Math.min(totalHeight, window.innerHeight * 0.8)
+    : 600;
+
+  const Row = React.useCallback(({ index, style }) => (
+    <div
+      style={{ ...style, display: "flex", gap: GUIDE_ROW_GAP, alignItems: "stretch" }}
+      role="row"
+    >
+      {rows[index].map((guide) => (
+        <div key={guide.id} style={{ flex: 1, minWidth: 0 }}>
+          <GuideCard guide={guide} organizers={organizers} language={language} />
+        </div>
+      ))}
+      {/* Phantom cells to keep last row aligned in a full-width flex container */}
+      {Array.from({ length: columns - rows[index].length }).map((_, i) => (
+        <div key={`phantom-${i}`} style={{ flex: 1, minWidth: 0 }} aria-hidden="true" />
+      ))}
+    </div>
+  ), [rows, columns, organizers, language]);
+
+  return (
+    <div role="grid" aria-label={language === "el" ? "Λίστα οδηγών" : "Guides list"}>
+      <FixedSizeList
+        height={listHeight}
+        itemCount={rows.length}
+        itemSize={GUIDE_CARD_HEIGHT + GUIDE_ROW_GAP}
+        width="100%"
+        overscanCount={OVERSCAN}
+      >
+        {Row}
+      </FixedSizeList>
+    </div>
+  );
+}
 
 export default function GuidesPage() {
   const { language } = useLanguage();
@@ -121,8 +198,8 @@ export default function GuidesPage() {
         )}
 
         {guides.length === 0 ? (
-          <div className="text-center py-16">
-            <Shield className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
+          <div className="text-center py-16" role="status">
+            <Shield className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" aria-hidden="true" />
             <h3 className="text-xl font-semibold text-foreground mb-2">
               {language === 'el' ? 'Δεν υπάρχουν οδηγοί ακόμα' : 'No guides yet'}
             </h3>
@@ -134,16 +211,11 @@ export default function GuidesPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {guides.map(guide => (
-              <GuideCard 
-                key={guide.id} 
-                guide={guide} 
-                organizers={organizers}
-                language={language}
-              />
-            ))}
-          </div>
+          <VirtualizedGuidesGrid
+            guides={guides}
+            organizers={organizers}
+            language={language}
+          />
         )}
       </PageWrapper>
     </>

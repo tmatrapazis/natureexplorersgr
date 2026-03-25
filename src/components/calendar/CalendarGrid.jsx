@@ -88,6 +88,7 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
               onClick={() => day && onDayClick(day, dayTrips)}
               disabled={!day}
               aria-label={day ? `${format(day, 'MMMM d, yyyy')}${hasTrips ? ` - ${dayTrips.length} trip${dayTrips.length > 1 ? 's' : ''}` : ''}` : undefined}
+              aria-pressed={isSelected || undefined}
               className={`
                 aspect-square p-2 rounded-xl transition-all duration-200 relative min-h-[44px] min-w-[44px] touch-manipulation
                 ${!day ? "invisible" : ""}

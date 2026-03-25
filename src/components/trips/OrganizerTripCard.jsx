@@ -67,6 +67,9 @@ function OrganizerTripCard({
           <OptimizedImage
             src={getTripImage(trip.image_url, trip.id)}
             alt={trip.title}
+            width={384}
+            height={256}
+            sizes="(max-width: 768px) 100vw, 192px"
             onError={(e) => handleImageError(e, trip.id)}
           />
         </div>
