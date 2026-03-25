@@ -186,7 +186,7 @@ export default function EditOrganizerProfilePage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
-                  <Label>{language === 'el' ? 'Φωτογραφία Προφίλ' : 'Profile Picture'}</Label>
+                  <Label htmlFor={photoInputMode === 'url' ? 'org-profile-photo-url' : 'org-profile-photo-file'}>{language === 'el' ? 'Φωτογραφία Προφίλ' : 'Profile Picture'}</Label>
                   
                   {formData.profile_picture_url && (
                     <div className="mt-2 mb-4">
@@ -227,6 +227,7 @@ export default function EditOrganizerProfilePage() {
 
                   {photoInputMode === 'url' ? (
                     <Input
+                      id="org-profile-photo-url"
                       type="url"
                       placeholder={language === 'el' ? 'https://example.com/photo.jpg' : 'https://example.com/photo.jpg'}
                       value={formData.profile_picture_url}
@@ -235,6 +236,7 @@ export default function EditOrganizerProfilePage() {
                   ) : (
                     <div>
                       <Input
+                        id="org-profile-photo-file"
                         type="file"
                         accept="image/*"
                         onChange={handlePhotoUpload}

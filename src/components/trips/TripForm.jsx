@@ -306,9 +306,9 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
               {language === 'el' ? 'Προσθέστε διαφορετικές κατηγορίες τιμών (π.χ. Κανονική, Early Bird, Φοιτητική)' : 'Add different pricing categories (e.g., Standard, Early Bird, Student)'}
             </p>
             <div className="flex flex-col md:grid md:grid-cols-12 gap-2 mb-2">
-              <Input placeholder={language === 'el' ? 'Κατηγορία' : 'Label'} value={currentPricingLabel} onChange={(e) => setCurrentPricingLabel(e.target.value)} className="md:col-span-3" />
-              <Input type="number" min="0" step="0.01" placeholder={language === 'el' ? 'Τιμή' : 'Price'} value={currentPricingPrice} onChange={(e) => setCurrentPricingPrice(e.target.value)} className="md:col-span-2" />
-              <Input placeholder={language === 'el' ? 'Περιγραφή (προαιρετικό)' : 'Description (optional)'} value={currentPricingDescription} onChange={(e) => setCurrentPricingDescription(e.target.value)} className="md:col-span-6" />
+              <Input aria-label={language === 'el' ? 'Κατηγορία τιμής' : 'Pricing label'} placeholder={language === 'el' ? 'Κατηγορία' : 'Label'} value={currentPricingLabel} onChange={(e) => setCurrentPricingLabel(e.target.value)} className="md:col-span-3" />
+              <Input aria-label={language === 'el' ? 'Τιμή' : 'Price'} type="number" min="0" step="0.01" placeholder={language === 'el' ? 'Τιμή' : 'Price'} value={currentPricingPrice} onChange={(e) => setCurrentPricingPrice(e.target.value)} className="md:col-span-2" />
+              <Input aria-label={language === 'el' ? 'Περιγραφή τιμής' : 'Pricing description'} placeholder={language === 'el' ? 'Περιγραφή (προαιρετικό)' : 'Description (optional)'} value={currentPricingDescription} onChange={(e) => setCurrentPricingDescription(e.target.value)} className="md:col-span-6" />
               <Button 
                 type="button" 
                 onClick={addPricingOption} 
@@ -388,9 +388,9 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
 
       {/* Requirements */}
       <div>
-        <Label>{t('create_trip.requirements_label')}</Label>
+        <Label htmlFor="requirement-input">{t('create_trip.requirements_label')}</Label>
         <div className="flex gap-2 mb-2">
-          <Input value={currentRequirement} onChange={(e) => setCurrentRequirement(e.target.value)} placeholder={t('create_trip.requirements_placeholder')}
+          <Input id="requirement-input" value={currentRequirement} onChange={(e) => setCurrentRequirement(e.target.value)} placeholder={t('create_trip.requirements_placeholder')}
             onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addRequirement())} />
           <Button 
             type="button" 
@@ -423,12 +423,12 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
 
       {/* Departure From */}
       <div>
-        <Label>{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</Label>
+        <Label htmlFor="departure-input">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</Label>
         <p className="text-xs text-muted-foreground mb-2">
           {language === 'el' ? 'Προσθέστε τις τοποθεσίες αναχώρησης (π.χ. Αθήνα, Θεσσαλονίκη)' : 'Add departure locations (e.g. Athens, Thessaloniki)'}
         </p>
         <div className="flex gap-2 mb-2">
-          <Input value={currentDeparture} onChange={(e) => setCurrentDeparture(e.target.value)}
+          <Input id="departure-input" value={currentDeparture} onChange={(e) => setCurrentDeparture(e.target.value)}
             placeholder={language === 'el' ? 'π.χ. Αθήνα' : 'e.g. Athens'}
             onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addDeparture())} />
           <Button 

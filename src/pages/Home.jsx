@@ -292,7 +292,7 @@ export default function HomePage() {
                   </Button>
                 </Link>
               </div>
-              <p className="mt-5 sm:mt-6 text-xs sm:text-sm text-white/60 max-w-md mx-auto leading-relaxed">
+              <p className="mt-5 sm:mt-6 text-xs sm:text-sm text-white/75 max-w-md mx-auto leading-relaxed">
                 {language === 'el'
                   ? 'Εγγραφείτε δωρεάν και ξεκινήστε την επόμενη outdoor περιπέτειά σας σήμερα!'
                   : 'Sign up free and start your next outdoor adventure today!'}
