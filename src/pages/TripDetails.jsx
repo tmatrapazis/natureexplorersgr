@@ -496,7 +496,8 @@ export default function TripDetailsPage() {
                   <ShareButton trip={trip} language={language} />
                 </div>
                 
-                <h1 className="text-3xl font-bold text-foreground mb-2 pr-20">{trip.title}</h1>
+                {/* pr-20 only on md+ where the absolute ShareButton is visible */}
+                <h1 className="text-3xl font-bold text-foreground mb-2 pr-0 md:pr-20">{trip.title}</h1>
 
                 {organizer && (
                   <Link
@@ -625,16 +626,19 @@ export default function TripDetailsPage() {
                 )}
 
                 {trip.tags && trip.tags.length > 0 && (
-                  <div className="mb-6">
+                  <div
+                    className="mb-6"
+                    style={{ contentVisibility: 'auto', containIntrinsicSize: '0 80px' }}
+                  >
                     <h3 className="font-semibold text-foreground mb-2">{language === 'el' ? 'Ετικέτες' : 'Tags'}</h3>
                     <div className="flex flex-wrap gap-2">
                       {trip.tags.map((tag, i) => {
                         const isTransportTag = tag === 'bus' || tag === 'organized-carpooling';
                         return (
-                          <Badge 
-                            key={i} 
-                            className={isTransportTag 
-                              ? "bg-purple-100 text-purple-800 border-purple-300 border font-semibold" 
+                          <Badge
+                            key={i}
+                            className={isTransportTag
+                              ? "bg-purple-100 text-purple-800 border-purple-300 border font-semibold"
                               : "bg-emerald-100 text-emerald-800 border-emerald-200 border"
                             }
                           >
@@ -647,7 +651,7 @@ export default function TripDetailsPage() {
                 )}
 
                 {trip.requirements && trip.requirements.length > 0 && (
-                  <div>
+                  <div style={{ contentVisibility: 'auto', containIntrinsicSize: '0 160px' }}>
                     <h3 className="font-semibold text-foreground mb-2">{t('trip.what_to_bring')}</h3>
                     <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                       {trip.requirements.map((req, i) => (
@@ -708,9 +712,12 @@ export default function TripDetailsPage() {
                 </div>
               </Card>
 
-              <Card className="p-4">
-                <LazyTripLocationMap trip={trip} />
-              </Card>
+              {/* Map is below the fold on mobile — skip layout/paint until visible */}
+              <div style={{ contentVisibility: 'auto', containIntrinsicSize: '0 380px' }}>
+                <Card className="p-4">
+                  <LazyTripLocationMap trip={trip} />
+                </Card>
+              </div>
             </div>
           </div>
           

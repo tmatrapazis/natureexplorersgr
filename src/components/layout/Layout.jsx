@@ -307,7 +307,13 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             </div>
           </header>
 
-          <div className="flex-1 overflow-auto scrollbar-hide pb-0 md:pb-0" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 4rem)' }}>
+          {/*
+            position:relative + overflow:hidden turns this into the clipping
+            boundary for the absolute-positioned, sliding motion.div page wrapper
+            in src/Layout.jsx.  The motion.div itself now owns scrolling +
+            paddingBottom, so we do NOT add overflow-auto or padding here.
+          */}
+          <div className="flex-1 relative overflow-hidden">
             {children}
           </div>
 

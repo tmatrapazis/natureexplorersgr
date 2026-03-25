@@ -443,7 +443,9 @@ export default function OrganizerProfilePage() {
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {trips.map((trip) => (
-                  <Card key={trip.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full">
+                  /* content-visibility skips layout/paint for off-screen cards on mobile */
+                  <div key={trip.id} style={{ contentVisibility: 'auto', containIntrinsicSize: '0 420px' }}>
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full">
                     <Link 
                       to={`${createPageUrl("TripDetails")}?id=${trip.id}`}
                       onClick={() => handleTripViewDetailsClick(trip)}
@@ -551,6 +553,7 @@ export default function OrganizerProfilePage() {
                       </CardContent>
                     </Link>
                   </Card>
+                  </div>
                 ))}
               </div>
             )}

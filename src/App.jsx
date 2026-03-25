@@ -11,8 +11,6 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { TabNavigationProvider } from '@/lib/TabNavigationContext';
-import { AnimatePresence } from 'framer-motion';
-
 // All pages are lazy-loaded via pages.lazy.js — no eager About import needed here
 const { Pages, Layout, mainPage } = lazyPagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -68,38 +66,39 @@ const AuthenticatedApp = () => {
   );
 };
 
-// Separate component to access useLocation() inside Router context
+// Separate component to access useLocation() inside Router context.
+// No outer AnimatePresence here — the Layout component owns the page-content
+// transition via its own AnimatePresence so the sidebar / bottom-nav shell
+// stays mounted and never remounts on navigation.
 function RoutesWithAnimation() {
   const location = useLocation();
-  
+
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={
-          <LayoutWrapper currentPageName={mainPageKey}>
-            <MainPage />
-          </LayoutWrapper>
-        } />
-        {Object.entries(Pages).map(([path, Page]) => (
-          <Route
-            key={path}
-            path={`/${path}`}
-            element={
-              <LayoutWrapper currentPageName={path}>
-                <Page />
-              </LayoutWrapper>
-            }
-          />
-        ))}
-        {/* /About is handled above via Pages registry — keeping slug route for /OrganizerProfile/:username */}
-        <Route path="/OrganizerProfile/:username" element={
-          <LayoutWrapper currentPageName="OrganizerProfile">
-            {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
-          </LayoutWrapper>
-        } />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </AnimatePresence>
+    <Routes location={location}>
+      <Route path="/" element={
+        <LayoutWrapper currentPageName={mainPageKey}>
+          <MainPage />
+        </LayoutWrapper>
+      } />
+      {Object.entries(Pages).map(([path, Page]) => (
+        <Route
+          key={path}
+          path={`/${path}`}
+          element={
+            <LayoutWrapper currentPageName={path}>
+              <Page />
+            </LayoutWrapper>
+          }
+        />
+      ))}
+      {/* /About is handled above via Pages registry — keeping slug route for /OrganizerProfile/:username */}
+      <Route path="/OrganizerProfile/:username" element={
+        <LayoutWrapper currentPageName="OrganizerProfile">
+          {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
+        </LayoutWrapper>
+      } />
+      <Route path="*" element={<PageNotFound />} />
+    </Routes>
   );
 }
 

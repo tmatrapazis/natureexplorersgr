@@ -192,6 +192,41 @@ img {
   content-visibility: auto;
 }
 
+/* ─── Page-transition layer ─────────────────────────────────────────────────
+   The sliding motion.div in Layout.jsx uses position:absolute + overflow-y:auto.
+   Promote it to its own GPU compositing layer so transforms run off the main
+   thread and don't trigger layout or paint.  The "transform: translateZ(0)"
+   hack is the most reliable way to force layer-promotion across browsers.
+   ─────────────────────────────────────────────────────────────────────────── */
+.page-transition-layer {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* Contain all paint and layout within this element */
+  contain: layout paint;
+}
+
+/* Utility: defer layout/paint for content that is far below the visible fold.
+   Pair with containIntrinsicSize to prevent layout-jump when content renders.
+   Usage (inline): style={{ contentVisibility: 'auto', containIntrinsicSize: '0 400px' }} */
+.cv-auto {
+  content-visibility: auto;
+}
+
+/* Prevent any individual card / grid item from bleeding outside its column */
+.grid > * {
+  min-width: 0;
+}
+
+/* Ensure that elements with translateX transitions can't create horizontal
+   scrollbars by confirming parent clipping.  This is belt-and-suspenders
+   on top of the overflow:hidden already set on the AppLayout container. */
+.transition-clip {
+  overflow: hidden;
+  position: relative;
+}
+
 /* iOS Safe Area Utilities */
 @supports (padding: max(0px)) {
   .safe-top {

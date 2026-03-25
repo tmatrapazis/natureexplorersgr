@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,22 +15,29 @@ import CookieConsent from "./components/cookie/CookieConsent";
 
 const PublicLayout = ({ children }) => {
   const location = useLocation();
-  
+  const navType = useNavigationType();
+  const navDir = navType === 'POP' ? -1 : 1;
+  // pageKey changes on every path/query change so AnimatePresence fires
+  const pageKey = location.pathname + location.search;
+
   return (
     <div className="flex flex-col min-h-screen">
       <PublicHeader />
-      <AnimatePresence mode="wait">
-        <motion.main
-          key={location.pathname}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.18, ease: "easeOut" }}
-          className="flex-1"
-        >
-          {children}
-        </motion.main>
-      </AnimatePresence>
+      {/* overflow-hidden clips slide during transition so no horizontal scrollbar appears */}
+      <div className="flex-1 relative overflow-hidden">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.main
+            key={pageKey}
+            initial={{ x: `${navDir * 60}%`, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: `${navDir * -20}%`, opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+            style={{ willChange: 'transform, opacity', minHeight: '100%' }}
+          >
+            {children}
+          </motion.main>
+        </AnimatePresence>
+      </div>
       <PublicFooter />
     </div>
   );
@@ -39,11 +46,14 @@ const PublicLayout = ({ children }) => {
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const navType = useNavigationType();
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [authCheckComplete, setAuthCheckComplete] = React.useState(false);
 
   console.log('🟢 [Layout] Rendering LayoutContent for page:', currentPageName, 'path:', location.pathname);
-  
+
+  // navDir: 1 = forward navigation (PUSH/REPLACE), -1 = back navigation (POP)
+  const navDir = navType === 'POP' ? -1 : 1;
   // Global page transition key for AnimatePresence
   const pageKey = location.pathname + location.search;
 
@@ -169,23 +179,46 @@ function LayoutContent({ children, currentPageName }) {
           }} 
         />
       )}
-      <AppLayout 
-        currentPageName={currentPageName} 
-        user={user} 
-        isOrganizer={isOrganizer} 
+      <AppLayout
+        currentPageName={currentPageName}
+        user={user}
+        isOrganizer={isOrganizer}
         location={location}
       >
+        {/*
+          The AppLayout scroll container has been changed to `position:relative overflow:hidden`
+          so these absolute-positioned motion.divs are properly clipped during their slide
+          transition, giving a native push/pop animation without any horizontal overflow.
+        */}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={pageKey}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ 
-              duration: 0.25, 
-              ease: [0.23, 1, 0.32, 1] // easeOutExpo for smoother feel
+            // Enter from the right (PUSH) or from the left (POP)
+            initial={{ x: `${navDir * 100}%` }}
+            animate={{ x: 0 }}
+            // Exit briefly fades while pulling slightly in the same direction
+            exit={{ x: `${navDir * -20}%`, opacity: 0 }}
+            transition={{
+              duration: 0.24,
+              ease: [0.4, 0, 0.2, 1], // Material Design standard — fast in, smooth out
             }}
-            style={{ willChange: "transform, opacity", height: "100%" }}
+            style={{
+              // Absolute fill keeps the page inside the clipping container
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              // This motion.div is now the scroll host (replaces the outer overflow-auto div)
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              overscrollBehavior: 'contain',
+              // Padding for iOS home-indicator and mobile bottom-nav
+              paddingBottom: 'max(env(safe-area-inset-bottom), 4rem)',
+              willChange: 'transform',
+            }}
+            // page-transition-layer promotes this element to a GPU compositing layer
+            className="scrollbar-hide page-transition-layer"
           >
             {children}
           </motion.div>

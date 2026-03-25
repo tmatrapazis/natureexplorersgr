@@ -147,7 +147,9 @@ export default function OrganizersListPage() {
               const tripCount = tripCountMap[organizer.organizer_code] || 0;
 
               return (
-                <Card key={organizer.id} className="text-center shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full">
+                /* content-visibility skips layout/paint for off-screen cards */
+                <div key={organizer.id} style={{ contentVisibility: 'auto', containIntrinsicSize: '0 380px' }}>
+                <Card className="text-center shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full">
                   <CardHeader className="p-0 relative">
                     <div className="absolute top-4 right-4 z-10">
                       <FollowButton organizer={organizer} variant="icon" />
@@ -196,6 +198,7 @@ export default function OrganizersListPage() {
                     </Link>
                   </CardContent>
                 </Card>
+                </div>
               );
             })}
           </div>

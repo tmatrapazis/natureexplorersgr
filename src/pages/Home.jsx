@@ -301,7 +301,11 @@ export default function HomePage() {
           </section>
 
           {featuredExpeditions.length > 0 && (
-            <section className="py-16 px-4 bg-background">
+            /* Below the hero fold — defer layout/paint until the user scrolls */
+            <section
+              className="py-16 px-4 bg-background"
+              style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}
+            >
               <div className="container mx-auto max-w-6xl">
                 <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
                   {language === 'el' ? 'Επιλεγμένες Εκδρομές' : 'Featured Expeditions'}
