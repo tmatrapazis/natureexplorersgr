@@ -42,14 +42,30 @@ function LayoutContent({ children, currentPageName }) {
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [authCheckComplete, setAuthCheckComplete] = React.useState(false);
 
-
+  console.log('🟢 [Layout] Rendering LayoutContent for page:', currentPageName, 'path:', location.pathname);
   
   // Global page transition key for AnimatePresence
   const pageKey = location.pathname + location.search;
 
   const { data: user, isLoading: userLoading, error: userError, isError } = useQuery({
     queryKey: ['current-user'], // Unified with EditProfile for cache consistency
-    queryFn: () => base44.auth.me(),
+    queryFn: async () => {
+      console.log('🔵 [Layout] Fetching current user via base44.auth.me()...');
+      try {
+        const userData = await base44.auth.me();
+        console.log('✅ [Layout] User data fetched successfully:', {
+          id: userData?.id,
+          email: userData?.email,
+          username: userData?.username,
+          has_accepted_terms: userData?.has_accepted_terms,
+          organizer_code: userData?.organizer_code
+        });
+        return userData;
+      } catch (error) {
+        console.error('❌ [Layout] Failed to fetch user:', error);
+        throw error;
+      }
+    },
     retry: false,
     staleTime: 5 * 60 * 1000, // cache for 5 minutes
   });
@@ -57,7 +73,9 @@ function LayoutContent({ children, currentPageName }) {
   // Handle errors from user query
   React.useEffect(() => {
     if (isError && userError) {
-      if (userError.status && userError.status !== 401 && userError.status !== 403) {
+      console.error('🔴 [Layout] User query error:', userError);
+      // Only show toast for actual auth errors, not for logged-out users
+      if ((/** @type {any} */(userError)).status && (/** @type {any} */(userError)).status !== 401 && (/** @type {any} */(userError)).status !== 403) {
         toast.error('Failed to load user session. Please refresh the page.');
       }
     }
@@ -66,13 +84,18 @@ function LayoutContent({ children, currentPageName }) {
   // Handle successful auth check completion
   React.useEffect(() => {
     if (!userLoading && user) {
+      console.log('🟢 [Layout] User query success, user loaded:', user?.email || 'no email');
       setAuthCheckComplete(true);
     }
   }, [userLoading, user]);
 
   // Handle auth check completion even when no user (logged out)
   React.useEffect(() => {
-    if (!userLoading && (!user || isError)) {
+    if (!userLoading && !user && !isError) {
+      console.log('ℹ️  [Layout] No user logged in (public visitor)');
+      setAuthCheckComplete(true);
+    } else if (isError) {
+      console.log('⚠️  [Layout] Auth error occurred, marking as complete');
       setAuthCheckComplete(true);
     }
   }, [userLoading, user, isError]);
@@ -80,7 +103,10 @@ function LayoutContent({ children, currentPageName }) {
   // Show welcome modal for new users who haven't accepted terms
   React.useEffect(() => {
     if (user && !user?.has_accepted_terms) {
+      console.log('🎉 [Layout] New user detected, showing welcome modal');
       setShowWelcome(true);
+    } else if (user && user?.has_accepted_terms) {
+      console.log('✓ [Layout] User has accepted terms, no welcome modal needed');
     }
   }, [user]);
 
@@ -92,13 +118,25 @@ function LayoutContent({ children, currentPageName }) {
       const isOnRoleSelectionPage = location.pathname.includes('/RoleSelection');
       
       if (isProfileIncomplete && !isOnEditProfilePage && !isOnRoleSelectionPage) {
+        console.log('⚠️  [Layout] User profile incomplete (missing username), redirecting to EditProfile');
+        console.log('📋 [Layout] User data:', { username: user?.username, email: user?.email });
         toast.info('Please complete your profile to continue');
         navigate(createPageUrl('EditProfile'));
+      } else if (isProfileIncomplete) {
+        console.log('ℹ️  [Layout] User on EditProfile/RoleSelection page with incomplete profile - allowing');
+      } else {
+        console.log('✓ [Layout] User profile complete (username:', user?.username, ')');
       }
     }
   }, [user, authCheckComplete, location.pathname, navigate]);
 
   const isOrganizer = user?.organizer_code && user?.organizer_code.trim().length > 0;
+  
+  if (isOrganizer) {
+    console.log('👤 [Layout] User is an organizer:', user?.organizer_code);
+  } else if (user) {
+    console.log('👤 [Layout] User is a regular user/hiker');
+  }
 
   // Show loading state while checking auth
   if (userLoading && !authCheckComplete) {
@@ -114,8 +152,11 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   if (currentPageName === 'Home') {
+    console.log('🏠 [Layout] Rendering public layout for Home page');
     return <PublicLayout>{children}</PublicLayout>;
   }
+
+  console.log('📄 [Layout] Rendering app layout for:', currentPageName);
   
   return (
     <>
@@ -123,6 +164,7 @@ function LayoutContent({ children, currentPageName }) {
         <WelcomeModal 
           user={user} 
           onClose={() => {
+            console.log('✓ [Layout] Welcome modal closed');
             setShowWelcome(false);
           }} 
         />
@@ -133,7 +175,21 @@ function LayoutContent({ children, currentPageName }) {
         isOrganizer={isOrganizer} 
         location={location}
       >
-        {children}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={pageKey}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ 
+              duration: 0.25, 
+              ease: [0.23, 1, 0.32, 1] // easeOutExpo for smoother feel
+            }}
+            style={{ willChange: "transform, opacity", height: "100%" }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </AppLayout>
     </>
   );
@@ -141,6 +197,8 @@ function LayoutContent({ children, currentPageName }) {
 
 export default function Layout({ children, currentPageName }) {
   const [analyticsEnabled, setAnalyticsEnabled] = React.useState(false);
+
+  console.log('🎯 [Layout] Main Layout component rendering for page:', currentPageName);
 
   const handleConsentChange = (preferences) => {
     console.log('🍪 [Layout] Cookie consent changed:', preferences);
