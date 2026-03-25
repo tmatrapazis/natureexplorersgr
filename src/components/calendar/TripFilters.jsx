@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import MobileSelect from '@/components/ui/MobileSelect';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -147,39 +146,19 @@ export default function TripFilters({ filters, onFilterChange }) {
             {/* Difficulty */}
             <div>
               <Label htmlFor="difficulty">{t('filters.difficulty')}</Label>
-              {/* Desktop Select */}
-              <div className="hidden md:block">
-                <Select
-                  value={tempFilters.difficulty}
-                  onValueChange={(value) => setTempFilters({ ...tempFilters, difficulty: value })}>
-                  <SelectTrigger id="difficulty">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{t('filters.all_levels')}</SelectItem>
-                    <SelectItem value="easy">{t('trip.difficulty_easy')}</SelectItem>
-                    <SelectItem value="moderate">{t('trip.difficulty_moderate')}</SelectItem>
-                    <SelectItem value="challenging">{t('trip.difficulty_challenging')}</SelectItem>
-                    <SelectItem value="difficult">{t('trip.difficulty_difficult')}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              {/* Mobile Drawer Select */}
-              <div className="md:hidden">
-                <MobileSelect
-                  value={tempFilters.difficulty}
-                  onValueChange={(value) => setTempFilters({ ...tempFilters, difficulty: value })}
-                  options={[
-                    { value: "all", label: t('filters.all_levels') },
-                    { value: "easy", label: t('trip.difficulty_easy') },
-                    { value: "moderate", label: t('trip.difficulty_moderate') },
-                    { value: "challenging", label: t('trip.difficulty_challenging') },
-                    { value: "difficult", label: t('trip.difficulty_difficult') }
-                  ]}
-                  placeholder={t('filters.difficulty')}
-                  label={t('filters.difficulty')}
-                />
-              </div>
+              <MobileSelect
+                value={tempFilters.difficulty}
+                onValueChange={(value) => setTempFilters({ ...tempFilters, difficulty: value })}
+                options={[
+                  { value: "all", label: t('filters.all_levels') },
+                  { value: "easy", label: t('trip.difficulty_easy') },
+                  { value: "moderate", label: t('trip.difficulty_moderate') },
+                  { value: "challenging", label: t('trip.difficulty_challenging') },
+                  { value: "difficult", label: t('trip.difficulty_difficult') }
+                ]}
+                placeholder={t('filters.difficulty')}
+                label={t('filters.difficulty')}
+              />
             </div>
 
             {/* Verified Only */}

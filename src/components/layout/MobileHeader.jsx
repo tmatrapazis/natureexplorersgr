@@ -1,7 +1,7 @@
 import React from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTabNavigation } from "@/components/contexts/TabNavigationContext";
+import { useTabNavigation } from "@/lib/TabNavigationContext";
 
 export default function MobileHeader({ title, onBack }) {
   const { goBackInTab } = useTabNavigation();

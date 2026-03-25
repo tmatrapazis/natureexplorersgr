@@ -7,7 +7,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
-import { useTabNavigation } from '../contexts/TabNavigationContext';
+import { useTabNavigation } from '@/lib/TabNavigationContext';
 import {
   DropdownMenu,
   DropdownMenuContent,

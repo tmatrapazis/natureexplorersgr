@@ -10,11 +10,24 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import { Check } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 
-export default function MobileSelect({ value, onValueChange, options, placeholder, label, triggerClassName }) {
+/**
+ * MobileSelect — a Drawer-based picker that works reliably in iOS/Android WebViews.
+ * Replaces native <select> and Radix SelectContent portals, both of which can
+ * trigger touch-event and z-index failures in WebView-wrapped apps.
+ */
+export default function MobileSelect({
+  value,
+  onValueChange,
+  options,
+  placeholder,
+  label,
+  triggerClassName,
+  disabled = false,
+}) {
   const [open, setOpen] = React.useState(false);
-  const selectedOption = options.find(opt => opt.value === value);
+  const selectedOption = options.find((opt) => opt.value === value);
 
   const handleSelect = (optionValue) => {
     onValueChange(optionValue);
@@ -22,60 +35,71 @@ export default function MobileSelect({ value, onValueChange, options, placeholde
   };
 
   return (
-    <>
-      {/* Desktop view - hidden on mobile */}
-      <div className="hidden md:block">
-        <select
-          value={value}
-          onChange={(e) => onValueChange(e.target.value)}
-          className={triggerClassName || "w-full h-10 px-3 py-2 text-sm rounded-md border border-input bg-background"}
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        <button
+          type="button"
+          disabled={disabled}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-label={label || placeholder}
+          className={
+            triggerClassName ||
+            'w-full flex items-center justify-between gap-2 px-3 py-2 h-10 text-sm rounded-md border border-input bg-background text-left transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed'
+          }
         >
-          {placeholder && <option value="">{placeholder}</option>}
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </div>
+          <span className={selectedOption ? 'text-foreground' : 'text-muted-foreground'}>
+            {selectedOption ? selectedOption.label : (placeholder || 'Select…')}
+          </span>
+          <ChevronDown className="w-4 h-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+        </button>
+      </DrawerTrigger>
 
-      {/* Mobile view - drawer */}
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild className="md:hidden">
-          <Button variant="outline" className={triggerClassName || "w-full justify-start text-left font-normal"}>
-            {selectedOption ? selectedOption.label : placeholder}
-          </Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>{label || placeholder}</DrawerTitle>
-            <DrawerDescription>Select an option</DrawerDescription>
-          </DrawerHeader>
-          <div className="px-4 pb-4 max-h-[60vh] overflow-y-auto scrollbar-hide">
-            <div className="space-y-2">
-              {options.map((option) => (
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>{label || placeholder}</DrawerTitle>
+          <DrawerDescription>
+            {placeholder ? `Select ${label || placeholder}` : 'Select an option'}
+          </DrawerDescription>
+        </DrawerHeader>
+
+        <div
+          role="listbox"
+          aria-label={label || placeholder}
+          className="px-4 pb-2 max-h-[55vh] overflow-y-auto scrollbar-hide"
+        >
+          <div className="space-y-1">
+            {options.map((option) => {
+              const isSelected = value === option.value;
+              return (
                 <button
                   key={option.value}
+                  role="option"
+                  aria-selected={isSelected}
+                  type="button"
                   onClick={() => handleSelect(option.value)}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-colors min-h-[44px] ${
-                    value === option.value
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-colors min-h-[48px] ${
+                    isSelected
                       ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100'
-                      : 'bg-muted hover:bg-muted/80'
+                      : 'bg-muted hover:bg-muted/70 active:bg-muted/50'
                   }`}
                 >
                   <span className="font-medium">{option.label}</span>
-                  {value === option.value && <Check className="w-5 h-5" />}
+                  {isSelected && <Check className="w-5 h-5 shrink-0" aria-hidden="true" />}
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
-          <DrawerFooter>
-            <DrawerClose asChild>
-              <Button variant="outline" className="w-full">Cancel</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    </>
+        </div>
+
+        <DrawerFooter>
+          <DrawerClose asChild>
+            <Button variant="outline" className="w-full min-h-[48px]">
+              Cancel
+            </Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }

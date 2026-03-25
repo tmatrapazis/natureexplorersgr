@@ -9,7 +9,6 @@ import PublicHeader from "./components/layout/PublicHeader";
 import PublicFooter from "./components/layout/PublicFooter";
 import AppLayout from "./components/layout/Layout";
 import { LanguageProvider } from "./components/contexts/LanguageContext";
-import { TabNavigationProvider } from "./components/contexts/TabNavigationContext";
 import GoogleAnalytics from "./components/analytics/GoogleAnalytics";
 import WelcomeModal from "./components/welcome/WelcomeModal";
 import CookieConsent from "./components/cookie/CookieConsent";
@@ -208,11 +207,9 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <LanguageProvider>
-      <TabNavigationProvider>
-        <GoogleAnalytics enabled={analyticsEnabled} />
-        {currentPageName !== 'TripDetails' && <CookieConsent onConsentChange={handleConsentChange} />}
-        <LayoutContent children={children} currentPageName={currentPageName} />
-      </TabNavigationProvider>
+      <GoogleAnalytics enabled={analyticsEnabled} />
+      {currentPageName !== 'TripDetails' && <CookieConsent onConsentChange={handleConsentChange} />}
+      <LayoutContent children={children} currentPageName={currentPageName} />
     </LanguageProvider>
   );
 }

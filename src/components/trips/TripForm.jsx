@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Plus, X, Loader2 } from "lucide-react";
@@ -259,31 +258,18 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
       <div className="grid md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="difficulty">{t('create_trip.difficulty_level')}</Label>
-          <div className="hidden md:block">
-            <Select value={tripData.difficulty} onValueChange={(v) => update('difficulty', v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="easy">{t('trip.difficulty_easy')}</SelectItem>
-                <SelectItem value="moderate">{t('trip.difficulty_moderate')}</SelectItem>
-                <SelectItem value="challenging">{t('trip.difficulty_challenging')}</SelectItem>
-                <SelectItem value="difficult">{t('trip.difficulty_difficult')}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="md:hidden">
-            <MobileSelect
-              value={tripData.difficulty}
-              onValueChange={(v) => update('difficulty', v)}
-              options={[
-                { value: 'easy', label: t('trip.difficulty_easy') },
-                { value: 'moderate', label: t('trip.difficulty_moderate') },
-                { value: 'challenging', label: t('trip.difficulty_challenging') },
-                { value: 'difficult', label: t('trip.difficulty_difficult') },
-              ]}
-              placeholder={t('create_trip.difficulty_level')}
-              label={t('create_trip.difficulty_level')}
-            />
-          </div>
+          <MobileSelect
+            value={tripData.difficulty}
+            onValueChange={(v) => update('difficulty', v)}
+            options={[
+              { value: 'easy', label: t('trip.difficulty_easy') },
+              { value: 'moderate', label: t('trip.difficulty_moderate') },
+              { value: 'challenging', label: t('trip.difficulty_challenging') },
+              { value: 'difficult', label: t('trip.difficulty_difficult') },
+            ]}
+            placeholder={t('create_trip.difficulty_level')}
+            label={t('create_trip.difficulty_level')}
+          />
         </div>
       </div>
 
@@ -478,27 +464,16 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
       {/* Trip Status */}
       <div>
         <Label htmlFor="status">{language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}</Label>
-        <div className="hidden md:block">
-          <Select value={tripData.status} onValueChange={(v) => update('status', v)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="draft">{language === 'el' ? 'Πρόχειρο (δεν θα δημοσιευτεί)' : 'Draft (will not be published)'}</SelectItem>
-              <SelectItem value="upcoming">{language === 'el' ? 'Επερχόμενη (θα δημοσιευτεί)' : 'Upcoming (will be published)'}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="md:hidden">
-          <MobileSelect
-            value={tripData.status}
-            onValueChange={(v) => update('status', v)}
-            options={[
-              { value: 'draft', label: language === 'el' ? 'Πρόχειρο (δεν θα δημοσιευτεί)' : 'Draft (will not be published)' },
-              { value: 'upcoming', label: language === 'el' ? 'Επερχόμενη (θα δημοσιευτεί)' : 'Upcoming (will be published)' },
-            ]}
-            placeholder={language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}
-            label={language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}
-          />
-        </div>
+        <MobileSelect
+          value={tripData.status}
+          onValueChange={(v) => update('status', v)}
+          options={[
+            { value: 'draft', label: language === 'el' ? 'Πρόχειρο (δεν θα δημοσιευτεί)' : 'Draft (will not be published)' },
+            { value: 'upcoming', label: language === 'el' ? 'Επερχόμενη (θα δημοσιευτεί)' : 'Upcoming (will be published)' },
+          ]}
+          placeholder={language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}
+          label={language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}
+        />
         <p className="text-xs text-stone-500 mt-1">
           {language === 'el' ? 'Επιλέξτε "Πρόχειρο" για να αποθηκεύσετε χωρίς δημοσίευση.' : 'Select "Draft" to save without publishing.'}
         </p>

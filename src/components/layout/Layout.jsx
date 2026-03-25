@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X, ArrowLeft } from "lucide-react";
-import { useTabNavigation } from "@/components/contexts/TabNavigationContext";
+import { useTabNavigation } from "@/lib/TabNavigationContext";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -312,9 +312,10 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
           </div>
 
           {/* Mobile Bottom Navigation */}
-          <nav 
+          <nav
+            aria-label="Main navigation"
             className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-50 select-none shadow-lg"
-            style={{ 
+            style={{
               paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)',
               paddingTop: '0.5rem'
             }}

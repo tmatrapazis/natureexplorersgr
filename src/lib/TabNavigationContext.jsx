@@ -148,10 +148,25 @@ export function TabNavigationProvider({ children, tabRoutes }) {
     return tabRoutes.some(tab => tab.path === path);
   };
 
+  /**
+   * Push a URL onto the current tab's stack (navigate deeper without losing back history)
+   */
+  const pushInTab = (url) => {
+    const tab = currentTab || tabRoutes[0]?.path;
+    if (tab) {
+      setTabStacks(prev => ({
+        ...prev,
+        [tab]: [...(prev[tab] || [tab]), url]
+      }));
+    }
+    navigate(url);
+  };
+
   const value = {
     currentTab,
     tabStacks,
     navigateToTab,
+    pushInTab,
     goBackInTab,
     canGoBack,
     isTabRoot,

@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { User, Upload, ArrowLeft, CheckCircle, Loader2, ShieldCheck, UserCog, Shield, Plus, X } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import useSEO from '../components/seo/useSEO';
@@ -336,31 +335,17 @@ export default function EditProfilePage() {
                 <CardContent className="space-y-6">
                   <div>
                     <Label htmlFor="training_status">Fitness Level</Label>
-                    <div className="hidden md:block">
-                      <Select id="training_status" value={formData.training_status} onValueChange={(value) => handleSelectChange('training_status', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your fitness level" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Beginner">Beginner (new to hiking)</SelectItem>
-                          <SelectItem value="Intermediate">Intermediate (hike regularly)</SelectItem>
-                          <SelectItem value="Advanced">Advanced (very experienced)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="md:hidden">
-                      <MobileSelect
-                        value={formData.training_status}
-                        onValueChange={(value) => handleSelectChange('training_status', value)}
-                        options={[
-                          { value: 'Beginner', label: 'Beginner (new to hiking)' },
-                          { value: 'Intermediate', label: 'Intermediate (hike regularly)' },
-                          { value: 'Advanced', label: 'Advanced (very experienced)' },
-                        ]}
-                        placeholder="Select your fitness level"
-                        label="Fitness Level"
-                      />
-                    </div>
+                    <MobileSelect
+                      value={formData.training_status}
+                      onValueChange={(value) => handleSelectChange('training_status', value)}
+                      options={[
+                        { value: 'Beginner', label: 'Beginner (new to hiking)' },
+                        { value: 'Intermediate', label: 'Intermediate (hike regularly)' },
+                        { value: 'Advanced', label: 'Advanced (very experienced)' },
+                      ]}
+                      placeholder="Select your fitness level"
+                      label="Fitness Level"
+                    />
                   </div>
                   <div>
                     <Label htmlFor="health_status">General Health</Label>

@@ -2,7 +2,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Home, Calendar } from "lucide-react";
-import { useTabNavigation } from "@/components/contexts/TabNavigationContext";
+import { useTabNavigation } from "@/lib/TabNavigationContext";
 
 export default function MobileBottomTab({ user }) {
   const location = useLocation();
