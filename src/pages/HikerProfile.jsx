@@ -63,8 +63,8 @@ export default function HikerProfilePage() {
       <div className="min-h-screen flex items-center justify-center text-center">
         <div>
           <h2 className="text-2xl font-bold text-stone-900 mb-2">{t('hiker_profile.not_found')}</h2>
-          <Link to={tripId ? `${createPageUrl("ManageBookings")}?tripId=${tripId}` : createPageUrl("MyTrips")}>
-            <Button>{t('hiker_profile.back_to_bookings')}</Button>
+          <Link to={tripId ? `${createPageUrl("ManageBookings")}?tripId=${tripId}` : createPageUrl("MyTrips")} aria-label={t('hiker_profile.back_to_bookings')}>
+            <Button className="min-h-[44px]" tabIndex={-1}>{t('hiker_profile.back_to_bookings')}</Button>
           </Link>
         </div>
       </div>

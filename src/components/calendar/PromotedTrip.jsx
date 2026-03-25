@@ -20,7 +20,7 @@ const difficultyColors = {
   difficult: "bg-red-100 text-red-800 border-red-300"
 };
 
-export default function PromotedTrip({ trips, currentDate }) {
+function PromotedTrip({ trips, currentDate }) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
@@ -123,8 +123,11 @@ export default function PromotedTrip({ trips, currentDate }) {
         </div>
 
         <div className="mt-auto">
-          <Link to={`${createPageUrl("TripDetails")}?id=${promotedTrip.id}`}>
-            <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+          <Link
+            to={`${createPageUrl("TripDetails")}?id=${promotedTrip.id}`}
+            aria-label={`${t('trip.view_details')}: ${promotedTrip.title}`}
+          >
+            <Button className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]" tabIndex={-1}>
               {t('trip.view_details')}
             </Button>
           </Link>
@@ -133,3 +136,4 @@ export default function PromotedTrip({ trips, currentDate }) {
     </Card>
   );
 }
+export default React.memo(PromotedTrip);

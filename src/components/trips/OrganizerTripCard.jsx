@@ -19,7 +19,7 @@ const STATUS_BADGE = {
   "almost soldout": "bg-orange-500",
 };
 
-export default function OrganizerTripCard({
+function OrganizerTripCard({
   trip,
   allBookings,
   language,
@@ -205,3 +205,5 @@ export default function OrganizerTripCard({
     </Card>
   );
 }
+
+export default React.memo(OrganizerTripCard);

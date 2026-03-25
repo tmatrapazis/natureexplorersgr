@@ -1,11 +1,11 @@
 import './App.css'
-import { Suspense, lazy } from 'react'
+import { Suspense } from 'react'
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
-import { pagesConfig } from './pages.config'
+import { lazyPagesConfig } from './pages.lazy'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
@@ -13,9 +13,8 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { TabNavigationProvider } from '@/lib/TabNavigationContext';
 import { AnimatePresence } from 'framer-motion';
 
-const About = lazy(() => import('@/pages/About'));
-
-const { Pages, Layout, mainPage } = pagesConfig;
+// All pages are lazy-loaded via pages.lazy.js — no eager About import needed here
+const { Pages, Layout, mainPage } = lazyPagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
 
@@ -92,11 +91,7 @@ function RoutesWithAnimation() {
             }
           />
         ))}
-        <Route path="/About" element={
-          <LayoutWrapper currentPageName="About">
-            <About />
-          </LayoutWrapper>
-        } />
+        {/* /About is handled above via Pages registry — keeping slug route for /OrganizerProfile/:username */}
         <Route path="/OrganizerProfile/:username" element={
           <LayoutWrapper currentPageName="OrganizerProfile">
             {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}

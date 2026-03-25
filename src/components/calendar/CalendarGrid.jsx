@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 // Athens timezone
 const ATHENS_TIMEZONE = 'Europe/Athens';
 
-export default function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDate }) {
+function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDate }) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
@@ -119,3 +119,5 @@ export default function CalendarGrid({ currentDate, onDateChange, trips, onDayCl
     </div>
   );
 }
+
+export default React.memo(CalendarGrid);

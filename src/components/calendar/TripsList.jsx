@@ -21,7 +21,7 @@ const difficultyColors = {
   difficult: "bg-red-100 text-red-800 border-red-300"
 };
 
-export default React.forwardRef(function TripsList({ trips, selectedDate, promotedTripId }, ref) {
+const TripsList = React.memo(React.forwardRef(function TripsList({ trips, selectedDate, promotedTripId }, ref) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const [translatedTitles, setTranslatedTitles] = React.useState(null);
@@ -111,9 +111,10 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, promot
           size="sm"
           onClick={handleTranslate}
           disabled={isTranslating}
-          className="gap-1"
+          className="gap-1 min-h-[44px]"
+          aria-label={isTranslating ? 'Translating titles…' : translatedTitles ? 'Show original titles' : 'Translate trip titles to English'}
         >
-          <Languages className="w-4 h-4" />
+          <Languages className="w-4 h-4" aria-hidden="true" />
           <span>{isTranslating ? '...' : translatedTitles ? 'Original Titles' : 'Translate Titles'}</span>
         </Button>
       </div>
@@ -214,19 +215,26 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, promot
                 </div>
 
                 <div className="flex flex-wrap gap-2 mt-auto">
-                  <Link 
-                    to={`${createPageUrl("TripDetails")}?id=${trip.id}`} 
+                  <Link
+                    to={`${createPageUrl("TripDetails")}?id=${trip.id}`}
                     className="flex-1"
                     onClick={() => handleViewDetailsClick(trip)}
+                    aria-label={`${t('trip.view_details')}: ${trip.title}`}
                   >
-                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 w-full">
+                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 w-full min-h-[44px]" tabIndex={-1}>
                       {t('trip.view_details')}
                     </Button>
                   </Link>
                   {user && trip.external_link && (
-                    <Button size="sm" variant="outline" asChild>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="min-h-[44px] min-w-[44px]"
+                      aria-label={`${language === 'el' ? 'Εξωτερικός σύνδεσμος για' : 'External link for'} ${trip.title}`}
+                      asChild
+                    >
                       <a href={trip.external_link} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="w-3 h-3" />
+                        <ExternalLink className="w-3 h-3" aria-hidden="true" />
                       </a>
                     </Button>
                   )}
@@ -238,4 +246,6 @@ export default React.forwardRef(function TripsList({ trips, selectedDate, promot
       </div>
     </div>
   );
-});
+}));
+
+export default TripsList;

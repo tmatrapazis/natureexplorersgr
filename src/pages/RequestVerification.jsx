@@ -73,8 +73,8 @@ export default function RequestVerificationPage() {
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-8 text-center">
           <p className="text-stone-600 mb-4">Only organizers can request verification.</p>
-          <Link to={createPageUrl("Calendar")}>
-            <Button>Back to Calendar</Button>
+          <Link to={createPageUrl("Calendar")} aria-label="Back to Calendar">
+            <Button className="min-h-[44px]" tabIndex={-1}>Back to Calendar</Button>
           </Link>
         </Card>
       </div>
@@ -88,8 +88,8 @@ export default function RequestVerificationPage() {
           <Shield className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">Verification Pending</h2>
           <p className="text-stone-600 mb-4">Your verification request is under review. We'll notify you once it's processed.</p>
-          <Link to={createPageUrl("Calendar")}>
-            <Button>Back to Calendar</Button>
+          <Link to={createPageUrl("Calendar")} aria-label="Back to Calendar">
+            <Button className="min-h-[44px]" tabIndex={-1}>Back to Calendar</Button>
           </Link>
         </Card>
       </div>
@@ -103,8 +103,8 @@ export default function RequestVerificationPage() {
           <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">You're Verified!</h2>
           <p className="text-stone-600 mb-4">Your organizer profile is verified and trusted by our community.</p>
-          <Link to={createPageUrl("Calendar")}>
-            <Button>Back to Calendar</Button>
+          <Link to={createPageUrl("Calendar")} aria-label="Back to Calendar">
+            <Button className="min-h-[44px]" tabIndex={-1}>Back to Calendar</Button>
           </Link>
         </Card>
       </div>
@@ -114,9 +114,9 @@ export default function RequestVerificationPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
-        <Link to={createPageUrl("EditProfile")}>
-          <Button variant="outline" className="mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
+        <Link to={createPageUrl("EditProfile")} aria-label="Back to profile">
+          <Button variant="outline" className="mb-6 min-h-[44px]" tabIndex={-1}>
+            <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
             Back to Profile
           </Button>
         </Link>
@@ -219,10 +219,11 @@ export default function RequestVerificationPage() {
                   </ul>
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full bg-emerald-600 hover:bg-emerald-700"
+                <Button
+                  type="submit"
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
                   disabled={requestVerificationMutation.isPending}
+                  aria-label={requestVerificationMutation.isPending ? 'Submitting verification request…' : 'Submit verification request'}
                 >
                   {requestVerificationMutation.isPending ? (
                     <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Submitting...</>

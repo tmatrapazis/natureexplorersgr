@@ -17,7 +17,7 @@ import { el, enUS } from 'date-fns/locale';
 import { useLanguage } from '@/components/contexts/LanguageContext';
 import { useTranslation } from '@/components/translations/useTranslations';
 
-export default function NotificationsBell({ user, compact = false }) {
+function NotificationsBell({ user, compact = false }) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -174,3 +174,4 @@ export default function NotificationsBell({ user, compact = false }) {
     </DropdownMenu>
   );
 }
+export default React.memo(NotificationsBell);

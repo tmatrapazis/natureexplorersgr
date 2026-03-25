@@ -290,8 +290,8 @@ export default function TripDetailsPage() {
       <div className="min-h-screen flex items-center justify-center text-center">
         <div>
           <h2 className="text-2xl font-bold text-stone-900 mb-2">{t('trip.trip_not_found')}</h2>
-          <Link to={createPageUrl("Calendar")}>
-            <Button>{t('trip.back_to_calendar')}</Button>
+          <Link to={createPageUrl("Calendar")} aria-label={t('trip.back_to_calendar')}>
+            <Button className="min-h-[44px]" tabIndex={-1}>{t('trip.back_to_calendar')}</Button>
           </Link>
         </div>
       </div>
@@ -424,11 +424,12 @@ export default function TripDetailsPage() {
                     <p className="text-stone-600 mb-4">
                       {t('trip.login_message')}
                     </p>
-                    <Button 
+                    <Button
                       onClick={() => base44.auth.redirectToLogin(window.location.href)}
-                      className="bg-emerald-600 hover:bg-emerald-700"
+                      className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                      aria-label={t('trip.login_to_continue')}
                     >
-                      <LogIn className="w-4 h-4 mr-2" />
+                      <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
                       {t('trip.login_to_continue')}
                     </Button>
                   </div>
@@ -443,11 +444,12 @@ export default function TripDetailsPage() {
                     <p className="text-stone-600 mb-4">
                       {t('trip.login_message')}
                     </p>
-                    <Button 
+                    <Button
                       onClick={() => base44.auth.redirectToLogin(window.location.href)}
-                      className="w-full bg-emerald-600 hover:bg-emerald-700"
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                      aria-label={t('common.login')}
                     >
-                      <LogIn className="w-4 h-4 mr-2" />
+                      <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
                       {t('common.login')}
                     </Button>
                   </div>

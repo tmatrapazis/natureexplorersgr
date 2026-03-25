@@ -169,8 +169,8 @@ export default function GuideProfilePage() {
           <h2 className="text-2xl font-bold text-stone-900 mb-2">
             {language === 'el' ? 'Ο οδηγός δεν βρέθηκε' : 'Guide not found'}
           </h2>
-          <Link to={createPageUrl("Guides")}>
-            <Button>
+          <Link to={createPageUrl("Guides")} aria-label={language === 'el' ? 'Επιστροφή στους Οδηγούς' : 'Back to Guides'}>
+            <Button className="min-h-[44px]" tabIndex={-1}>
               {language === 'el' ? 'Επιστροφή στους Οδηγούς' : 'Back to Guides'}
             </Button>
           </Link>
@@ -214,9 +214,10 @@ export default function GuideProfilePage() {
             <ShareGuideButton guide={guide} language={language} />
             <Button
               onClick={() => navigate(createPageUrl('EditGuideProfile') + `?id=${guideId}`)}
-              className="bg-emerald-600 hover:bg-emerald-700"
+              className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+              aria-label={language === 'el' ? 'Επεξεργασία προφίλ οδηγού' : 'Edit guide profile'}
             >
-              <Edit className="w-4 h-4 mr-2" />
+              <Edit className="w-4 h-4 mr-2" aria-hidden="true" />
               {language === 'el' ? 'Επεξεργασία' : 'Edit Profile'}
             </Button>
           </div>
@@ -255,9 +256,10 @@ export default function GuideProfilePage() {
                         href={guide.social_media.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-stone-600 hover:text-emerald-600 transition-colors"
+                        className="text-stone-600 hover:text-emerald-600 transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
+                        aria-label={`${guide.full_name} on Instagram`}
                       >
-                        <Instagram className="w-5 h-5" />
+                        <Instagram className="w-5 h-5" aria-hidden="true" />
                       </a>
                     )}
                     {guide.social_media.facebook && (
@@ -265,9 +267,10 @@ export default function GuideProfilePage() {
                         href={guide.social_media.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-stone-600 hover:text-emerald-600 transition-colors"
+                        className="text-stone-600 hover:text-emerald-600 transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
+                        aria-label={`${guide.full_name} on Facebook`}
                       >
-                        <Facebook className="w-5 h-5" />
+                        <Facebook className="w-5 h-5" aria-hidden="true" />
                       </a>
                     )}
                   </div>
@@ -328,6 +331,7 @@ export default function GuideProfilePage() {
                         key={trip.id}
                         to={`${createPageUrl("TripDetails")}?id=${trip.id}`}
                         className="block"
+                        aria-label={`${language === 'el' ? 'Προβολή εκδρομής' : 'View trip'}: ${trip.title}`}
                       >
                         <div className="flex gap-4 p-4 rounded-lg border hover:border-emerald-600 hover:shadow-md transition-all">
                           <img

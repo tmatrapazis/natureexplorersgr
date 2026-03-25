@@ -262,8 +262,8 @@ export default function OrganizerProfilePage() {
       <div className="min-h-screen flex items-center justify-center text-center">
         <div>
           <h2 className="text-2xl font-bold text-stone-900 mb-2">{t('trip.organizer')} {t('errors.not_found')}</h2>
-          <Link to={createPageUrl("OrganizersList")}>
-            <Button>{t('common.back_to_organizers')}</Button>
+          <Link to={createPageUrl("OrganizersList")} aria-label={t('common.back_to_organizers')}>
+            <Button className="min-h-[44px]" tabIndex={-1}>{t('common.back_to_organizers')}</Button>
           </Link>
         </div>
       </div>
@@ -334,8 +334,8 @@ export default function OrganizerProfilePage() {
                 )}
                 
                 <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm text-stone-600 justify-center md:justify-start">
-                  <a href={`mailto:${organizer.email}`} className="flex items-center gap-2 hover:text-emerald-600">
-                    <Mail className="w-4 h-4" />
+                  <a href={`mailto:${organizer.email}`} className="flex items-center gap-2 hover:text-emerald-600 min-h-[44px]" aria-label={`Email ${organizer.full_name}: ${organizer.email}`}>
+                    <Mail className="w-4 h-4" aria-hidden="true" />
                     {organizer.email}
                   </a>
                   {organizer.phone && (
@@ -345,13 +345,14 @@ export default function OrganizerProfilePage() {
                     </div>
                   )}
                   {organizer.website && (
-                    <a 
-                      href={organizer.website.startsWith('http://') || organizer.website.startsWith('https://') ? organizer.website : `https://${organizer.website}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="flex items-center gap-2 hover:text-emerald-600"
+                    <a
+                      href={organizer.website.startsWith('http://') || organizer.website.startsWith('https://') ? organizer.website : `https://${organizer.website}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 hover:text-emerald-600 min-h-[44px]"
+                      aria-label={`${language === 'el' ? 'Ιστοσελίδα' : 'Website'}: ${organizer.website.replace(/https?:\/\//, '')}`}
                     >
-                      <Globe className="w-4 h-4" />
+                      <Globe className="w-4 h-4" aria-hidden="true" />
                       {organizer.website.replace(/https?:\/\//, '')}
                     </a>
                   )}
@@ -365,9 +366,10 @@ export default function OrganizerProfilePage() {
                         href={organizer.social_profiles.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors min-h-[44px]"
+                        aria-label={`${organizer.full_name} on Facebook`}
                       >
-                        <Facebook className="w-4 h-4" />
+                        <Facebook className="w-4 h-4" aria-hidden="true" />
                         <span className="text-sm font-medium">{t('social.facebook')}</span>
                       </a>
                     )}
@@ -376,9 +378,10 @@ export default function OrganizerProfilePage() {
                         href={organizer.social_profiles.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-colors min-h-[44px]"
+                        aria-label={`${organizer.full_name} on Instagram`}
                       >
-                        <Instagram className="w-4 h-4" />
+                        <Instagram className="w-4 h-4" aria-hidden="true" />
                         <span className="text-sm font-medium">{t('social.instagram')}</span>
                       </a>
                     )}
@@ -387,9 +390,10 @@ export default function OrganizerProfilePage() {
                         href={organizer.social_profiles.twitter}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-lg transition-colors min-h-[44px]"
+                        aria-label={`${organizer.full_name} on X (Twitter)`}
                       >
-                        <Twitter className="w-4 h-4" />
+                        <Twitter className="w-4 h-4" aria-hidden="true" />
                         <span className="text-sm font-medium">{t('social.twitter_x')}</span>
                       </a>
                     )}
@@ -399,21 +403,21 @@ export default function OrganizerProfilePage() {
                 {/* Organizer Actions - Only visible to the organizer themselves */}
                 {user?.organizer_code === organizer?.organizer_code && (
                   <div className="mt-4 justify-center md:justify-start flex gap-2 flex-wrap">
-                    <Link to={createPageUrl("MyTrips")}>
-                      <Button variant="outline">
-                        <Calendar className="w-4 h-4 mr-2" />
+                    <Link to={createPageUrl("MyTrips")} aria-label={language === 'el' ? 'Οι Εκδρομές μου' : 'My Trips'}>
+                      <Button variant="outline" className="min-h-[44px]" tabIndex={-1}>
+                        <Calendar className="w-4 h-4 mr-2" aria-hidden="true" />
                         {language === 'el' ? 'Οι Εκδρομές μου' : 'My Trips'}
                       </Button>
                     </Link>
-                    <Link to={createPageUrl("EditOrganizerProfile")}>
-                      <Button variant="outline">
-                        <Edit className="w-4 h-4 mr-2" />
+                    <Link to={createPageUrl("EditOrganizerProfile")} aria-label={language === 'el' ? 'Επεξεργασία Προφίλ' : 'Edit organizer profile'}>
+                      <Button variant="outline" className="min-h-[44px]" tabIndex={-1}>
+                        <Edit className="w-4 h-4 mr-2" aria-hidden="true" />
                         {language === 'el' ? 'Επεξεργασία Προφίλ' : 'Edit Profile'}
                       </Button>
                     </Link>
-                    <Link to={createPageUrl("CreateTrip")}>
-                      <Button className="bg-emerald-600 hover:bg-emerald-700">
-                        <PlusCircle className="w-4 h-4 mr-2" />
+                    <Link to={createPageUrl("CreateTrip")} aria-label={language === 'el' ? 'Δημιουργία Νέας Εκδρομής' : 'Create new trip'}>
+                      <Button className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]" tabIndex={-1}>
+                        <PlusCircle className="w-4 h-4 mr-2" aria-hidden="true" />
                         {language === 'el' ? 'Δημιουργία Νέας Εκδρομής' : 'Create New Trip'}
                       </Button>
                     </Link>
@@ -524,15 +528,16 @@ export default function OrganizerProfilePage() {
 
 
                         <div className="flex gap-2 mt-auto">
-                          <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 flex-1">
+                          <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 flex-1 min-h-[44px]">
                             {t('trip.view_details')}
                           </Button>
                           {user && trip.external_link && (
                             <button
-                              className="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground h-8"
+                              className="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground min-h-[44px] min-w-[44px]"
                               onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(trip.external_link, '_blank', 'noopener,noreferrer'); }}
+                              aria-label={`${language === 'el' ? 'Εξωτερικός σύνδεσμος για' : 'External link for'} ${trip.title}`}
                             >
-                              <ExternalLink className="w-3 h-3" />
+                              <ExternalLink className="w-3 h-3" aria-hidden="true" />
                             </button>
                           )}
                         </div>

@@ -272,9 +272,10 @@ export default function CalendarPage() {
           <Button
             variant="outline"
             onClick={handleClearAll}
-            className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800">
-
-              <X className="w-4 h-4 mr-2" />
+            className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800 min-h-[44px]"
+            aria-label={t('filters.clear')}
+          >
+              <X className="w-4 h-4 mr-2" aria-hidden="true" />
               {t('filters.clear')}
             </Button>
           }
@@ -354,7 +355,9 @@ export default function CalendarPage() {
                   variant="outline"
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50">
+                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 min-h-[44px]"
+                  aria-label={language === 'el' ? 'Προηγούμενη σελίδα' : 'Previous page'}
+                >
                       {language === 'el' ? 'Προηγούμενη' : 'Previous'}
                     </Button>
                     
@@ -372,8 +375,10 @@ export default function CalendarPage() {
                               key={pageNum}
                               variant={currentPage === pageNum ? "default" : "outline"}
                               onClick={() => setCurrentPage(pageNum)}
-                              className={currentPage === pageNum ? "bg-emerald-600 hover:bg-emerald-700" : "border-emerald-300 text-emerald-700 hover:bg-emerald-50"}
+                              className={currentPage === pageNum ? "bg-emerald-600 hover:bg-emerald-700 min-h-[44px] min-w-[44px]" : "border-emerald-300 text-emerald-700 hover:bg-emerald-50 min-h-[44px] min-w-[44px]"}
                               size="sm"
+                              aria-label={language === 'el' ? `Σελίδα ${pageNum}` : `Page ${pageNum}`}
+                              aria-current={currentPage === pageNum ? 'page' : undefined}
                             >
                               {pageNum}
                             </Button>
@@ -392,7 +397,9 @@ export default function CalendarPage() {
                   variant="outline"
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50">
+                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 min-h-[44px]"
+                  aria-label={language === 'el' ? 'Επόμενη σελίδα' : 'Next page'}
+                >
                       {language === 'el' ? 'Επόμενη' : 'Next'}
                     </Button>
                   </div>

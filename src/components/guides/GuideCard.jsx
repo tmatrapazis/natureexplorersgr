@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shield } from "lucide-react";
 
-export default function GuideCard({ guide, organizers = [], language = 'en' }) {
+function GuideCard({ guide, organizers = [], language = 'en' }) {
   const primaryCert = guide.certifications?.[0];
   const guideOrganizers = organizers.filter(org => 
     guide.organizer_codes?.includes(org.organizer_code)
@@ -66,3 +66,4 @@ export default function GuideCard({ guide, organizers = [], language = 'en' }) {
     </Link>
   );
 }
+export default React.memo(GuideCard);

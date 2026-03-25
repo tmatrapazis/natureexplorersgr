@@ -20,7 +20,7 @@ import {
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 
-export default function TripFilters({ filters, onFilterChange }) {
+function TripFilters({ filters, onFilterChange }) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
@@ -266,3 +266,5 @@ export default function TripFilters({ filters, onFilterChange }) {
     </Dialog>);
 
 }
+
+export default React.memo(TripFilters);

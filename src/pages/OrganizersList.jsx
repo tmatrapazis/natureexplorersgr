@@ -137,8 +137,8 @@ export default function OrganizersListPage() {
         ) : sortedOrganizers.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-stone-600 mb-4">{t('organizer.no_organizers')}</p>
-            <Link to={createPageUrl("Calendar")}>
-              <Button>{t('booking.browse_trips')}</Button>
+            <Link to={createPageUrl("Calendar")} aria-label={t('booking.browse_trips')}>
+              <Button className="min-h-[44px]" tabIndex={-1}>{t('booking.browse_trips')}</Button>
             </Link>
           </div>
         ) : (
@@ -187,8 +187,12 @@ export default function OrganizersListPage() {
                     <p className="text-muted-foreground mt-2 min-h-[60px] mb-4">
                       {organizer.bio ? `${organizer.bio.substring(0, 100)}...` : t('organizer.passionate_guide')}
                     </p>
-                    <Link to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`} className="mt-auto">
-                      <Button className="bg-emerald-600 hover:bg-emerald-700 w-full">{t('organizer.view_profile_trips')}</Button>
+                    <Link
+                      to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`}
+                      className="mt-auto"
+                      aria-label={`${t('organizer.view_profile_trips')}: ${organizer.full_name}`}
+                    >
+                      <Button className="bg-emerald-600 hover:bg-emerald-700 w-full min-h-[44px]" tabIndex={-1}>{t('organizer.view_profile_trips')}</Button>
                     </Link>
                   </CardContent>
                 </Card>

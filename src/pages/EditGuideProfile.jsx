@@ -211,7 +211,7 @@ export default function EditGuideProfilePage() {
           <h2 className="text-2xl font-bold mb-4">
             {language === 'el' ? 'Το προφίλ δεν βρέθηκε' : 'Profile not found'}
           </h2>
-          <Button onClick={() => navigate(createPageUrl('Guides'))}>
+          <Button onClick={() => navigate(createPageUrl('Guides'))} className="min-h-[44px]" aria-label={language === 'el' ? 'Επιστροφή στους Οδηγούς' : 'Back to Guides'}>
             {language === 'el' ? 'Επιστροφή στους Οδηγούς' : 'Back to Guides'}
           </Button>
         </div>
@@ -235,8 +235,8 @@ export default function EditGuideProfilePage() {
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">
-                <Trash2 className="w-4 h-4 mr-2" />
+              <Button variant="destructive" className="min-h-[44px]" aria-label={language === 'el' ? 'Διαγραφή προφίλ οδηγού' : 'Delete guide profile'}>
+                <Trash2 className="w-4 h-4 mr-2" aria-hidden="true" />
                 {language === 'el' ? 'Διαγραφή Προφίλ' : 'Delete Profile'}
               </Button>
             </AlertDialogTrigger>
@@ -286,9 +286,10 @@ export default function EditGuideProfilePage() {
                     <button
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, profile_photo_url: "" }))}
-                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 min-h-[32px] min-w-[32px]"
+                      aria-label={language === 'el' ? 'Αφαίρεση φωτογραφίας προφίλ' : 'Remove profile photo'}
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 ) : (
@@ -317,9 +318,10 @@ export default function EditGuideProfilePage() {
                     <button
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, cover_photo_url: "" }))}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 min-h-[32px] min-w-[32px]"
+                      aria-label={language === 'el' ? 'Αφαίρεση εικόνας εξωφύλλου' : 'Remove cover photo'}
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 ) : (
@@ -393,7 +395,7 @@ export default function EditGuideProfilePage() {
                     placeholder={language === 'el' ? 'π.χ. Πρώτες Βοήθειες' : 'e.g. First Aid'}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCertification())}
                   />
-                  <Button type="button" onClick={handleAddCertification}>
+                  <Button type="button" onClick={handleAddCertification} className="min-h-[44px]" aria-label={language === 'el' ? 'Προσθήκη πιστοποίησης' : 'Add certification'}>
                     {t('common.add')}
                   </Button>
                 </div>
@@ -404,9 +406,10 @@ export default function EditGuideProfilePage() {
                       <button
                         type="button"
                         onClick={() => handleRemoveCertification(index)}
-                        className="hover:text-red-600"
+                        className="hover:text-red-600 min-h-[24px] min-w-[24px] flex items-center justify-center"
+                        aria-label={`${language === 'el' ? 'Αφαίρεση πιστοποίησης' : 'Remove certification'}: ${cert}`}
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-3 h-3" aria-hidden="true" />
                       </button>
                     </div>
                   ))}
@@ -476,13 +479,16 @@ export default function EditGuideProfilePage() {
                   type="button"
                   variant="outline"
                   onClick={goBack}
+                  className="min-h-[44px]"
+                  aria-label={t('common.cancel')}
                 >
                   {t('common.cancel')}
                 </Button>
                 <Button
                   type="submit"
                   disabled={updateGuideMutation.isPending}
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                  aria-label={updateGuideMutation.isPending ? (language === 'el' ? 'Αποθήκευση…' : 'Saving…') : (language === 'el' ? 'Αποθήκευση αλλαγών' : 'Save changes')}
                 >
                   {updateGuideMutation.isPending ? (
                     <>
