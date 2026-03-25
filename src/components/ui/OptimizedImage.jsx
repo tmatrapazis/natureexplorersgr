@@ -48,9 +48,9 @@ export default function OptimizedImage({
   const aspectRatio = width && height ? `${width}/${height}` : 'auto';
 
   return (
-    <div 
-      className={`relative overflow-hidden bg-stone-200 ${className}`}
-      style={{ 
+    <div
+      className={`relative overflow-hidden bg-muted ${className}`}
+      style={{
         aspectRatio,
         width: '100%',
         height: '100%'
@@ -78,7 +78,7 @@ export default function OptimizedImage({
         }}
       />
       {!isLoaded && (
-        <div className="absolute inset-0 animate-pulse bg-stone-300" />
+        <div className="absolute inset-0 animate-pulse bg-muted/60" />
       )}
     </div>
   );

@@ -206,7 +206,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
             </Badge>
           ))}
         </div>
-        <p className="text-xs text-stone-500 mt-2">{t('create_trip.tags_description')}</p>
+        <p className="text-xs text-muted-foreground mt-2">{t('create_trip.tags_description')}</p>
       </div>
 
       {/* Dates */}
@@ -218,7 +218,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         <div>
           <Label htmlFor="end_date">{t('create_trip.end_date')} *</Label>
           <Input id="end_date" type="date" value={tripData.end_date} min={tripData.start_date} onChange={(e) => update('end_date', e.target.value)} required />
-          <p className="text-xs text-stone-500 mt-1">{t('create_trip.end_date_note')}</p>
+          <p className="text-xs text-muted-foreground mt-1">{t('create_trip.end_date_note')}</p>
         </div>
       </div>
 
@@ -226,15 +226,15 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
       <div>
         <Label htmlFor="location">{t('create_trip.location_region')} *</Label>
         <Input id="location" value={tripData.location} onChange={(e) => update('location', e.target.value)} placeholder={t('create_trip.location_placeholder')} required className="mb-2" />
-        <p className="text-xs text-stone-500 mb-3">{t('create_trip.location_note')}</p>
-        <Label className="mb-1 block text-sm text-stone-600">
+        <p className="text-xs text-muted-foreground mb-3">{t('create_trip.location_note')}</p>
+        <Label className="mb-1 block text-sm text-muted-foreground">
           {language === 'el' ? 'Ακριβής τοποθεσία στον χάρτη (προαιρετικό)' : 'Precise map location (optional)'}
         </Label>
         <React.Suspense fallback={
-          <div className="h-[400px] flex items-center justify-center bg-stone-50 rounded-lg border border-stone-200">
+          <div className="h-[400px] flex items-center justify-center bg-muted/30 rounded-lg border border-border">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-2" />
-              <p className="text-sm text-stone-500">Loading map...</p>
+              <p className="text-sm text-muted-foreground">Loading map...</p>
             </div>
           </div>
         }>
@@ -303,7 +303,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         </div>
         {useMultiplePricing ? (
           <>
-            <p className="text-xs text-stone-500 mb-2">
+            <p className="text-xs text-muted-foreground mb-2">
               {language === 'el' ? 'Προσθέστε διαφορετικές κατηγορίες τιμών (π.χ. Κανονική, Early Bird, Φοιτητική)' : 'Add different pricing categories (e.g., Standard, Early Bird, Student)'}
             </p>
             <div className="flex flex-col md:grid md:grid-cols-12 gap-2 mb-2">
@@ -322,10 +322,10 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
             </div>
             <div className="space-y-2">
               {tripData.pricing_options.map((option, i) => (
-                <div key={i} className="flex items-center justify-between bg-stone-50 p-3 rounded">
+                <div key={i} className="flex items-center justify-between bg-muted/30 p-3 rounded">
                   <div className="flex-1">
                     <span className="font-medium text-sm">{option.label}: €{option.price}</span>
-                    {option.description && <p className="text-xs text-stone-500">{option.description}</p>}
+                    {option.description && <p className="text-xs text-muted-foreground">{option.description}</p>}
                   </div>
                   <Button 
                     type="button" 
@@ -383,7 +383,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
             {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin" /> : t('create_trip.generate_ai_image')}
           </Button>
         </div>
-        {uploadingImage && <p className="text-sm text-stone-500">{t('create_trip.uploading')}</p>}
+        {uploadingImage && <p className="text-sm text-muted-foreground">{t('create_trip.uploading')}</p>}
         {tripData.image_url && <img src={tripData.image_url} alt="Preview" className="mt-2 w-full h-48 object-cover rounded-lg" />}
       </div>
 
@@ -405,7 +405,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         </div>
         <div className="space-y-2">
           {tripData.requirements.map((req, i) => (
-            <div key={i} className="flex items-center justify-between bg-stone-50 p-2 rounded">
+            <div key={i} className="flex items-center justify-between bg-muted/30 p-2 rounded">
               <span className="text-sm">{req}</span>
               <Button 
                 type="button" 
@@ -425,7 +425,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
       {/* Departure From */}
       <div>
         <Label>{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</Label>
-        <p className="text-xs text-stone-500 mb-2">
+        <p className="text-xs text-muted-foreground mb-2">
           {language === 'el' ? 'Προσθέστε τις τοποθεσίες αναχώρησης (π.χ. Αθήνα, Θεσσαλονίκη)' : 'Add departure locations (e.g. Athens, Thessaloniki)'}
         </p>
         <div className="flex gap-2 mb-2">
@@ -444,7 +444,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         </div>
         <div className="space-y-2">
           {tripData.departure_from.map((dep, i) => (
-            <div key={i} className="flex items-center justify-between bg-stone-50 p-2 rounded">
+            <div key={i} className="flex items-center justify-between bg-muted/30 p-2 rounded">
               <span className="text-sm">{dep}</span>
               <Button 
                 type="button" 
@@ -474,7 +474,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
           placeholder={language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}
           label={language === 'el' ? 'Κατάσταση Εκδρομής' : 'Trip Status'}
         />
-        <p className="text-xs text-stone-500 mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           {language === 'el' ? 'Επιλέξτε "Πρόχειρο" για να αποθηκεύσετε χωρίς δημοσίευση.' : 'Select "Draft" to save without publishing.'}
         </p>
       </div>

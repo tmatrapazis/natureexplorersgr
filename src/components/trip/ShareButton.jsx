@@ -140,7 +140,7 @@ export default function ShareButton({ trip, language, className = "" }) {
           Facebook Messenger
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleEmailShare} className="cursor-pointer">
-          <Mail className="w-4 h-4 mr-2 text-stone-600" />
+          <Mail className="w-4 h-4 mr-2 text-muted-foreground" />
           Email
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleCopyLink} className="cursor-pointer">
@@ -151,7 +151,7 @@ export default function ShareButton({ trip, language, className = "" }) {
             </>
           ) : (
             <>
-              <LinkIcon className="w-4 h-4 mr-2 text-stone-600" />
+              <LinkIcon className="w-4 h-4 mr-2 text-muted-foreground" />
               {language === 'el' ? 'Αντιγραφή Συνδέσμου' : 'Copy Link'}
             </>
           )}

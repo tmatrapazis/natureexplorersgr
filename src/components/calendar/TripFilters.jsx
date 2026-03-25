@@ -131,7 +131,7 @@ function TripFilters({ filters, onFilterChange }) {
           <div>
             <Label htmlFor="search">{t('filters.search_label')}</Label> {/* Adjusted key for better semantic */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 id="search"
                 placeholder={t('filters.search_placeholder')}

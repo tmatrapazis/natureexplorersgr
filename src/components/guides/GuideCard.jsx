@@ -30,7 +30,7 @@ function GuideCard({ guide, organizers = [], language = 'en' }) {
           )}
         </div>
         <CardContent className="p-5">
-          <h3 className="text-xl font-bold text-stone-900 mb-2 group-hover:text-emerald-700 transition-colors">
+          <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-emerald-700 transition-colors">
             {guide.full_name}
           </h3>
           
@@ -41,20 +41,20 @@ function GuideCard({ guide, organizers = [], language = 'en' }) {
           )}
 
           {guide.years_of_experience && (
-            <p className="text-sm text-stone-600 mb-3">
+            <p className="text-sm text-muted-foreground mb-3">
               {guide.years_of_experience} {language === 'el' ? 'χρόνια εμπειρίας' : 'years experience'}
             </p>
           )}
 
           {guideOrganizers.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t">
-              <p className="text-xs text-stone-500 w-full mb-1">
+              <p className="text-xs text-muted-foreground w-full mb-1">
                 {language === 'el' ? 'Συνεργάζεται με:' : 'Works with:'}
               </p>
               {guideOrganizers.slice(0, 3).map(org => (
                 <div
                   key={org.organizer_code}
-                  className="text-xs px-2 py-1 bg-stone-100 rounded-full text-stone-700"
+                  className="text-xs px-2 py-1 bg-muted rounded-full text-foreground"
                 >
                   {org.username || org.full_name}
                 </div>

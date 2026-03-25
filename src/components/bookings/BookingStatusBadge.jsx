@@ -18,9 +18,9 @@ const statusConfig = {
     color: "bg-red-100 text-red-800 border-red-300", 
     label: "Declined" 
   },
-  cancelled: { 
-    color: "bg-gray-100 text-gray-800 border-gray-300", 
-    label: "Cancelled" 
+  cancelled: {
+    color: "bg-muted text-foreground border-border",
+    label: "Cancelled"
   }
 };
 

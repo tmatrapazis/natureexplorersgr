@@ -12,8 +12,8 @@ export default function LazyTripLocationMap({ trip }) {
 
   if (!hasCoordinates) {
     return (
-      <div className="w-full h-64 bg-stone-100 rounded-lg flex items-center justify-center">
-        <p className="text-stone-500 text-sm">{trip?.location}</p>
+      <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center">
+        <p className="text-muted-foreground text-sm">{trip?.location}</p>
       </div>
     );
   }
@@ -22,10 +22,10 @@ export default function LazyTripLocationMap({ trip }) {
     <div className="min-h-[16rem]" style={{ willChange: 'contents' }}>
       <Suspense
         fallback={
-          <div className="w-full h-64 bg-stone-50 rounded-lg border border-stone-200 flex items-center justify-center">
+          <div className="w-full h-64 bg-muted/30 rounded-lg border border-border flex items-center justify-center">
             <div className="text-center">
-              <Loader2 className="w-6 h-6 animate-spin text-stone-400 mx-auto mb-2" />
-              <p className="text-sm text-stone-500">Loading map...</p>
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Loading map...</p>
             </div>
           </div>
         }

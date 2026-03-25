@@ -280,7 +280,7 @@ export default function TripDetailsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center text-center">
         <div>
-          <h2 className="text-2xl font-bold text-stone-900 mb-2">{t('trip.trip_not_found')}</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t('trip.trip_not_found')}</h2>
           <Link to={createPageUrl("Calendar")} aria-label={t('trip.back_to_calendar')}>
             <Button className="min-h-[44px]" tabIndex={-1}>{t('trip.back_to_calendar')}</Button>
           </Link>
@@ -355,12 +355,12 @@ export default function TripDetailsPage() {
                 )}
 
                 <Card className="p-6">
-                  <h1 className="text-3xl font-bold text-stone-900 mb-2">{trip.title}</h1>
+                  <h1 className="text-3xl font-bold text-foreground mb-2">{trip.title}</h1>
 
                   {organizer && (
                     <Link
                       to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
-                      className="inline-flex items-center gap-2 text-stone-600 hover:text-emerald-700 mb-4"
+                      className="inline-flex items-center gap-2 text-muted-foreground hover:text-emerald-700 mb-4"
                     >
                       <UserIcon className="w-4 h-4" />
                       <span>{t('trip.organized_by')} {organizer.username || organizer.full_name}</span>
@@ -381,16 +381,16 @@ export default function TripDetailsPage() {
                     <div className="flex items-center gap-3">
                       <MapPin className="w-5 h-5 text-emerald-600" />
                       <div>
-                        <p className="text-sm text-stone-500">Location</p>
-                        <p className="font-medium text-stone-900">{trip.location}</p>
+                        <p className="text-sm text-muted-foreground">Location</p>
+                        <p className="font-medium text-foreground">{trip.location}</p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-3">
                       <Clock className="w-5 h-5 text-emerald-600" />
                       <div>
-                        <p className="text-sm text-stone-500">Date</p>
-                        <p className="font-medium text-stone-900">
+                        <p className="text-sm text-muted-foreground">Date</p>
+                        <p className="font-medium text-foreground">
                           {formatDateRange(trip.start_date, trip.end_date)}
                         </p>
                       </div>
@@ -399,11 +399,11 @@ export default function TripDetailsPage() {
 
                   {trip.description && (
                     <div className="mb-6">
-                      <h3 className="font-semibold text-stone-900 mb-2">Description</h3>
+                      <h3 className="font-semibold text-foreground mb-2">Description</h3>
                       {/* Sanitise before rendering so Quill-generated HTML is displayed
                           correctly for logged-out users instead of showing raw tags. */}
                       <div
-                        className="text-stone-600 break-words overflow-hidden line-clamp-4"
+                        className="text-muted-foreground break-words overflow-hidden line-clamp-4"
                         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(trip.description) }}
                       />
                     </div>
@@ -411,8 +411,8 @@ export default function TripDetailsPage() {
 
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
                     <LogIn className="w-12 h-12 text-blue-600 mx-auto mb-3" />
-                    <h3 className="text-lg font-bold text-stone-900 mb-2">{t('trip.login_to_see_details')}</h3>
-                    <p className="text-stone-600 mb-4">
+                    <h3 className="text-lg font-bold text-foreground mb-2">{t('trip.login_to_see_details')}</h3>
+                    <p className="text-muted-foreground mb-4">
                       {t('trip.login_message')}
                     </p>
                     <Button
@@ -430,9 +430,9 @@ export default function TripDetailsPage() {
               <div>
                 <Card className="p-6 sticky top-6">
                   <div className="text-center py-6">
-                    <Users className="w-16 h-16 text-stone-300 mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-stone-900 mb-2">{t('trip.login_required')}</h3>
-                    <p className="text-stone-600 mb-4">
+                    <Users className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
+                    <h3 className="text-lg font-bold text-foreground mb-2">{t('trip.login_required')}</h3>
+                    <p className="text-muted-foreground mb-4">
                       {t('trip.login_message')}
                     </p>
                     <Button
@@ -473,7 +473,7 @@ export default function TripDetailsPage() {
           <div className="grid lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               {trip.image_url && (
-                <div className="relative w-full h-64 md:h-96 rounded-2xl overflow-hidden shadow-lg flex items-center justify-center bg-stone-100">
+                <div className="relative w-full h-64 md:h-96 rounded-2xl overflow-hidden shadow-lg flex items-center justify-center bg-muted">
                   <img
                     src={getTripImage(trip.image_url, trip.id)}
                     alt={language === 'el'
@@ -493,12 +493,12 @@ export default function TripDetailsPage() {
                   <ShareButton trip={trip} language={language} />
                 </div>
                 
-                <h1 className="text-3xl font-bold text-stone-900 mb-2 pr-20">{trip.title}</h1>
+                <h1 className="text-3xl font-bold text-foreground mb-2 pr-20">{trip.title}</h1>
 
                 {organizer && (
                   <Link
                     to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
-                    className="inline-flex items-center gap-2 text-stone-600 hover:text-emerald-700 mb-4 transition-colors"
+                    className="inline-flex items-center gap-2 text-muted-foreground hover:text-emerald-700 mb-4 transition-colors"
                   >
                     <UserIcon className="w-4 h-4" />
                     <span>{t('trip.organized_by')} {organizer.username || organizer.full_name}</span>
@@ -522,16 +522,16 @@ export default function TripDetailsPage() {
                   <div className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-emerald-600" />
                     <div>
-                      <p className="text-sm text-stone-500">{t('trip.location')}</p>
-                      <p className="font-medium text-stone-900">{trip.location}</p>
+                      <p className="text-sm text-muted-foreground">{t('trip.location')}</p>
+                      <p className="font-medium text-foreground">{trip.location}</p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-emerald-600" />
                     <div>
-                      <p className="text-sm text-stone-500">{t('trip.date')}</p>
-                      <p className="font-medium text-stone-900">
+                      <p className="text-sm text-muted-foreground">{t('trip.date')}</p>
+                      <p className="font-medium text-foreground">
                         {formatDateRange(trip.start_date, trip.end_date)} {trip.start_time && `at ${trip.start_time}`}
                       </p>
                     </div>
@@ -541,8 +541,8 @@ export default function TripDetailsPage() {
                     <div className="flex items-center gap-3">
                       <Clock className="w-5 h-5 text-emerald-600" />
                       <div>
-                        <p className="text-sm text-stone-500">{t('trip.duration')}</p>
-                        <p className="font-medium text-stone-900">{trip.duration_hours} {t('trip.hours')}</p>
+                        <p className="text-sm text-muted-foreground">{t('trip.duration')}</p>
+                        <p className="font-medium text-foreground">{trip.duration_hours} {t('trip.hours')}</p>
                       </div>
                     </div>
                   )}
@@ -550,17 +550,17 @@ export default function TripDetailsPage() {
                   <div className="flex items-start gap-3">
                     <Euro className="w-5 h-5 text-emerald-600 mt-0.5" />
                     <div>
-                      <p className="text-sm text-stone-500">{t('trip.price')}</p>
+                      <p className="text-sm text-muted-foreground">{t('trip.price')}</p>
                       {(() => {
                         const pricingOptions = getPricingOptions(trip);
-                        if (pricingOptions.length === 0) return <p className="font-medium text-stone-900">TBA</p>;
-                        if (pricingOptions.length === 1) return <p className="font-medium text-stone-900">€{pricingOptions[0].price} {t('trip.per_person')}</p>;
+                        if (pricingOptions.length === 0) return <p className="font-medium text-foreground">TBA</p>;
+                        if (pricingOptions.length === 1) return <p className="font-medium text-foreground">€{pricingOptions[0].price} {t('trip.per_person')}</p>;
                         return (
                           <div className="space-y-1 mt-1">
                             {pricingOptions.map((option, i) => (
                               <div key={i} className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-stone-900">€{option.price}</span>
-                                <span className="text-sm text-stone-500">— {option.label}</span>
+                                <span className="text-sm font-medium text-foreground">€{option.price}</span>
+                                <span className="text-sm text-muted-foreground">— {option.label}</span>
                               </div>
                             ))}
                           </div>
@@ -573,10 +573,10 @@ export default function TripDetailsPage() {
                     <div className="flex items-center gap-3 md:col-start-2">
                       <MapPin className="w-5 h-5 text-emerald-600" />
                       <div>
-                        <p className="text-sm text-stone-500">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
+                        <p className="text-sm text-muted-foreground">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {trip.departure_from.map((location, i) => (
-                            <span key={i} className="text-sm font-medium text-stone-900">
+                            <span key={i} className="text-sm font-medium text-foreground">
                               {location}{i < trip.departure_from.length - 1 ? ', ' : ''}
                             </span>
                           ))}
@@ -588,19 +588,19 @@ export default function TripDetailsPage() {
 
                 {trip.meeting_points && trip.meeting_points.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="font-semibold text-stone-900 mb-3">{t('trip.meeting_points')}</h3>
+                    <h3 className="font-semibold text-foreground mb-3">{t('trip.meeting_points')}</h3>
                     <div className="space-y-3">
                       {trip.meeting_points.map((point, index) => (
-                        <div key={index} className="bg-stone-50 p-3 rounded-lg">
+                        <div key={index} className="bg-muted/30 p-3 rounded-lg">
                           <div className="flex items-start gap-3">
                             <MapPin className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
-                              <p className="font-medium text-stone-900">{point.name}</p>
-                              <p className="text-sm text-stone-600 mt-1">{point.location}</p>
+                              <p className="font-medium text-foreground">{point.name}</p>
+                              <p className="text-sm text-muted-foreground mt-1">{point.location}</p>
                               {point.time && (
                                 <div className="flex items-center gap-2 mt-2">
-                                  <Clock className="w-4 h-4 text-stone-500" />
-                                  <p className="text-sm text-stone-600">{point.time}</p>
+                                  <Clock className="w-4 h-4 text-muted-foreground" />
+                                  <p className="text-sm text-muted-foreground">{point.time}</p>
                                 </div>
                               )}
                             </div>
@@ -613,9 +613,9 @@ export default function TripDetailsPage() {
 
                 {trip.description && (
                   <div className="mb-6">
-                    <h3 className="font-semibold text-stone-900 mb-2">{t('trip.description')}</h3>
+                    <h3 className="font-semibold text-foreground mb-2">{t('trip.description')}</h3>
                     <div 
-                      className="text-stone-600 break-words overflow-hidden" 
+                      className="text-muted-foreground break-words overflow-hidden" 
                       dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(trip.description) }} 
                     />
                   </div>
@@ -623,7 +623,7 @@ export default function TripDetailsPage() {
 
                 {trip.tags && trip.tags.length > 0 && (
                   <div className="mb-6">
-                    <h3 className="font-semibold text-stone-900 mb-2">{language === 'el' ? 'Ετικέτες' : 'Tags'}</h3>
+                    <h3 className="font-semibold text-foreground mb-2">{language === 'el' ? 'Ετικέτες' : 'Tags'}</h3>
                     <div className="flex flex-wrap gap-2">
                       {trip.tags.map((tag, i) => {
                         const isTransportTag = tag === 'bus' || tag === 'organized-carpooling';
@@ -645,8 +645,8 @@ export default function TripDetailsPage() {
 
                 {trip.requirements && trip.requirements.length > 0 && (
                   <div>
-                    <h3 className="font-semibold text-stone-900 mb-2">{t('trip.what_to_bring')}</h3>
-                    <ul className="list-disc list-inside space-y-1 text-stone-600">
+                    <h3 className="font-semibold text-foreground mb-2">{t('trip.what_to_bring')}</h3>
+                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                       {trip.requirements.map((req, i) => (
                         <li key={i}>{req}</li>
                       ))}
@@ -675,8 +675,8 @@ export default function TripDetailsPage() {
               <Card className="p-6">
                 <div className="text-center py-6">
                   <Users className="w-16 h-16 text-emerald-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-bold text-stone-900 mb-2">{t('trip.interested_in_trip')}</h3>
-                  <p className="text-stone-600 mb-4">
+                  <h3 className="text-lg font-bold text-foreground mb-2">{t('trip.interested_in_trip')}</h3>
+                  <p className="text-muted-foreground mb-4">
                     {isSocialMedia 
                       ? t('trip.contact_organizer')
                       : t('trip.click_to_book')
@@ -700,7 +700,7 @@ export default function TripDetailsPage() {
                       </Button>
                     </Link>
                   ) : (
-                    <p className="text-sm text-stone-500">{t('trip.no_booking_info')}</p>
+                    <p className="text-sm text-muted-foreground">{t('trip.no_booking_info')}</p>
                   )}
                 </div>
               </Card>

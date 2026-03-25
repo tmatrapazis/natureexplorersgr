@@ -197,7 +197,7 @@ export default function CreateGuideProfilePage() {
                       onChange={(e) => handleImageUpload(e.target.files[0], 'profile')}
                       disabled={uploadingProfile}
                     />
-                    {uploadingProfile && <p className="text-sm text-stone-500 mt-1">{t('common.loading')}</p>}
+                    {uploadingProfile && <p className="text-sm text-muted-foreground mt-1">{t('common.loading')}</p>}
                   </div>
                 )}
               </div>
@@ -229,7 +229,7 @@ export default function CreateGuideProfilePage() {
                       onChange={(e) => handleImageUpload(e.target.files[0], 'cover')}
                       disabled={uploadingCover}
                     />
-                    {uploadingCover && <p className="text-sm text-stone-500 mt-1">{t('common.loading')}</p>}
+                    {uploadingCover && <p className="text-sm text-muted-foreground mt-1">{t('common.loading')}</p>}
                   </div>
                 )}
               </div>
@@ -253,8 +253,8 @@ export default function CreateGuideProfilePage() {
                 <Label>{language === 'el' ? 'Βιογραφικό' : 'Bio'}</Label>
                 <div className="mt-2" style={{ minHeight: '200px' }}>
                   <React.Suspense fallback={
-                    <div className="flex items-center justify-center h-[150px] bg-stone-50 rounded-md border border-stone-200">
-                      <Loader2 className="w-6 h-6 animate-spin text-stone-400" />
+                    <div className="flex items-center justify-center h-[150px] bg-muted/30 rounded-md border border-border">
+                      <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
                     </div>
                   }>
                     <ReactQuill
@@ -347,16 +347,16 @@ export default function CreateGuideProfilePage() {
                 <Label>
                   {language === 'el' ? 'Συνεργασίες με Διοργανωτές' : 'Collaborates With Organizers'}
                 </Label>
-                <p className="text-sm text-stone-600 mb-3">
-                  {language === 'el' 
+                <p className="text-sm text-muted-foreground mb-3">
+                  {language === 'el'
                     ? 'Επιλέξτε τους διοργανωτές με τους οποίους συνεργάζεστε'
                     : 'Select the organizers you work with'}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-64 overflow-y-auto border rounded-lg p-3">
                   {organizers.map(org => (
-                    <label 
+                    <label
                       key={org.organizer_code}
-                      className="flex items-center gap-2 p-2 hover:bg-stone-50 rounded cursor-pointer"
+                      className="flex items-center gap-2 p-2 hover:bg-accent rounded cursor-pointer"
                     >
                       <input
                         type="checkbox"

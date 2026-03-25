@@ -150,7 +150,7 @@ export default function TripFormPage() {
         </Button>
 
         <Card className="p-4 md:p-8 w-full overflow-x-hidden">
-          <h1 className="text-2xl md:text-3xl font-bold text-stone-900 mb-6 break-words">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6 break-words">
             {isEditing ? t('create_trip.edit_title') : t('create_trip.title')}
           </h1>
 

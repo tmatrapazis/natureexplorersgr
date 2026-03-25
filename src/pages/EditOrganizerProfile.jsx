@@ -241,7 +241,7 @@ export default function EditOrganizerProfilePage() {
                         disabled={uploadingImage}
                       />
                       {uploadingImage && (
-                        <p className="text-sm text-stone-500 mt-2 flex items-center">
+                        <p className="text-sm text-muted-foreground mt-2 flex items-center">
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                           {language === 'el' ? 'Μεταφόρτωση...' : 'Uploading...'}
                         </p>
@@ -313,7 +313,7 @@ export default function EditOrganizerProfilePage() {
                   <Label>{t('profile.social_media')}</Label>
                   <div className="space-y-3 mt-2">
                     <div>
-                      <Label htmlFor="facebook" className="text-sm text-stone-600">{t('profile.facebook')}</Label>
+                      <Label htmlFor="facebook" className="text-sm text-muted-foreground">{t('profile.facebook')}</Label>
                       <Input
                         id="facebook"
                         type="url"
@@ -323,7 +323,7 @@ export default function EditOrganizerProfilePage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="instagram" className="text-sm text-stone-600">{t('profile.instagram')}</Label>
+                      <Label htmlFor="instagram" className="text-sm text-muted-foreground">{t('profile.instagram')}</Label>
                       <Input
                         id="instagram"
                         type="url"
@@ -333,7 +333,7 @@ export default function EditOrganizerProfilePage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="twitter" className="text-sm text-stone-600">{t('profile.twitter')}</Label>
+                      <Label htmlFor="twitter" className="text-sm text-muted-foreground">{t('profile.twitter')}</Label>
                       <Input
                         id="twitter"
                         type="url"

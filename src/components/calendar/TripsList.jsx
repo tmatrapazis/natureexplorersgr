@@ -95,9 +95,9 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
   if (trips.length === 0) {
     return (
       <div className="text-center py-12">
-        <Calendar className="w-16 h-16 mx-auto text-stone-300 mb-4" />
-        <h3 className="text-lg font-semibold text-stone-700 mb-2">{t('calendar.no_trips')}</h3>
-        <p className="text-stone-500">
+        <Calendar className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+        <h3 className="text-lg font-semibold text-foreground mb-2">{t('calendar.no_trips')}</h3>
+        <p className="text-muted-foreground">
           {selectedDate ? `${t('calendar.no_trips_scheduled')} ${format(selectedDate, "MMMM d, yyyy")}` : t('calendar.select_date')}
         </p>
       </div>
@@ -125,8 +125,8 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
           const organizer = organizerMap[trip.organizer_code];
           
           return (
-            <Card key={trip.id} className={`overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full ${trip.id === promotedTripId ? 'border-amber-400 ring-2 ring-amber-300' : 'border-stone-200'}`}>
-              <div className="w-full h-40 bg-stone-200 relative overflow-hidden">
+            <Card key={trip.id} className={`overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full ${trip.id === promotedTripId ? 'border-amber-400 ring-2 ring-amber-300' : 'border-border'}`}>
+              <div className="w-full h-40 bg-muted relative overflow-hidden">
                 <OptimizedImage
                   src={getTripImage(trip.image_url, trip.id)}
                   alt={language === 'el'
@@ -146,7 +146,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-base font-bold text-stone-900 mb-2 line-clamp-2 h-12">{translatedTitles?.[trip.id] || trip.title}</h4>
+                      <h4 className="text-base font-bold text-foreground mb-2 line-clamp-2 h-12">{translatedTitles?.[trip.id] || trip.title}</h4>
                       <div className="flex flex-wrap items-center gap-1.5 mb-2">
                         <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
                           {trip.difficulty}
@@ -188,7 +188,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                     {organizer && organizer.username && (
                       <Link
                         to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`}
-                        className="inline-flex items-center gap-1.5 text-xs text-stone-600 hover:text-emerald-700"
+                        className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-emerald-700"
                       >
                         <User className="w-3 h-3" />
                         <span>by {organizer.full_name}</span>
@@ -196,7 +196,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                     )}
                   </div>
 
-                  <div className="space-y-1 text-xs text-stone-600 mb-3">
+                  <div className="space-y-1 text-xs text-muted-foreground mb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <Calendar className="w-3 h-3 text-emerald-600 flex-shrink-0" />

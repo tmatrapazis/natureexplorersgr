@@ -163,26 +163,26 @@ export default function TripsMap({ trips, organizerMap }) {
   }, [geoTrips]);
 
   return (
-    <div className={isFullScreen ? "fixed inset-0 z-50 bg-white" : "rounded-xl overflow-hidden border border-stone-200 shadow-sm relative"}>
+    <div className={isFullScreen ? "fixed inset-0 z-50 bg-card" : "rounded-xl overflow-hidden border border-border shadow-sm relative"}>
       {/* Header */}
-      <div className="bg-white px-4 py-3 border-b border-stone-200 flex items-center justify-between flex-wrap gap-2">
+      <div className="bg-card px-4 py-3 border-b border-border flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 flex-wrap">
           <Mountain className="w-4 h-4 text-emerald-600" />
-          <span className="font-semibold text-stone-800 text-sm">
+          <span className="font-semibold text-foreground text-sm">
             {language === 'el' ? 'Χάρτης Εκδρομών' : 'Trip Map'}
           </span>
-          <span className="text-xs text-stone-500 bg-stone-100 rounded-full px-2 py-0.5">
+          <span className="text-xs text-muted-foreground bg-muted rounded-full px-2 py-0.5">
             {geoTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
           </span>
           {dateRange && (
-            <span className="text-xs text-stone-600">
+            <span className="text-xs text-muted-foreground">
               {dateRange.start} - {dateRange.end}
             </span>
           )}
         </div>
         <div className="flex items-center gap-2">
           {/* Legend */}
-          <div className="hidden sm:flex items-center gap-3 text-xs text-stone-500">
+          <div className="hidden sm:flex items-center gap-3 text-xs text-muted-foreground">
             {Object.entries(difficultyColors).map(([level, color]) => (
               <span key={level} className="flex items-center gap-1">
                 <span style={{ background: color }} className="w-2.5 h-2.5 rounded-full inline-block" />
@@ -195,13 +195,13 @@ export default function TripsMap({ trips, organizerMap }) {
             variant="outline"
             size="icon"
             onClick={() => setIsFullScreen(!isFullScreen)}
-            className="md:hidden h-8 w-8 border-stone-300"
+            className="md:hidden h-8 w-8 border-border"
             aria-label={isFullScreen ? 'Exit full screen' : 'Enter full screen'}
           >
             {isFullScreen ? (
-              <Minimize className="w-4 h-4 text-stone-700" aria-hidden="true" />
+              <Minimize className="w-4 h-4 text-foreground" aria-hidden="true" />
             ) : (
-              <Maximize className="w-4 h-4 text-stone-700" aria-hidden="true" />
+              <Maximize className="w-4 h-4 text-foreground" aria-hidden="true" />
             )}
           </Button>
         </div>

@@ -18,8 +18,8 @@ const InfoField = ({ icon, label, value }) => {
     <div className="flex items-start gap-4">
       <div className="flex-shrink-0 w-8 text-center">{icon}</div>
       <div className="flex-1">
-        <p className="text-sm font-medium text-stone-600">{label}</p>
-        <p className="text-stone-800 whitespace-pre-wrap">{value}</p>
+        <p className="text-sm font-medium text-muted-foreground">{label}</p>
+        <p className="text-foreground whitespace-pre-wrap">{value}</p>
       </div>
     </div>
   );
@@ -62,7 +62,7 @@ export default function HikerProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center text-center">
         <div>
-          <h2 className="text-2xl font-bold text-stone-900 mb-2">{t('hiker_profile.not_found')}</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t('hiker_profile.not_found')}</h2>
           <Link to={tripId ? `${createPageUrl("ManageBookings")}?tripId=${tripId}` : createPageUrl("MyTrips")} aria-label={t('hiker_profile.back_to_bookings')}>
             <Button className="min-h-[44px]" tabIndex={-1}>{t('hiker_profile.back_to_bookings')}</Button>
           </Link>
@@ -85,7 +85,7 @@ export default function HikerProfilePage() {
         </Button>
         <div className="space-y-6">
           <Card>
-            <CardHeader className="items-center text-center p-8 bg-stone-50">
+            <CardHeader className="items-center text-center p-8 bg-muted/30">
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg mb-4">
                   {hiker.profile_picture_url ? (
                     <img src={hiker.profile_picture_url} alt={hiker.username || hiker.full_name} className="w-full h-full object-cover rounded-full" />
@@ -93,12 +93,12 @@ export default function HikerProfilePage() {
                     <User className="w-12 h-12 text-white" />
                   )}
               </div>
-              <h1 className="text-2xl font-bold text-stone-900">{hiker.username || hiker.full_name}</h1>
+              <h1 className="text-2xl font-bold text-foreground">{hiker.username || hiker.full_name}</h1>
               {hiker.training_status && <Badge variant="secondary" className="mt-2">{hiker.training_status} {t('hiker_profile.hiker')}</Badge>}
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-              <InfoField icon={<Mail className="w-5 h-5 text-stone-500" />} label={t('hiker_profile.email')} value={<a href={`mailto:${hiker.email}`} className="text-emerald-600 hover:underline">{hiker.email}</a>} />
-              <InfoField icon={<Phone className="w-5 h-5 text-stone-500" />} label={t('hiker_profile.mobile_number')} value={hiker.phone_number} />
+              <InfoField icon={<Mail className="w-5 h-5 text-muted-foreground" />} label={t('hiker_profile.email')} value={<a href={`mailto:${hiker.email}`} className="text-emerald-600 hover:underline">{hiker.email}</a>} />
+              <InfoField icon={<Phone className="w-5 h-5 text-muted-foreground" />} label={t('hiker_profile.mobile_number')} value={hiker.phone_number} />
             </CardContent>
           </Card>
 
@@ -108,9 +108,9 @@ export default function HikerProfilePage() {
               <CardDescription>{t('hiker_profile.confidential_info')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <InfoField icon={<HeartPulse className="w-5 h-5 text-stone-500" />} label={t('hiker_profile.general_health')} value={hiker.health_status || t('hiker_profile.not_provided')} />
-              <InfoField icon={<AlertTriangle className="w-5 h-5 text-stone-500" />} label={t('hiker_profile.allergies_medical')} value={hiker.medical_needs || t('hiker_profile.none_specified')} />
-              <InfoField icon={<Phone className="w-5 h-5 text-stone-500" />} label={t('hiker_profile.emergency_contact')} value={hiker.emergency_contact_number || t('hiker_profile.not_provided')} />
+              <InfoField icon={<HeartPulse className="w-5 h-5 text-muted-foreground" />} label={t('hiker_profile.general_health')} value={hiker.health_status || t('hiker_profile.not_provided')} />
+              <InfoField icon={<AlertTriangle className="w-5 h-5 text-muted-foreground" />} label={t('hiker_profile.allergies_medical')} value={hiker.medical_needs || t('hiker_profile.none_specified')} />
+              <InfoField icon={<Phone className="w-5 h-5 text-muted-foreground" />} label={t('hiker_profile.emergency_contact')} value={hiker.emergency_contact_number || t('hiker_profile.not_provided')} />
             </CardContent>
           </Card>
         </div>

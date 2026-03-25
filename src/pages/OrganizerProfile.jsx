@@ -262,7 +262,7 @@ export default function OrganizerProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center text-center">
         <div>
-          <h2 className="text-2xl font-bold text-stone-900 mb-2">{t('trip.organizer')} {t('errors.not_found')}</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-2">{t('trip.organizer')} {t('errors.not_found')}</h2>
           <Link to={createPageUrl("OrganizersList")} aria-label={t('common.back_to_organizers')}>
             <Button className="min-h-[44px]" tabIndex={-1}>{t('common.back_to_organizers')}</Button>
           </Link>
@@ -286,7 +286,7 @@ export default function OrganizerProfilePage() {
         <div className="max-w-7xl mx-auto">
           
           {/* Organizer Header */}
-          <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
+          <div className="bg-card rounded-2xl shadow-lg p-8 mb-8">
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1" />
               {/* Hide the Follow button when the organizer is viewing their own profile */}
@@ -295,7 +295,7 @@ export default function OrganizerProfilePage() {
               )}
             </div>
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-white flex-shrink-0 flex items-center justify-center shadow-lg overflow-hidden">
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-full bg-muted flex-shrink-0 flex items-center justify-center shadow-lg overflow-hidden">
                 {organizer.profile_picture_url ? (
                   <img 
                     src={organizer.profile_picture_url} 
@@ -311,7 +311,7 @@ export default function OrganizerProfilePage() {
               
               <div className="flex-1 text-center md:text-left">
                 <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2">
-                  <h1 className="text-3xl md:text-4xl font-bold text-stone-900">{organizer.full_name}</h1>
+                  <h1 className="text-3xl md:text-4xl font-bold text-foreground">{organizer.full_name}</h1>
                   {organizer.is_verified && (
                     <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 self-center md:self-start">
                       <ShieldCheck className="w-4 h-4 mr-1" />
@@ -320,21 +320,21 @@ export default function OrganizerProfilePage() {
                   )}
                 </div>
                 
-                {organizer.bio && <p className="text-stone-600 mt-2 max-w-2xl">{organizer.bio}</p>}
+                {organizer.bio && <p className="text-muted-foreground mt-2 max-w-2xl">{organizer.bio}</p>}
                 
                 {organizer.years_of_experience && (
-                  <p className="text-sm text-stone-500 mt-2">
+                  <p className="text-sm text-muted-foreground mt-2">
                     {organizer.years_of_experience} {t('organizer.years_of_experience')}
                   </p>
                 )}
                 
                 {organizer.certifications && (
-                  <p className="text-sm text-stone-600 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     <strong>{t('organizer.certifications')}:</strong> {organizer.certifications}
                   </p>
                 )}
                 
-                <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm text-stone-600 justify-center md:justify-start">
+                <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm text-muted-foreground justify-center md:justify-start">
                   <a href={`mailto:${organizer.email}`} className="flex items-center gap-2 hover:text-emerald-600 min-h-[44px]" aria-label={`Email ${organizer.full_name}: ${organizer.email}`}>
                     <Mail className="w-4 h-4" aria-hidden="true" />
                     {organizer.email}
@@ -429,16 +429,16 @@ export default function OrganizerProfilePage() {
           </div>
 
           {/* Upcoming Trips List */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h2 className="text-2xl font-bold text-stone-900 mb-6">
+          <div className="bg-card rounded-2xl shadow-lg p-6">
+            <h2 className="text-2xl font-bold text-foreground mb-6">
               {t('organizer.upcoming_trips')} ({trips.length})
             </h2>
             
             {trips.length === 0 ? (
               <div className="text-center py-12">
-                <Calendar className="w-16 h-16 mx-auto text-stone-300 mb-4" aria-hidden="true" />
-                <h3 className="text-lg font-semibold text-stone-700 mb-2">{t('organizer.no_upcoming_trips')}</h3>
-                <p className="text-stone-500">{t('organizer.check_back_later_for_adventures')}</p>
+                <Calendar className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" aria-hidden="true" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">{t('organizer.no_upcoming_trips')}</h3>
+                <p className="text-muted-foreground">{t('organizer.check_back_later_for_adventures')}</p>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -450,7 +450,7 @@ export default function OrganizerProfilePage() {
                       className="flex flex-col h-full"
                     >
                       {trip.image_url && (
-                        <div className="w-full h-48 bg-stone-200 overflow-hidden">
+                        <div className="w-full h-48 bg-muted overflow-hidden">
                           <OptimizedImage
                             src={trip.image_url}
                             alt={language === 'el'
@@ -462,7 +462,7 @@ export default function OrganizerProfilePage() {
                       
                       <CardContent className="p-4 flex flex-col flex-1">
                         <div className="flex items-start justify-between mb-2">
-                          <h3 className="text-lg font-bold text-stone-900 line-clamp-2 flex-1">
+                          <h3 className="text-lg font-bold text-foreground line-clamp-2 flex-1">
                             {trip.title}
                           </h3>
                         </div>
@@ -506,7 +506,7 @@ export default function OrganizerProfilePage() {
                           </div>
                         )}
 
-                        <div className="space-y-2 text-sm text-stone-600 mb-3">
+                        <div className="space-y-2 text-sm text-muted-foreground mb-3">
                           <div className="flex items-center gap-2">
                             <Calendar className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                             <span>{formatDateRange(trip.start_date, trip.end_date)}</span>

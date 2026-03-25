@@ -51,7 +51,7 @@ export default function WelcomeModal({ user, onClose }) {
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <div className="flex items-start gap-3 p-4 bg-stone-50 rounded-lg">
+          <div className="flex items-start gap-3 p-4 bg-muted/30 rounded-lg">
             <Checkbox 
               id="terms" 
               checked={acceptedTerms}
@@ -86,8 +86,8 @@ export default function WelcomeModal({ user, onClose }) {
                   </>
                 )}
               </Label>
-              <p className="text-xs text-stone-500 mt-1">
-                {language === 'el' 
+              <p className="text-xs text-muted-foreground mt-1">
+                {language === 'el'
                   ? 'Απαραίτητο για τη χρήση της πλατφόρμας'
                   : 'Required to use the platform'}
               </p>
@@ -107,8 +107,8 @@ export default function WelcomeModal({ user, onClose }) {
                   ? 'Θέλω να λαμβάνω ενημερώσεις για νέες εκδρομές'
                   : 'I want to receive updates about new trips'}
               </Label>
-              <p className="text-xs text-stone-600 mt-1">
-                {language === 'el' 
+              <p className="text-xs text-muted-foreground mt-1">
+                {language === 'el'
                   ? 'Λάβετε email με τις καλύτερες πεζοπορικές εκδρομές κάθε εβδομάδα'
                   : 'Get weekly emails with the best hiking trips'}
               </p>
@@ -131,8 +131,8 @@ export default function WelcomeModal({ user, onClose }) {
           )}
         </Button>
 
-        <p className="text-xs text-center text-stone-500">
-          {language === 'el' 
+        <p className="text-xs text-center text-muted-foreground">
+          {language === 'el'
             ? '* Υποχρεωτικό πεδίο'
             : '* Required field'}
         </p>

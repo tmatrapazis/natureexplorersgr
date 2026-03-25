@@ -105,7 +105,7 @@ export default function OrganizersListPage() {
           <h1 className="text-4xl font-bold mb-3">
             {language === 'el' ? 'Γνωρίστε τους Οδηγούς Πεζοπορίας' : t('organizer.meet_organizers')}
           </h1>
-          <p className="text-stone-600 max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto">
             {t('organizer.new_organizer_cta')}
             {' '}
             <a
@@ -116,7 +116,7 @@ export default function OrganizersListPage() {
               Email
             </a>
             {' '}
-            <span className="text-stone-400">or</span>
+            <span className="text-muted-foreground">or</span>
             {' '}
             <a
               href="https://www.instagram.com/natureexplorers.gr/"
@@ -136,7 +136,7 @@ export default function OrganizersListPage() {
           </div>
         ) : sortedOrganizers.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-stone-600 mb-4">{t('organizer.no_organizers')}</p>
+            <p className="text-muted-foreground mb-4">{t('organizer.no_organizers')}</p>
             <Link to={createPageUrl("Calendar")} aria-label={t('booking.browse_trips')}>
               <Button className="min-h-[44px]" tabIndex={-1}>{t('booking.browse_trips')}</Button>
             </Link>
@@ -152,7 +152,7 @@ export default function OrganizersListPage() {
                     <div className="absolute top-4 right-4 z-10">
                       <FollowButton organizer={organizer} variant="icon" />
                     </div>
-                    <div className="mx-auto w-24 h-24 mt-6 border-4 border-white rounded-full overflow-hidden bg-stone-100 flex items-center justify-center">
+                    <div className="mx-auto w-24 h-24 mt-6 border-4 border-white rounded-full overflow-hidden bg-muted flex items-center justify-center">
                       {organizer.profile_picture_url ? (
                         <img
                           src={organizer.profile_picture_url}
@@ -162,7 +162,7 @@ export default function OrganizersListPage() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <User className="w-12 h-12 text-stone-400" aria-hidden="true" />
+                        <User className="w-12 h-12 text-muted-foreground" aria-hidden="true" />
                       )}
                     </div>
                   </CardHeader>
@@ -172,7 +172,7 @@ export default function OrganizersListPage() {
                       {organizer.is_verified && <VerifiedBadge showText={false} />}
                     </div>
                     {organizer.years_of_experience && (
-                      <p className="text-sm text-stone-500 mb-2">
+                      <p className="text-sm text-muted-foreground mb-2">
                         {organizer.years_of_experience} {t('organizer.years_experience')}
                       </p>
                     )}

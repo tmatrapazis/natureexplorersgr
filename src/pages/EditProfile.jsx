@@ -279,11 +279,11 @@ export default function EditProfilePage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 rounded-full bg-stone-200 flex-shrink-0 flex items-center justify-center overflow-hidden">
+                  <div className="w-20 h-20 rounded-full bg-muted flex-shrink-0 flex items-center justify-center overflow-hidden">
                     {formData.profile_picture_url ? (
                       <img src={formData.profile_picture_url} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
-                      <User className="w-10 h-10 text-stone-400" />
+                      <User className="w-10 h-10 text-muted-foreground" />
                     )}
                   </div>
                   <div className="flex-1">
@@ -305,7 +305,7 @@ export default function EditProfilePage() {
                     placeholder="Choose a unique username"
                     required
                   />
-                  <p className="text-xs text-stone-500 mt-1">This can be used for your profile URL</p>
+                  <p className="text-xs text-muted-foreground mt-1">This can be used for your profile URL</p>
                 </div>
                 <div>
                   <Label htmlFor="phone_number">Mobile Number</Label>
@@ -316,7 +316,7 @@ export default function EditProfilePage() {
                     value={formData.phone_number}
                     onChange={handleInputChange}
                   />
-                  <p className="text-xs text-stone-500 mt-1">Numbers only</p>
+                  <p className="text-xs text-muted-foreground mt-1">Numbers only</p>
                 </div>
               </CardContent>
             </Card>
@@ -364,7 +364,7 @@ export default function EditProfilePage() {
                       value={formData.emergency_contact_number}
                       onChange={handleInputChange}
                     />
-                    <p className="text-xs text-stone-500 mt-1">Numbers only</p>
+                    <p className="text-xs text-muted-foreground mt-1">Numbers only</p>
                   </div>
                 </CardContent>
               </Card>

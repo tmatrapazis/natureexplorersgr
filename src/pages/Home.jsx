@@ -275,8 +275,8 @@ export default function HomePage() {
               <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight drop-shadow-lg leading-tight">
                 {language === 'el' ? 'Οργανωμένες Εκδρομές Πεζοπορίας στην Ελλάδα' : 'Organized Hiking Trips in Greece'}
               </h1>
-              <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg lg:text-xl text-stone-200 drop-shadow-md leading-relaxed">
-                {language === 'el' 
+              <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg lg:text-xl text-white/80 drop-shadow-md leading-relaxed">
+                {language === 'el'
                   ? 'Ομαδικές εκδρομές, trekking και ταξίδια ορειβασίας με έμπειρους οδηγούς - Βρείτε την επόμενη περιπέτειά σας!'
                   : 'Group expeditions, trekking and mountain adventures with expert guides - Find your next adventure!'}
               </p>
@@ -292,7 +292,7 @@ export default function HomePage() {
                   </Button>
                 </Link>
               </div>
-              <p className="mt-5 sm:mt-6 text-xs sm:text-sm text-stone-300 max-w-md mx-auto leading-relaxed">
+              <p className="mt-5 sm:mt-6 text-xs sm:text-sm text-white/60 max-w-md mx-auto leading-relaxed">
                 {language === 'el'
                   ? 'Εγγραφείτε δωρεάν και ξεκινήστε την επόμενη outdoor περιπέτειά σας σήμερα!'
                   : 'Sign up free and start your next outdoor adventure today!'}

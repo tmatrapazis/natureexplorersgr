@@ -42,10 +42,10 @@ export default function About() {
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/10 to-stone-600/10" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           {/* H1 — primary SEO heading */}
-          <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
             {t.title}
           </h1>
-          <p className="text-xl text-stone-600 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             {t.subtitle}
           </p>
         </div>
@@ -61,8 +61,8 @@ export default function About() {
                 <Card key={idx} className="text-center hover:shadow-lg transition-shadow">
                   <CardContent className="pt-6">
                     <Icon className="w-8 h-8 mx-auto mb-3 text-emerald-600" />
-                    <div className="text-3xl font-bold text-stone-900 mb-1">{stat.value}</div>
-                    <div className="text-sm text-stone-600">{stat.label}</div>
+                    <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
+                    <div className="text-sm text-muted-foreground">{stat.label}</div>
                   </CardContent>
                 </Card>
               );
@@ -72,12 +72,12 @@ export default function About() {
       </section>
 
       { ── Who We Are ──────────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white/50">
+      <section className="py-16 px-4 bg-card/50">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-stone-900 mb-4">
+          <h2 className="text-3xl font-bold text-foreground mb-4">
             {t.whoWeAre.title}
           </h2>
-          <p className="text-lg text-stone-700 leading-relaxed">
+          <p className="text-lg text-foreground leading-relaxed">
             {t.whoWeAre.description}
           </p>
         </div>
@@ -87,14 +87,14 @@ export default function About() {
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto space-y-12">
           <div>
-            <h2 className="text-3xl font-bold text-stone-900 mb-4">{t.mission.title}</h2>
-            <p className="text-lg text-stone-700 leading-relaxed">
+            <h2 className="text-3xl font-bold text-foreground mb-4">{t.mission.title}</h2>
+            <p className="text-lg text-foreground leading-relaxed">
               {t.mission.description}
             </p>
           </div>
           <div>
-            <h2 className="text-3xl font-bold text-stone-900 mb-4">{t.story.title}</h2>
-            <p className="text-lg text-stone-700 leading-relaxed">
+            <h2 className="text-3xl font-bold text-foreground mb-4">{t.story.title}</h2>
+            <p className="text-lg text-foreground leading-relaxed">
               {t.story.description}
             </p>
           </div>
@@ -102,9 +102,9 @@ export default function About() {
       </section>
 
       {/* ── What We Offer (Features) ─────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white/50">
+      <section className="py-16 px-4 bg-card/50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-stone-900 mb-12 text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-12 text-center">
             {t.features.title}
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
@@ -117,7 +117,7 @@ export default function About() {
                     <CardTitle className="text-xl">{feature.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-stone-600">{feature.description}</p>
+                    <p className="text-muted-foreground">{feature.description}</p>
                   </CardContent>
                 </Card>
               );
@@ -129,19 +129,19 @@ export default function About() {
       {/* ── Why Nature Explorers ────────────────────────────────────────────── */}
       <section className="py-16 px-4">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-stone-900 mb-4">
+          <h2 className="text-3xl font-bold text-foreground mb-4">
             {t.whyUs.title}
           </h2>
-          <p className="text-lg text-stone-700 leading-relaxed">
+          <p className="text-lg text-foreground leading-relaxed">
             {t.whyUs.description}
           </p>
         </div>
       </section>
 
       {/* ── Values ──────────────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white/50">
+      <section className="py-16 px-4 bg-card/50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-stone-900 mb-12 text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-12 text-center">
             {t.values.title}
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
@@ -156,7 +156,7 @@ export default function About() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-stone-600">{value.description}</p>
+                    <p className="text-muted-foreground">{value.description}</p>
                   </CardContent>
                 </Card>
               );
@@ -174,7 +174,7 @@ export default function About() {
             <Button
               size="lg"
               onClick={() => navigate(createPageUrl("Calendar"))}
-              className="bg-white text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6 min-h-[44px]"
+              className="bg-background text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6 min-h-[44px]"
               aria-label={t.cta.button}
             >
               {t.cta.button}

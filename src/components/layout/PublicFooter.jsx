@@ -29,7 +29,7 @@ export default function PublicFooter() {
               href="https://www.instagram.com/natureexplorers.gr/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-stone-600 hover:text-emerald-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="text-muted-foreground hover:text-emerald-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               aria-label="Visit Nature Explorers on Instagram"
             >
               <Instagram className="w-5 h-5" aria-hidden="true" />
@@ -38,14 +38,14 @@ export default function PublicFooter() {
               href="https://www.facebook.com/natureexplorersgr/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-stone-600 hover:text-emerald-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="text-muted-foreground hover:text-emerald-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               aria-label="Visit Nature Explorers on Facebook"
             >
               <Facebook className="w-5 h-5" aria-hidden="true" />
             </a>
             <a
               href="mailto:natureexplorersgr@gmail.com"
-              className="text-stone-600 hover:text-emerald-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="text-muted-foreground hover:text-emerald-600 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               aria-label="Email Nature Explorers at natureexplorersgr@gmail.com"
             >
               <Mail className="w-5 h-5" aria-hidden="true" />

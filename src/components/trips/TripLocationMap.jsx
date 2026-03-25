@@ -26,14 +26,14 @@ export default function TripLocationMap({ trip }) {
 
   if (!hasCoordinates) {
     return (
-      <div className="w-full h-64 bg-stone-100 rounded-lg flex items-center justify-center">
-        <p className="text-stone-500 text-sm">{trip.location}</p>
+      <div className="w-full h-64 bg-muted rounded-lg flex items-center justify-center">
+        <p className="text-muted-foreground text-sm">{trip.location}</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-64 rounded-lg overflow-hidden border border-stone-200 shadow-sm">
+    <div className="w-full h-64 rounded-lg overflow-hidden border border-border shadow-sm">
       <MapContainer
         center={[trip.latitude, trip.longitude]}
         zoom={12}

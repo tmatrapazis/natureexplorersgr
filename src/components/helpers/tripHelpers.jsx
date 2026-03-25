@@ -26,7 +26,7 @@ export const getComputedTripStatus = (trip) => {
 export const statusColors = {
   upcoming: "bg-blue-100 text-blue-800",
   "happening now": "bg-green-100 text-green-800 animate-pulse",
-  completed: "bg-stone-100 text-stone-800",
+  completed: "bg-muted text-foreground",
   cancelled: "bg-red-100 text-red-800",
 };
 

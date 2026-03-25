@@ -112,7 +112,7 @@ export default function LocationPicker({ latitude, longitude, onLocationChange, 
         className="font-mono text-sm"
       />
 
-      <div className="rounded-lg overflow-hidden border border-stone-200 h-[260px]">
+      <div className="rounded-lg overflow-hidden border border-border h-[260px]">
         <MapContainer
           center={pinPos ? [pinPos.lat, pinPos.lng] : [38.5, 22.5]}
           zoom={pinPos ? 11 : 6}
@@ -135,7 +135,7 @@ export default function LocationPicker({ latitude, longitude, onLocationChange, 
           {language === 'el' ? 'Συντεταγμένες:' : 'Coordinates:'} {pinPos.lat.toFixed(5)}, {pinPos.lng.toFixed(5)}
         </p>
       ) : (
-        <p className="text-xs text-stone-400">
+        <p className="text-xs text-muted-foreground">
           {language === 'el' ? 'Κάντε κλικ στον χάρτη για να τοποθετήσετε καρφίτσα' : 'Click on the map to drop a pin'}
         </p>
       )}

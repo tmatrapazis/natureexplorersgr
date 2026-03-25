@@ -96,7 +96,7 @@ export default function GuidesPage() {
                         ? 'Είστε Συνοδός Βουνού;' 
                         : 'Are You a Mountain Guide?'}
                   </h3>
-                  <p className="text-stone-700">
+                  <p className="text-foreground">
                     {language === 'el'
                       ? 'Δημιουργήστε το προφίλ σας και μοιραστείτε την εμπειρία σας με την κοινότητα'
                       : 'Create your profile and share your expertise with the community'}
@@ -122,12 +122,12 @@ export default function GuidesPage() {
 
         {guides.length === 0 ? (
           <div className="text-center py-16">
-            <Shield className="w-16 h-16 text-stone-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-stone-900 mb-2">
+            <Shield className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">
               {language === 'el' ? 'Δεν υπάρχουν οδηγοί ακόμα' : 'No guides yet'}
             </h3>
-            <p className="text-stone-600">
-              {language === 'el' 
+            <p className="text-muted-foreground">
+              {language === 'el'
                 ? 'Ελέγξτε ξανά σύντομα για νέους πιστοποιημένους οδηγούς'
                 : 'Check back soon for certified guides'
               }

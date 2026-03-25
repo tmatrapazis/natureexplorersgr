@@ -165,7 +165,7 @@ export default function GuideProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center text-center">
         <div>
-          <h2 className="text-2xl font-bold text-stone-900 mb-2">
+          <h2 className="text-2xl font-bold text-foreground mb-2">
             {language === 'el' ? 'Ο οδηγός δεν βρέθηκε' : 'Guide not found'}
           </h2>
           <Link to={createPageUrl("Guides")} aria-label={language === 'el' ? 'Επιστροφή στους Οδηγούς' : 'Back to Guides'}>
@@ -195,9 +195,9 @@ export default function GuideProfilePage() {
         
         {/* Back Button - Upper Left Corner */}
         <div className="absolute top-4 left-4 z-20">
-          <Button 
-            variant="outline" 
-            className="bg-white min-h-[44px]" 
+          <Button
+            variant="outline"
+            className="bg-background min-h-[44px]"
             onClick={goBack}
             aria-label={language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
           >
@@ -233,7 +233,7 @@ export default function GuideProfilePage() {
               />
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl font-bold text-stone-900">{guide.full_name}</h1>
+                  <h1 className="text-3xl font-bold text-foreground">{guide.full_name}</h1>
                   {guide.is_verified && (
                     <Badge className="bg-emerald-600 text-white flex items-center gap-1">
                       <Shield className="w-4 h-4" />
@@ -243,7 +243,7 @@ export default function GuideProfilePage() {
                 </div>
                 
                 {guide.years_of_experience && (
-                  <p className="text-lg text-stone-600 mb-4">
+                  <p className="text-lg text-muted-foreground mb-4">
                     {guide.years_of_experience} {language === 'el' ? 'χρόνια εμπειρίας' : 'years of experience'}
                   </p>
                 )}
@@ -255,7 +255,7 @@ export default function GuideProfilePage() {
                         href={guide.social_media.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-stone-600 hover:text-emerald-600 transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
+                        className="text-muted-foreground hover:text-emerald-600 transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
                         aria-label={`${guide.full_name} on Instagram`}
                       >
                         <Instagram className="w-5 h-5" aria-hidden="true" />
@@ -266,7 +266,7 @@ export default function GuideProfilePage() {
                         href={guide.social_media.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-stone-600 hover:text-emerald-600 transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
+                        className="text-muted-foreground hover:text-emerald-600 transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
                         aria-label={`${guide.full_name} on Facebook`}
                       >
                         <Facebook className="w-5 h-5" aria-hidden="true" />
@@ -288,7 +288,7 @@ export default function GuideProfilePage() {
                   <CardTitle>{language === 'el' ? 'Σχετικά με εμένα' : 'About Me'}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-stone-700 prose prose-stone max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(guide.bio) }} />
+                  <div className="text-foreground prose prose-inherit max-w-none" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(guide.bio) }} />
                 </CardContent>
               </Card>
             )}
@@ -340,12 +340,12 @@ export default function GuideProfilePage() {
                             onError={(e) => handleImageError(e, trip.id)}
                           />
                           <div className="flex-1">
-                            <h4 className="font-semibold text-stone-900 mb-1">{trip.title}</h4>
-                            <div className="flex items-center gap-2 text-sm text-stone-600 mb-2">
+                            <h4 className="font-semibold text-foreground mb-1">{trip.title}</h4>
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                               <MapPin className="w-4 h-4" />
                               {trip.location}
                             </div>
-                            <div className="flex items-center gap-2 text-sm text-stone-600">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Calendar className="w-4 h-4" />
                               {formatDateRange(trip.start_date, trip.end_date)}
                             </div>
@@ -390,7 +390,7 @@ export default function GuideProfilePage() {
                           />
                         )}
                         <div>
-                          <p className="font-semibold text-stone-900">
+                          <p className="font-semibold text-foreground">
                             {organizer.username || organizer.full_name}
                           </p>
                           {organizer.is_verified && (

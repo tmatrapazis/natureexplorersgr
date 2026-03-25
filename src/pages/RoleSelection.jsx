@@ -139,8 +139,8 @@ export default function RoleSelectionPage() {
           <div className="flex justify-center mb-4">
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" alt="Nature Explorers" className="h-16 w-auto" />
           </div>
-          <h1 className="text-4xl font-bold text-stone-900 mb-2">Welcome to Nature Explorers!</h1>
-          <p className="text-stone-600">Choose how you'd like to join our community</p>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Welcome to Nature Explorers!</h1>
+          <p className="text-muted-foreground">Choose how you'd like to join our community</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -154,7 +154,7 @@ export default function RoleSelectionPage() {
               <CardDescription>Discover and book amazing hiking adventures</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <ul className="space-y-2 text-sm text-stone-600">
+              <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>
                   <span>Browse and search hiking events</span>
@@ -200,7 +200,7 @@ export default function RoleSelectionPage() {
               <CardDescription>Create and manage hiking expeditions</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <ul className="space-y-2 text-sm text-stone-600">
+              <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-start gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>
                   <span>Create, edit, and manage events</span>
@@ -237,7 +237,7 @@ export default function RoleSelectionPage() {
           </Card>
         </div>
 
-        <p className="text-center text-sm text-stone-500 mt-6">
+        <p className="text-center text-sm text-muted-foreground mt-6">
           You can always update your preferences later in your profile settings
         </p>
       </div>

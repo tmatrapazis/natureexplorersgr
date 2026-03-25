@@ -72,7 +72,7 @@ export default function RequestVerificationPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-8 text-center">
-          <p className="text-stone-600 mb-4">Only organizers can request verification.</p>
+          <p className="text-muted-foreground mb-4">Only organizers can request verification.</p>
           <Link to={createPageUrl("Calendar")} aria-label="Back to Calendar">
             <Button className="min-h-[44px]" tabIndex={-1}>Back to Calendar</Button>
           </Link>
@@ -87,7 +87,7 @@ export default function RequestVerificationPage() {
         <Card className="max-w-md p-8 text-center">
           <Shield className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">Verification Pending</h2>
-          <p className="text-stone-600 mb-4">Your verification request is under review. We'll notify you once it's processed.</p>
+          <p className="text-muted-foreground mb-4">Your verification request is under review. We'll notify you once it's processed.</p>
           <Link to={createPageUrl("Calendar")} aria-label="Back to Calendar">
             <Button className="min-h-[44px]" tabIndex={-1}>Back to Calendar</Button>
           </Link>
@@ -102,7 +102,7 @@ export default function RequestVerificationPage() {
         <Card className="max-w-md p-8 text-center">
           <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">You're Verified!</h2>
-          <p className="text-stone-600 mb-4">Your organizer profile is verified and trusted by our community.</p>
+          <p className="text-muted-foreground mb-4">Your organizer profile is verified and trusted by our community.</p>
           <Link to={createPageUrl("Calendar")} aria-label="Back to Calendar">
             <Button className="min-h-[44px]" tabIndex={-1}>Back to Calendar</Button>
           </Link>
@@ -163,13 +163,13 @@ export default function RequestVerificationPage() {
                     onChange={(e) => setFormData({...formData, certifications: e.target.value})}
                     rows={3}
                   />
-                  <p className="text-xs text-stone-500 mt-1">List any relevant certifications or training</p>
+                  <p className="text-xs text-muted-foreground mt-1">List any relevant certifications or training</p>
                 </div>
 
                 <div className="space-y-3">
                   <Label>Social Media Profiles (Optional)</Label>
                   <div>
-                    <Label htmlFor="facebook" className="text-sm text-stone-600">Facebook</Label>
+                    <Label htmlFor="facebook" className="text-sm text-muted-foreground">Facebook</Label>
                     <Input
                       id="facebook"
                       type="url"
@@ -182,7 +182,7 @@ export default function RequestVerificationPage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="instagram" className="text-sm text-stone-600">Instagram</Label>
+                    <Label htmlFor="instagram" className="text-sm text-muted-foreground">Instagram</Label>
                     <Input
                       id="instagram"
                       type="url"
@@ -195,7 +195,7 @@ export default function RequestVerificationPage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="twitter" className="text-sm text-stone-600">Twitter/X</Label>
+                    <Label htmlFor="twitter" className="text-sm text-muted-foreground">Twitter/X</Label>
                     <Input
                       id="twitter"
                       type="url"

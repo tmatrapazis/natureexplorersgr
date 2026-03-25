@@ -12,10 +12,10 @@ import OptimizedImage from "@/components/ui/OptimizedImage";
 import { getTripInsights } from "../helpers/bookingHelpers";
 
 const STATUS_BADGE = {
-  draft: "bg-stone-400",
+  draft: "bg-muted-foreground",
   upcoming: "bg-emerald-600",
   "happening now": "bg-blue-600",
-  completed: "bg-stone-600",
+  completed: "bg-muted-foreground",
   cancelled: "bg-red-600",
   "almost soldout": "bg-orange-500",
 };
@@ -63,7 +63,7 @@ function OrganizerTripCard({
   return (
     <Card className={`p-6 hover:shadow-lg transition-shadow ${trip.status === 'draft' ? 'border-dashed' : ''}`}>
       <div className="flex flex-col md:flex-row gap-6">
-        <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-stone-200 flex-shrink-0">
+        <div className="w-full md:w-48 h-32 rounded-lg overflow-hidden bg-muted flex-shrink-0">
           <OptimizedImage
             src={getTripImage(trip.image_url, trip.id)}
             alt={trip.title}
@@ -73,9 +73,9 @@ function OrganizerTripCard({
         <div className="flex-1 min-w-0">
           <div className="flex flex-col md:flex-row justify-between gap-2 mb-3">
             <div className="min-w-0">
-              <h3 className="text-xl font-bold text-stone-900 mb-2 break-words">{trip.title}</h3>
+              <h3 className="text-xl font-bold text-foreground mb-2 break-words">{trip.title}</h3>
               <div className="flex flex-wrap gap-2">
-                <Badge className={STATUS_BADGE[trip.status] || "bg-stone-400"}>
+                <Badge className={STATUS_BADGE[trip.status] || "bg-muted-foreground"}>
                   {statusLabel[trip.status] || trip.status}
                 </Badge>
                 <Badge variant="outline">{formatDateRange(trip.start_date, trip.end_date)}</Badge>
@@ -86,7 +86,7 @@ function OrganizerTripCard({
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-3 mb-4 text-sm text-stone-600">
+          <div className="grid sm:grid-cols-2 gap-3 mb-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <MapPin className="w-4 h-4 text-emerald-600" />
               <span>{trip.location}</span>
@@ -104,8 +104,8 @@ function OrganizerTripCard({
           </div>
 
           {insights.total > 0 && (
-            <div className="bg-stone-50 rounded-lg p-3 mb-4">
-              <p className="text-xs font-semibold text-stone-600 mb-2">{t('organizer.booking_insights')}</p>
+            <div className="bg-muted/30 rounded-lg p-3 mb-4">
+              <p className="text-xs font-semibold text-muted-foreground mb-2">{t('organizer.booking_insights')}</p>
               <div className="flex gap-4 text-sm">
                 <span>{t('organizer.insights_pending')}: <strong>{insights.pending}</strong></span>
                 <span>{t('organizer.insights_confirmed')}: <strong className="text-emerald-600">{insights.confirmed}</strong></span>

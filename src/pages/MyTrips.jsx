@@ -236,7 +236,7 @@ export default function MyTripsPage() {
     <PageWrapper>
       <div className="max-w-5xl mx-auto pb-20">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-stone-900">{t('organizer.my_trips')}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground">{t('organizer.my_trips')}</h1>
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             {user && (
               <Link to={`${createPageUrl("OrganizerProfile")}?code=${user.organizer_code}`} className="w-full sm:w-auto">
@@ -264,9 +264,9 @@ export default function MyTripsPage() {
 
         {trips.length === 0 ? (
           <Card className="p-12 text-center">
-            <Calendar className="w-16 h-16 mx-auto text-stone-300 mb-4" />
-            <h3 className="text-lg font-semibold text-stone-700 mb-2">{t('organizer.no_trips')}</h3>
-            <p className="text-stone-500 mb-4">{t('organizer.no_trips_message')}</p>
+            <Calendar className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+            <h3 className="text-lg font-semibold text-foreground mb-2">{t('organizer.no_trips')}</h3>
+            <p className="text-muted-foreground mb-4">{t('organizer.no_trips_message')}</p>
             <Link to={createPageUrl("TripForm")}>
               <Button 
                 className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
@@ -319,7 +319,7 @@ export default function MyTripsPage() {
                     showCancel={false} showRecreate={false} showDelete={true} isRequiredFieldsFilled={isRequiredFieldsFilled}
                   />
                 ))}
-                {draftTrips.length === 0 && <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>}
+                {draftTrips.length === 0 && <div className="text-center py-10 text-muted-foreground">{t('organizer.no_trips_in_category')}</div>}
               </div>
             </TabsContent>
 
@@ -333,7 +333,7 @@ export default function MyTripsPage() {
                     showCancel={true} showRecreate={false} showDelete={true}
                   />
                 ))}
-                {upcomingTrips.length === 0 && <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>}
+                {upcomingTrips.length === 0 && <div className="text-center py-10 text-muted-foreground">{t('organizer.no_trips_in_category')}</div>}
               </div>
             </TabsContent>
 
@@ -347,7 +347,7 @@ export default function MyTripsPage() {
                     showCancel={true} showRecreate={false} showDelete={true}
                   />
                 ))}
-                {happeningTrips.length === 0 && <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>}
+                {happeningTrips.length === 0 && <div className="text-center py-10 text-muted-foreground">{t('organizer.no_trips_in_category')}</div>}
               </div>
             </TabsContent>
 
@@ -361,7 +361,7 @@ export default function MyTripsPage() {
                     showCancel={false} showRecreate={true} showDelete={false} showStatusChange={false} showEdit={false}
                   />
                 ))}
-                {completedTrips.length === 0 && <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>}
+                {completedTrips.length === 0 && <div className="text-center py-10 text-muted-foreground">{t('organizer.no_trips_in_category')}</div>}
               </div>
             </TabsContent>
 
@@ -375,7 +375,7 @@ export default function MyTripsPage() {
                     showCancel={false} showRecreate={false} showDelete={true}
                   />
                 ))}
-                {cancelledTrips.length === 0 && <div className="text-center py-10 text-stone-500">{t('organizer.no_trips_in_category')}</div>}
+                {cancelledTrips.length === 0 && <div className="text-center py-10 text-muted-foreground">{t('organizer.no_trips_in_category')}</div>}
               </div>
             </TabsContent>
             </Tabs>

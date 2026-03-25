@@ -12,8 +12,8 @@ export default function LazyQuillEditor({ value, onChange, theme = 'snow', style
     <div className="min-h-[150px]" style={{ willChange: 'contents' }}>
       <Suspense
         fallback={
-          <div className="flex items-center justify-center h-[150px] bg-stone-50 rounded-md border border-stone-200">
-            <Loader2 className="w-6 h-6 animate-spin text-stone-400" />
+          <div className="flex items-center justify-center h-[150px] bg-muted/30 rounded-md border border-border">
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
           </div>
         }
       >

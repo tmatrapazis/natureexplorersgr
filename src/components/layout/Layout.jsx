@@ -115,7 +115,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
           <SidebarContent className="p-3 scrollbar-hide">
             {/* Public Navigation */}
             <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-semibold text-stone-500 uppercase tracking-wider px-3 py-2">
+              <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
                 {user ? (isOrganizer ? "Hello Organizer" : "Hello Hiker") : t('common.explore')}
               </SidebarGroupLabel>
               <SidebarGroupContent>
@@ -148,7 +148,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
             {/* Role-based Navigation */}
             {user && roleBasedNav.length > 0 && (
               <SidebarGroup>
-                <SidebarGroupLabel className="text-xs font-semibold text-stone-500 uppercase tracking-wider px-3 py-2">
+                <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
                   {isOrganizer ? "Organizer Tools" : "My Activities"}
                 </SidebarGroupLabel>
                 <SidebarGroupContent>
@@ -181,7 +181,7 @@ const AppLayoutInner = ({ children, isOrganizer, user, location }) => {
 
             {/* Language Switcher */}
             <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-semibold text-stone-500 uppercase tracking-wider px-3 py-2">
+              <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
                 {language === 'el' ? 'Γλώσσα' : 'Language'}
               </SidebarGroupLabel>
               <SidebarGroupContent>

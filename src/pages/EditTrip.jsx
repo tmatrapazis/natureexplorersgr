@@ -116,7 +116,7 @@ export default function EditTripPage() {
         </Button>
 
         <Card className="p-4 md:p-8 w-full overflow-x-hidden">
-          <h1 className="text-2xl md:text-3xl font-bold text-stone-900 mb-6 break-words">{t('create_trip.edit_title')}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-6 break-words">{t('create_trip.edit_title')}</h1>
 
           <TripForm
             key={trip.id}

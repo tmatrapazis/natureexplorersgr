@@ -83,7 +83,7 @@ export default function GreekRefugesMap({ refugesData, mapCenter, mapZoom, setSe
             <Popup>
               <div className="text-center">
                 <h3 className="font-bold text-base mb-2">{refuge.name}</h3>
-                <p className="text-sm text-stone-600 mb-1">
+                <p className="text-sm text-muted-foreground mb-1">
                   <MapPin className="w-3 h-3 inline mr-1" />
                   {refuge.mountain}
                 </p>

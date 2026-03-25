@@ -12,11 +12,11 @@ export default function LazyTripsMap({ trips, organizerMap }) {
     <div className="min-h-[420px]" style={{ willChange: 'contents' }}>
       <Suspense
         fallback={
-          <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm">
-            <div className="h-[420px] flex items-center justify-center bg-stone-50">
+          <div className="rounded-xl overflow-hidden border border-border shadow-sm">
+            <div className="h-[420px] flex items-center justify-center bg-muted/30">
               <div className="text-center">
-                <Loader2 className="w-8 h-8 animate-spin text-stone-400 mx-auto mb-2" />
-                <p className="text-sm text-stone-500">Loading map...</p>
+                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground">Loading map...</p>
               </div>
             </div>
           </div>

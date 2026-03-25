@@ -89,11 +89,11 @@ export default function GreekRefuges() {
         <div className="text-center mb-6 md:mb-8">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
             <Mountain className="w-8 h-8 md:w-12 md:h-12 text-emerald-600 flex-shrink-0" />
-            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-stone-900 break-words min-w-0">
+            <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-foreground break-words min-w-0">
               {t('refuges.page_title')}
             </h1>
           </div>
-          <p className="text-sm md:text-lg text-stone-600 max-w-3xl mx-auto px-2 break-words">
+          <p className="text-sm md:text-lg text-muted-foreground max-w-3xl mx-auto px-2 break-words">
             {t('refuges.page_subtitle').replace('{count}', refugesData.length)}
           </p>
         </div>
@@ -118,7 +118,7 @@ export default function GreekRefuges() {
               <MapPin className="w-5 h-5 text-emerald-600 flex-shrink-0" />
               <span className="break-words min-w-0">{t('refuges.list_title')}</span>
             </CardTitle>
-            <p className="text-xs md:text-sm text-stone-600 mt-2 break-words">
+            <p className="text-xs md:text-sm text-muted-foreground mt-2 break-words">
               {t('refuges.list_subtitle')}
             </p>
           </CardHeader>
@@ -187,7 +187,7 @@ export default function GreekRefuges() {
                       }`}
                     >
                       <td className="p-3">
-                        <div className="font-medium text-stone-900">{refuge.name}</div>
+                        <div className="font-medium text-foreground">{refuge.name}</div>
                         <div className="flex flex-wrap gap-2 mt-1">
                           {refuge.website && (
                             <a
@@ -249,13 +249,13 @@ export default function GreekRefuges() {
                           )}
                         </div>
                       </td>
-                      <td className="p-3 text-stone-700">{refuge.mountain}</td>
+                      <td className="p-3 text-foreground">{refuge.mountain}</td>
                       <td className="p-3">
-                        <Badge variant="outline" className="bg-stone-100">
+                        <Badge variant="outline" className="bg-muted">
                           {refuge.altitude}m
                         </Badge>
                       </td>
-                      <td className="p-3 text-stone-700">
+                      <td className="p-3 text-foreground">
                         {refuge.capacity > 0 ? `${refuge.capacity} ${t('refuges.people')}` : '-'}
                       </td>
                       <td className="p-3">
@@ -306,23 +306,23 @@ export default function GreekRefuges() {
                   key={refuge.id}
                   onClick={() => handleRowClick(refuge)}
                   className={`border rounded-lg p-4 cursor-pointer hover:border-emerald-600 transition-all w-full max-w-full ${
-                    selectedRefuge?.id === refuge.id ? 'bg-emerald-50 border-emerald-600' : 'bg-white'
+                    selectedRefuge?.id === refuge.id ? 'bg-emerald-50 border-emerald-600' : 'bg-card'
                   }`}
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold text-stone-900 text-base break-words min-w-0 flex-1">{refuge.name}</h3>
+                      <h3 className="font-semibold text-foreground text-base break-words min-w-0 flex-1">{refuge.name}</h3>
                       <Badge className="bg-emerald-600 text-white flex-shrink-0 text-xs">
                         {refuge.type}
                       </Badge>
                     </div>
                     
-                    <div className="flex flex-wrap items-center gap-3 text-sm text-stone-600">
+                    <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <MapPin className="w-4 h-4 flex-shrink-0" />
                         <span className="break-words min-w-0">{refuge.mountain}</span>
                       </span>
-                      <Badge variant="outline" className="bg-stone-100 flex-shrink-0">
+                      <Badge variant="outline" className="bg-muted flex-shrink-0">
                         {refuge.altitude}m
                       </Badge>
                       {refuge.capacity > 0 && (
@@ -401,7 +401,7 @@ export default function GreekRefuges() {
         </Card>
 
         {/* Footer Info */}
-        <div className="mt-6 md:mt-8 text-center text-xs md:text-sm text-stone-600 px-2">
+        <div className="mt-6 md:mt-8 text-center text-xs md:text-sm text-muted-foreground px-2">
           <p className="break-words">
             {t('refuges.data_source')}{' '}
             <a
