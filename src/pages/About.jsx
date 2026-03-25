@@ -35,14 +35,14 @@ export default function About() {
   const valueIcons   = [Shield, Sprout, Users, Heart];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-stone-50">
+    <div className="w-full bg-gradient-to-br from-emerald-50 via-white to-stone-50 overflow-x-hidden">
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <section className="relative py-20 px-4 overflow-hidden">
+      <section className="relative py-16 px-4 overflow-hidden hero-section">
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/10 to-stone-600/10" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           {/* H1 — primary SEO heading */}
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
             {t.title}
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -107,7 +107,7 @@ export default function About() {
           <h2 className="text-3xl font-bold text-foreground mb-12 text-center">
             {t.features.title}
           </h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {t.features.items.map((feature, idx) => {
               const Icon = featureIcons[idx];
               return (
@@ -144,7 +144,7 @@ export default function About() {
           <h2 className="text-3xl font-bold text-foreground mb-12 text-center">
             {t.values.title}
           </h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {t.values.items.map((value, idx) => {
               const Icon = valueIcons[idx];
               return (
@@ -170,7 +170,7 @@ export default function About() {
         <div className="max-w-4xl mx-auto text-center text-white">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.cta.title}</h2>
           <p className="text-xl mb-8 text-emerald-50">{t.cta.description}</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col gap-4 justify-center items-center">
             <Button
               size="lg"
               onClick={() => navigate(createPageUrl("Calendar"))}

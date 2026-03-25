@@ -68,16 +68,41 @@ const AuthenticatedApp = () => {
   );
 };
 
+// Page transition variants — native-like slide in/out
+const pageVariants = {
+  initial: { opacity: 0, x: '100%' },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: '-30%' },
+};
+
+const pageTransition = {
+  duration: 0.28,
+  ease: [0.25, 0.46, 0.45, 0.94],
+};
+
+const PageWrapper = ({ children }) => (
+  <motion.div
+    variants={pageVariants}
+    initial="initial"
+    animate="animate"
+    exit="exit"
+    transition={pageTransition}
+    style={{ willChange: 'transform, opacity', height: '100%', width: '100%', position: 'relative' }}
+  >
+    {children}
+  </motion.div>
+);
+
 // Separate component to access useLocation() inside Router context
 function RoutesWithAnimation() {
   const location = useLocation();
   
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode="popLayout" initial={false}>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={
           <LayoutWrapper currentPageName={mainPageKey}>
-            <MainPage />
+            <PageWrapper><MainPage /></PageWrapper>
           </LayoutWrapper>
         } />
         {Object.entries(Pages).map(([path, Page]) => (
@@ -86,15 +111,14 @@ function RoutesWithAnimation() {
             path={`/${path}`}
             element={
               <LayoutWrapper currentPageName={path}>
-                <Page />
+                <PageWrapper><Page /></PageWrapper>
               </LayoutWrapper>
             }
           />
         ))}
-        {/* /About is handled above via Pages registry — keeping slug route for /OrganizerProfile/:username */}
         <Route path="/OrganizerProfile/:username" element={
           <LayoutWrapper currentPageName="OrganizerProfile">
-            {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
+            <PageWrapper>{Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}</PageWrapper>
           </LayoutWrapper>
         } />
         <Route path="*" element={<PageNotFound />} />

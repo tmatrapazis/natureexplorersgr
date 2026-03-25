@@ -155,9 +155,17 @@
 /* Prevent horizontal overflow globally */
 * {
   max-width: 100%;
+  box-sizing: border-box;
 }
 
 html, body, #root {
+  overflow-x: hidden;
+}
+
+/* Constrain page content to viewport — prevents layout overflow from large grids */
+.page-content {
+  width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
 }
 
@@ -187,9 +195,22 @@ img {
   will-change: box-shadow;
 }
 
-/* Critical CSS for above-the-fold content */
-.hero-section {
+/* content-visibility: auto for off-screen sections — improves WebView 60fps scrolling */
+section, .lazy-section {
   content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+}
+
+/* Critical above-the-fold sections should NOT be deferred */
+section:first-of-type, .hero-section {
+  content-visibility: visible;
+  contain-intrinsic-size: unset;
+}
+
+/* GPU-accelerated page transition container */
+.page-transition-root {
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* iOS Safe Area Utilities */
