@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Upload, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -356,13 +357,11 @@ export default function CreateGuideProfilePage() {
                   {organizers.map(org => (
                     <label
                       key={org.organizer_code}
-                      className="flex items-center gap-2 p-2 hover:bg-accent rounded cursor-pointer"
+                      className="flex items-center gap-3 px-2 min-h-[44px] hover:bg-accent rounded cursor-pointer"
                     >
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={formData.organizer_codes.includes(org.organizer_code)}
-                        onChange={() => handleOrganizerToggle(org.organizer_code)}
-                        className="rounded"
+                        onCheckedChange={() => handleOrganizerToggle(org.organizer_code)}
                       />
                       <span className="text-sm">{org.full_name}</span>
                     </label>
