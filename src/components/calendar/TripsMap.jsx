@@ -70,15 +70,6 @@ function buildPopupHTML(trip, organizer, language) {
   `;
 }
 
-// Tells Leaflet to recalculate its size after the container resizes
-function MapResizer({ trigger }) {
-  const map = useMap();
-  useEffect(() => {
-    setTimeout(() => map.invalidateSize(), 100);
-  }, [trigger, map]);
-  return null;
-}
-
 // Component that manages the marker cluster layer imperatively
 function ClusterLayer({ trips, organizerMap, language }) {
   const map = useMap();
