@@ -29,9 +29,9 @@ const LoadingFallback = () => (
 // Redirect any URL with uppercase letters to its lowercase equivalent
 function LowercaseRedirect() {
   const location = useLocation();
-  const lower = location.pathname.toLowerCase();
-  if (lower !== location.pathname) {
-    return <Navigate to={lower + location.search + location.hash} replace />;
+  const lowerPath = location.pathname.toLowerCase();
+  if (lowerPath !== location.pathname) {
+    return <Navigate to={lowerPath + location.search + location.hash} replace />;
   }
   return <Outlet />;
 }
