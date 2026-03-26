@@ -13,17 +13,29 @@ import GoogleAnalytics from "./components/analytics/GoogleAnalytics";
 import WelcomeModal from "./components/welcome/WelcomeModal";
 import CookieConsent from "./components/cookie/CookieConsent";
 
-const PublicLayout = ({ children }) => {
+// ─── Transition config ────────────────────────────────────────────────────────
+// Defined outside the component so the reference is stable across renders.
+const PAGE_TRANSITION = { duration: 0.24, ease: [0.4, 0, 0.2, 1] };
+const PAGE_STYLE = {
+  position: 'absolute',
+  top: 0, left: 0, right: 0, bottom: 0,
+  overflowY: 'auto',
+  WebkitOverflowScrolling: 'touch',
+  overscrollBehavior: 'contain',
+  paddingBottom: 'max(env(safe-area-inset-bottom), 4rem)',
+  willChange: 'transform',
+};
+
+// ─── Public (marketing) layout ────────────────────────────────────────────────
+const PublicLayout = React.memo(function PublicLayout({ children }) {
   const location = useLocation();
   const navType = useNavigationType();
   const navDir = navType === 'POP' ? -1 : 1;
-  // pageKey changes on every path/query change so AnimatePresence fires
   const pageKey = location.pathname + location.search;
 
   return (
     <div className="flex flex-col min-h-screen">
       <PublicHeader />
-      {/* overflow-hidden clips slide during transition so no horizontal scrollbar appears */}
       <div className="flex-1 relative overflow-hidden">
         <AnimatePresence mode="wait" initial={false}>
           <motion.main
@@ -41,8 +53,9 @@ const PublicLayout = ({ children }) => {
       <PublicFooter />
     </div>
   );
-};
+});
 
+// ─── App (authenticated) layout ───────────────────────────────────────────────
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -50,111 +63,59 @@ function LayoutContent({ children, currentPageName }) {
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [authCheckComplete, setAuthCheckComplete] = React.useState(false);
 
-  console.log('🟢 [Layout] Rendering LayoutContent for page:', currentPageName, 'path:', location.pathname);
-
-  // navDir: 1 = forward navigation (PUSH/REPLACE), -1 = back navigation (POP)
   const navDir = navType === 'POP' ? -1 : 1;
-  // Global page transition key for AnimatePresence
   const pageKey = location.pathname + location.search;
 
   const { data: user, isLoading: userLoading, error: userError, isError } = useQuery({
-    queryKey: ['current-user'], // Unified with EditProfile for cache consistency
-    queryFn: async () => {
-      console.log('🔵 [Layout] Fetching current user via base44.auth.me()...');
-      try {
-        const userData = await base44.auth.me();
-        console.log('✅ [Layout] User data fetched successfully:', {
-          id: userData?.id,
-          email: userData?.email,
-          username: userData?.username,
-          has_accepted_terms: userData?.has_accepted_terms,
-          organizer_code: userData?.organizer_code
-        });
-        return userData;
-      } catch (error) {
-        console.error('❌ [Layout] Failed to fetch user:', error);
-        throw error;
-      }
-    },
+    queryKey: ['current-user'],
+    queryFn: () => base44.auth.me(),
     retry: false,
-    staleTime: 5 * 60 * 1000, // cache for 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
-  // Handle errors from user query
+  // Surface non-401/403 errors
   React.useEffect(() => {
     if (isError && userError) {
-      console.error('🔴 [Layout] User query error:', userError);
-      // Only show toast for actual auth errors, not for logged-out users
-      if ((/** @type {any} */(userError)).status && (/** @type {any} */(userError)).status !== 401 && (/** @type {any} */(userError)).status !== 403) {
+      const status = /** @type {any} */(userError).status;
+      if (status && status !== 401 && status !== 403) {
         toast.error('Failed to load user session. Please refresh the page.');
       }
     }
   }, [isError, userError]);
 
-  // Handle successful auth check completion
+  // Mark auth check done when query settles
   React.useEffect(() => {
-    if (!userLoading && user) {
-      console.log('🟢 [Layout] User query success, user loaded:', user?.email || 'no email');
-      setAuthCheckComplete(true);
-    }
-  }, [userLoading, user]);
+    if (!userLoading) setAuthCheckComplete(true);
+  }, [userLoading]);
 
-  // Handle auth check completion even when no user (logged out)
+  // Show welcome modal for new users
   React.useEffect(() => {
-    if (!userLoading && !user && !isError) {
-      console.log('ℹ️  [Layout] No user logged in (public visitor)');
-      setAuthCheckComplete(true);
-    } else if (isError) {
-      console.log('⚠️  [Layout] Auth error occurred, marking as complete');
-      setAuthCheckComplete(true);
-    }
-  }, [userLoading, user, isError]);
-
-  // Show welcome modal for new users who haven't accepted terms
-  React.useEffect(() => {
-    if (user && !user?.has_accepted_terms) {
-      console.log('🎉 [Layout] New user detected, showing welcome modal');
-      setShowWelcome(true);
-    } else if (user && user?.has_accepted_terms) {
-      console.log('✓ [Layout] User has accepted terms, no welcome modal needed');
-    }
+    if (user && !user?.has_accepted_terms) setShowWelcome(true);
   }, [user]);
 
-  // Check for incomplete profile and redirect to EditProfile
+  // Redirect to EditProfile when profile is incomplete
   React.useEffect(() => {
     if (user && authCheckComplete) {
       const isProfileIncomplete = !user?.username || user?.username.trim() === '';
       const isOnEditProfilePage = location.pathname.includes('/EditProfile');
       const isOnRoleSelectionPage = location.pathname.includes('/RoleSelection');
-      
       if (isProfileIncomplete && !isOnEditProfilePage && !isOnRoleSelectionPage) {
-        console.log('⚠️  [Layout] User profile incomplete (missing username), redirecting to EditProfile');
-        console.log('📋 [Layout] User data:', { username: user?.username, email: user?.email });
         toast.info('Please complete your profile to continue');
         navigate(createPageUrl('EditProfile'));
-      } else if (isProfileIncomplete) {
-        console.log('ℹ️  [Layout] User on EditProfile/RoleSelection page with incomplete profile - allowing');
-      } else {
-        console.log('✓ [Layout] User profile complete (username:', user?.username, ')');
       }
     }
   }, [user, authCheckComplete, location.pathname, navigate]);
 
-  const isOrganizer = user?.organizer_code && user?.organizer_code.trim().length > 0;
-  
-  if (isOrganizer) {
-    console.log('👤 [Layout] User is an organizer:', user?.organizer_code);
-  } else if (user) {
-    console.log('👤 [Layout] User is a regular user/hiker');
-  }
+  const isOrganizer = !!(user?.organizer_code && user.organizer_code.trim().length > 0);
 
-  // Show loading state while checking auth
+  const handleCloseWelcome = React.useCallback(() => setShowWelcome(false), []);
+
+  // Loading state
   if (userLoading && !authCheckComplete) {
-    console.log('⏳ [Layout] Loading user data...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-stone-50">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" />
           <p className="mt-4 text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -162,22 +123,13 @@ function LayoutContent({ children, currentPageName }) {
   }
 
   if (currentPageName === 'Home') {
-    console.log('🏠 [Layout] Rendering public layout for Home page');
     return <PublicLayout>{children}</PublicLayout>;
   }
 
-  console.log('📄 [Layout] Rendering app layout for:', currentPageName);
-  
   return (
     <>
       {showWelcome && user && (
-        <WelcomeModal 
-          user={user} 
-          onClose={() => {
-            console.log('✓ [Layout] Welcome modal closed');
-            setShowWelcome(false);
-          }} 
-        />
+        <WelcomeModal user={user} onClose={handleCloseWelcome} />
       )}
       <AppLayout
         currentPageName={currentPageName}
@@ -186,38 +138,17 @@ function LayoutContent({ children, currentPageName }) {
         location={location}
       >
         {/*
-          The AppLayout scroll container has been changed to `position:relative overflow:hidden`
-          so these absolute-positioned motion.divs are properly clipped during their slide
-          transition, giving a native push/pop animation without any horizontal overflow.
+          position:absolute + overflow-y:auto on the motion.div makes it the
+          scroll host so slide-transitions never cause horizontal overflow.
         */}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={pageKey}
-            // Enter from the right (PUSH) or from the left (POP)
             initial={{ x: `${navDir * 100}%` }}
             animate={{ x: 0 }}
-            // Exit briefly fades while pulling slightly in the same direction
             exit={{ x: `${navDir * -20}%`, opacity: 0 }}
-            transition={{
-              duration: 0.24,
-              ease: [0.4, 0, 0.2, 1], // Material Design standard — fast in, smooth out
-            }}
-            style={{
-              // Absolute fill keeps the page inside the clipping container
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              // This motion.div is now the scroll host (replaces the outer overflow-auto div)
-              overflowY: 'auto',
-              WebkitOverflowScrolling: 'touch',
-              overscrollBehavior: 'contain',
-              // Padding for iOS home-indicator and mobile bottom-nav
-              paddingBottom: 'max(env(safe-area-inset-bottom), 4rem)',
-              willChange: 'transform',
-            }}
-            // page-transition-layer promotes this element to a GPU compositing layer
+            transition={PAGE_TRANSITION}
+            style={PAGE_STYLE}
             className="scrollbar-hide page-transition-layer"
           >
             {children}
@@ -231,18 +162,17 @@ function LayoutContent({ children, currentPageName }) {
 export default function Layout({ children, currentPageName }) {
   const [analyticsEnabled, setAnalyticsEnabled] = React.useState(false);
 
-  console.log('🎯 [Layout] Main Layout component rendering for page:', currentPageName);
-
-  const handleConsentChange = (preferences) => {
-    console.log('🍪 [Layout] Cookie consent changed:', preferences);
+  const handleConsentChange = React.useCallback((preferences) => {
     setAnalyticsEnabled(preferences.analytics);
-  };
+  }, []);
 
   return (
     <LanguageProvider>
       <GoogleAnalytics enabled={analyticsEnabled} />
-      {currentPageName !== 'TripDetails' && <CookieConsent onConsentChange={handleConsentChange} />}
-      <LayoutContent children={children} currentPageName={currentPageName} />
+      {currentPageName !== 'TripDetails' && (
+        <CookieConsent onConsentChange={handleConsentChange} />
+      )}
+      <LayoutContent currentPageName={currentPageName}>{children}</LayoutContent>
     </LanguageProvider>
   );
 }

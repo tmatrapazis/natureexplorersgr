@@ -37,8 +37,6 @@ export default function CreateTripPage() {
   // Notify all followers of this organizer about the new trip.
   // Fire-and-forget: errors are logged but never block navigation.
   const notifyFollowers = async (newTrip) => {
-    console.log('[CreateTrip] notifyFollowers called for trip:', newTrip.id, newTrip.title);
-    console.log('[CreateTrip] User organizer_code:', user?.organizer_code);
     
     // Guard: without an organizer_code the filter would return all follows
     if (!user?.organizer_code) {
@@ -51,9 +49,7 @@ export default function CreateTripPage() {
         organizer_code: user.organizer_code,
       });
 
-      console.log('[CreateTrip] Found followers:', followers?.length || 0);
       if (!followers || followers.length === 0) {
-        console.log('[CreateTrip] No followers to notify');
         return;
       }
 
@@ -74,9 +70,7 @@ export default function CreateTripPage() {
         is_read: false,
         link: tripPath,   // relative — navigable by React Router
       }));
-      console.log('[CreateTrip] Creating notifications payload:', notificationsPayload);
-      const createdNotifications = await base44.entities.Notification.bulkCreate(notificationsPayload);
-      console.log('[CreateTrip] Successfully created notifications:', createdNotifications?.length || 0, 'for', followers.length, 'followers');
+      await base44.entities.Notification.bulkCreate(notificationsPayload);
 
       // Emails — best-effort with Promise.allSettled so one failure doesn't block others
       const emailPromises = followers.map(follow =>
@@ -120,13 +114,9 @@ export default function CreateTripPage() {
       );
 
       const emailResults = await Promise.allSettled(emailPromises);
-      const successCount = emailResults.filter(r => r.status === 'fulfilled').length;
-      console.log('[CreateTrip] Email results:', successCount, 'succeeded,', emailResults.length - successCount, 'failed');
       emailResults.forEach((result, i) => {
         if (result.status === 'rejected') {
           console.error(`[CreateTrip] Failed to send notification email to follower ${followers[i]?.user_email}:`, result.reason);
-        } else {
-          console.log(`[CreateTrip] Email sent successfully to ${followers[i]?.user_email}`);
         }
       });
     } catch (err) {
@@ -140,20 +130,14 @@ export default function CreateTripPage() {
     const dataToSave = isDraft ? { ...data, status: "draft" } : data;
     saveDraftRef.current = false;
 
-    console.log('[CreateTrip] Creating trip, isDraft:', isDraft, 'status:', dataToSave.status);
     const newTrip = await base44.entities.HikingTrip.create({ ...dataToSave, organizer_code: user.organizer_code });
-    console.log('[CreateTrip] Trip created:', newTrip.id, 'status:', newTrip.status);
 
     // Notify followers only when publishing — drafts are silent
     if (!isDraft && newTrip?.id) {
-      console.log('[CreateTrip] Triggering notifications for published trip');
       await notifyFollowers(newTrip); // Wait for notifications to be created
       // Invalidate notification queries so the bell updates immediately
-      console.log('[CreateTrip] Invalidating notification queries');
       queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
       queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
-    } else {
-      console.log('[CreateTrip] Skipping notifications - isDraft:', isDraft, 'newTrip.id:', newTrip?.id);
     }
 
     navigate(createPageUrl("MyTrips"));

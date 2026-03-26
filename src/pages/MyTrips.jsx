@@ -222,14 +222,18 @@ export default function MyTripsPage() {
     );
   }
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
-  const draftTrips = (trips || []).filter(t => t.status === 'draft');
-  const upcomingTrips = (trips || []).filter(t => (t.status === 'upcoming' || t.status === 'almost soldout') && new Date(t.start_date) > today);
-  const happeningTrips = (trips || []).filter(t => t.status !== 'cancelled' && t.status !== 'draft' && ((new Date(t.start_date) <= today && t.end_date && new Date(t.end_date) >= today) || t.status === 'happening now'));
-  const completedTrips = (trips || []).filter(t => t.status !== 'cancelled' && t.status !== 'draft' && (t.status === 'completed' || (t.end_date && new Date(t.end_date) < today)));
-  const cancelledTrips = (trips || []).filter(t => t.status === 'cancelled');
+  const { draftTrips, upcomingTrips, happeningTrips, completedTrips, cancelledTrips } = React.useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const list = trips || [];
+    return {
+      draftTrips:     list.filter(t => t.status === 'draft'),
+      upcomingTrips:  list.filter(t => (t.status === 'upcoming' || t.status === 'almost soldout') && new Date(t.start_date) > today),
+      happeningTrips: list.filter(t => t.status !== 'cancelled' && t.status !== 'draft' && ((new Date(t.start_date) <= today && t.end_date && new Date(t.end_date) >= today) || t.status === 'happening now')),
+      completedTrips: list.filter(t => t.status !== 'cancelled' && t.status !== 'draft' && (t.status === 'completed' || (t.end_date && new Date(t.end_date) < today))),
+      cancelledTrips: list.filter(t => t.status === 'cancelled'),
+    };
+  }, [trips]);
   const cancellingTripId = /** @type {any} */(cancelTripMutation.variables)?.trip?.id;
 
   return (

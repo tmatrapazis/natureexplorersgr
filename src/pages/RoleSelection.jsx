@@ -40,7 +40,6 @@ export default function RoleSelectionPage() {
 
   const assignRoleMutation = useMutation({
     mutationFn: async (/** @type {any} */ intendedRole) => {
-      console.log('[RoleSelection] 🚀 Starting role assignment for:', intendedRole);
       
       const updates = {
         full_name: user.full_name || user.email.split('@')[0],
@@ -50,22 +49,17 @@ export default function RoleSelectionPage() {
       // Store intent in localStorage - organizer access will be granted once organizer_code is assigned
       if (intendedRole === 'organizer') {
         updates.intended_role = 'organizer';
-        console.log('[RoleSelection] 📝 Marking user intent as organizer');
       } else {
         updates.intended_role = 'hiker';
-        console.log('[RoleSelection] 📝 Marking user intent as hiker');
       }
 
-      console.log('[RoleSelection] 💾 Updating user with:', updates);
       
       try {
         const updatedUser = await base44.auth.updateMe(updates);
-        console.log('[RoleSelection] ✅ User updated successfully');
 
         // Send email notification to admin if user selected organizer role
         if (intendedRole === 'organizer') {
           try {
-            console.log('[RoleSelection] 📧 Sending admin notification email');
             await base44.integrations.Core.SendEmail({
               to: 'natureexplorersgr@gmail.com',
               subject: 'New Organizer Sign-Up Request',
@@ -91,7 +85,6 @@ export default function RoleSelectionPage() {
                 <p><em>Note: Until you assign them an organizer_code in the dashboard, they will not have organizer permissions.</em></p>
               `
             });
-            console.log('[RoleSelection] ✅ Admin notification email sent');
           } catch (error) {
             console.warn('[RoleSelection] ⚠️ Failed to send admin notification email:', error.message);
             // Don't throw - email failure shouldn't block the user flow
@@ -105,12 +98,10 @@ export default function RoleSelectionPage() {
       }
     },
     onSuccess: async (data, intendedRole) => {
-      console.log('[RoleSelection] 🔄 Invalidating queries');
       toast.success('Role selection completed successfully!');
       queryClient.invalidateQueries({ queryKey: ['current-user'] });
       
       // Navigate to edit profile to complete required fields
-      console.log('[RoleSelection] ➡️ Redirecting to EditProfile');
       navigate(createPageUrl("EditProfile"));
     },
     onError: (error) => {
@@ -120,7 +111,6 @@ export default function RoleSelectionPage() {
   });
 
   const handleRoleSelection = (role) => {
-    console.log('[RoleSelection] 👤 User selected role:', role);
     assignRoleMutation.mutate(role);
   };
 

@@ -84,9 +84,7 @@ export default function EditOrganizerProfilePage() {
     mutationFn: async (/** @type {any} */ updatedData) => {
       // Remove is_verified and organizer_code - only admins can modify these
       const { is_verified, organizer_code, ...dataToUpdate } = updatedData;
-      console.log('Updating organizer with data:', dataToUpdate);
       const result = await base44.entities.Organizer.update(organizer.id, dataToUpdate);
-      console.log('Update successful:', result);
       return result;
     },
     ...createOptimisticUpdate(

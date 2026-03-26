@@ -86,10 +86,10 @@ export default function CalendarPage() {
     return map;
   }, [organizers]);
 
-  const activeTrips = trips.filter((trip) => {
+  const activeTrips = React.useMemo(() => trips.filter((trip) => {
     const status = getComputedTripStatus(trip);
     return status === 'upcoming' || status === 'happening now' || /** @type {string} */ (status) === 'almost soldout';
-  });
+  }), [trips]);
 
   const filteredTrips = React.useMemo(() => {
     const tripsInCurrentMonth = activeTrips.filter((trip) => {
