@@ -42,7 +42,7 @@ function NotificationsBell({ user, compact = false }) {
 
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId) => {
-      await base44.functions.invoke('markNotificationsRead', { notification_ids: [notificationId] });
+      await base44.entities.Notification.update(notificationId, { is_read: true });
     },
     ...createOptimisticUpdate(
       queryClient,
@@ -56,7 +56,7 @@ function NotificationsBell({ user, compact = false }) {
     mutationFn: async () => {
       const unread = notifications.filter(n => !n.is_read);
       if (unread.length === 0) return;
-      await base44.functions.invoke('markNotificationsRead', { notification_ids: unread.map(n => n.id) });
+      await Promise.all(unread.map(n => base44.entities.Notification.update(n.id, { is_read: true })));
     },
     ...createOptimisticUpdate(
       queryClient,

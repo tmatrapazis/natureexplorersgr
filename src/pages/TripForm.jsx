@@ -66,13 +66,36 @@ export default function TripFormPage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isFormDirty, isEditing]);
 
+  // Notify all followers when a trip is published for the first time
+  const notifyFollowersOnPublish = async (publishedTrip) => {
+    try {
+      const follows = await base44.entities.OrganizerFollow.filter({ organizer_code: user.organizer_code });
+      if (!follows || follows.length === 0) return;
+      await base44.entities.Notification.bulkCreate(
+        follows.map(f => ({
+          user_id: f.user_id,
+          title: 'New Trip Available!',
+          message: `"${publishedTrip.title}" has just been published by an organizer you follow.`,
+          link: `/TripDetails?id=${publishedTrip.id}`,
+          is_read: false,
+        }))
+      );
+    } catch {
+      // Non-critical — don't block navigation on notification failure
+    }
+  };
+
   const createMutation = useMutation({
     mutationFn: async (/** @type {any} */ data) => {
       const dataToSave = saveDraftRef.current ? { ...data, status: "draft" } : data;
       saveDraftRef.current = false;
       return await base44.entities.HikingTrip.create({ ...dataToSave, organizer_code: user.organizer_code });
     },
-    onSuccess: () => {
+    onSuccess: async (newTrip) => {
+      // Notify followers when organizer publishes a new trip (not a draft)
+      if (newTrip.status && newTrip.status !== 'draft') {
+        await notifyFollowersOnPublish(newTrip);
+      }
       queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
       navigate(createPageUrl("MyTrips"));
     },
@@ -84,7 +107,11 @@ export default function TripFormPage() {
       if (!clean.end_date) clean.end_date = clean.start_date;
       return await base44.entities.HikingTrip.update(tripId, clean);
     },
-    onSuccess: () => {
+    onSuccess: async (result, variables) => {
+      // Notify followers when a draft is promoted to upcoming via the edit form
+      if (trip?.status === 'draft' && variables.status === 'upcoming') {
+        await notifyFollowersOnPublish({ id: tripId, title: result?.title || variables.title });
+      }
       queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
       queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       setIsFormDirty(false);

@@ -98,6 +98,25 @@ export default function MyTripsPage() {
     },
   });
 
+  // Notify all followers when a trip is published (draft → upcoming)
+  const notifyFollowersOnPublish = async (trip) => {
+    try {
+      const follows = await base44.entities.OrganizerFollow.filter({ organizer_code: user?.organizer_code });
+      if (!follows || follows.length === 0) return;
+      await base44.entities.Notification.bulkCreate(
+        follows.map(f => ({
+          user_id: f.user_id,
+          title: 'New Trip Available!',
+          message: `"${trip.title}" has just been published by an organizer you follow.`,
+          link: `/TripDetails?id=${trip.id}`,
+          is_read: false,
+        }))
+      );
+    } catch {
+      // Non-critical — don't block the status update on notification failure
+    }
+  };
+
   const updateTripStatusMutation = useMutation({
     mutationFn: async (/** @type {any} */ { tripId, status }) => {
       return await base44.entities.HikingTrip.update(tripId, { status });
@@ -116,6 +135,15 @@ export default function MyTripsPage() {
     onError: (_err, _vars, context) => {
       if (context?.previous) {
         queryClient.setQueryData(['my-trips', user?.organizer_code], context.previous);
+      }
+    },
+    onSuccess: async (_result, { tripId, status }) => {
+      // Notify followers when organizer publishes a draft trip
+      if (status === 'upcoming') {
+        const prevTrip = trips?.find(t => t.id === tripId);
+        if (prevTrip?.status === 'draft') {
+          await notifyFollowersOnPublish(prevTrip);
+        }
       }
     },
     onSettled: () => {
@@ -148,8 +176,12 @@ export default function MyTripsPage() {
 
         notifications.push({
           user_id: booking.user_id,
-          message: `Your trip "${trip.title}" has been cancelled. A refund is being processed.`,
-          link: createPageUrl("MyBookings")
+          title: language === 'el' ? 'Εκδρομή Ακυρώθηκε' : 'Trip Cancelled',
+          message: language === 'el'
+            ? `Η εκδρομή "${trip.title}" ακυρώθηκε. Η επιστροφή χρημάτων είναι σε εξέλιξη.`
+            : `Your trip "${trip.title}" has been cancelled. A refund is being processed.`,
+          link: createPageUrl("HikerProfile"),
+          is_read: false,
         });
 
         bookingUpdatePromises.push(base44.entities.Booking.update(booking.id, { status: 'cancelled' }));
@@ -174,7 +206,7 @@ export default function MyTripsPage() {
       toast.success(language === 'el' ? 'Η εκδρομή ακυρώθηκε με επιτυχία' : 'Trip cancelled successfully');
       queryClient.invalidateQueries({ queryKey: ['my-trips'] });
       queryClient.invalidateQueries({ queryKey: ['all-bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
     },
     onError: (error) => {
       console.error('Trip cancellation error:', error);
