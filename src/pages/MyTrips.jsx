@@ -101,13 +101,17 @@ export default function MyTripsPage() {
   // Notify all followers when a trip is published (draft → upcoming)
   const notifyFollowersOnPublish = async (trip) => {
     try {
-      const follows = await base44.entities.OrganizerFollow.filter({ organizer_code: user?.organizer_code });
+      const [follows, organizers] = await Promise.all([
+        base44.entities.OrganizerFollow.filter({ organizer_code: user?.organizer_code }),
+        base44.entities.Organizer.filter({ organizer_code: user?.organizer_code }),
+      ]);
       if (!follows || follows.length === 0) return;
+      const organizerName = organizers?.[0]?.full_name || user?.organizer_code;
       await base44.entities.Notification.bulkCreate(
         follows.map(f => ({
           user_id: f.user_id,
-          title: 'New Trip Available!',
-          message: `"${trip.title}" has just been published by an organizer you follow.`,
+          title: `New trip from ${organizerName}`,
+          message: `"${trip.title}" has just been published.`,
           link: `/TripDetails?id=${trip.id}`,
           is_read: false,
         }))

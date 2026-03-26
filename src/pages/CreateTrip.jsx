@@ -45,9 +45,10 @@ export default function CreateTripPage() {
     }
 
     try {
-      const followers = await base44.entities.OrganizerFollow.filter({
-        organizer_code: user.organizer_code,
-      });
+      const [followers, organizers] = await Promise.all([
+        base44.entities.OrganizerFollow.filter({ organizer_code: user.organizer_code }),
+        base44.entities.Organizer.filter({ organizer_code: user.organizer_code }),
+      ]);
 
       if (!followers || followers.length === 0) {
         return;
@@ -58,7 +59,7 @@ export default function CreateTripPage() {
       const tripPath = `/TripDetails?id=${newTrip.id}`;
       // Absolute URL kept only for the email CTA button href
       const tripUrl = `https://www.natureexplorers.gr${tripPath}`;
-      const organizerName = user.full_name || user.username || '';
+      const organizerName = organizers?.[0]?.full_name || user.full_name || user.username || '';
 
       // In-app notifications — bulk create, same pattern as trip cancellation in MyTrips.jsx
       const notificationsPayload = followers.map(follow => ({
@@ -135,8 +136,7 @@ export default function CreateTripPage() {
     // Notify followers only when publishing — drafts are silent
     if (!isDraft && newTrip?.id) {
       await notifyFollowers(newTrip); // Wait for notifications to be created
-      // Invalidate notification queries so the bell updates immediately
-      queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+      // Invalidate notification query so the bell updates immediately
       queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
     }
 
