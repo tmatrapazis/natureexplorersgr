@@ -45,7 +45,7 @@ export default function MobileSelect({
           aria-label={label || placeholder}
           className={
             triggerClassName ||
-            'w-full flex items-center justify-between gap-2 px-3 py-2 min-h-[44px] text-[16px] md:text-sm rounded-md border border-input bg-background text-left transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation'
+            'inline-flex items-center justify-between gap-2 px-3 py-2 min-h-[44px] text-[16px] md:text-sm rounded-md border border-input bg-background text-left transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation'
           }
         >
           <span className={selectedOption ? 'text-foreground' : 'text-muted-foreground'}>
