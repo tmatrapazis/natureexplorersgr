@@ -70,6 +70,15 @@ function buildPopupHTML(trip, organizer, language) {
   `;
 }
 
+// Tells Leaflet to recalculate its size after the container resizes
+function MapResizer({ trigger }) {
+  const map = useMap();
+  useEffect(() => {
+    setTimeout(() => map.invalidateSize(), 100);
+  }, [trigger, map]);
+  return null;
+}
+
 // Component that manages the marker cluster layer imperatively
 function ClusterLayer({ trips, organizerMap, language }) {
   const map = useMap();
@@ -191,12 +200,12 @@ export default function TripsMap({ trips, organizerMap }) {
               </span>
             ))}
           </div>
-          {/* Full-screen toggle (mobile only) */}
+          {/* Full-screen toggle */}
           <Button
             variant="outline"
             size="icon"
             onClick={() => setIsFullScreen(!isFullScreen)}
-            className="md:hidden h-8 w-8 border-border"
+            className="h-8 w-8 border-border"
             aria-label={isFullScreen ? 'Exit full screen' : 'Enter full screen'}
           >
             {isFullScreen ? (
@@ -221,6 +230,7 @@ export default function TripsMap({ trips, organizerMap }) {
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             subdomains="abcd"
           />
+          <MapResizer trigger={isFullScreen} />
           {geoTrips.length > 0 && (
             <ClusterLayer trips={geoTrips} organizerMap={organizerMap} language={language} />
           )}
