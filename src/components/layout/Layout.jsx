@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X, ArrowLeft } from "lucide-react";
 import { useTabNavigation } from "@/lib/TabNavigationContext";
+import { useBackNavigation } from "@/lib/useBackNavigation";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -101,7 +102,8 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
   const { setOpenMobile } = useSidebar();
-  const { canGoBack, goBackInTab, isTabRoot, navigateToTab } = useTabNavigation();
+  const { isTabRoot, navigateToTab } = useTabNavigation();
+  const { canGoBack, showBackButton, backLabel, goBack: goBackInTab } = useBackNavigation(null);
 
   // Redirect to incomplete-profile pages when needed
   React.useEffect(() => {
@@ -341,26 +343,29 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
           }}
         >
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              {canGoBack && !isTabRoot() ? (
+            <div className="flex items-center gap-1 min-w-0">
+              {showBackButton && !isTabRoot() ? (
                 <button
                   onClick={goBackInTab}
-                  className="hover:bg-accent p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]"
-                  aria-label="Go back"
+                  className="flex items-center gap-1 hover:bg-accent pl-1 pr-2 py-2 rounded-lg transition-colors min-h-[44px] text-sm font-medium text-foreground max-w-[140px]"
+                  aria-label={`Go back to ${backLabel}`}
                 >
-                  <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+                  <ArrowLeft className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                  <span className="truncate">{backLabel}</span>
                 </button>
               ) : (
-                <SidebarTrigger
-                  className="hover:bg-accent p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px]"
-                  aria-label="Open menu"
-                />
+                <>
+                  <SidebarTrigger
+                    className="hover:bg-accent p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex-shrink-0"
+                    aria-label="Open menu"
+                  />
+                  <img
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png"
+                    alt="Nature Explorers"
+                    className="h-8 w-auto"
+                  />
+                </>
               )}
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png"
-                alt="Nature Explorers"
-                className="h-8 w-auto"
-              />
             </div>
 
             {user && <NotificationsBell user={user} compact={true} />}

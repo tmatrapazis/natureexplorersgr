@@ -1,6 +1,7 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import PullToRefresh from '../components/ui/PullToRefresh';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,7 @@ import StructuredData from '../components/seo/StructuredData';
 import FollowButton from '../components/organizers/FollowButton';
 
 export default function OrganizersListPage() {
+  const queryClient = useQueryClient();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
@@ -72,6 +74,13 @@ export default function OrganizersListPage() {
 
   const isLoading = organizersLoading || tripsLoading;
 
+  const handleRefresh = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['organizers-list'] }),
+      queryClient.invalidateQueries({ queryKey: ['all-upcoming-trips'] }),
+    ]);
+  }, [queryClient]);
+
   // Breadcrumb structured data
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -98,6 +107,7 @@ export default function OrganizersListPage() {
   } : null;
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <PageWrapper>
         <StructuredData data={breadcrumbSchema} />
         {itemListSchema && <StructuredData data={itemListSchema} />}
@@ -204,5 +214,6 @@ export default function OrganizersListPage() {
           </div>
         )}
     </PageWrapper>
+    </PullToRefresh>
   );
 }

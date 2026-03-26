@@ -1,12 +1,13 @@
 import React from 'react';
 import { useLanguage } from '@/components/contexts/LanguageContext';
 import { useSEO } from '@/components/seo/useSEO';
-import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { ArrowLeft } from 'lucide-react';
+import { useBackNavigation } from '../lib/useBackNavigation';
 
 export default function PrivacyPolicy() {
   const { language } = useLanguage();
+  const { goBack, backLabel } = useBackNavigation(createPageUrl('Home'));
 
   useSEO({
     title: language === 'el' ? 'Πολιτική Απορρήτου | Nature Explorers' : 'Privacy Policy | Nature Explorers',
@@ -20,13 +21,14 @@ export default function PrivacyPolicy() {
     <div className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
         {/* Back Navigation */}
-        <Link 
-          to={createPageUrl('Home')} 
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors"
+        <button
+          onClick={goBack}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors min-h-[44px]"
+          aria-label={`Go back to ${backLabel}`}
         >
-          <ArrowLeft className="w-4 h-4" />
-          {language === 'el' ? 'Επιστροφή στην Αρχική' : 'Back to Home'}
-        </Link>
+          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+          {backLabel}
+        </button>
 
         {/* Header */}
         <div className="mb-8">

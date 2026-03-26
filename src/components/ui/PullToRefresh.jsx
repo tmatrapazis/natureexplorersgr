@@ -1,96 +1,132 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Loader2, RefreshCw } from 'lucide-react';
 
+/**
+ * PullToRefresh
+ *
+ * Attaches touch listeners to the nearest `.page-transition-layer` ancestor
+ * (the animated scroll host managed by Layout.jsx) rather than creating its own
+ * overflow container.  This preserves TabNavigationContext's scroll-position
+ * save/restore, which queries `.page-transition-layer.scrollTop`.
+ *
+ * Props:
+ *   onRefresh  — async () => void  called when the user pulls past the threshold
+ *   children   — React nodes       page content rendered inside a relative wrapper
+ */
 export default function PullToRefresh({ onRefresh, children }) {
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [canPull, setCanPull] = useState(false);
-  const startY = useRef(0);
-  const containerRef = useRef(null);
-  
-  const threshold = 80;
-  const maxPull = 120;
+
+  // Mutable refs — avoids stale-closure issues inside event handlers
+  const canPullRef   = useRef(false);
+  const startYRef    = useRef(0);
+  const distanceRef  = useRef(0);
+  const refreshingRef = useRef(false);
+
+  // The wrapper we use to find the scroll host on mount
+  const wrapperRef = useRef(null);
+
+  const THRESHOLD = 80;  // px to trigger refresh
+  const MAX_PULL  = 120; // px clamped visual max
+
+  // Keep refreshingRef in sync
+  useEffect(() => { refreshingRef.current = isRefreshing; }, [isRefreshing]);
+
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    refreshingRef.current = true;
+    try {
+      await onRefresh();
+    } catch {
+      // Swallow — callers toast on error themselves
+    } finally {
+      setTimeout(() => {
+        setIsRefreshing(false);
+        refreshingRef.current = false;
+        setPullDistance(0);
+        distanceRef.current = 0;
+      }, 500);
+    }
+  }, [onRefresh]);
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
+    // Walk up the DOM to find the scroll host; fall back to the wrapper itself.
+    const wrapper = wrapperRef.current;
+    const scrollEl = wrapper?.closest('.page-transition-layer') ?? wrapper;
+    if (!scrollEl) return;
 
     const handleTouchStart = (e) => {
-      if (container.scrollTop === 0) {
-        setCanPull(true);
-        startY.current = e.touches[0].clientY;
+      if (refreshingRef.current) return;
+      if (scrollEl.scrollTop === 0) {
+        canPullRef.current = true;
+        startYRef.current  = e.touches[0].clientY;
       }
     };
 
     const handleTouchMove = (e) => {
-      if (!canPull || isRefreshing) return;
-      
-      const currentY = e.touches[0].clientY;
-      const distance = Math.max(0, currentY - startY.current);
-      
-      if (distance > 0 && container.scrollTop === 0) {
+      if (!canPullRef.current || refreshingRef.current) return;
+      const dy = Math.max(0, e.touches[0].clientY - startYRef.current);
+      if (dy > 0 && scrollEl.scrollTop === 0) {
         e.preventDefault();
-        setPullDistance(Math.min(distance, maxPull));
+        const clamped = Math.min(dy, MAX_PULL);
+        distanceRef.current = clamped;
+        setPullDistance(clamped);
       }
     };
 
-    const handleTouchEnd = async () => {
-      if (!canPull || isRefreshing) return;
-      
-      if (pullDistance >= threshold) {
-        setIsRefreshing(true);
-        try {
-          await onRefresh();
-        } catch (error) {
-          console.error('Refresh error:', error);
-        } finally {
-          setTimeout(() => {
-            setIsRefreshing(false);
-            setPullDistance(0);
-          }, 500);
-        }
+    const handleTouchEnd = () => {
+      if (!canPullRef.current || refreshingRef.current) return;
+      canPullRef.current = false;
+      if (distanceRef.current >= THRESHOLD) {
+        handleRefresh();
       } else {
         setPullDistance(0);
+        distanceRef.current = 0;
       }
-      setCanPull(false);
     };
 
-    container.addEventListener('touchstart', handleTouchStart, { passive: true });
-    container.addEventListener('touchmove', handleTouchMove, { passive: false });
-    container.addEventListener('touchend', handleTouchEnd);
+    scrollEl.addEventListener('touchstart', handleTouchStart, { passive: true });
+    scrollEl.addEventListener('touchmove',  handleTouchMove,  { passive: false });
+    scrollEl.addEventListener('touchend',   handleTouchEnd);
 
     return () => {
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
+      scrollEl.removeEventListener('touchstart', handleTouchStart);
+      scrollEl.removeEventListener('touchmove',  handleTouchMove);
+      scrollEl.removeEventListener('touchend',   handleTouchEnd);
     };
-  }, [canPull, isRefreshing, pullDistance, onRefresh]);
+  }, [handleRefresh]); // stable: handleRefresh only changes if onRefresh changes
 
-  const rotation = isRefreshing ? 360 : (pullDistance / threshold) * 360;
-  const opacity = Math.min(pullDistance / threshold, 1);
+  const rotation = isRefreshing ? 360 : (pullDistance / THRESHOLD) * 360;
+  const opacity  = Math.min(pullDistance / THRESHOLD, 1);
 
   return (
-    <div ref={containerRef} className="relative h-full overflow-auto">
-      <div 
-        className="absolute top-0 left-0 right-0 flex items-center justify-center transition-transform"
-        style={{ 
+    <div ref={wrapperRef} className="relative">
+      {/* Pull indicator — slides down with the pull gesture */}
+      <div
+        aria-hidden="true"
+        className="absolute top-0 left-0 right-0 flex items-center justify-center pointer-events-none"
+        style={{
           transform: `translateY(${isRefreshing ? '60px' : `${pullDistance}px`})`,
-          height: '60px',
-          opacity: opacity
+          height:    '60px',
+          opacity,
+          zIndex:    10,
+          transition: isRefreshing ? 'none' : undefined,
         }}
       >
         <div className="bg-background rounded-full p-2 shadow-lg">
           {isRefreshing ? (
             <Loader2 className="w-6 h-6 text-emerald-600 animate-spin" />
           ) : (
-            <RefreshCw 
-              className="w-6 h-6 text-emerald-600 transition-transform" 
+            <RefreshCw
+              className="w-6 h-6 text-emerald-600"
               style={{ transform: `rotate(${rotation}deg)` }}
             />
           )}
         </div>
       </div>
-      <div style={{ paddingTop: isRefreshing ? '60px' : '0' }}>
+
+      {/* Content — pushed down when refreshing to make room for the indicator */}
+      <div style={{ paddingTop: isRefreshing ? '60px' : '0', transition: 'padding-top 0.2s ease' }}>
         {children}
       </div>
     </div>

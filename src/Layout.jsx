@@ -12,6 +12,7 @@ import { LanguageProvider } from "./components/contexts/LanguageContext";
 import GoogleAnalytics from "./components/analytics/GoogleAnalytics";
 import WelcomeModal from "./components/welcome/WelcomeModal";
 import CookieConsent from "./components/cookie/CookieConsent";
+import { useTabNavigation } from "@/lib/TabNavigationContext";
 
 // ─── Transition config ────────────────────────────────────────────────────────
 // Defined outside the component so the reference is stable across renders.
@@ -60,11 +61,53 @@ function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
   const navType = useNavigationType();
+  const { isTabRoot } = useTabNavigation();
   const [showWelcome, setShowWelcome] = React.useState(false);
   const [authCheckComplete, setAuthCheckComplete] = React.useState(false);
 
-  const navDir = navType === 'POP' ? -1 : 1;
   const pageKey = location.pathname + location.search;
+
+  /**
+   * Three distinct animation flavours:
+   *
+   *  1. POP (back gesture / goBackInTab)
+   *     → current page exits to the RIGHT, previous slides in from the LEFT
+   *     → mirrors iOS "swipe back" feel
+   *
+   *  2. PUSH to a tab-root (bottom-nav tab switch, e.g. Calendar → Guides)
+   *     → cross-fade only — no horizontal shift
+   *     → mirrors iOS tab-bar behaviour: tabs are peers, not a hierarchy
+   *
+   *  3. PUSH to a child page (e.g. Calendar → TripDetails)
+   *     → child enters from the RIGHT, previous exits to the LEFT
+   *     → standard iOS push transition
+   */
+  const anim = React.useMemo(() => {
+    if (navType === 'POP') {
+      return {
+        initial: { x: '-30%', opacity: 0 },
+        animate: { x: 0,      opacity: 1 },
+        exit:    { x:  '30%', opacity: 0 },
+        transition: { duration: 0.22, ease: [0.4, 0, 0.2, 1] },
+      };
+    }
+    if (isTabRoot(location.pathname)) {
+      // Tab switch — pure cross-fade, no horizontal motion
+      return {
+        initial:    { opacity: 0 },
+        animate:    { opacity: 1 },
+        exit:       { opacity: 0 },
+        transition: { duration: 0.16, ease: 'easeInOut' },
+      };
+    }
+    // Child page push
+    return {
+      initial:    { x: '100%' },
+      animate:    { x: 0,      opacity: 1 },
+      exit:       { x: '-20%', opacity: 0 },
+      transition: PAGE_TRANSITION,
+    };
+  }, [navType, location.pathname, isTabRoot]);
 
   const { data: user, isLoading: userLoading, error: userError, isError } = useQuery({
     queryKey: ['current-user'],
@@ -144,10 +187,10 @@ function LayoutContent({ children, currentPageName }) {
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={pageKey}
-            initial={{ x: `${navDir * 100}%` }}
-            animate={{ x: 0 }}
-            exit={{ x: `${navDir * -20}%`, opacity: 0 }}
-            transition={PAGE_TRANSITION}
+            initial={anim.initial}
+            animate={anim.animate}
+            exit={anim.exit}
+            transition={anim.transition}
             style={PAGE_STYLE}
             className="scrollbar-hide page-transition-layer"
           >

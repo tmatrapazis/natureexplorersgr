@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import PullToRefresh from '../components/ui/PullToRefresh';
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useLanguage } from "../components/contexts/LanguageContext";
@@ -17,6 +18,7 @@ import useSEO from "../components/seo/useSEO";
 const GUIDES_PER_PAGE = 9;
 
 export default function GuidesPage() {
+  const queryClient = useQueryClient();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const navigate = useNavigate();
@@ -58,6 +60,13 @@ export default function GuidesPage() {
 
   const hasGuideProfile = userGuideProfile && userGuideProfile.length > 0;
 
+  const handleRefresh = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['mountain-guides'] }),
+      queryClient.invalidateQueries({ queryKey: ['all-organizers'] }),
+    ]);
+  }, [queryClient]);
+
   // Guides visible in current "page" — incremental rendering keeps initial paint fast
   const visibleGuides = React.useMemo(
     () => guides.slice(0, visibleCount),
@@ -74,7 +83,7 @@ export default function GuidesPage() {
   }
 
   return (
-    <>
+    <PullToRefresh onRefresh={handleRefresh}>
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-emerald-700 to-emerald-900 text-white py-12 md:py-16 px-4 bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1547233528-b4d311a5be41?w=1400&q=80)' }}>
         <div className="absolute inset-0 bg-emerald-900/70 z-0"></div>
@@ -190,6 +199,6 @@ export default function GuidesPage() {
           </>
         )}
       </PageWrapper>
-    </>
+    </PullToRefresh>
   );
 }

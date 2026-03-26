@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import PullToRefresh from '../components/ui/PullToRefresh';
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { createOptimisticTripDelete, createOptimisticTripUpdate } from "../lib/optimistic-mutations";
@@ -236,7 +237,15 @@ export default function MyTripsPage() {
   }, [trips]);
   const cancellingTripId = /** @type {any} */(cancelTripMutation.variables)?.trip?.id;
 
+  const handleRefresh = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['my-trips', user?.organizer_code] }),
+      queryClient.invalidateQueries({ queryKey: ['all-bookings', user?.organizer_code] }),
+    ]);
+  }, [queryClient, user?.organizer_code]);
+
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <PageWrapper>
       <div className="max-w-5xl mx-auto pb-20">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
@@ -387,5 +396,6 @@ export default function MyTripsPage() {
             )}
       </div>
     </PageWrapper>
+    </PullToRefresh>
   );
 }

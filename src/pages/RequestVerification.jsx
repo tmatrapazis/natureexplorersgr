@@ -14,6 +14,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import useSEO from '../components/seo/useSEO';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
+import { useBackNavigation } from '../lib/useBackNavigation';
 
 export default function RequestVerificationPage() {
   const queryClient = useQueryClient();
@@ -21,6 +22,7 @@ export default function RequestVerificationPage() {
 
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const { goBack, backLabel } = useBackNavigation(createPageUrl('EditProfile'));
 
   // Prevent indexing - this is an authenticated page
   useSEO({
@@ -114,12 +116,10 @@ export default function RequestVerificationPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
-        <Link to={createPageUrl("EditProfile")} aria-label="Back to profile">
-          <Button variant="outline" className="mb-6 min-h-[44px]" tabIndex={-1}>
-            <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
-            Back to Profile
-          </Button>
-        </Link>
+        <Button variant="outline" className="mb-6 min-h-[44px]" onClick={goBack} aria-label={`Go back to ${backLabel}`}>
+          <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
+          {backLabel}
+        </Button>
 
         <Card>
           <CardHeader>
