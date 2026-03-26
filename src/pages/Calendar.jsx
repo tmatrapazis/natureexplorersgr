@@ -35,7 +35,7 @@ export default function CalendarPage() {
     'Περιηγηθείτε και κλείστε επερχόμενες πεζοπορικές εκδρομές σε όλη την Ελλάδα. Βρείτε trekking περιπέτειες, outdoor δραστηριότητες, ημερολόγιο εκδρομών και ορειβατικές διαδρομές με πιστοποιημένους τοπικούς οδηγούς. Πεζοπορία Πάρνηθα, Όλυμπος, Πήλιο, Κρήτη.' :
     'Browse and book upcoming hiking trips Greece, trekking adventures, and hiking events. Explore weekend hiking trips, one day hikes Greece, mountain trekking calendar with verified organizers. Hiking Parnitha, Olympus, Pelion, Crete.',
     image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png',
-    url: 'https://natureexplorers.gr/Calendar',
+    url: 'https://natureexplorers.gr/calendar',
     type: 'website'
   });
 
@@ -44,7 +44,7 @@ export default function CalendarPage() {
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Nature Explorers", "item": "https://natureexplorers.gr/" },
-      { "@type": "ListItem", "position": 2, "name": language === 'el' ? "Ημερολόγιο Εκδρομών" : "Hiking Calendar", "item": "https://natureexplorers.gr/Calendar" }
+      { "@type": "ListItem", "position": 2, "name": language === 'el' ? "Ημερολόγιο Εκδρομών" : "Hiking Calendar", "item": "https://natureexplorers.gr/calendar" }
     ]
   };
 

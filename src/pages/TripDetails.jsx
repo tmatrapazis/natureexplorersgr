@@ -154,7 +154,7 @@ export default function TripDetailsPage() {
       updateMetaTag('keywords', language === 'el' 
         ? `πεζοπορία, ${trip.location}, εκδρομές, ορειβασία, trekking, outdoor activities, ${trip.difficulty}, hiking greece, οργανωμένες εκδρομές βουνού, πεζοπορικές διαδρομές`
         : `hiking, ${trip.location}, trekking, outdoor activities, mountain adventure, ${trip.difficulty}, hiking greece, hiking trips greece, weekend hiking, one day hikes`);
-      const canonicalUrl = `https://natureexplorers.gr/TripDetails?id=${trip.id}`;
+      const canonicalUrl = `https://natureexplorers.gr/tripdetails?id=${trip.id}`;
       updateMetaTag('og:title', tripTitle, true);
       updateMetaTag('og:description', description, true);
       updateMetaTag('og:image', trip.image_url, true);

@@ -111,7 +111,7 @@ export default function OrganizerProfilePage() {
   React.useEffect(() => {
     if (organizer) {
       // Stable canonical URL using slug — consistent across all tags
-      const canonicalUrl = `https://natureexplorers.gr/OrganizerProfile/${organizer.username}`;
+      const canonicalUrl = `https://natureexplorers.gr/organizerprofile/${organizer.username}`;
 
       // Title includes username/slug for brand keyword indexing
       const pageTitle = language === 'el'
@@ -180,7 +180,7 @@ export default function OrganizerProfilePage() {
   }, [organizer, language]);
 
   // Enhanced Structured Data for Organizer
-  const canonicalUrl = organizer ? `https://natureexplorers.gr/OrganizerProfile/${organizer.username}` : null;
+  const canonicalUrl = organizer ? `https://natureexplorers.gr/organizerprofile/${organizer.username}` : null;
 
   const organizerSchema = organizer ? {
     "@context": "https://schema.org",
@@ -224,7 +224,7 @@ export default function OrganizerProfilePage() {
           "itemOffered": {
             "@type": "Event",
             "name": trip.title,
-            "url": `https://natureexplorers.gr/TripDetails?id=${trip.id}`,
+            "url": `https://natureexplorers.gr/tripdetails?id=${trip.id}`,
             "startDate": trip.start_date,
             "location": {
               "@type": "Place",
@@ -243,7 +243,7 @@ export default function OrganizerProfilePage() {
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://natureexplorers.gr/" },
-      { "@type": "ListItem", "position": 2, "name": "Organizers", "item": "https://natureexplorers.gr/OrganizersList" },
+      { "@type": "ListItem", "position": 2, "name": "Organizers", "item": "https://natureexplorers.gr/organizerslist" },
       { "@type": "ListItem", "position": 3, "name": organizer.full_name, "item": canonicalUrl }
     ]
   } : null;

@@ -30,7 +30,7 @@ export default function OrganizersListPage() {
       ? 'Ανακαλύψτε 14+ ομάδες πεζοπορίας και πιστοποιημένους οδηγούς σε όλη την Ελλάδα. Εκδρομές βουνό, trekking & outdoor περιπέτειες. Βρείτε τη σωστή ομάδα για εσάς!'
       : 'Discover 14+ hiking groups and certified guides across Greece. Browse trekking organizers, outdoor leaders and find your perfect hiking team for mountain adventures.',
     image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb4/01040e5a0_logo.png',
-    url: 'https://natureexplorers.gr/OrganizersList',
+    url: 'https://natureexplorers.gr/organizerslist',
     type: 'website'
   });
 
@@ -87,7 +87,7 @@ export default function OrganizersListPage() {
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Nature Explorers", "item": "https://natureexplorers.gr/" },
-      { "@type": "ListItem", "position": 2, "name": language === 'el' ? "Ομάδες Πεζοπορίας" : "Hiking Groups", "item": "https://natureexplorers.gr/OrganizersList" }
+      { "@type": "ListItem", "position": 2, "name": language === 'el' ? "Ομάδες Πεζοπορίας" : "Hiking Groups", "item": "https://natureexplorers.gr/organizerslist" }
     ]
   };
 
@@ -96,12 +96,12 @@ export default function OrganizersListPage() {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "name": language === 'el' ? "Οδηγοί Πεζοπορίας Ελλάδα" : "Hiking Guides & Trip Organizers Greece",
-    "url": "https://natureexplorers.gr/OrganizersList",
+    "url": "https://natureexplorers.gr/organizerslist",
     "numberOfItems": sortedOrganizers.length,
     "itemListElement": sortedOrganizers.map((organizer, index) => ({
       "@type": "ListItem",
       "position": index + 1,
-      "url": `https://natureexplorers.gr/OrganizerProfile/${organizer.username}`,
+      "url": `https://natureexplorers.gr/organizerprofile/${organizer.username}`,
       "name": organizer.full_name
     }))
   } : null;

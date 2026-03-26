@@ -83,7 +83,7 @@ function RoutesWithAnimation() {
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
-          path={`/${path}`}
+          path={`/${path.toLowerCase()}`}
           element={
             <LayoutWrapper currentPageName={path}>
               <Page />
@@ -92,7 +92,7 @@ function RoutesWithAnimation() {
         />
       ))}
       {/* /About is handled above via Pages registry — keeping slug route for /OrganizerProfile/:username */}
-      <Route path="/OrganizerProfile/:username" element={
+      <Route path="/organizerprofile/:username" element={
         <LayoutWrapper currentPageName="OrganizerProfile">
           {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
         </LayoutWrapper>
