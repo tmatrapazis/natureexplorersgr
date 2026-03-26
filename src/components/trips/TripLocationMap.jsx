@@ -41,8 +41,9 @@ export default function TripLocationMap({ trip }) {
         scrollWheelZoom={false}
       >
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; OpenStreetMap contributors'
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          subdomains="abcd"
         />
         <Marker position={[trip.latitude, trip.longitude]} icon={createMarkerIcon()}>
           <Popup>{trip.location}</Popup>
