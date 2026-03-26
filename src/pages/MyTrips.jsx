@@ -223,9 +223,13 @@ export default function MyTripsPage() {
     );
   }
 
+  const today = React.useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
   const { draftTrips, upcomingTrips, happeningTrips, completedTrips, cancelledTrips } = React.useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
     const list = trips || [];
     return {
       draftTrips:     list.filter(t => t.status === 'draft'),
@@ -234,7 +238,7 @@ export default function MyTripsPage() {
       completedTrips: list.filter(t => t.status !== 'cancelled' && t.status !== 'draft' && (t.status === 'completed' || (t.end_date && new Date(t.end_date) < today))),
       cancelledTrips: list.filter(t => t.status === 'cancelled'),
     };
-  }, [trips]);
+  }, [trips, today]);
   const cancellingTripId = /** @type {any} */(cancelTripMutation.variables)?.trip?.id;
 
   const handleRefresh = useCallback(async () => {
