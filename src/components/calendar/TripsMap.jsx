@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Mountain, Maximize, Minimize } from "lucide-react";
+import { Mountain, Maximize, X } from "lucide-react";
 import { format } from "date-fns";
 import { formatPriceForCard } from "../helpers/pricingHelpers";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -133,9 +133,29 @@ function ClusterLayer({ trips, organizerMap, language }) {
   return null;
 }
 
+// Tells Leaflet to recalculate its container size after fullscreen transitions
+function MapResizer({ isFullScreen }) {
+  const map = useMap();
+  useEffect(() => {
+    const timer = setTimeout(() => map.invalidateSize(), 50);
+    return () => clearTimeout(timer);
+  }, [isFullScreen, map]);
+  return null;
+}
+
 export default function TripsMap({ trips, organizerMap }) {
   const { language } = useLanguage();
   const [isFullScreen, setIsFullScreen] = useState(false);
+
+  // Lock body scroll while fullscreen so the background page doesn't scroll
+  useEffect(() => {
+    if (isFullScreen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isFullScreen]);
 
   // Inject markercluster CSS from CDN
   useEffect(() => {
@@ -200,20 +220,18 @@ export default function TripsMap({ trips, organizerMap }) {
               </span>
             ))}
           </div>
-          {/* Full-screen toggle */}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setIsFullScreen(!isFullScreen)}
-            className="h-8 w-8 border-border"
-            aria-label={isFullScreen ? 'Exit full screen' : 'Enter full screen'}
-          >
-            {isFullScreen ? (
-              <Minimize className="w-4 h-4 text-foreground" aria-hidden="true" />
-            ) : (
+          {/* Expand button — only shown when NOT fullscreen, mobile only */}
+          {!isFullScreen && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsFullScreen(true)}
+              className="md:hidden h-8 w-8 border-border"
+              aria-label="Enter full screen"
+            >
               <Maximize className="w-4 h-4 text-foreground" aria-hidden="true" />
-            )}
-          </Button>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -230,7 +248,7 @@ export default function TripsMap({ trips, organizerMap }) {
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             subdomains="abcd"
           />
-          <MapResizer trigger={isFullScreen} />
+          <MapResizer isFullScreen={isFullScreen} />
           {geoTrips.length > 0 && (
             <ClusterLayer trips={geoTrips} organizerMap={organizerMap} language={language} />
           )}
@@ -245,6 +263,19 @@ export default function TripsMap({ trips, organizerMap }) {
               {language === 'el' ? 'Δεν υπάρχουν εκδρομές με γεωγραφικά δεδομένα για την επιλογή σας' : 'No trips with location data for your selection'}
             </p>
           </div>
+        )}
+
+        {/* Floating exit button — visible only in fullscreen mode */}
+        {isFullScreen && (
+          <button
+            onClick={() => setIsFullScreen(false)}
+            style={{ zIndex: 1001 }}
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white text-gray-800 font-semibold text-sm px-5 py-3 rounded-full shadow-lg border border-gray-200 active:scale-95 transition-transform"
+            aria-label="Exit full screen"
+          >
+            <X className="w-4 h-4" aria-hidden="true" />
+            {language === 'el' ? 'Έξοδος' : 'Exit Map'}
+          </button>
         )}
       </div>
     </div>
