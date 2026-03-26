@@ -51,7 +51,7 @@ export default function OrganizerProfilePage() {
         const org = organizers[0];
         // Redirect to new URL format
         if (org?.username) {
-          navigate(`/OrganizerProfile/${org.username}`, { replace: true });
+          navigate(`/organizerprofile/${org.username}`, { replace: true });
         }
         return org;
       }
