@@ -111,8 +111,8 @@ export default function PublicHeader() {
               {t('navigation.refuges')}
             </Link>
             <Link 
-              to="/About" 
-              onClick={handleNavClick("/About")}
+              to="/about" 
+              onClick={handleNavClick("/about")}
               className="text-foreground hover:text-emerald-600 transition-colors font-medium"
               aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
             >
@@ -221,8 +221,8 @@ export default function PublicHeader() {
                     {t('navigation.refuges')}
                   </Link>
                   <Link 
-                    to="/About" 
-                    onClick={handleNavClick("/About")}
+                    to="/about" 
+                    onClick={handleNavClick("/about")}
                     className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
                   >

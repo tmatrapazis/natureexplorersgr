@@ -110,13 +110,13 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
     if (user) {
       const intendedRole = localStorage.getItem('intended_role');
       if (intendedRole && (!user.full_name || !user.phone_number)) {
-        if (!location.pathname.includes('RoleSelection')) {
+        if (!location.pathname.includes('roleselection')) {
           navigate(createPageUrl("RoleSelection"), { replace: true });
         }
         return;
       }
       if (!user.full_name || !user.username) {
-        if (!location.pathname.includes('EditProfile') && !location.pathname.includes('RoleSelection')) {
+        if (!location.pathname.includes('editprofile') && !location.pathname.includes('roleselection')) {
           navigate(createPageUrl("EditProfile"), { replace: true });
         }
       }
@@ -371,7 +371,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
             {user && <NotificationsBell user={user} compact={true} />}
 
             {/* Organizer quick-actions on MyTrips */}
-            {isOrganizer && pathname.includes('/MyTrips') && user && (
+            {isOrganizer && pathname.includes('/mytrips') && user && (
               <div className="flex items-center gap-1">
                 <Button
                   variant="ghost"

@@ -6,7 +6,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { lazyPagesConfig } from './pages.lazy'
-import { BrowserRouter as Router, Route, Routes, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -33,7 +33,7 @@ function LowercaseRedirect() {
   if (lowerPath !== location.pathname) {
     return <Navigate to={lowerPath + location.search + location.hash} replace />;
   }
-  return <Outlet />;
+  return null;
 }
 
 const tabRoutes = [
@@ -84,8 +84,9 @@ function RoutesWithAnimation() {
   const location = useLocation();
 
   return (
-    <Routes location={location}>
-      <Route element={<LowercaseRedirect />}>
+    <>
+      <LowercaseRedirect />
+      <Routes location={location}>
         <Route path="/" element={
           <LayoutWrapper currentPageName={mainPageKey}>
             <MainPage />
@@ -108,8 +109,8 @@ function RoutesWithAnimation() {
           </LayoutWrapper>
         } />
         <Route path="*" element={<PageNotFound />} />
-      </Route>
-    </Routes>
+      </Routes>
+    </>
   );
 }
 

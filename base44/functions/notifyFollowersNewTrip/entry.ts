@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
           user_id: follower.user_id,
           title: `New Trip from ${follower.organizer_name}`,
           message: `${follower.organizer_name} just published a new hiking trip: "${trip.title}". Check it out!`,
-          link: `/TripDetails?id=${trip.id}`,
+          link: `/tripdetails?id=${trip.id}`,
           is_read: false
         })
       );
@@ -77,7 +77,7 @@ Deno.serve(async (req) => {
                 ${trip.difficulty ? `<p style="margin: 5px 0;"><strong>Difficulty:</strong> ${trip.difficulty}</p>` : ''}
               </div>
               
-              <a href="https://natureexplorers.gr/TripDetails?id=${trip.id}" 
+              <a href="https://natureexplorers.gr/tripdetails?id=${trip.id}" 
                  style="display: inline-block; background: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin-top: 10px;">
                 View Trip Details
               </a>
@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
               <p style="color: #6b7280; font-size: 14px;">
                 You're receiving this email because you follow ${follower.organizer_name} on Nature Explorers.
                 <br>
-                To unfollow, visit their <a href="https://natureexplorers.gr/OrganizerProfile/${follower.organizer_username}" style="color: #059669;">profile page</a>.
+                To unfollow, visit their <a href="https://natureexplorers.gr/organizerprofile/${follower.organizer_username}" style="color: #059669;">profile page</a>.
               </p>
             </div>
           `

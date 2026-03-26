@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
     }
 
     const organizer_name = followers[0]?.organizer_name || 'Organizer';
-    const tripLink = `/TripDetails?trip_id=${trip_id}`;
+    const tripLink = `/tripdetails?trip_id=${trip_id}`;
     const fullTripUrl = `https://www.natureexplorers.gr${tripLink}`;
 
     // Format date nicely
