@@ -6,7 +6,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { lazyPagesConfig } from './pages.lazy'
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, Outlet, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -26,11 +26,21 @@ const LoadingFallback = () => (
   </div>
 );
 
+// Redirect any URL with uppercase letters to its lowercase equivalent
+function LowercaseRedirect() {
+  const location = useLocation();
+  const lower = location.pathname.toLowerCase();
+  if (lower !== location.pathname) {
+    return <Navigate to={lower + location.search + location.hash} replace />;
+  }
+  return <Outlet />;
+}
+
 const tabRoutes = [
-  { path: '/Calendar', name: 'Calendar' },
-  { path: '/OrganizersList', name: 'Organizers' },
-  { path: '/Guides', name: 'Guides' },
-  { path: '/GreekRefuges', name: 'Refuges' },
+  { path: '/calendar', name: 'Calendar' },
+  { path: '/organizerslist', name: 'Organizers' },
+  { path: '/guides', name: 'Guides' },
+  { path: '/greekrefuges', name: 'Refuges' },
 ];
 
 const AuthenticatedApp = () => {
@@ -75,29 +85,30 @@ function RoutesWithAnimation() {
 
   return (
     <Routes location={location}>
-      <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
-      } />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path.toLowerCase()}`}
-          element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
-            </LayoutWrapper>
-          }
-        />
-      ))}
-      {/* /About is handled above via Pages registry — keeping slug route for /OrganizerProfile/:username */}
-      <Route path="/organizerprofile/:username" element={
-        <LayoutWrapper currentPageName="OrganizerProfile">
-          {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
-        </LayoutWrapper>
-      } />
-      <Route path="*" element={<PageNotFound />} />
+      <Route element={<LowercaseRedirect />}>
+        <Route path="/" element={
+          <LayoutWrapper currentPageName={mainPageKey}>
+            <MainPage />
+          </LayoutWrapper>
+        } />
+        {Object.entries(Pages).map(([path, Page]) => (
+          <Route
+            key={path}
+            path={`/${path.toLowerCase()}`}
+            element={
+              <LayoutWrapper currentPageName={path}>
+                <Page />
+              </LayoutWrapper>
+            }
+          />
+        ))}
+        <Route path="/organizerprofile/:username" element={
+          <LayoutWrapper currentPageName="OrganizerProfile">
+            {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
+          </LayoutWrapper>
+        } />
+        <Route path="*" element={<PageNotFound />} />
+      </Route>
     </Routes>
   );
 }
