@@ -17,14 +17,14 @@ const BASE_URL = process.env.SITEMAP_URL || 'https://natureexplorers.gr';
 // Static routes for the sitemap
 const STATIC_ROUTES = [
   { loc: '/', priority: 1.0, changefreq: 'daily' },
-  { loc: '/Calendar', priority: 0.9, changefreq: 'daily' },
-  { loc: '/Guides', priority: 0.8, changefreq: 'weekly' },
-  { loc: '/OrganizersList', priority: 0.8, changefreq: 'weekly' },
-  { loc: '/About', priority: 0.8, changefreq: 'monthly' },
-  { loc: '/GreekRefuges', priority: 0.7, changefreq: 'monthly' },
-  { loc: '/PrivacyPolicy', priority: 0.6, changefreq: 'yearly' },
-  { loc: '/CookiePolicy', priority: 0.6, changefreq: 'yearly' },
-  { loc: '/TermsOfUse', priority: 0.6, changefreq: 'yearly' },
+  { loc: '/calendar', priority: 0.9, changefreq: 'daily' },
+  { loc: '/guides', priority: 0.8, changefreq: 'weekly' },
+  { loc: '/organizerslist', priority: 0.8, changefreq: 'weekly' },
+  { loc: '/about', priority: 0.8, changefreq: 'monthly' },
+  { loc: '/greekrefuges', priority: 0.7, changefreq: 'monthly' },
+  { loc: '/privacypolicy', priority: 0.6, changefreq: 'yearly' },
+  { loc: '/cookiepolicy', priority: 0.6, changefreq: 'yearly' },
+  { loc: '/termsofuse', priority: 0.6, changefreq: 'yearly' },
 ];
 
 // Known organizer profile pages (clean slug URLs) — update when new organizers join
@@ -44,7 +44,7 @@ const ORGANIZER_ROUTES = [
   'wade',
   'exploroloco',
 ].map(username => ({
-  loc: `/OrganizerProfile/${username}`,
+  loc: `/organizerprofile/${username}`,
   priority: 0.7,
   changefreq: 'weekly',
 }));
