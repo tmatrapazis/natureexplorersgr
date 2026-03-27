@@ -34,7 +34,7 @@ const CLIENT_NAV = [
 ];
 
 const ORGANIZER_NAV = [
-  { title: "Create Trip", url: createPageUrl("CreateTrip"), icon: PlusCircle },
+  { title: "Create Trip", url: createPageUrl("TripForm"), icon: PlusCircle },
   { title: "My Trips",    url: createPageUrl("MyTrips"),    icon: Map },
   { title: "Edit Profile", url: createPageUrl("EditProfile"), icon: Edit },
 ];
@@ -138,7 +138,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
   }, [setOpenMobile]);
 
   const handleNavigateCreateTrip = useCallback(() => {
-    navigate(createPageUrl("CreateTrip"));
+    navigate(createPageUrl("TripForm"));
   }, [navigate]);
 
   const handleNavigateEditProfile = useCallback(() => {
