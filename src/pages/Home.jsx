@@ -66,20 +66,25 @@ export default function HomePage() {
   const { data: featuredExpeditions = [] } = useQuery({
     queryKey: ['featured-expeditions'],
     queryFn: async () => {
-      const trips = await base44.entities.HikingTrip.list('start_date', 100);
+      const trips = await base44.entities.HikingTrip.list('-start_date', 100);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       
-      return trips.filter(trip => {
+      const futureTrips = trips.filter(trip => {
         if (!trip.start_date) return false;
         const startDate = new Date(trip.start_date);
         startDate.setHours(0, 0, 0, 0);
-        const isUpcoming = trip.status === 'upcoming' || trip.status === 'almost soldout';
-        return startDate > today && isUpcoming && trip.is_promoted === true;
+        return startDate > today && (trip.status === 'upcoming' || trip.status === 'almost soldout');
       });
+      
+      // Stable shuffle using trip ID as seed to avoid reshuffling on re-renders
+      const shuffled = [...futureTrips].sort((a, b) => a.id.localeCompare(b.id));
+      return shuffled.slice(0, 3);
     },
     initialData: [],
   });
+
+
 
   // Fetch organizers for featured trips
   const { data: organizers = [] } = useQuery({
