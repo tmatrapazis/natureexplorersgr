@@ -229,7 +229,7 @@ export default function EditGuideProfilePage() {
           <Button
             variant="ghost"
             onClick={goBack}
-            className="min-h-[44px]"
+            className="hidden md:inline-flex min-h-[44px]"
             aria-label={language === 'el' ? 'Πίσω στο Προφίλ' : 'Back to Profile'}
           >
             <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />

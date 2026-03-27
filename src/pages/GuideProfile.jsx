@@ -193,8 +193,8 @@ export default function GuideProfilePage() {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         
-        {/* Back Button - Upper Left Corner */}
-        <div className="absolute top-4 left-4 z-20">
+        {/* Back Button - Upper Left Corner (desktop only; mobile header handles back) */}
+        <div className="absolute top-4 left-4 z-20 hidden md:block">
           <Button
             variant="outline"
             className="bg-background min-h-[44px]"

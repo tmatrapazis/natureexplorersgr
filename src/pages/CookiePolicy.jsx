@@ -38,7 +38,7 @@ export default function CookiePolicy() {
         {/* Back Navigation */}
         <button
           onClick={goBack}
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors min-h-[44px]"
+          className="hidden md:inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           {language === 'el' ? 'Επιστροφή στην Αρχική' : 'Back to Home'}

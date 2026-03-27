@@ -76,7 +76,7 @@ export default function HikerProfilePage() {
       <div className="max-w-xl mx-auto">
         <Button
           variant="outline"
-          className="mb-6 min-h-[44px]"
+          className="hidden md:inline-flex mb-6 min-h-[44px]"
           onClick={goBack}
           aria-label={t('hiker_profile.back_to_bookings')}
         >

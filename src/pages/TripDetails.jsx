@@ -326,9 +326,9 @@ export default function TripDetailsPage() {
         <StructuredData data={breadcrumbSchema} />
         <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
           <div className="max-w-5xl mx-auto">
-            <Button 
-              variant="outline" 
-              className="mb-6"
+            <Button
+              variant="outline"
+              className="hidden md:inline-flex mb-6"
               aria-label="Go back"
               onClick={handleGoBack}
             >
@@ -463,9 +463,9 @@ export default function TripDetailsPage() {
       <StructuredData data={breadcrumbSchema} />
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-5xl mx-auto">
-          <Button 
-            variant="outline" 
-            className="mb-6"
+          <Button
+            variant="outline"
+            className="hidden md:inline-flex mb-6"
             aria-label="Go back"
             onClick={handleGoBack}
           >

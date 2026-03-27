@@ -7,23 +7,23 @@ import { useTabNavigation } from './TabNavigationContext';
  * Used to populate the back-button label with the previous screen's name.
  */
 const ROUTE_LABELS = {
-  '/Calendar':       'Calendar',
-  '/OrganizersList': 'Organizers',
-  '/Guides':         'Guides',
-  '/GreekRefuges':   'Refuges',
-  '/MyTrips':        'My Trips',
-  '/EditProfile':    'Profile',
-  '/TripDetails':    'Trip',
-  '/OrganizerProfile': 'Organizer',
-  '/GuideProfile':   'Guide Profile',
-  '/CreateTrip':     'Create Trip',
-  '/EditTrip':       'Edit Trip',
-  '/HikerProfile':   'My Bookings',
+  '/calendar':          'Calendar',
+  '/organizerslist':    'Organizers',
+  '/guides':            'Guides',
+  '/greekrefuges':      'Refuges',
+  '/mytrips':           'My Trips',
+  '/editprofile':       'Profile',
+  '/tripdetails':       'Trip',
+  '/organizerprofile':  'Organizer',
+  '/guideprofile':      'Guide Profile',
+  '/createtrip':        'Create Trip',
+  '/edittrip':          'Edit Trip',
+  '/hikerprofile':      'My Bookings',
 };
 
 function labelForPath(path) {
   if (!path) return 'Back';
-  const pathname = path.split('?')[0];
+  const pathname = path.split('?')[0].toLowerCase();
   return ROUTE_LABELS[pathname] ?? 'Back';
 }
 

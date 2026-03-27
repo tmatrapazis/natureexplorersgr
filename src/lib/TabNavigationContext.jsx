@@ -173,7 +173,10 @@ export function TabNavigationProvider({ children, tabRoutes }) {
   // ─── Stable public API (useCallback with ref-based deps) ────────────────────
 
   /**
-   * Navigate to a tab, restoring its last known screen + scroll position.
+   * Navigate to a tab.
+   * - Tapping the CURRENT active tab: always resets to the tab root and clears
+   *   the stack (standard iOS/Android "double-tap to go home" behaviour).
+   * - Tapping a DIFFERENT tab: restores the last visited page within that tab.
    * Stable reference — does NOT change on navigation.
    */
   const navigateToTab = useCallback((tabPath) => {
@@ -182,8 +185,16 @@ export function TabNavigationProvider({ children, tabRoutes }) {
     scrollPositions.current[loc.pathname + loc.search] =
       el === window ? window.scrollY : /** @type {Element} */(el).scrollTop;
 
-    const stack = tabStacksRef.current[tabPath];
-    navigate(stack?.[stack.length - 1] || tabPath);
+    const isCurrentTab = currentTabRef.current === tabPath;
+
+    if (isCurrentTab) {
+      // Reset to root and clear the stack
+      setTabStacks(prev => ({ ...prev, [tabPath]: [tabPath] }));
+      navigate(tabPath);
+    } else {
+      const stack = tabStacksRef.current[tabPath];
+      navigate(stack?.[stack.length - 1] || tabPath);
+    }
   }, [navigate, getScrollEl]);
 
   /**

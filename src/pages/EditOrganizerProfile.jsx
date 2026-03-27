@@ -166,9 +166,9 @@ export default function EditOrganizerProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
-        <Button 
-          variant="outline" 
-          className="mb-6 min-h-[44px]" 
+        <Button
+          variant="outline"
+          className="hidden md:inline-flex mb-6 min-h-[44px]"
           onClick={goBack}
           aria-label={t('common.back')}
         >

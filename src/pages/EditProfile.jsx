@@ -255,7 +255,7 @@ export default function EditProfilePage() {
         {!isNewUser && (
           <Button
             variant="outline"
-            className="mb-6 min-h-[44px]"
+            className="hidden md:inline-flex mb-6 min-h-[44px]"
             onClick={goBack}
             aria-label={language === 'el' ? 'Πίσω' : 'Back'}
           >

@@ -154,7 +154,7 @@ export default function CreateGuideProfilePage() {
         <Button
           variant="ghost"
           onClick={goBack}
-          className="mb-6 min-h-[44px]"
+          className="hidden md:inline-flex mb-6 min-h-[44px]"
           aria-label={language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
         >
           <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
