@@ -81,6 +81,13 @@ export default function HomePage() {
     initialData: [],
   });
 
+  // Fetch organizers for featured trips
+  const { data: organizers = [] } = useQuery({
+    queryKey: ['home-organizers'],
+    queryFn: () => base44.entities.Organizer.list(),
+    initialData: [],
+  });
+
   // Create organizer map
   const organizerMap = React.useMemo(() => {
     const map = {};
