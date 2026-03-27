@@ -16,8 +16,7 @@ const ROUTE_LABELS = {
   '/tripdetails':       'Trip',
   '/organizerprofile':  'Organizer',
   '/guideprofile':      'Guide Profile',
-  '/createtrip':        'Create Trip',
-  '/edittrip':          'Edit Trip',
+  '/tripform':          'Trip Form',   // unified create + edit page
   '/hikerprofile':      'My Bookings',
 };
 

@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { createOptimisticTripCreate, createOptimisticTripUpdate } from '../lib/optimistic-mutations';
 import { useBackNavigation } from '../lib/useBackNavigation';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -66,26 +67,32 @@ export default function TripFormPage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isFormDirty, isEditing]);
 
-  // Notify all followers when a trip is published for the first time
+  // Notify all followers when a trip is published for the first time.
+  // Single source of truth — CreateTrip.jsx intentionally has no notification logic.
   const notifyFollowersOnPublish = async (publishedTrip) => {
+    if (!user?.organizer_code) return;
     try {
       const [follows, organizers] = await Promise.all([
         base44.entities.OrganizerFollow.filter({ organizer_code: user.organizer_code }),
         base44.entities.Organizer.filter({ organizer_code: user.organizer_code }),
       ]);
       if (!follows || follows.length === 0) return;
-      const organizerName = organizers?.[0]?.full_name || user.organizer_code;
+      const organizerName = organizers?.[0]?.full_name || user.full_name || user.username || user.organizer_code;
       await base44.entities.Notification.bulkCreate(
         follows.map(f => ({
           user_id: f.user_id,
-          title: `New trip from ${organizerName}`,
-          message: `"${publishedTrip.title}" has just been published.`,
-          link: `/TripDetails?id=${publishedTrip.id}`,
+          title: language === 'el'
+            ? `Νέα εκδρομή από ${organizerName}`
+            : `New trip from ${organizerName}`,
+          message: `"${publishedTrip.title}"`,
+          // Use lowercase path — matches the app's actual route (LowercaseRedirect)
+          link: `/tripdetails?id=${publishedTrip.id}`,
           is_read: false,
         }))
       );
+      queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
     } catch {
-      // Non-critical — don't block navigation on notification failure
+      // Non-critical — never block navigation on notification failure
     }
   };
 
@@ -95,12 +102,15 @@ export default function TripFormPage() {
       saveDraftRef.current = false;
       return await base44.entities.HikingTrip.create({ ...dataToSave, organizer_code: user.organizer_code });
     },
+    // Optimistic: show trip in My Trips immediately while API call completes
+    ...createOptimisticTripCreate(queryClient, user?.organizer_code),
     onSuccess: async (newTrip) => {
       // Notify followers when organizer publishes a new trip (not a draft)
       if (newTrip.status && newTrip.status !== 'draft') {
         await notifyFollowersOnPublish(newTrip);
       }
       queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+      queryClient.invalidateQueries({ queryKey: ['my-trips', user?.organizer_code] });
       navigate(createPageUrl("MyTrips"));
     },
   });
@@ -111,12 +121,15 @@ export default function TripFormPage() {
       if (!clean.end_date) clean.end_date = clean.start_date;
       return await base44.entities.HikingTrip.update(tripId, clean);
     },
+    // Optimistic: reflect changes in the list immediately
+    ...createOptimisticTripUpdate(queryClient, tripId, user?.organizer_code),
     onSuccess: async (result, variables) => {
       // Notify followers when a draft is promoted to upcoming via the edit form
       if (trip?.status === 'draft' && variables.status === 'upcoming') {
         await notifyFollowersOnPublish({ id: tripId, title: result?.title || variables.title });
       }
       queryClient.invalidateQueries({ queryKey: ['hiking-trips'] });
+      queryClient.invalidateQueries({ queryKey: ['my-trips', user?.organizer_code] });
       queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
       setIsFormDirty(false);
       navigate(createPageUrl("MyTrips"));
