@@ -416,7 +416,7 @@ export default function OrganizerProfilePage() {
                         {language === 'el' ? 'Επεξεργασία Προφίλ' : 'Edit Profile'}
                       </Button>
                     </Link>
-                    <Link to={createPageUrl("CreateTrip")} aria-label={language === 'el' ? 'Δημιουργία Νέας Εκδρομής' : 'Create new trip'}>
+                    <Link to={createPageUrl("TripForm")} aria-label={language === 'el' ? 'Δημιουργία Νέας Εκδρομής' : 'Create new trip'}>
                       <Button className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]" tabIndex={-1}>
                         <PlusCircle className="w-4 h-4 mr-2" aria-hidden="true" />
                         {language === 'el' ? 'Δημιουργία Νέας Εκδρομής' : 'Create New Trip'}
