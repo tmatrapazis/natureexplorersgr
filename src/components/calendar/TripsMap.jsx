@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -183,10 +184,18 @@ export default function TripsMap({ trips, organizerMap }) {
     };
   }, [geoTrips]);
 
-  return (
-    <div className={isFullScreen ? "fixed inset-0 z-50 bg-card" : "rounded-xl overflow-hidden border border-border shadow-sm relative"}>
+  // The map panel — same JSX for both normal and fullscreen, only the wrapper differs
+  const mapPanel = (
+    <div
+      className={
+        isFullScreen
+          ? "flex flex-col bg-background"
+          : "rounded-xl overflow-hidden border border-border shadow-sm relative"
+      }
+      style={isFullScreen ? { position: "fixed", inset: 0, zIndex: 9999 } : undefined}
+    >
       {/* Header */}
-      <div className="bg-card px-4 py-3 border-b border-border flex items-center justify-between flex-wrap gap-2">
+      <div className="bg-card px-4 py-3 border-b border-border flex items-center justify-between flex-wrap gap-2 flex-shrink-0">
         <div className="flex items-center gap-2 flex-wrap">
           <Mountain className="w-4 h-4 text-emerald-600" />
           <span className="font-semibold text-foreground text-sm">
@@ -202,7 +211,7 @@ export default function TripsMap({ trips, organizerMap }) {
           )}
         </div>
         <div className="flex items-center gap-2">
-          {/* Legend */}
+          {/* Difficulty legend */}
           <div className="hidden sm:flex items-center gap-3 text-xs text-muted-foreground">
             {Object.entries(difficultyColors).map(([level, color]) => (
               <span key={level} className="flex items-center gap-1">
@@ -211,7 +220,7 @@ export default function TripsMap({ trips, organizerMap }) {
               </span>
             ))}
           </div>
-          {/* Expand button — only shown when NOT fullscreen, mobile only */}
+          {/* Expand button — mobile only, hidden while fullscreen */}
           {!isFullScreen && (
             <Button
               variant="outline"
@@ -226,13 +235,16 @@ export default function TripsMap({ trips, organizerMap }) {
         </div>
       </div>
 
-      {/* Map */}
-      <div className={isFullScreen ? "h-[calc(100dvh-57px)] w-full relative" : "h-[420px] w-full relative"}>
+      {/* Map area — flex-1 fills all remaining height in fullscreen; fixed px in normal mode */}
+      <div
+        className="relative w-full"
+        style={{ height: isFullScreen ? undefined : "420px", flex: isFullScreen ? "1 1 0" : undefined, minHeight: isFullScreen ? 0 : undefined }}
+      >
         <MapContainer
           center={[38.5, 22.5]}
           zoom={6}
           style={{ height: "100%", width: "100%" }}
-          scrollWheelZoom={false}
+          scrollWheelZoom={isFullScreen}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -244,6 +256,7 @@ export default function TripsMap({ trips, organizerMap }) {
             <ClusterLayer trips={geoTrips} organizerMap={organizerMap} language={language} />
           )}
         </MapContainer>
+
         {geoTrips.length === 0 && (
           <div style={{
             position: "absolute", inset: 0, zIndex: 1000,
@@ -256,19 +269,25 @@ export default function TripsMap({ trips, organizerMap }) {
           </div>
         )}
 
-        {/* Floating exit button — visible only in fullscreen mode */}
+        {/* Floating exit button — only in fullscreen */}
         {isFullScreen && (
           <button
             onClick={() => setIsFullScreen(false)}
-            style={{ zIndex: 1001 }}
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white text-gray-800 font-semibold text-sm px-5 py-3 rounded-full shadow-lg border border-gray-200 active:scale-95 transition-transform"
+            style={{ zIndex: 10000 }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white text-gray-800 font-semibold text-sm px-5 py-3 rounded-full shadow-xl border border-gray-200 active:scale-95 transition-transform min-h-[48px]"
             aria-label="Exit full screen"
           >
-            <X className="w-4 h-4" aria-hidden="true" />
-            {language === 'el' ? 'Έξοδος' : 'Exit Map'}
+            <X className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+            {language === 'el' ? 'Έξοδος από χάρτη' : 'Exit Map'}
           </button>
         )}
       </div>
     </div>
   );
+
+  // Render inside a portal when fullscreen so it escapes Framer Motion's
+  // transform stacking context and truly covers the whole viewport
+  return isFullScreen
+    ? createPortal(mapPanel, document.body)
+    : mapPanel;
 }
