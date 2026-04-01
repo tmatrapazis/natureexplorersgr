@@ -97,7 +97,7 @@ export default function HomePage() {
   const organizerMap = React.useMemo(() => {
     const map = {};
     organizers.forEach(org => {
-      map[org.organizer_code] = org;
+      if (org?.organizer_code) map[org.organizer_code] = org;
     });
     return map;
   }, [organizers]);

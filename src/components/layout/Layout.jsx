@@ -84,7 +84,7 @@ const BottomNav = React.memo(function BottomNav({ publicNav, pathname, navigateT
             aria-current={pathname.includes('/EditProfile') ? 'page' : undefined}
           >
             {user.profile_picture_url ? (
-              <img src={user.profile_picture_url} alt="" className="w-6 h-6 rounded-full object-cover mb-1" />
+              <img src={user.profile_picture_url} alt={`${user.username || 'User'}'s profile picture`} className="w-6 h-6 rounded-full object-cover mb-1" />
             ) : (
               <User className="w-5 h-5 mb-1" aria-hidden="true" />
             )}

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { CheckCircle2, Mountain } from 'lucide-react';
+import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -27,6 +28,9 @@ export default function WelcomeModal({ user, onClose }) {
       onClose();
     } catch (error) {
       console.error('Failed to update user preferences:', error);
+      toast.error(language === 'el'
+        ? 'Αποτυχία αποθήκευσης προτιμήσεων. Παρακαλώ δοκιμάστε ξανά.'
+        : 'Failed to save preferences. Please try again.');
       setIsSubmitting(false);
     }
   };

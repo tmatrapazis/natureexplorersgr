@@ -243,6 +243,15 @@ src/components/trips/TripLocationMap.d.ts
 src/types/react-leaflet.d.ts   # ambient module override for react-leaflet
 ```
 
+### Recent Fixes (April 2026 audit)
+
+- **React.StrictMode re-enabled** — `main.jsx` had `<React.StrictMode>` commented out, suppressing double-render detection and effect-cleanup warnings in development. Re-enabled.
+- **`Booking.list()` null safety** — `MyTrips.jsx` called `.filter()` directly on the API response without guarding against a `null` return. Fixed with `(allB || []).filter(…)`.
+- **`organizer_code` undefined key** — `Home.jsx` organizer map was silently creating a `map[undefined]` entry when `organizer_code` was missing. Added `if (org?.organizer_code)` guard.
+- **Profile image missing alt text** — `Layout.jsx` bottom-nav profile picture had `alt=""`, failing accessibility audits. Changed to `alt="${user.username || 'User'}'s profile picture"`.
+- **WelcomeModal silent failure** — On error, `WelcomeModal.jsx` only logged to console; the user saw nothing and the modal stayed open with no feedback. Added a bilingual `toast.error` call.
+- **postMessage wildcard documented** — Added an inline comment to `main.jsx` explaining that `'*'` is intentional for HMR signals to the Base44 sandbox parent whose origin is unknown at build time.
+
 ### Known Bugs Fixed
 
 - **Calendar price sort** — Sort by price now uses `getLowestPrice()` (respects `pricing_options`); previously used the legacy scalar `trip.price` field only.

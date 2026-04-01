@@ -67,7 +67,7 @@ export default function MyTripsPage() {
       if (!orgTrips || orgTrips.length === 0) return [];
       const tripIds = new Set(orgTrips.map(t => t.id));
       const allB = await base44.entities.Booking.list();
-      return allB.filter(b => tripIds.has(b.trip_id));
+      return (allB || []).filter(b => tripIds.has(b.trip_id));
     },
     enabled: !!user?.organizer_code,
     initialData: [],
