@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/lib/AuthContext';
+import { supabase } from '@/api/supabaseClient';
+
 import { toast } from 'sonner';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -25,10 +27,7 @@ export default function RoleSelectionPage() {
     noindex: true
   });
 
-  const { data: user, isLoading } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-  });
+  const { user, isLoadingAuth: isLoading, refreshUser } = useAuth();
 
   // Check if user already has completed setup
   useEffect(() => {
@@ -55,43 +54,19 @@ export default function RoleSelectionPage() {
 
       
       try {
-        const updatedUser = await base44.auth.updateMe(updates);
+        const { error } = await supabase
+          .from('profiles')
+          .update(updates)
+          .eq('id', user.id);
+        if (error) throw error;
+        await refreshUser();
 
         // Send email notification to admin if user selected organizer role
         if (intendedRole === 'organizer') {
-          try {
-            await base44.integrations.Core.SendEmail({
-              to: 'natureexplorersgr@gmail.com',
-              subject: 'New Organizer Sign-Up Request',
-              body: `
-                <h2>New Organizer Registration</h2>
-                <p>A new user has requested to join as an organizer on Nature Explorers.</p>
-                <hr/>
-                <h3>User Details:</h3>
-                <ul>
-                  <li><strong>Email:</strong> ${user.email}</li>
-                  <li><strong>Name:</strong> ${user.full_name || 'Not provided yet'}</li>
-                  <li><strong>User ID:</strong> ${user.id}</li>
-                  <li><strong>Registration Date:</strong> ${new Date().toLocaleString()}</li>
-                </ul>
-                <p>The user's <strong>intended_role</strong> has been set to <strong>organizer</strong>.</p>
-                <p><strong>Next Steps:</strong></p>
-                <ol>
-                  <li>The user will complete their profile (name, phone, bio, etc.)</li>
-                  <li>To grant them organizer access, you need to assign them an <strong>organizer_code</strong> in the Base44 dashboard (Data → User entity → find user → set organizer_code field to a unique code like "ORG001")</li>
-                  <li>Once they have an organizer_code, they can create and manage trips</li>
-                  <li>They may also request verification (verified badge) later through the app</li>
-                </ol>
-                <p><em>Note: Until you assign them an organizer_code in the dashboard, they will not have organizer permissions.</em></p>
-              `
-            });
-          } catch (error) {
-            console.warn('[RoleSelection] ⚠️ Failed to send admin notification email:', error.message);
-            // Don't throw - email failure shouldn't block the user flow
-          }
+          console.warn('Email sending not yet implemented — will use Supabase Edge Function');
         }
 
-        return updatedUser;
+        return updates;
       } catch (updateError) {
         console.error('[RoleSelection] ❌ User update failed:', updateError);
         throw new Error('Failed to update user role. Please try again.');

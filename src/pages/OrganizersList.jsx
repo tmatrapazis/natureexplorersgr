@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Organizer, HikingTrip } from '@/api/db';
+
 import PullToRefresh from '../components/ui/PullToRefresh';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,13 +37,13 @@ export default function OrganizersListPage() {
 
   const { data: organizers = [], isLoading: organizersLoading } = useQuery({
     queryKey: ['organizers-list'],
-    queryFn: () => base44.entities.Organizer.list(),
+    queryFn: () => Organizer.list(),
     initialData: [],
   });
 
   const { data: allTrips = [], isLoading: tripsLoading } = useQuery({
     queryKey: ['all-upcoming-trips'],
-    queryFn: () => base44.entities.HikingTrip.list(),
+    queryFn: () => HikingTrip.list(),
     initialData: [],
   });
 

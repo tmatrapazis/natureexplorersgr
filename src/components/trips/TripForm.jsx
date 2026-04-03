@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { supabase } from "@/api/supabaseClient";
+import { useAuth } from "@/lib/AuthContext";
+
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Plus, X, Loader2 } from "lucide-react";
 import { useLanguage } from '../contexts/LanguageContext';
@@ -13,6 +14,7 @@ import { useTranslation } from '../translations/useTranslations';
 import LazyQuillEditor from '../lazy/LazyQuillEditor';
 const LazyLocationPicker = React.lazy(() => import('../lazy/LazyLocationPicker'));
 import MobileSelect from '../ui/MobileSelect';
+import { useOrganizerPlan } from '@/lib/useOrganizerPlan';
 
 const availableTags = [
   "beginner-friendly", "sunrise-hike", "sunset-hike", "pet-friendly",
@@ -24,14 +26,16 @@ const availableTags = [
 const emptyTrip = {
   title: "", description: "", start_date: "", end_date: "", location: "",
   latitude: null, longitude: null,
-  difficulty: "moderate", distance_km: 0, elevation_gain_m: 0, total_slots: 10,
+  difficulty: "moderate", distance_km: 0, elevation_gain_m: 0, total_attendees: 10,
   price: 0, pricing_options: [], external_link: "", event_url: "", image_url: "",
   requirements: [], departure_from: [], tags: [], cancel_policy: "", status: "draft"
 };
 
 export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft = undefined, onDirtyChange = undefined, isSubmitting, isEditing = false }) {
+  const { user } = useAuth();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const { isPremium } = useOrganizerPlan();
 
   const [tripData, setTripData] = useState(() => {
     if (!initialData) return emptyTrip;
@@ -42,19 +46,15 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
       end_date: initialData.end_date ? new Date(initialData.end_date).toISOString().split('T')[0] : "",
       requirements: initialData.requirements || [],
       departure_from: initialData.departure_from || [],
-      pricing_options: initialData.pricing_options || [],
+      pricing_options: initialData.pricing_options?.length > 0
+        ? initialData.pricing_options
+        : (initialData.price > 0 ? [{ label: 'Standard', price: initialData.price }] : []),
       tags: initialData.tags || [],
     };
   });
 
-  const [useMultiplePricing, setUseMultiplePricing] = useState(
-    !!(initialData?.pricing_options && initialData.pricing_options.length > 0)
-  );
   const [currentRequirement, setCurrentRequirement] = useState("");
   const [currentDeparture, setCurrentDeparture] = useState("");
-  const [currentPricingLabel, setCurrentPricingLabel] = useState("");
-  const [currentPricingPrice, setCurrentPricingPrice] = useState("");
-  const [currentPricingDescription, setCurrentPricingDescription] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
@@ -66,10 +66,11 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         end_date: initialData.end_date ? new Date(initialData.end_date).toISOString().split('T')[0] : "",
         requirements: initialData.requirements || [],
         departure_from: initialData.departure_from || [],
-        pricing_options: initialData.pricing_options || [],
+        pricing_options: initialData.pricing_options?.length > 0
+          ? initialData.pricing_options
+          : (initialData.price > 0 ? [{ label: 'Standard', price: initialData.price }] : []),
         tags: initialData.tags || [],
       });
-      setUseMultiplePricing(!!(initialData.pricing_options && initialData.pricing_options.length > 0));
     }
   }, [initialData?.id]);
 
@@ -78,10 +79,15 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
     if (onDirtyChange) onDirtyChange(true);
   };
 
-  const handlePricingModeChange = (checked) => {
-    setUseMultiplePricing(checked);
-    if (checked) update('price', 0);
-    else update('pricing_options', []);
+  const addPricingOption = () => {
+    update('pricing_options', [...(tripData.pricing_options || []), { label: '', price: 0 }]);
+  };
+  const removePricingOption = (i) => update('pricing_options', tripData.pricing_options.filter((_, idx) => idx !== i));
+  const updatePricingOption = (i, field, value) => {
+    const updated = tripData.pricing_options.map((opt, idx) =>
+      idx === i ? { ...opt, [field]: field === 'price' ? parseFloat(value) || 0 : value } : opt
+    );
+    update('pricing_options', updated);
   };
 
   const addRequirement = () => {
@@ -107,29 +113,19 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
     );
   };
 
-  const addPricingOption = () => {
-    if (currentPricingLabel.trim() && currentPricingPrice) {
-      update('pricing_options', [...tripData.pricing_options, {
-        label: currentPricingLabel.trim(),
-        price: parseFloat(currentPricingPrice),
-        ...(currentPricingDescription.trim() && { description: currentPricingDescription.trim() })
-      }]);
-      setCurrentPricingLabel(""); setCurrentPricingPrice(""); setCurrentPricingDescription("");
-    }
-  };
-  const removePricingOption = (i) => update('pricing_options', tripData.pricing_options.filter((_, idx) => idx !== i));
-
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setUploadingImage(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      if (!file_url) {
-        toast.error(language === 'el' ? 'Σφάλμα ανέβασμα εικόνας' : 'Error uploading image');
-        return;
-      }
-      update('image_url', file_url);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `trip-${Date.now()}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from('trip-images')
+        .upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('trip-images').getPublicUrl(data.path);
+      update('image_url', publicUrl);
       toast.success(language === 'el' ? 'Εικόνα ανέβηκε με επιτυχία' : 'Image uploaded successfully');
     } catch (error) {
       console.error('Image upload error:', error);
@@ -140,28 +136,43 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
   };
 
   const handleImageGeneration = async () => {
-    setUploadingImage(true);
-    try {
-      const prompt = `Beautiful hiking trail landscape for a ${tripData.difficulty} difficulty hike in ${tripData.location || 'mountains'}, scenic nature photography, high quality`;
-      const result = await base44.integrations.Core.GenerateImage({ prompt });
-      if (!result || !result.url) {
-        toast.error(language === 'el' ? 'Σφάλμα δημιουργίας εικόνας' : 'Error generating image');
-        return;
-      }
-      update('image_url', result.url);
-      toast.success(language === 'el' ? 'Εικόνα δημιουργήθηκε με επιτυχία' : 'Image generated successfully');
-    } catch (error) {
-      console.error('Image generation error:', error);
-      toast.error(language === 'el' ? 'Σφάλμα δημιουργίας εικόνας' : 'Error generating image');
-    } finally {
-      setUploadingImage(false);
-    }
+    setUploadingImage(false);
+    console.warn('Image generation not yet implemented — will use Supabase Edge Function');
+    toast.error(language === 'el' ? 'Η δημιουργία εικόνας δεν είναι ακόμα διαθέσιμη' : 'Image generation not yet available');
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const dataToSubmit = { ...tripData };
     if (!dataToSubmit.end_date) dataToSubmit.end_date = dataToSubmit.start_date;
+    // Normalize pricing: single price → pricing_options tier; keep price in sync for SEO
+    if (!dataToSubmit.pricing_options || dataToSubmit.pricing_options.length === 0) {
+      dataToSubmit.pricing_options = dataToSubmit.price > 0
+        ? [{ label: 'Standard', price: dataToSubmit.price }]
+        : [];
+    }
+    dataToSubmit.price = dataToSubmit.pricing_options[0]?.price ?? 0;
+    // Validate tier slots don't exceed total_attendees
+    const tierSlotsSum = dataToSubmit.pricing_options.reduce((sum, t) => sum + (t.slots || 0), 0);
+    if (tierSlotsSum > 0 && tierSlotsSum > (dataToSubmit.total_attendees || 0)) {
+      toast.error(
+        language === 'el'
+          ? `Το άθροισμα θέσεων ανά κατηγορία (${tierSlotsSum}) υπερβαίνει τις Συνολικές Θέσεις (${dataToSubmit.total_attendees}).`
+          : `Tier slots total (${tierSlotsSum}) exceeds Total Slots (${dataToSubmit.total_attendees}). Please adjust.`
+      );
+      return;
+    }
+    // Initialize `remaining` for each tier that has a slot limit.
+    // Only set it if it's not already present (preserve existing remaining for edits).
+    dataToSubmit.pricing_options = dataToSubmit.pricing_options.map(t =>
+      t.slots > 0 ? { ...t, remaining: t.remaining ?? t.slots } : t
+    );
+    // Auto-sum total_attendees when all tiers have per-tier slot limits
+    const allHaveSlots = dataToSubmit.pricing_options.length > 0 &&
+      dataToSubmit.pricing_options.every(t => t.slots > 0);
+    if (allHaveSlots) {
+      dataToSubmit.total_attendees = dataToSubmit.pricing_options.reduce((sum, t) => sum + t.slots, 0);
+    }
     onSubmit(dataToSubmit);
   };
 
@@ -246,12 +257,19 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         </React.Suspense>
       </div>
 
-      {/* Booking Link */}
-      <div>
-        <Label htmlFor="event_url">{language === 'el' ? 'Σύνδεσμος Κράτησης' : 'Booking Link'}</Label>
-        <Input id="event_url" type="url" value={tripData.event_url || ""} onChange={(e) => update('event_url', e.target.value)}
-          placeholder={language === 'el' ? 'Π.χ. https://example.com/book' : 'e.g. https://example.com/book'} />
-      </div>
+      {/* Booking Link — free plan only; premium uses in-app booking */}
+      {!isPremium && (
+        <div>
+          <Label htmlFor="event_url">{language === 'el' ? 'Σύνδεσμος Κράτησης' : 'Booking Link'}</Label>
+          <p className="text-xs text-muted-foreground mb-1">
+            {language === 'el'
+              ? 'Προσθέστε έναν εξωτερικό σύνδεσμο κράτησης (π.χ. Google Forms, Eventbrite).'
+              : 'Add an external booking link (e.g. Google Forms, Eventbrite). Premium organizers use the built-in booking system instead.'}
+          </p>
+          <Input id="event_url" type="url" value={tripData.event_url || ""} onChange={(e) => update('event_url', e.target.value)}
+            placeholder={language === 'el' ? 'Π.χ. https://example.com/book' : 'e.g. https://example.com/book'} />
+        </div>
+      )}
 
       {/* Difficulty */}
       <div className="grid md:grid-cols-2 gap-4">
@@ -285,65 +303,132 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
       </div>
 
       {/* Pricing */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
           <Label>{language === 'el' ? 'Τιμολόγηση' : 'Pricing'}</Label>
-          <div className="flex items-center gap-2">
-            <Label htmlFor="pricing-mode" className="text-sm font-normal">
-              {language === 'el' ? 'Πολλαπλές επιλογές τιμών' : 'Multiple pricing options'}
-            </Label>
-            <Switch 
-              id="pricing-mode" 
-              checked={useMultiplePricing} 
-              onCheckedChange={handlePricingModeChange}
-              aria-label={language === 'el' ? 'Ενεργοποίηση πολλαπλών επιλογών τιμών' : 'Enable multiple pricing options'}
-            />
-          </div>
+          <span className="text-xs text-muted-foreground">
+            {language === 'el' ? 'Προσθέστε μία ή περισσότερες επιλογές τιμής' : 'Add one or more price options'}
+          </span>
         </div>
-        {useMultiplePricing ? (
-          <>
-            <p className="text-xs text-muted-foreground mb-2">
-              {language === 'el' ? 'Προσθέστε διαφορετικές κατηγορίες τιμών (π.χ. Κανονική, Early Bird, Φοιτητική)' : 'Add different pricing categories (e.g., Standard, Early Bird, Student)'}
-            </p>
-            <div className="flex flex-col md:grid md:grid-cols-12 gap-2 mb-2">
-              <Input aria-label={language === 'el' ? 'Κατηγορία τιμής' : 'Pricing label'} placeholder={language === 'el' ? 'Κατηγορία' : 'Label'} value={currentPricingLabel} onChange={(e) => setCurrentPricingLabel(e.target.value)} className="md:col-span-3" />
-              <Input aria-label={language === 'el' ? 'Τιμή' : 'Price'} type="number" min="0" step="0.01" placeholder={language === 'el' ? 'Τιμή' : 'Price'} value={currentPricingPrice} onChange={(e) => setCurrentPricingPrice(e.target.value)} className="md:col-span-2" />
-              <Input aria-label={language === 'el' ? 'Περιγραφή τιμής' : 'Pricing description'} placeholder={language === 'el' ? 'Περιγραφή (προαιρετικό)' : 'Description (optional)'} value={currentPricingDescription} onChange={(e) => setCurrentPricingDescription(e.target.value)} className="md:col-span-6" />
-              <Button 
-                type="button" 
-                onClick={addPricingOption} 
-                variant="outline" 
-                className="md:col-span-1 min-h-[44px] min-w-[44px]"
-                aria-label={language === 'el' ? 'Προσθήκη επιλογής τιμής' : 'Add pricing option'}
-              >
-                <Plus className="w-4 h-4" />
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {tripData.pricing_options.map((option, i) => (
-                <div key={i} className="flex items-center justify-between bg-muted/30 p-3 rounded">
-                  <div className="flex-1">
-                    <span className="font-medium text-sm">{option.label}: €{option.price}</span>
-                    {option.description && <p className="text-xs text-muted-foreground">{option.description}</p>}
-                  </div>
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => removePricingOption(i)} 
-                    className="min-h-[44px] min-w-[44px]"
-                    aria-label={`${language === 'el' ? 'Αφαίρεση' : 'Remove'} ${option.label}`}
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </>
+
+        {(tripData.pricing_options || []).length === 0 ? (
+          /* Single price mode */
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground w-6">€</span>
+            <Input
+              id="single-price"
+              type="number"
+              min="0"
+              step="0.01"
+              value={tripData.price || 0}
+              onChange={(e) => update('price', parseFloat(e.target.value) || 0)}
+              className="w-36"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="min-h-[44px] text-xs"
+              onClick={() => update('pricing_options', [
+                { label: language === 'el' ? 'Κανονική' : 'Standard', price: tripData.price || 0 }
+              ])}
+            >
+              <Plus className="w-3 h-3 mr-1" />
+              {language === 'el' ? 'Προσθήκη κατηγοριών' : 'Add tiers'}
+            </Button>
+          </div>
         ) : (
-          <div>
-            <Label htmlFor="single-price">{t('create_trip.price_per_person')}</Label>
-            <Input id="single-price" type="number" min="0" step="0.01" value={tripData.price || 0} onChange={(e) => update('price', parseFloat(e.target.value))} />
+          /* Multiple pricing tiers — inline editable rows */
+          <div className="space-y-2">
+            <div className="grid grid-cols-[1fr_6rem_5rem_2.5rem] gap-2 px-1">
+              <span className="text-xs text-muted-foreground">{language === 'el' ? 'Κατηγορία' : 'Label'}</span>
+              <span className="text-xs text-muted-foreground">{language === 'el' ? 'Τιμή' : 'Price'}</span>
+              <span className="text-xs text-muted-foreground">{language === 'el' ? 'Θέσεις' : 'Slots'}</span>
+              <span />
+            </div>
+            {tripData.pricing_options.map((option, i) => (
+              <div key={i} className="grid grid-cols-[1fr_6rem_5rem_2.5rem] items-center gap-2">
+                <Input
+                  aria-label={language === 'el' ? 'Κατηγορία' : 'Label'}
+                  placeholder={language === 'el' ? 'π.χ. Κανονική, Early Bird…' : 'e.g. Standard, Early Bird…'}
+                  value={option.label}
+                  onChange={(e) => updatePricingOption(i, 'label', e.target.value)}
+                />
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">€</span>
+                  <Input
+                    aria-label={language === 'el' ? 'Τιμή' : 'Price'}
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={option.price}
+                    onChange={(e) => updatePricingOption(i, 'price', e.target.value)}
+                    className="pl-7"
+                  />
+                </div>
+                <Input
+                  aria-label={language === 'el' ? 'Θέσεις' : 'Slots'}
+                  type="number"
+                  min="1"
+                  placeholder="∞"
+                  value={option.slots || ''}
+                  onChange={(e) => updatePricingOption(i, 'slots', e.target.value ? parseInt(e.target.value) : null)}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    if (tripData.pricing_options.length === 1) {
+                      update('price', option.price || 0);
+                      update('pricing_options', []);
+                    } else {
+                      removePricingOption(i);
+                    }
+                  }}
+                  className="min-h-[44px] min-w-[44px] text-muted-foreground hover:text-destructive"
+                  aria-label={language === 'el' ? 'Αφαίρεση' : 'Remove'}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addPricingOption}
+              className="min-h-[44px] text-xs w-full"
+            >
+              <Plus className="w-3 h-3 mr-1" />
+              {language === 'el' ? 'Προσθήκη επιλογής' : 'Add option'}
+            </Button>
+            {(() => {
+              const tierSlotsSum = tripData.pricing_options.reduce((sum, t) => sum + (t.slots || 0), 0);
+              const totalSlots = tripData.total_attendees || 0;
+              const hasAnyTierSlots = tripData.pricing_options.some(t => t.slots > 0);
+              if (!hasAnyTierSlots) {
+                return (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {language === 'el'
+                      ? 'Αφήστε τις θέσεις κενές για απεριόριστη διαθεσιμότητα ανά κατηγορία.'
+                      : 'Leave slots blank for no per-tier limit.'}
+                  </p>
+                );
+              }
+              const isOver = tierSlotsSum > totalSlots;
+              return (
+                <p className={`text-xs mt-1 ${isOver ? 'text-red-500 font-medium' : 'text-muted-foreground'}`}>
+                  {isOver
+                    ? (language === 'el'
+                        ? `Το άθροισμα θέσεων ανά κατηγορία (${tierSlotsSum}) υπερβαίνει τις Συνολικές Θέσεις (${totalSlots}).`
+                        : `Tier slots total (${tierSlotsSum}) exceeds Total Slots (${totalSlots}).`)
+                    : (language === 'el'
+                        ? `Άθροισμα θέσεων: ${tierSlotsSum} / ${totalSlots}`
+                        : `Tier slots: ${tierSlotsSum} / ${totalSlots}`)}
+                </p>
+              );
+            })()}
           </div>
         )}
       </div>
@@ -351,7 +436,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
       {/* Total Slots */}
       <div>
         <Label htmlFor="slots">{t('create_trip.total_slots')}</Label>
-        <Input id="slots" type="number" min="1" value={tripData.total_slots || 10} onChange={(e) => update('total_slots', parseInt(e.target.value))} />
+        <Input id="slots" type="number" min="1" value={tripData.total_attendees || 10} onChange={(e) => update('total_attendees', parseInt(e.target.value))} />
       </div>
 
       {/* Cancellation Policy */}

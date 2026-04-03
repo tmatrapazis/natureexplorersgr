@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Profile } from '@/api/db';
+import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle, Loader2 } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+
 import { toast } from 'sonner';
 
 /**
@@ -24,6 +26,7 @@ import { toast } from 'sonner';
  * - Step 3: Final confirmation before permanent deletion
  */
 export default function DeleteAccountDialog({ user, language = 'en' }) {
+  const { logout } = useAuth();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [confirmText, setConfirmText] = useState('');
@@ -47,11 +50,11 @@ export default function DeleteAccountDialog({ user, language = 'en' }) {
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      await base44.entities.User.delete(user.id);
-      toast.success(language === 'el' 
-        ? 'Ο λογαριασμός διαγράφηκε επιτυχώς' 
+      await Profile.delete(user.id);
+      toast.success(language === 'el'
+        ? 'Ο λογαριασμός διαγράφηκε επιτυχώς'
         : 'Account deleted successfully');
-      await base44.auth.logout();
+      await logout();
     } catch (error) {
       console.error('Account deletion failed:', error);
       toast.error(language === 'el' 

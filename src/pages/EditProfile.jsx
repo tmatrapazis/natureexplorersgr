@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/lib/AuthContext';
+import { supabase } from '@/api/supabaseClient';
+
 import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
@@ -33,19 +35,20 @@ export default function EditProfilePage() {
     noindex: true
   });
 
-  const { data: user, isLoading: userLoading } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-    staleTime: Infinity,
-  });
+  const { user, isLoadingAuth: userLoading, refreshUser } = useAuth();
 
   const [formData, setFormData] = useState({
+    full_name: '',
     username: '',
     profile_picture_url: '',
     phone_number: '',
+    date_of_birth: '',
     training_status: '',
+    blood_type: '',
     health_status: '',
     medical_needs: '',
+    dietary_requirements: '',
+    emergency_contact_name: '',
     emergency_contact_number: '',
     certification_files: [],
     bank_accounts: [],
@@ -69,12 +72,17 @@ export default function EditProfilePage() {
       setIsNewUser(newUser);
 
       setFormData({
+        full_name: user.full_name || '',
         username: user.username || '',
         profile_picture_url: user.profile_picture_url || '',
         phone_number: user.phone_number || '',
+        date_of_birth: user.date_of_birth || '',
         training_status: user.training_status || '',
+        blood_type: user.blood_type || '',
         health_status: user.health_status || '',
         medical_needs: user.medical_needs || '',
+        dietary_requirements: user.dietary_requirements || '',
+        emergency_contact_name: user.emergency_contact_name || '',
         emergency_contact_number: user.emergency_contact_number || '',
         certification_files: user.certification_files || [],
         bank_accounts: user.bank_accounts || [],
@@ -85,17 +93,16 @@ export default function EditProfilePage() {
 
   const updateProfileMutation = useMutation({
     mutationFn: async (/** @type {any} */ updatedData) => {
-      try {
-        return await base44.auth.updateMe(updatedData);
-      } catch (error) {
-        throw error;
-      }
+      const { data, error } = await supabase
+        .from('profiles')
+        .update(updatedData)
+        .eq('id', user.id)
+        .select()
+        .single();
+      if (error) throw error;
+      await refreshUser();
+      return data;
     },
-    ...createOptimisticUpdate(
-      queryClient,
-      ['current-user'],
-      (old, updatedData) => ({ ...old, ...updatedData })
-    ),
     onError: (/** @type {any} */ err) => {
       const errorMessage = err.message || 'Failed to update profile';
       if (err.status === 400) {
@@ -131,11 +138,14 @@ export default function EditProfilePage() {
 
     setIsUploading(true);
     try {
-      const response = await base44.integrations.Core.UploadFile({ file });
-      if (!response || !response.file_url) {
-        throw new Error('Upload response missing file_url');
-      }
-      setFormData(prev => ({ ...prev, profile_picture_url: response.file_url }));
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from('profile-images')
+        .upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('profile-images').getPublicUrl(data.path);
+      setFormData(prev => ({ ...prev, profile_picture_url: publicUrl }));
       toast.success(language === 'el' ? 'Η εικόνα ανέβηκε με επιτυχία' : 'Image uploaded successfully');
     } catch (error) {
       toast.error(language === 'el'
@@ -152,13 +162,16 @@ export default function EditProfilePage() {
 
     setIsUploading(true);
     try {
-      const response = await base44.integrations.Core.UploadFile({ file });
-      if (!response || !response.file_url) {
-        throw new Error('Upload response missing file_url');
-      }
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-cert-${Date.now()}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from('guide-documents')
+        .upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('guide-documents').getPublicUrl(data.path);
       setFormData(prev => ({
         ...prev,
-        certification_files: [...prev.certification_files, response.file_url]
+        certification_files: [...prev.certification_files, publicUrl]
       }));
       toast.success(language === 'el' ? 'Το αρχείο ανέβηκε με επιτυχία' : 'File uploaded successfully');
     } catch (error) {
@@ -297,6 +310,15 @@ export default function EditProfilePage() {
                   <Input id="email" value={user?.email || ''} disabled required />
                 </div>
                 <div>
+                  <Label htmlFor="full_name">Full Name</Label>
+                  <Input
+                    id="full_name"
+                    value={formData.full_name}
+                    onChange={handleInputChange}
+                    placeholder="Your full name"
+                  />
+                </div>
+                <div>
                   <Label htmlFor="username">Username *</Label>
                   <Input
                     id="username"
@@ -317,6 +339,16 @@ export default function EditProfilePage() {
                     onChange={handleInputChange}
                   />
                   <p className="text-xs text-muted-foreground mt-1">Numbers only</p>
+                </div>
+                <div>
+                  <Label htmlFor="date_of_birth">Date of Birth</Label>
+                  <Input
+                    id="date_of_birth"
+                    type="date"
+                    value={formData.date_of_birth}
+                    onChange={handleInputChange}
+                    max={new Date().toISOString().split('T')[0]}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -348,12 +380,44 @@ export default function EditProfilePage() {
                     />
                   </div>
                   <div>
+                    <Label htmlFor="blood_type">Blood Type</Label>
+                    <MobileSelect
+                      value={formData.blood_type}
+                      onValueChange={(value) => handleSelectChange('blood_type', value)}
+                      options={[
+                        { value: 'A+',  label: 'A+' },
+                        { value: 'A-',  label: 'A-' },
+                        { value: 'B+',  label: 'B+' },
+                        { value: 'B-',  label: 'B-' },
+                        { value: 'AB+', label: 'AB+' },
+                        { value: 'AB-', label: 'AB-' },
+                        { value: 'O+',  label: 'O+' },
+                        { value: 'O-',  label: 'O-' },
+                      ]}
+                      placeholder="Select your blood type"
+                      label="Blood Type"
+                    />
+                  </div>
+                  <div>
                     <Label htmlFor="health_status">General Health</Label>
                     <Textarea id="health_status" placeholder="Any general conditions an organizer should know about? (e.g., 'Good overall health, no issues.')" value={formData.health_status} onChange={handleInputChange} />
                   </div>
                   <div>
                     <Label htmlFor="medical_needs">Allergies & Medical Needs</Label>
                     <Textarea id="medical_needs" placeholder="List any allergies (e.g., bees, nuts), medical conditions, or important medications." value={formData.medical_needs} onChange={handleInputChange} />
+                  </div>
+                  <div>
+                    <Label htmlFor="dietary_requirements">Dietary Requirements</Label>
+                    <Textarea id="dietary_requirements" placeholder="e.g., vegetarian, vegan, gluten-free, halal — relevant for multi-day trips with meals." value={formData.dietary_requirements} onChange={handleInputChange} rows={2} />
+                  </div>
+                  <div>
+                    <Label htmlFor="emergency_contact_name">Emergency Contact Name</Label>
+                    <Input
+                      id="emergency_contact_name"
+                      placeholder="Name of a trusted contact (e.g., spouse, parent)"
+                      value={formData.emergency_contact_name}
+                      onChange={handleInputChange}
+                    />
                   </div>
                   <div>
                     <Label htmlFor="emergency_contact_number">Emergency Contact Number</Label>

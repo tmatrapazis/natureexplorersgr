@@ -1,200 +1,329 @@
 # Nature Explorers
 
-Nature Explorers is a React + Vite web application for discovering and managing hiking trips in Greece.  
-It supports two primary personas:
+Nature Explorers is a React + Vite web application for discovering and booking hiking trips in Greece. It serves three distinct user personas:
 
-- Hikers (`user`): browse trips, view details, and manage bookings.
-- Organizers (`user`): create/manage trips, maintain organizer profiles, and handle participant communication.
+- **Visitors** (anonymous): browse trips, organizer profiles, guides, and refuges.
+- **Hikers** (authenticated): submit booking requests, track their bookings, and follow organizers.
+- **Organizers** (authenticated): create and publish trips, manage participant bookings, and view revenue analytics.
 
-The app is built on top of the Base44 SDK for authentication, entity CRUD, file uploads, and integrations.
+Backend is powered by Supabase (PostgreSQL + Auth + RLS). Server state is managed with TanStack Query v5.
 
-## What This App Does
+---
 
-- Public trip discovery:
-  - Home landing page with featured trips and SEO content
-  - Calendar view with filtering and monthly browsing
-  - Trip details pages and organizer profile pages
-  - Organizer and mountain guide directories
-  - Greek mountain refuges map + list
-- Authenticated user workflows:
-  - Role selection for new users (hiker vs organizer intent)
-  - Profile completion/editing
-  - Hiker booking tracking (`MyBookings`, `MyProfile`)
-  - Organizer trip management (`CreateTrip`, `EditTrip`, `MyTrips`)
-  - Organizer verification request flow
-- Platform capabilities:
-  - Bilingual UI (`en`, `el`)
-  - GA4 tracking hooks
-  - Cookie consent management
-  - Structured data (schema.org) on major SEO pages
+## User Journeys
+
+### 1. Anonymous Visitor
+
+```
+Home (featured trips, SEO landing)
+  └─ Calendar (filter by date / difficulty / tag)
+       └─ TripDetails (full trip info, pricing, map)
+            └─ OrganizerProfile (organizer bio, all trips, follow)
+                 └─ Login / Register (redirect after intent)
+```
+
+Key behaviors:
+- All public pages are fully rendered without authentication.
+- TripDetails shows a booking button if the organizer is active premium, or an external link for free-tier organizers.
+- Attempting to book or follow redirects to login with a `?redirect=` param so the user lands back on the same page after auth.
+
+---
+
+### 2. New User Registration
+
+```
+Register (Supabase Auth)
+  └─ RoleSelection (hiker or organizer intent)
+       ├─ [hiker] → EditProfile (complete profile) → Home
+       └─ [organizer] → EditOrganizerProfile (complete organizer profile) → MyTrips
+```
+
+- Role selection runs once; after the profile has an `organizer_code` the user is treated as an organizer app-wide.
+- Organizers start on the Free plan automatically. No manual DB setup is needed.
+
+---
+
+### 3. Hiker Journey
+
+```
+Browse (Home / Calendar)
+  └─ TripDetails
+       ├─ [premium organizer] Book Now → BookingForm modal
+       │    └─ Submit request → status: pending
+       │         └─ Organizer confirms → Notification → status: confirmed
+       │              └─ Pay organizer (offline) → status: paid
+       └─ [free organizer]  External booking link (Google Forms, Eventbrite, etc.)
+
+MyBookings
+  └─ View all booking statuses (pending / confirmed / paid / declined / cancelled)
+```
+
+- Hikers cannot see other hikers' bookings (RLS-enforced).
+- Cancellation by the organizer triggers a notification and frees the slot.
+
+---
+
+### 4. Organizer Journey — Free Plan
+
+```
+TripForm → create trip (external booking link field visible)
+MyTrips → list own trips, view draft / upcoming / past
+  └─ [trip card] Edit / Cancel / Duplicate trip
+EditOrganizerProfile → set bio, payment instructions, social links
+RequestVerification → submit documents to become a verified organizer
+OrganizerPlans → view Free vs Premium features → request upgrade
+```
+
+Free plan features:
+- Unlimited trip creation and publication.
+- Public organizer profile with follower count.
+- External booking link per trip (Google Forms, Eventbrite, etc.).
+- Trip analytics (view count) — read only.
+
+Premium-locked features show an `UpgradePrompt` card with a link to `OrganizerPlans`.
+
+---
+
+### 5. Organizer Journey — Premium Plan
+
+Everything in the Free plan, plus:
+
+```
+TripForm → external booking link hidden; in-app booking is automatic
+MyTrips → Bookings tab → BookingList per active trip
+ManageBookings → full cross-trip booking dashboard
+  └─ BookingCard (per booking)
+       ├─ Approve → status: confirmed → notify hiker (with payment instructions)
+       ├─ Decline → status: declined → notify hiker (with optional reason)
+       └─ Mark as Paid → status: paid → notify hiker
+
+TripDetails (as a hiker) → "Book Now" button active
+OrganizerAnalytics → revenue KPIs, monthly bar chart, status pie chart, top trips
+```
+
+Per-tier slot tracking:
+- Each pricing tier can have a `slots` limit set in TripForm.
+- `pricing_options[].remaining` is decremented on confirm, restored on decline/cancel.
+- `BookingForm` and `TripDetails` read `remaining` directly — no extra query, no RLS issues.
+
+---
+
+### 6. Plan Expiry Journey
+
+When `plan_expires_at` passes (organizer stays on `plan = 'premium'` in DB):
+
+```
+TripDetails (hiker view)
+  └─ "Book Now" button hidden
+       ├─ [has event_url] → external link shown instead
+       └─ [no event_url] → "Booking temporarily unavailable"
+
+ManageBookings / MyTrips Bookings tab
+  └─ Amber banner: "Your Premium plan has expired"
+       └─ [Renew] → OrganizerPlans
+  └─ Existing bookings fully accessible (confirm / decline / mark paid all work)
+
+OrganizerAnalytics → UpgradePrompt (access gated)
+```
+
+Key distinction: `isExpired` (was premium, now lapsed) vs `!isPremium` (never had premium). Only the latter shows `UpgradePrompt`; the former preserves access to existing booking data.
+
+---
 
 ## Tech Stack
 
-- Runtime: React 18, React Router, Vite 6
-- Data/Auth: `@base44/sdk`
-- Server state: `@tanstack/react-query`
-- UI: Tailwind CSS + shadcn/ui (Radix primitives)
-- Forms/validation: react-hook-form, zod (available in deps)
-- Maps: `react-leaflet`
-- SEO/analytics: custom `useSEO`, GA4 helper
-- Date/time: `date-fns`, `date-fns-tz`, `moment-timezone`
+| Layer | Library |
+|---|---|
+| Runtime | React 18, React Router v7, Vite 6 |
+| Backend / Auth | Supabase (PostgreSQL + Auth + RLS) |
+| Server state | TanStack Query v5 |
+| UI primitives | Tailwind CSS, shadcn/ui (Radix UI) |
+| Charts | Recharts 2 |
+| Maps | react-leaflet, leaflet.markercluster |
+| Rich text editor | react-quill (lazy-loaded) |
+| Drawer/mobile UI | Vaul |
+| Animations | Framer Motion |
+| Date utilities | date-fns, date-fns-tz |
+| Notifications (toast) | sonner |
+| SEO / analytics | custom `useSEO`, GA4 (`G-JZQZ0VT8XK`) |
+
+---
 
 ## Project Structure
 
-```text
-src/
-  api/                    # Base44 client + entity/integration exports
-  components/
-    analytics/            # Google Analytics integration
-    calendar/             # Calendar subcomponents
-    contexts/             # Language context + outdated TabNavigationContext duplicate (see Notes)
-    cookie/               # Cookie consent banner/preferences
-    guides/               # Guide cards/share
-    helpers/              # Domain helpers (trip, booking, pricing, timezone)
-    layout/               # Header/footer/nav/notifications
-    seo/                  # SEO hooks + structured data component
-    translations/         # en/el dictionaries + translator helper
-    ui/                   # shadcn/ui components
-  lib/
-    AuthContext.jsx           # Auth + app public settings flow
-    TabNavigationContext.jsx  # Tab-aware navigation stacks (canonical — import from here)
-    NavigationTracker.jsx     # URL sync + app log tracking
-    query-client.js           # React Query client config
-    optimistic-mutations.js   # Reusable optimistic update helpers for React Query
-    app-params.js             # Runtime app params from URL/env/localStorage
-  pages/                  # Route pages
-  Layout.jsx              # Active app layout wrapper from pages.config
-  pages.config.js         # Auto-generated page registry + main page
 ```
+src/
+  api/
+    supabaseClient.js         # Supabase client singleton
+    db.js                     # Data access layer (replaces base44.entities.*)
+  components/
+    analytics/                # Google Analytics loader + event tracker
+    bookings/                 # BookingForm, BookingCard, BookingList
+    calendar/                 # TripsList, TripFilters, TripsMap, PromotedTrip
+    contexts/                 # LanguageContext (canonical import here)
+    cookie/                   # Cookie consent banner + preferences
+    guides/                   # Guide cards + share
+    helpers/                  # Domain helpers:
+                              #   tripHelpers    — computed trip status
+                              #   bookingHelpers — booking stats
+                              #   pricingHelpers — multi-tier pricing
+                              #   dateHelpers    — Athens timezone formatting
+                              #   timezoneHelpers
+    layout/                   # Header, footer, nav, NotificationsBell, PageWrapper
+    organizers/               # FollowButton, OrganizerTripCard
+    seo/                      # useSEO hook + StructuredData component
+    translations/             # en.jsx, el.jsx, useTranslations.jsx
+    trips/                    # TripForm, TripCard, TripLocationMap
+    ui/                       # shadcn/ui components + MobileSelect, PullToRefresh
+    upgrade/                  # UpgradePrompt component
+  lib/
+    AuthContext.jsx            # Auth state + boot flow
+    useOrganizerPlan.js        # isPremium / isExpired hook
+    TabNavigationContext.jsx   # Tab-aware navigation stacks (canonical)
+    NavigationTracker.jsx      # URL sync
+    query-client.js            # React Query client config
+    optimistic-mutations.js    # Shared optimistic update helpers
+  pages/                      # Route pages (one file per route)
+  pages.lazy.js               # React.lazy() registry — used by App.jsx
+  pages.config.js             # Auto-generated eager registry (not used at runtime)
+  App.jsx                     # Router + Suspense wrapper
+  Layout.jsx                  # Layout router shim
+```
+
+---
 
 ## Routing
 
-Routes are auto-registered in `src/pages.config.js`, then mounted in `src/App.jsx`.
+The app uses `pages.lazy.js` exclusively at runtime (code-split chunks via `React.lazy`). `pages.config.js` is auto-generated but not loaded.
 
-- Root route: `/` -> `Home`
-- Named routes use page keys (case-insensitive in practice):
-  - `/calendar`
-  - `/createtrip`
-  - `/edittrip` (expects `?id=<tripId>`)
-  - `/tripdetails` (expects `?id=<tripId>`)
-  - `/organizerprofile/:username` (preferred slug-based URL)
-- `/organizerprofile` (legacy; expects `?code=<organizerCode>`; auto-redirects to slug URL if organizer has a username)
-  - `/guides`
-  - `/guideprofile` (expects `?id=<guideId>`)
-  - `/createguideprofile`
-  - `/editguideprofile` (expects `?id=<guideId>`)
-  - `/mytrips`
-  - `/mybookings`
-  - `/myprofile`
-  - `/editprofile`
-  - `/editorganizerprofile`
-  - `/hikerprofile` (expects `?id=<userId>` and optionally `tripId`)
-  - `/organizerslist`
-  - `/requestverification`
-  - `/roleselection`
-  - `/greekrefuges`
-  - `/termsofuse`
-  - `/tempimageuploader`
+| Path | Page | Auth required |
+|---|---|---|
+| `/` | Home | No |
+| `/calendar` | Calendar | No |
+| `/tripdetails?id=` | TripDetails | No (booking requires auth) |
+| `/organizerprofile?code=` | OrganizerProfile | No |
+| `/organizerslist` | OrganizersList | No |
+| `/guides` | Guides | No |
+| `/guideprofile?id=` | GuideProfile | No |
+| `/greekrefuges` | GreekRefuges | No |
+| `/termsofuse` | TermsOfUse | No |
+| `/privacypolicy` | PrivacyPolicy | No |
+| `/cookiepolicy` | CookiePolicy | No |
+| `/about` | About | No |
+| `/roleselection` | RoleSelection | Yes |
+| `/editprofile` | EditProfile | Yes |
+| `/mybookings` | MyBookings | Yes (hiker) |
+| `/hikerprofile?id=` | HikerProfile | Yes |
+| `/mytrips` | MyTrips | Yes (organizer) |
+| `/tripform` | TripForm | Yes (organizer) |
+| `/edittrip?id=` | EditTrip | Yes (organizer) |
+| `/managebookings` | ManageBookings | Yes (organizer, premium) |
+| `/organizeranalytics` | OrganizerAnalytics | Yes (organizer, premium) |
+| `/organizerplans` | OrganizerPlans | Yes (organizer) |
+| `/editorganizerprofile` | EditOrganizerProfile | Yes (organizer) |
+| `/requestverification` | RequestVerification | Yes (organizer) |
+| `/createguideprofile` | CreateGuideProfile | Yes |
+| `/editguideprofile?id=` | EditGuideProfile | Yes |
 
-## Auth and App Boot Flow
+---
 
-Authentication and app readiness are controlled by:
+## Data Layer (`src/api/db.js`)
 
-- `src/lib/AuthContext.jsx`
-- `src/lib/app-params.js`
+All database access goes through plain async functions that throw on error. No direct Supabase calls outside this file (except Realtime subscriptions in MyTrips).
 
-At startup, the app:
+| Object | Table | Key methods |
+|---|---|---|
+| `HikingTrip` | `hiking_trips` | `list`, `filter`, `get`, `create`, `update`, `delete` |
+| `Organizer` | `organizers` | `list`, `filter`, `create`, `update`, `updatePlan` |
+| `Booking` | `bookings` | `list`, `filter`, `filterByTripIds`, `create`, `update`, `delete`, `getTierAvailability` |
+| `Notification` | `notifications` | `filter`, `create`, `bulkCreate`, `update` |
+| `OrganizerFollow` | `organizer_follows` | `filter`, `create`, `deleteMany` |
+| `MountainGuide` | `mountain_guides` | `list`, `filter`, `create`, `update`, `delete` |
+| `Refuge` | `refuges` | `list` |
+| `Profile` | `profiles` | `get`, `update`, `delete` |
+| `Promotion` | `promotions` | `getActive`, `filterByOrganizer`, `create`, `cancel` |
 
-1. Reads runtime params from URL/query/localStorage/env.
-2. Fetches app public settings from Base44 public endpoint.
-3. If token exists, validates current user via `base44.auth.me()`.
-4. Handles auth errors (`auth_required`, `user_not_registered`) and redirects/logical guards.
+### RLS Notes
 
-### Runtime Parameters
+- Hikers can only read their own bookings (RLS policy). `Booking.filterByTripIds` is available to organizers who have a matching `organizer_code` policy.
+- `Booking.getTierAvailability(tripId)` calls a `SECURITY DEFINER` RPC (`get_trip_tier_availability`) that bypasses RLS to return aggregate slot counts — no personal data exposed.
+- `HikingTrip.update` uses `.maybeSingle()` to avoid PGRST116 errors when hikers (blocked by RLS) trigger best-effort updates (e.g. view count increment).
 
-The app can be configured either by URL params or Vite env vars:
+---
 
-- URL params:
-  - `app_id`
-  - `server_url`
-  - `access_token` (removed from URL after capture)
-  - `from_url`
-  - `functions_version`
-- Environment fallback:
-  - `VITE_BASE44_APP_ID`
-  - `VITE_BASE44_BACKEND_URL`
+## Premium Plan System
 
-Values are persisted in localStorage under `base44_<snake_case_param>`.
+Managed via the `plan` and `plan_expires_at` columns on the `organizers` table.
 
-## Data Model (Observed via Usage)
+| Value | Meaning |
+|---|---|
+| `plan = 'free'` | Free tier (default) |
+| `plan = 'premium'` + `plan_expires_at = null` | Premium, no expiry |
+| `plan = 'premium'` + `plan_expires_at > now()` | Premium, active |
+| `plan = 'premium'` + `plan_expires_at <= now()` | Expired premium |
 
-Entities used via `base44.entities.*`:
+The `useOrganizerPlan` hook (`src/lib/useOrganizerPlan.js`) computes:
+- `isPremium` — active premium right now
+- `isExpired` — was premium, expiry date has passed
+- `plan`, `organizer`, `isLoading`
 
-- `User` (read/delete in selected flows)
-- `Organizer`
-- `HikingTrip`
-- `Booking`
-- `Notification`
-- `OrganizerFollow` (follow/unfollow organizers; delete permission must be **No Restrictions** in base44 Security panel)
-- `MountainGuide`
-- `Refuge`
-- `Query` (exported, not central in current pages)
+Admin upgrade: call `Organizer.updatePlan(organizerCode, 'premium', expiresAt)` directly in Supabase or via a server function.
 
-Core integrations used via `base44.integrations.Core.*`:
+Self-service upgrade: organizer clicks "Upgrade" / "Renew" → `OrganizerPlans` page → pre-filled email to `hello@natureexplorers.gr`.
 
-- `UploadFile` (image/profile/certification uploads)
-- `GenerateImage` (AI image generation for trips)
-- `SendEmail` (booking/organizer notifications)
-- `InvokeLLM`, `SendSMS`, `ExtractDataFromUploadedFile` (exported, available)
+---
 
-## Domain Rules and Helpers
+## Auth and Boot Flow
 
-Important business logic lives in:
+Controlled by `src/lib/AuthContext.jsx`.
 
-- `src/components/helpers/tripHelpers.jsx`
-  - computes trip lifecycle status (`upcoming`, `happening now`, `completed`, `cancelled`)
-- `src/components/helpers/bookingHelpers.jsx`
-  - booking statistics and organizer trip insights
-- `src/components/helpers/pricingHelpers.jsx`
-  - multi-price support and legacy single-price fallback
-- `src/components/helpers/dateHelpers.jsx`
-  - Athens timezone date range formatting
-- `src/components/helpers/timezoneHelpers.jsx`
-  - explicit timezone utilities for `Europe/Athens`
+1. App mounts → `supabase.auth.getSession()` called.
+2. If session exists, user object is stored in context; `organizer_code` is read from `profiles` table.
+3. `onAuthStateChange` listener keeps the session live across tab focus.
+4. Routes requiring auth check `user` from context; unauthenticated users are redirected to `/login?redirect=`.
+
+---
 
 ## Localization
 
-Language support is implemented via:
+Bilingual (English / Greek). Language preference stored in localStorage under `app_language`, defaults to `en`.
 
-- `src/components/contexts/LanguageContext.jsx`
-- `src/components/translations/en.jsx`
-- `src/components/translations/el.jsx`
-- `src/components/translations/useTranslations.jsx`
+- Context: `src/components/contexts/LanguageContext.jsx`
+- Dictionaries: `src/components/translations/en.jsx`, `el.jsx`
+- Hook: `src/components/translations/useTranslations.jsx` → `t('key')`
 
-Language preference is stored in localStorage (`app_language`), defaulting to `en`.
+---
+
+## Realtime
+
+`MyTrips.jsx` subscribes to Supabase Realtime on the `bookings` table filtered by the organizer's trip IDs. On any `INSERT/UPDATE/DELETE` event the `['all-bookings']` and `['tier-availability']` query keys are invalidated, keeping slot counts live without polling.
+
+---
 
 ## Analytics and Cookies
 
-- GA4 loader/tracker: `src/components/analytics/GoogleAnalytics.jsx`
-  - Current measurement ID is hardcoded: `G-JZQZ0VT8XK`
-- Cookie consent: `src/components/cookie/CookieConsent.jsx`
-  - preferences stored under `cookie_consent_preferences`
+- GA4 loader: `src/components/analytics/GoogleAnalytics.jsx` — measurement ID `G-JZQZ0VT8XK`
+- Cookie consent: `src/components/cookie/CookieConsent.jsx` — stored under `cookie_consent_preferences`
+
+---
 
 ## Scripts
 
-From `package.json`:
+```bash
+npm run dev        # Vite dev server
+npm run build      # Production build → dist/
+npm run preview    # Preview production build
+npm run lint       # ESLint
+npm run typecheck  # tsc
+```
 
-- `npm run dev` -> start Vite dev server
-- `npm run build` -> production build
-- `npm run preview` -> preview production build
-- `npm run lint` -> ESLint over selected app files
-- `npm run typecheck` -> `tsc` against `jsconfig.json` scope
+---
 
 ## Local Development
 
 ### Prerequisites
 
-- Node.js 18+ (recommended modern LTS)
+- Node.js 18+ LTS
 - npm
 
 ### Install
@@ -205,16 +334,12 @@ npm install
 
 ### Configure
 
-Create `.env.local` (or `.env`) with:
+Create `.env.local`:
 
 ```bash
-VITE_BASE44_APP_ID=<your_app_id>
-VITE_BASE44_BACKEND_URL=<your_base44_backend_url>
+VITE_SUPABASE_URL=https://<project>.supabase.co
+VITE_SUPABASE_ANON_KEY=<anon-key>
 ```
-
-Optional:
-
-- `BASE44_LEGACY_SDK_IMPORTS=true` for legacy SDK import compatibility in Vite plugin.
 
 ### Run
 
@@ -222,63 +347,18 @@ Optional:
 npm run dev
 ```
 
-## Code Quality
+---
 
-`npm run lint` and `npm run typecheck` both pass with 0 errors.
+## Deployment
 
-### Type Declarations
+Client-rendered SPA. Deploy `dist/` from `npm run build`. The host must rewrite all unmatched routes to `index.html` for client-side routing to work.
 
-Alongside shadcn/ui source files, `.d.ts` declaration files exist to provide `React.FC<any>` types so
-TypeScript skips source-checking auto-generated component code:
+---
 
-```
-src/components/ui/*.d.ts       # button, badge, card, tabs, select, alert, label,
-                               # alert-dialog, dialog, drawer, sheet, sidebar,
-                               # dropdown-menu, checkbox, switch, input, textarea,
-                               # separator, tooltip, MobileSelect
-src/components/calendar/TripsList.d.ts
-src/components/calendar/TripsMap.d.ts
-src/components/trips/LocationPicker.d.ts
-src/components/trips/TripLocationMap.d.ts
-src/types/react-leaflet.d.ts   # ambient module override for react-leaflet
-```
+## Notable Implementation Notes
 
-### Recent Fixes (April 2026 audit)
-
-- **React.StrictMode re-enabled** — `main.jsx` had `<React.StrictMode>` commented out, suppressing double-render detection and effect-cleanup warnings in development. Re-enabled.
-- **`Booking.list()` null safety** — `MyTrips.jsx` called `.filter()` directly on the API response without guarding against a `null` return. Fixed with `(allB || []).filter(…)`.
-- **`organizer_code` undefined key** — `Home.jsx` organizer map was silently creating a `map[undefined]` entry when `organizer_code` was missing. Added `if (org?.organizer_code)` guard.
-- **Profile image missing alt text** — `Layout.jsx` bottom-nav profile picture had `alt=""`, failing accessibility audits. Changed to `alt="${user.username || 'User'}'s profile picture"`.
-- **WelcomeModal silent failure** — On error, `WelcomeModal.jsx` only logged to console; the user saw nothing and the modal stayed open with no feedback. Added a bilingual `toast.error` call.
-- **postMessage wildcard documented** — Added an inline comment to `main.jsx` explaining that `'*'` is intentional for HMR signals to the Base44 sandbox parent whose origin is unknown at build time.
-
-### Known Bugs Fixed
-
-- **Calendar price sort** — Sort by price now uses `getLowestPrice()` (respects `pricing_options`); previously used the legacy scalar `trip.price` field only.
-- **Trip cancellation email resilience** — Cancellation flow uses `Promise.allSettled` for emails so a delivery failure no longer aborts the booking update.
-- **Unfollow button 404** — `OrganizerFollow.delete(id)` was returning 404 due to base44 row-level security. Fixed by switching to `OrganizerFollow.deleteMany({ user_id, organizer_code })` and setting entity delete permission to "No Restrictions" in the base44 Security panel.
-- **Follow/unfollow cache flicker** — Added `queryClient.setQueryData(followQueryKey, newRecord|null)` in both mutation `onSuccess` handlers to eliminate the flash between optimistic state and refetch.
-- **iOS scroll tracking** — `body: position:fixed` makes `window.scrollY` always 0. All scroll save/restore in `TabNavigationContext.jsx` now routes through `document.getElementById('root')` instead of `window`.
-- **iOS `100vh` layout jump** — `TripsMap.jsx` full-screen map container changed from `calc(100vh-57px)` to `calc(100dvh-57px)`.
-- **Lazy component layout shift** — All five lazy wrappers (`LazyTripsMap`, `LazyGreekRefugesMap`, `LazyTripLocationMap`, `LazyQuillEditor`, `LazyLocationPicker`) now wrap Suspense in a `min-h` container with `willChange: 'contents'` to prevent surrounding content from shifting during load.
-- **`EditProfile.jsx` back button bypassed tab stack** — Replaced `window.history.back()` with `canGoBack() ? goBackInTab() : navigate(-1)`.
-- **Notification links broken** — `CreateTrip.jsx` was storing absolute `https://…` URLs in `notification.link`. React Router's `navigate()` treats these as relative paths, causing silent navigation failures. Fixed by storing a relative path (`/TripDetails?id=…`) in `notification.link` (absolute URL kept only for the email button href). `NotificationsBell.jsx` also hardened to fall back to `window.location.href` for any pre-existing absolute-URL notifications.
-- **Optimistic delete/update no-ops in `MyTrips.jsx`** — `deleteTripMutation` and `updateTripStatusMutation` were calling the shared optimistic helpers with `''` as `tripId`, so no cache entry ever matched and the optimistic update was silently skipped. Replaced with inline `onMutate` handlers that capture the real `tripId` from mutation variables at call time.
-- **`MyTrips.jsx` fetched all bookings** — `Booking.list()` was loading every booking in the system. Replaced with a scoped query that first fetches the organizer's own trips, then filters bookings to only those trip IDs.
-- **Raw HTML in unauthenticated `TripDetails`** — The logged-out description view rendered Quill-generated HTML as plain text (visible `<p>` and `<strong>` tags). Fixed by applying `DOMPurify.sanitize` + `dangerouslySetInnerHTML`, consistent with the authenticated view.
-- **Wrong `TabNavigationContext` import in `CreateTrip.jsx`** — Was importing `useTabNavigation` from `components/contexts/TabNavigationContext` (a standalone no-op context), not from the provider-matched `lib/TabNavigationContext`. Fixed the import path so the back button now correctly uses the active tab stack.
-- **`notifyFollowers` missing `organizer_code` guard** — Added an early-return guard so the function is a no-op when `user.organizer_code` is falsy, preventing an unscoped query that would return all followers.
-- **Debug `console.log` statements** — Removed ~20 verbose debug `console.log` calls that were left in `EditProfile.jsx`.
-- **`remainingAttendeeCapacity` always showing max** — Removed the inaccurate `remainingAttendeeCapacity` field from the TripDetails schema.org structured data (booking count is not fetched on that page, so the field cannot be computed accurately; omission is preferable to a wrong value).
-
-### Notable Implementation Notes
-
-- `src/Layout.jsx` is the active layout configured in `src/pages.config.js`.
-- `src/components/layout/Layout.jsx` exists but is not wired by current page config.
-- **Two `TabNavigationContext` files exist.** The canonical provider is `src/lib/TabNavigationContext.jsx` — always import from there. `src/components/contexts/TabNavigationContext.jsx` is an outdated duplicate with a different context instance; it returns silent no-ops and must not be used.
-
-## Deployment Notes
-
-- This is a client-rendered SPA; deploy the `dist/` output from `npm run build`.
-- Ensure host rewrites all unmatched routes to `index.html` so client-side routing works.
-- Runtime auth/app params can be injected through URL query parameters if needed by embed/runtime environments.
+- `src/pages.lazy.js` is the runtime page registry (lazy chunks). `src/pages.config.js` is auto-generated but unused at runtime — do not add manual imports to it.
+- **Two `TabNavigationContext` files exist.** The canonical provider is `src/lib/TabNavigationContext.jsx`. `src/components/contexts/TabNavigationContext.jsx` is a legacy no-op duplicate — never import from there.
+- `BookingForm.jsx` reads slot availability directly from `trip.pricing_options[].remaining` (set/maintained by `BookingCard`). This avoids a cross-user RLS issue that would occur if hikers queried confirmed bookings directly.
+- `HikingTrip.update` uses `.maybeSingle()` (not `.single()`) to handle the case where a hiker's best-effort view-count update is blocked by RLS (returns 0 rows instead of throwing PGRST116).
+- The `isExpired` flag in `useOrganizerPlan` distinguishes between a lapsed premium organizer (still has booking history — full access preserved) and a pure free-tier organizer (has never had premium — `UpgradePrompt` shown instead).

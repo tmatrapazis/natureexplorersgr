@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { MountainGuide, Organizer } from "@/api/db";
+import { useAuth } from "@/lib/AuthContext";
+import { supabase } from "@/api/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useBackNavigation } from '../lib/useBackNavigation';
@@ -42,19 +45,16 @@ export default function CreateGuideProfilePage() {
   const [uploadingProfile, setUploadingProfile] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-  });
+  const { user, refreshUser } = useAuth();
 
   const { data: organizers = [] } = useQuery({
     queryKey: ['all-organizers'],
-    queryFn: () => base44.entities.Organizer.list(),
+    queryFn: () => Organizer.list(),
   });
 
   const { data: existingGuide } = useQuery({
     queryKey: ['existing-guide', user?.id],
-    queryFn: () => base44.entities.MountainGuide.filter({ user_id: user.id }),
+    queryFn: () => MountainGuide.filter({ user_id: user.id }),
     enabled: !!user,
   });
 
@@ -65,11 +65,12 @@ export default function CreateGuideProfilePage() {
   }, [existingGuide, navigate]);
 
   const createGuideMutation = useMutation({
-    mutationFn: (/** @type {any} */ data) => base44.entities.MountainGuide.create(data),
+    mutationFn: (/** @type {any} */ data) => MountainGuide.create(data),
     ...createOptimisticCreate(queryClient, ['mountain-guides'], (data) => ({ ...data, id: 'temp-' + Date.now(), created_date: new Date().toISOString() })),
     onSuccess: async (newGuide) => {
       // Update user's mountain_guide_id
-      await base44.auth.updateMe({ mountain_guide_id: newGuide.id });
+      await supabase.from('profiles').update({ mountain_guide_id: newGuide.id }).eq('id', user.id);
+      await refreshUser();
 
       queryClient.invalidateQueries({ queryKey: ['mountain-guides'] });
       queryClient.invalidateQueries({ queryKey: ['user-guide-profile'] });
@@ -84,12 +85,18 @@ export default function CreateGuideProfilePage() {
   const handleImageUpload = async (file, type) => {
     const uploader = type === 'profile' ? setUploadingProfile : setUploadingCover;
     uploader(true);
-    
+
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const fileExt = file.name.split('.').pop();
+      const fileName = `guide-${type}-${Date.now()}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from('profile-images')
+        .upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('profile-images').getPublicUrl(data.path);
       setFormData(prev => ({
         ...prev,
-        [type === 'profile' ? 'profile_photo_url' : 'cover_photo_url']: file_url
+        [type === 'profile' ? 'profile_photo_url' : 'cover_photo_url']: publicUrl
       }));
     } catch (error) {
       toast.error(language === 'el' ? 'Σφάλμα μεταφόρτωσης εικόνας' : 'Error uploading image');

@@ -4,7 +4,7 @@ import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+
 import { MapPin, Calendar, TrendingUp, User as UserIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +17,8 @@ import { getComputedTripStatus } from '../components/helpers/tripHelpers';
 import { getTripImage, handleImageError } from '../components/helpers/imageHelpers';
 import OptimizedImage from '../components/ui/OptimizedImage';
 import { formatPriceForCard } from '../components/helpers/pricingHelpers';
+import { useAuth } from '@/lib/AuthContext';
+import { HikingTrip, Organizer } from '@/api/db';
 
 const difficultyColors = {
   easy: "bg-green-100 text-green-800",
@@ -29,6 +31,7 @@ export default function HomePage() {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const { t } = useTranslation(language);
+  const { user } = useAuth();
 
   // 301 Redirect: /Home and /home to root /
   React.useEffect(() => {
@@ -40,7 +43,7 @@ export default function HomePage() {
 
   // Enhanced SEO Configuration with target keywords
   useSEO({
-    title: language === 'el' 
+    title: language === 'el'
       ? 'Πεζοπορία Ελλάδα | Οργανωμένες Εκδρομές | Ομαδικές Εκδρομές | Nature Explorers'
       : 'Hiking Greece | Trekking Greece | Organized Hiking Trips | Nature Explorers',
     description: language === 'el'
@@ -51,32 +54,20 @@ export default function HomePage() {
     type: 'website'
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: async () => {
-      try {
-        return await base44.auth.me();
-      } catch {
-        return null;
-      }
-    },
-    retry: false,
-  });
-
   const { data: featuredExpeditions = [] } = useQuery({
     queryKey: ['featured-expeditions'],
     queryFn: async () => {
-      const trips = await base44.entities.HikingTrip.list('-start_date', 100);
+      const trips = await HikingTrip.list('-start_date');
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       const futureTrips = trips.filter(trip => {
         if (!trip.start_date) return false;
         const startDate = new Date(trip.start_date);
         startDate.setHours(0, 0, 0, 0);
         return startDate > today && (trip.status === 'upcoming' || trip.status === 'almost soldout');
       });
-      
+
       // Stable shuffle using trip ID as seed to avoid reshuffling on re-renders
       const shuffled = [...futureTrips].sort((a, b) => a.id.localeCompare(b.id));
       return shuffled.slice(0, 3);
@@ -89,7 +80,7 @@ export default function HomePage() {
   // Fetch organizers for featured trips
   const { data: organizers = [] } = useQuery({
     queryKey: ['home-organizers'],
-    queryFn: () => base44.entities.Organizer.list(),
+    queryFn: () => Organizer.list(),
     initialData: [],
   });
 
@@ -111,7 +102,7 @@ export default function HomePage() {
     "url": window.location.origin,
     "logo": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png",
     "image": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png",
-    "description": language === 'el' 
+    "description": language === 'el'
       ? "Η #1 πλατφόρμα για οργανωμένες εκδρομές και ομαδικές εκδρομές πεζοπορίας στην Ελλάδα. Βρείτε ταξίδια πεζοπορίας, trekking Greece, ορειβασία και outdoor δραστηριότητες με πιστοποιημένους οδηγούς. Ημερολόγιο εκδρομών βουνό σε Όλυμπο, Πάρνηθα, Πήλιο και όλη την Ελλάδα."
       : "The #1 platform for organized hiking trips and group expeditions in Greece. Find hiking tours, trekking adventures Greece, mountain climbing and outdoor activities with certified guides. Hiking calendar for Olympus, Parnitha, Pelion and all Greece.",
     "sameAs": [
@@ -139,7 +130,7 @@ export default function HomePage() {
         "itemOffered": {
           "@type": "Service",
           "name": language === 'el' ? "Οργανωμένες Εκδρομές Πεζοπορίας" : "Organized Hiking Trips",
-          "description": language === 'el' 
+          "description": language === 'el'
             ? "Ομαδικές εκδρομές πεζοπορίας με έμπειρους οδηγούς σε όλη την Ελλάδα"
             : "Group hiking expeditions with experienced guides across Greece"
         }
@@ -187,7 +178,7 @@ export default function HomePage() {
       ? "ταξίδια, πεζοπορία, πεζοπορία στην ελλάδα, trekking greece, hiking greece, εκδρομές, ομαδικές εκδρομές, οργανωμένες εκδρομές, πού να πάω για πεζοπορία, καλύτερες εκδρομές βουνό, ομάδες πεζοπορίας αθήνα, weekend εκδρομές, μονοήμερες εκδρομές, πολυήμερες εκδρομές, ορειβασία ελλάδα"
       : "travel, hiking, hiking in greece, trekking greece, hiking greece, trips, group trips, organized trips, where to hike in greece, best mountain trips, hiking groups athens, weekend trips, day trips, multi-day trips, climbing greece"
   };
-  
+
   // FAQ Schema for SEO
   const faqSchema = {
     "@context": "https://schema.org",
@@ -250,23 +241,23 @@ export default function HomePage() {
       <StructuredData data={organizationSchema} />
       <StructuredData data={websiteSchema} />
       <StructuredData data={faqSchema} />
-      
+
       <div className="flex flex-col min-h-screen">
         <main className="flex-1">
           <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white">
             <div className="absolute inset-0 bg-black/50 z-10" />
-            <img 
+            <img
               src="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp"
               srcSet="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&q=80&fm=webp 600w,
                       https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp 1200w,
                       https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1920&q=80&fm=webp 1920w"
               sizes="100vw"
-              alt={language === 'el' 
+              alt={language === 'el'
                 ? "Πεζοπορία στα ελληνικά βουνά - ομάδες πεζοπορίας σε ορειβατική διαδρομή με πανοραμική θέα - outdoor adventures Greece"
                 : "Hiking in Greek mountains - hiking teams Greece on mountain trekking trail with panoramic views - outdoor activities"}
               className="absolute inset-0 w-full h-full object-cover"
               loading="eager"
-              fetchPriority="high"
+              fetchpriority="high"
               decoding="sync"
               width="1920"
               height="1280"

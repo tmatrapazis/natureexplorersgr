@@ -3,11 +3,13 @@ import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, ExternalLink, User, Languages, Star } from "lucide-react";
+import { Calendar, MapPin, ExternalLink, User, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { Organizer } from "@/api/db";
+import { useAuth } from "@/lib/AuthContext";
+
 import { trackEvent } from "../analytics/GoogleAnalytics";
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
@@ -25,48 +27,13 @@ const difficultyColors = {
 const TripsList = React.memo(React.forwardRef(function TripsList({ trips, selectedDate, promotedTripId }, ref) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
-  const [translatedTitles, setTranslatedTitles] = React.useState(null);
-  const [isTranslating, setIsTranslating] = React.useState(false);
 
-  const handleTranslate = async () => {
-    if (translatedTitles) {
-      setTranslatedTitles(null);
-      return;
-    }
-    setIsTranslating(true);
-    try {
-      const response = await base44.functions.invoke('translateTrip', {
-        titles: trips.map(t => ({ id: t.id, title: t.title }))
-      });
-      const map = {};
-      (response.data.translatedTitles || []).forEach(item => {
-        map[item.id] = item.title;
-      });
-      setTranslatedTitles(map);
-    } catch (error) {
-      console.error('Translation error:', error);
-    } finally {
-      setIsTranslating(false);
-    }
-  };
-
-  // Fetch current user
-  const { data: user } = useQuery({
-    queryKey: ['current-user-trips-list'],
-    queryFn: async () => {
-      try {
-        return await base44.auth.me();
-      } catch (error) {
-        return null;
-      }
-    },
-    retry: false,
-  });
+  const { user } = useAuth();
 
   // Fetch all organizers to match with trips
   const { data: organizers = [] } = useQuery({
     queryKey: ['all-organizers'],
-    queryFn: () => base44.entities.Organizer.list(),
+    queryFn: () => Organizer.list(),
     initialData: [],
   });
 
@@ -106,20 +73,6 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
 
   return (
     <div ref={ref}>
-      <div className="flex items-center justify-between mb-6">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleTranslate}
-          disabled={isTranslating}
-          className="gap-1 min-h-[44px]"
-          aria-label={isTranslating ? 'Translating titles…' : translatedTitles ? 'Show original titles' : 'Translate trip titles to English'}
-        >
-          <Languages className="w-4 h-4" aria-hidden="true" />
-          <span>{isTranslating ? '...' : translatedTitles ? 'Original Titles' : 'Translate Titles'}</span>
-        </Button>
-      </div>
-
       {/* CSS grid with content-visibility:auto for browser-native render skipping of off-screen cards */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {trips.map((trip) => {
@@ -160,7 +113,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1 min-w-0">
-                        <h4 className="text-base font-bold text-foreground mb-2 line-clamp-2 h-12">{translatedTitles?.[trip.id] || trip.title}</h4>
+                        <h4 className="text-base font-bold text-foreground mb-2 line-clamp-2 h-12">{trip.title}</h4>
                         <div className="flex flex-wrap items-center gap-1.5 mb-2">
                           <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
                             {trip.difficulty}

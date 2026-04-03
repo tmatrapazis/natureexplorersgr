@@ -2,9 +2,9 @@ import React, { lazy, Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 
 const ReactQuill = lazy(() =>
-  import('react-quill').then((mod) => {
+  import('react-quill-new').then((mod) => {
     // Co-load the theme CSS alongside the JS so it never renders unstyled
-    import('react-quill/dist/quill.snow.css');
+    import('react-quill-new/dist/quill.snow.css');
     return mod;
   })
 );

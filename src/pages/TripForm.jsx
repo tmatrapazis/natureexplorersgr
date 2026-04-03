@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { HikingTrip, OrganizerFollow, Organizer, Notification } from "@/api/db";
+import { supabase } from "@/api/supabaseClient";
+import { useAuth } from "@/lib/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { createOptimisticTripCreate, createOptimisticTripUpdate } from '../lib/optimistic-mutations';
@@ -38,15 +42,12 @@ export default function TripFormPage() {
     noindex: true
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-  });
+  const { user } = useAuth();
 
   const { data: trip, isLoading: tripLoading } = useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
-      const results = await base44.entities.HikingTrip.filter({ id: tripId });
+      const results = await HikingTrip.filter({ id: tripId });
       return results[0];
     },
     enabled: !!tripId,
@@ -73,19 +74,30 @@ export default function TripFormPage() {
     if (!user?.organizer_code) return;
     try {
       const [follows, organizers] = await Promise.all([
-        base44.entities.OrganizerFollow.filter({ organizer_code: user.organizer_code }),
-        base44.entities.Organizer.filter({ organizer_code: user.organizer_code }),
+        OrganizerFollow.filter({ organizer_code: user.organizer_code }),
+        Organizer.filter({ organizer_code: user.organizer_code }),
       ]);
       if (!follows || follows.length === 0) return;
+
+      // Only notify followers who opted in to trip notifications (newsletter_subscribed)
+      const { data: subscribedProfiles } = await supabase
+        .from('profiles')
+        .select('id')
+        .in('id', follows.map(f => f.user_id))
+        .eq('newsletter_subscribed', true);
+
+      const subscribedIds = new Set((subscribedProfiles || []).map(p => p.id));
+      const eligibleFollows = follows.filter(f => subscribedIds.has(f.user_id));
+      if (eligibleFollows.length === 0) return;
+
       const organizerName = organizers?.[0]?.full_name || user.full_name || user.username || user.organizer_code;
-      await base44.entities.Notification.bulkCreate(
-        follows.map(f => ({
+      await Notification.bulkCreate(
+        eligibleFollows.map(f => ({
           user_id: f.user_id,
           title: language === 'el'
             ? `Νέα εκδρομή από ${organizerName}`
             : `New trip from ${organizerName}`,
           message: `"${publishedTrip.title}"`,
-          // Use lowercase path — matches the app's actual route (LowercaseRedirect)
           link: `/tripdetails?id=${publishedTrip.id}`,
           is_read: false,
         }))
@@ -98,12 +110,14 @@ export default function TripFormPage() {
 
   const createMutation = useMutation({
     mutationFn: async (/** @type {any} */ data) => {
+      if (!user?.organizer_code) throw new Error('Your account is not linked to an organizer profile.');
       const dataToSave = saveDraftRef.current ? { ...data, status: "draft" } : data;
       saveDraftRef.current = false;
-      return await base44.entities.HikingTrip.create({ ...dataToSave, organizer_code: user.organizer_code });
+      return await HikingTrip.create({ ...dataToSave, organizer_code: user.organizer_code });
     },
     // Optimistic: show trip in My Trips immediately while API call completes
     ...createOptimisticTripCreate(queryClient, user?.organizer_code),
+    onError: (err) => toast.error(err.message || 'Failed to create trip.'),
     onSuccess: async (newTrip) => {
       // Notify followers when organizer publishes a new trip (not a draft)
       if (newTrip.status && newTrip.status !== 'draft') {
@@ -119,7 +133,7 @@ export default function TripFormPage() {
     mutationFn: async (/** @type {any} */ data) => {
       const { created_date, updated_date, id, created_by, view_count, organizer_name, organizer_is_verified, organizer_email, computedStatus, ...clean } = data;
       if (!clean.end_date) clean.end_date = clean.start_date;
-      return await base44.entities.HikingTrip.update(tripId, clean);
+      return await HikingTrip.update(tripId, clean);
     },
     // Optimistic: reflect changes in the list immediately
     ...createOptimisticTripUpdate(queryClient, tripId, user?.organizer_code),

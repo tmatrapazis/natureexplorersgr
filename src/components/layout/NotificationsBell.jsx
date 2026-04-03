@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Notification } from '@/api/db';
+import { supabase } from '@/api/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { createOptimisticUpdate } from '@/lib/optimistic-mutations';
 import { Button } from '@/components/ui/button';
@@ -30,19 +31,39 @@ function NotificationsBell({ user, compact = false }) {
     queryKey: ['notifications-list', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const result = await base44.entities.Notification.filter({ user_id: user.id });
-      result.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+      const result = await Notification.filter({ user_id: user.id });
+      result.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
       return result;
     },
     enabled: !!user?.id,
     refetchOnWindowFocus: true,
   });
 
+  // Realtime: invalidate the query whenever a new notification is inserted for this user
+  useEffect(() => {
+    if (!user?.id) return;
+    // Unique channel name per mount prevents StrictMode double-mount conflicts
+    const channelName = `notifications-${user.id}-${Math.random().toString(36).slice(2)}`;
+    const channel = supabase
+      .channel(channelName)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'notifications',
+        filter: `user_id=eq.${user.id}`,
+      }, () => {
+        queryClient.invalidateQueries({ queryKey: ['notifications-list', user.id] });
+      })
+      .subscribe();
+
+    return () => { channel.unsubscribe(); supabase.removeChannel(channel); };
+  }, [user?.id, queryClient]);
+
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId) => {
-      await base44.entities.Notification.update(notificationId, { is_read: true });
+      await Notification.update(notificationId, { is_read: true });
     },
     ...createOptimisticUpdate(
       queryClient,
@@ -56,7 +77,7 @@ function NotificationsBell({ user, compact = false }) {
     mutationFn: async () => {
       const unread = notifications.filter(n => !n.is_read);
       if (unread.length === 0) return;
-      await Promise.all(unread.map(n => base44.entities.Notification.update(n.id, { is_read: true })));
+      await Promise.all(unread.map(n => Notification.update(n.id, { is_read: true })));
     },
     ...createOptimisticUpdate(
       queryClient,
@@ -156,7 +177,7 @@ function NotificationsBell({ user, compact = false }) {
                   )}
                   <p className="text-sm text-muted-foreground line-clamp-2">{notification.message}</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    {formatDistanceToNow(new Date(notification.created_date), { addSuffix: true, locale: dateLocale })}
+                    {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: dateLocale })}
                   </p>
                 </div>
               </div>

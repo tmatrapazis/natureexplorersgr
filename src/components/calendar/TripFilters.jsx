@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, X } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+
 import { useQuery } from '@tanstack/react-query';
+import { HikingTrip } from '@/api/db';
 import {
   Dialog,
   DialogContent,
@@ -30,7 +31,7 @@ function TripFilters({ filters, onFilterChange }) {
   // Fetch all unique departure locations
   const { data: allTrips = [] } = useQuery({
     queryKey: ['all-trips-departure'],
-    queryFn: () => base44.entities.HikingTrip.list(),
+    queryFn: () => HikingTrip.list(),
   });
 
   const uniqueDepartureLocations = React.useMemo(() => {

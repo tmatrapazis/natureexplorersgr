@@ -1,6 +1,8 @@
 import React from "react";
-import { base44 } from "@/api/base44Client";
+
 import { useQuery } from "@tanstack/react-query";
+import { Organizer, HikingTrip } from "@/api/db";
+import { useAuth } from "@/lib/AuthContext";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -28,26 +30,16 @@ export default function OrganizerProfilePage() {
   const urlParams = new URLSearchParams(window.location.search);
   const legacyCode = urlParams.get("code");
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: async () => {
-      try {
-        return await base44.auth.me();
-      } catch (error) {
-        return null;
-      }
-    },
-    retry: false,
-  });
+  const { user } = useAuth();
 
   const { data: organizer, isLoading: organizerLoading } = useQuery({
     queryKey: ['organizer', username, legacyCode],
     queryFn: async () => {
       if (username) {
-        const organizers = await base44.entities.Organizer.filter({ username: username });
+        const organizers = await Organizer.filter({ username: username });
         return organizers[0];
       } else if (legacyCode) {
-        const organizers = await base44.entities.Organizer.filter({ organizer_code: legacyCode });
+        const organizers = await Organizer.filter({ organizer_code: legacyCode });
         const org = organizers[0];
         // Redirect to new URL format
         if (org?.username) {
@@ -62,7 +54,7 @@ export default function OrganizerProfilePage() {
 
   const { data: allTrips = [], isLoading: tripsLoading } = useQuery({
     queryKey: ['organizer-trips', organizer?.organizer_code],
-    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: organizer.organizer_code }, "start_date"),
+    queryFn: () => HikingTrip.filter({ organizer_code: organizer.organizer_code }, "start_date"),
     enabled: !!organizer?.organizer_code,
     initialData: [],
   });

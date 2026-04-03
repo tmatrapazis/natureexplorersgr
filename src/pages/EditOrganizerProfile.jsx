@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Organizer } from '@/api/db';
+import { useAuth } from '@/lib/AuthContext';
+import { supabase } from '@/api/supabaseClient';
+
 import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useBackNavigation } from '../lib/useBackNavigation';
@@ -23,15 +26,12 @@ export default function EditOrganizerProfilePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-  });
+  const { user } = useAuth();
 
   const { data: organizer, isLoading } = useQuery({
     queryKey: ['organizer', user?.organizer_code],
     queryFn: async () => {
-      const organizers = await base44.entities.Organizer.filter({ organizer_code: user.organizer_code });
+      const organizers = await Organizer.filter({ organizer_code: user.organizer_code });
       return organizers[0];
     },
     enabled: !!user?.organizer_code,
@@ -46,6 +46,7 @@ export default function EditOrganizerProfilePage() {
     phone: '',
     years_of_experience: '',
     certifications: '',
+    payment_instructions: '',
     profile_picture_url: '',
     social_profiles: {
       facebook: '',
@@ -70,6 +71,7 @@ export default function EditOrganizerProfilePage() {
         phone: organizer.phone || '',
         years_of_experience: organizer.years_of_experience || '',
         certifications: organizer.certifications || '',
+        payment_instructions: organizer.payment_instructions || '',
         profile_picture_url: organizer.profile_picture_url || '',
         social_profiles: organizer.social_profiles || {
           facebook: '',
@@ -84,7 +86,7 @@ export default function EditOrganizerProfilePage() {
     mutationFn: async (/** @type {any} */ updatedData) => {
       // Remove is_verified and organizer_code - only admins can modify these
       const { is_verified, organizer_code, ...dataToUpdate } = updatedData;
-      const result = await base44.entities.Organizer.update(organizer.id, dataToUpdate);
+      const result = await Organizer.update(organizer.id, dataToUpdate);
       return result;
     },
     ...createOptimisticUpdate(
@@ -125,9 +127,20 @@ export default function EditOrganizerProfilePage() {
     if (!file) return;
 
     setUploadingImage(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setFormData(prev => ({ ...prev, profile_picture_url: file_url }));
-    setUploadingImage(false);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `org-profile-${Date.now()}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from('profile-images')
+        .upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('profile-images').getPublicUrl(data.path);
+      setFormData(prev => ({ ...prev, profile_picture_url: publicUrl }));
+    } catch (error) {
+      console.error('Upload error:', error);
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -371,10 +384,32 @@ export default function EditOrganizerProfilePage() {
             </Card>
 
             <Card>
+              <CardHeader>
+                <CardTitle>{language === 'el' ? 'Τρόποι Πληρωμής' : 'Payment Methods'}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  {language === 'el'
+                    ? 'Προσθέστε τα στοιχεία πληρωμής σας (IBAN, IRIS, Revolut, κ.λπ.). Θα αποστέλλονται αυτόματα στον hiker όταν εγκρίνετε μια κράτηση.'
+                    : 'Add your payment details (IBAN, IRIS, Revolut, etc.). These will be automatically sent to the hiker when you approve a booking.'}
+                </p>
+                <Textarea
+                  id="payment_instructions"
+                  placeholder={language === 'el'
+                    ? 'π.χ. IBAN: GR1601101250000000012300695\nIRIS: 6912345678\nRevolut: @username'
+                    : 'e.g. IBAN: GR1601101250000000012300695\nIRIS: 6912345678\nRevolut: @username'}
+                  value={formData.payment_instructions}
+                  onChange={handleInputChange}
+                  rows={4}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
               <CardContent className="p-6">
-                <Button 
-                  type="submit" 
-                  disabled={updateOrganizerMutation.isPending} 
+                <Button
+                  type="submit"
+                  disabled={updateOrganizerMutation.isPending}
                   className="w-full min-h-[44px]"
                   aria-label={t('profile.save_changes')}
                 >

@@ -1,6 +1,9 @@
 import React, { useState, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { HikingTrip, Booking, OrganizerFollow, Organizer, Notification } from "@/api/db";
+import { supabase } from "@/api/supabaseClient";
+import { useAuth } from "@/lib/AuthContext";
 import PullToRefresh from '../components/ui/PullToRefresh';
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -9,7 +12,7 @@ import MobileSelect from '../components/ui/MobileSelect';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Plus, User as UserIcon } from "lucide-react";
+import { Calendar, Plus, User as UserIcon, ClipboardList, AlertTriangle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,6 +25,9 @@ import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import { getTripImage, handleImageError } from "../components/helpers/imageHelpers";
 import OrganizerTripCard from "../components/trips/OrganizerTripCard";
+import BookingList from "@/components/bookings/BookingList";
+import { useOrganizerPlan } from "@/lib/useOrganizerPlan";
+import UpgradePrompt from "@/components/upgrade/UpgradePrompt";
 
 export default function MyTripsPage() {
   const queryClient = useQueryClient();
@@ -38,44 +44,48 @@ export default function MyTripsPage() {
     noindex: true
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: async () => {
-      try {
-        return await base44.auth.me();
-      } catch {
-        return null;
-      }
-    },
-    retry: false,
-  });
+  const { user } = useAuth();
+  const { isPremium, isExpired, organizer: organizerData } = useOrganizerPlan();
 
-  const { data: trips, isLoading: tripsLoading } = useQuery({
+  const { data: trips = [], isLoading: tripsLoading, isError: tripsError } = useQuery({
     queryKey: ['my-trips', user?.organizer_code],
-    queryFn: () => base44.entities.HikingTrip.filter({ organizer_code: user?.organizer_code }, "-start_date"),
+    queryFn: () => HikingTrip.filter({ organizer_code: user?.organizer_code }, "-start_date"),
     enabled: !!user?.organizer_code,
-    initialData: [],
+    staleTime: 2 * 60 * 1000,
+    retry: 1,
   });
 
   const { data: allBookings = [] } = useQuery({
     queryKey: ['all-bookings', user?.organizer_code],
     queryFn: async () => {
       if (!user?.organizer_code) return [];
-      // Fetch only bookings for trips owned by this organizer to avoid loading
-      // every booking in the system (privacy + performance).
-      const orgTrips = await base44.entities.HikingTrip.filter({ organizer_code: user.organizer_code });
+      const orgTrips = await HikingTrip.filter({ organizer_code: user.organizer_code });
       if (!orgTrips || orgTrips.length === 0) return [];
-      const tripIds = new Set(orgTrips.map(t => t.id));
-      const allB = await base44.entities.Booking.list();
-      return (allB || []).filter(b => tripIds.has(b.trip_id));
+      const tripIds = orgTrips.map(t => t.id);
+      return Booking.filterByTripIds(tripIds);
     },
     enabled: !!user?.organizer_code,
-    initialData: [],
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
+
+  // Realtime: invalidate allBookings whenever any booking row changes (INSERT, UPDATE, DELETE)
+  // so the organizer's slot counts stay accurate without a manual refresh.
+  React.useEffect(() => {
+    if (!user?.organizer_code) return;
+    const channel = supabase
+      .channel(`mytrips-bookings-${user.organizer_code}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['all-bookings', user.organizer_code] });
+        queryClient.invalidateQueries({ queryKey: ['tier-availability'] });
+      })
+      .subscribe();
+    return () => { channel.unsubscribe(); supabase.removeChannel(channel); };
+  }, [user?.organizer_code, queryClient]);
 
   const deleteTripMutation = useMutation({
     mutationFn: async (/** @type {any} */ tripId) => {
-      return await base44.entities.HikingTrip.delete(tripId);
+      return await HikingTrip.delete(tripId);
     },
     // Optimistic: remove the trip from the cache immediately so the UI updates
     // without waiting for the server round-trip.
@@ -91,6 +101,7 @@ export default function MyTripsPage() {
       if (context?.previous) {
         queryClient.setQueryData(['my-trips', user?.organizer_code], context.previous);
       }
+      toast.error('Failed to delete trip. Please try again.');
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['my-trips', user?.organizer_code] });
@@ -103,19 +114,30 @@ export default function MyTripsPage() {
     if (!user?.organizer_code) return;
     try {
       const [follows, organizers] = await Promise.all([
-        base44.entities.OrganizerFollow.filter({ organizer_code: user.organizer_code }),
-        base44.entities.Organizer.filter({ organizer_code: user.organizer_code }),
+        OrganizerFollow.filter({ organizer_code: user.organizer_code }),
+        Organizer.filter({ organizer_code: user.organizer_code }),
       ]);
       if (!follows || follows.length === 0) return;
+
+      // Only notify followers who opted in to trip notifications (newsletter_subscribed)
+      const { data: subscribedProfiles } = await supabase
+        .from('profiles')
+        .select('id')
+        .in('id', follows.map(f => f.user_id))
+        .eq('newsletter_subscribed', true);
+
+      const subscribedIds = new Set((subscribedProfiles || []).map(p => p.id));
+      const eligibleFollows = follows.filter(f => subscribedIds.has(f.user_id));
+      if (eligibleFollows.length === 0) return;
+
       const organizerName = organizers?.[0]?.full_name || user?.full_name || user?.organizer_code;
-      await base44.entities.Notification.bulkCreate(
-        follows.map(f => ({
+      await Notification.bulkCreate(
+        eligibleFollows.map(f => ({
           user_id: f.user_id,
           title: language === 'el'
             ? `Νέα εκδρομή από ${organizerName}`
             : `New trip from ${organizerName}`,
           message: `"${trip.title}"`,
-          // Lowercase path — matches actual route (no redirect needed)
           link: `/tripdetails?id=${trip.id}`,
           is_read: false,
         }))
@@ -128,7 +150,7 @@ export default function MyTripsPage() {
 
   const updateTripStatusMutation = useMutation({
     mutationFn: async (/** @type {any} */ { tripId, status }) => {
-      return await base44.entities.HikingTrip.update(tripId, { status });
+      return await HikingTrip.update(tripId, { status });
     },
     // Optimistic: update the status in cache immediately.
     onMutate: async ({ tripId, status }) => {
@@ -145,6 +167,7 @@ export default function MyTripsPage() {
       if (context?.previous) {
         queryClient.setQueryData(['my-trips', user?.organizer_code], context.previous);
       }
+      toast.error('Failed to update trip status. Please try again.');
     },
     onSuccess: async (_result, { tripId, status }) => {
       // Notify followers when organizer publishes a draft trip
@@ -181,7 +204,7 @@ export default function MyTripsPage() {
               <p>Sincerely,<br/>The Nature Explorers Team</p>
           `
         };
-        emailPromises.push(base44.integrations.Core.SendEmail(email));
+        // TODO: send cancellation email via Supabase Edge Function
 
         notifications.push({
           user_id: booking.user_id,
@@ -193,7 +216,7 @@ export default function MyTripsPage() {
           is_read: false,
         });
 
-        bookingUpdatePromises.push(base44.entities.Booking.update(booking.id, { status: 'cancelled' }));
+        bookingUpdatePromises.push(Booking.update(booking.id, { status: 'cancelled' }));
       }
 
       // Emails are best-effort — a delivery failure should not block the cancellation
@@ -206,10 +229,10 @@ export default function MyTripsPage() {
 
       await Promise.all(bookingUpdatePromises);
       if (notifications.length > 0) {
-        await base44.entities.Notification.bulkCreate(notifications);
+        await Notification.bulkCreate(notifications);
       }
 
-      return await base44.entities.HikingTrip.update(trip.id, { status: "cancelled" });
+      return await HikingTrip.update(trip.id, { status: "cancelled" });
     },
     onSuccess: () => {
       toast.success(language === 'el' ? 'Η εκδρομή ακυρώθηκε με επιτυχία' : 'Trip cancelled successfully');
@@ -256,14 +279,6 @@ export default function MyTripsPage() {
     navigate(createPageUrl("TripForm"), { state: { tripData } });
   };
 
-  if (tripsLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" />
-      </div>
-    );
-  }
-
   const today = React.useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -289,6 +304,29 @@ export default function MyTripsPage() {
     ]);
   }, [queryClient, user?.organizer_code]);
 
+  if (tripsLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" />
+      </div>
+    );
+  }
+
+  if (tripsError) {
+    return (
+      <PageWrapper>
+        <div className="max-w-5xl mx-auto pb-20 pt-8 text-center">
+          <p className="text-muted-foreground mb-4">
+            {language === 'el' ? 'Σφάλμα φόρτωσης εκδρομών.' : 'Failed to load trips.'} Please refresh the page.
+          </p>
+          <Button onClick={() => window.location.reload()} variant="outline">
+            {language === 'el' ? 'Ανανέωση' : 'Refresh'}
+          </Button>
+        </div>
+      </PageWrapper>
+    );
+  }
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <PageWrapper>
@@ -308,8 +346,20 @@ export default function MyTripsPage() {
                 </Button>
               </Link>
             )}
+            {isPremium && (
+              <Link to={createPageUrl("ManageBookings")} className="w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-auto min-h-[44px]"
+                  aria-label={language === 'el' ? 'Διαχείριση Κρατήσεων' : 'Manage Bookings'}
+                >
+                  <ClipboardList className="w-4 h-4 mr-2" />
+                  {language === 'el' ? 'Κρατήσεις' : 'Manage Bookings'}
+                </Button>
+              </Link>
+            )}
             <Link to={createPageUrl("TripForm")} className="w-full sm:w-auto">
-            <Button 
+            <Button
               className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto min-h-[44px]"
               aria-label={t('organizer.create_new_trip')}
             >
@@ -339,12 +389,13 @@ export default function MyTripsPage() {
             {/* Desktop Tabs */}
             <div className="hidden md:block mb-4">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-5">
+                <TabsList className="grid w-full grid-cols-6">
                   <TabsTrigger value="draft">{language === 'el' ? 'Πρόχειρα' : 'Drafts'}</TabsTrigger>
                   <TabsTrigger value="upcoming">{t('organizer.tab_upcoming')}</TabsTrigger>
                   <TabsTrigger value="happening">{t('organizer.tab_happening')}</TabsTrigger>
                   <TabsTrigger value="completed">{t('organizer.tab_completed')}</TabsTrigger>
                   <TabsTrigger value="cancelled">{t('organizer.tab_cancelled')}</TabsTrigger>
+                  <TabsTrigger value="bookings">{language === 'el' ? 'Κρατήσεις' : 'Bookings'}</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -360,6 +411,7 @@ export default function MyTripsPage() {
                   { value: 'happening', label: t('organizer.tab_happening') },
                   { value: 'completed', label: t('organizer.tab_completed') },
                   { value: 'cancelled', label: t('organizer.tab_cancelled') },
+                  { value: 'bookings', label: language === 'el' ? 'Κρατήσεις' : 'Bookings' },
                 ]}
                 placeholder={language === 'el' ? 'Επιλέξτε κατηγορία' : 'Select category'}
                 label={language === 'el' ? 'Κατηγορία Εκδρομών' : 'Trip Category'}
@@ -435,6 +487,53 @@ export default function MyTripsPage() {
                 ))}
                 {cancelledTrips.length === 0 && <div className="text-center py-10 text-muted-foreground">{t('organizer.no_trips_in_category')}</div>}
               </div>
+            </TabsContent>
+
+            <TabsContent value="bookings">
+              {!isPremium && !isExpired ? (
+                <UpgradePrompt
+                  feature={language === 'el' ? 'Διαχείριση Κρατήσεων' : 'Booking Management'}
+                  description={language === 'el'
+                    ? 'Αναβαθμίστε σε Premium για να διαχειρίζεστε κρατήσεις απευθείας μέσα στην πλατφόρμα.'
+                    : 'Upgrade to Premium to manage booking requests directly inside the platform.'}
+                />
+              ) : (
+                <div className="space-y-6">
+                  {isExpired && (
+                    <div className="flex items-start gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-amber-800">
+                          {language === 'el' ? 'Το πλάνο σας έχει λήξει — εμφάνιση υπαρχουσών κρατήσεων' : 'Plan expired — existing bookings shown'}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-amber-400 text-amber-700 flex-shrink-0"
+                        onClick={() => navigate(createPageUrl('OrganizerPlans'))}
+                      >
+                        {language === 'el' ? 'Ανανέωση' : 'Renew'}
+                      </Button>
+                    </div>
+                  )}
+                  {[...draftTrips, ...upcomingTrips, ...happeningTrips].length === 0 ? (
+                    <div className="text-center py-10 text-muted-foreground">
+                      {language === 'el' ? 'Δεν υπάρχουν ενεργές εκδρομές.' : 'No active trips.'}
+                    </div>
+                  ) : (
+                    [...draftTrips, ...upcomingTrips, ...happeningTrips].map(trip => (
+                      <Card key={trip.id} className="p-4">
+                        <h3 className="font-semibold text-base mb-3 text-foreground">{trip.title}</h3>
+                        <BookingList
+                          tripId={trip.id}
+                          paymentInstructions={organizerData?.payment_instructions || null}
+                        />
+                      </Card>
+                    ))
+                  )}
+                </div>
+              )}
             </TabsContent>
             </Tabs>
             </>

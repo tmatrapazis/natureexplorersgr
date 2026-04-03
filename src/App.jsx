@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import VisualEditAgent from '@/lib/VisualEditAgent'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { lazyPagesConfig } from './pages.lazy'
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
@@ -11,6 +10,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { TabNavigationProvider } from '@/lib/TabNavigationContext';
+import LoginPage from './pages/Login';
 // All pages are lazy-loaded via pages.lazy.js — no eager About import needed here
 const { Pages, Layout, mainPage } = lazyPagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -116,16 +116,21 @@ function RoutesWithAnimation() {
 
 
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <NavigationTracker />
-          <AuthenticatedApp />
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              {/* Login lives outside the main layout — no sidebar/header */}
+              <Route path="/login" element={<LoginPage />} />
+              {/* Everything else goes through AuthenticatedApp */}
+              <Route path="*" element={<AuthenticatedApp />} />
+            </Routes>
+          </Suspense>
         </Router>
         <Toaster />
-        <VisualEditAgent />
       </QueryClientProvider>
     </AuthProvider>
   )

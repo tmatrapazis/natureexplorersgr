@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { MountainGuide, Organizer } from "@/api/db";
+import { useAuth } from "@/lib/AuthContext";
+import { supabase } from "@/api/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useBackNavigation } from '../lib/useBackNavigation';
@@ -57,15 +60,12 @@ export default function EditGuideProfilePage() {
   const [uploadingCover, setUploadingCover] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
-  const { data: currentUser } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-  });
+  const { user: currentUser } = useAuth();
 
   const { data: guide, isLoading: guideLoading } = useQuery({
     queryKey: ['guide', guideId],
     queryFn: async () => {
-      const guides = await base44.entities.MountainGuide.filter({ id: guideId });
+      const guides = await MountainGuide.filter({ id: guideId });
       return guides[0];
     },
     enabled: !!guideId,
@@ -73,7 +73,7 @@ export default function EditGuideProfilePage() {
 
   const { data: organizers = [] } = useQuery({
     queryKey: ['all-organizers'],
-    queryFn: () => base44.entities.Organizer.list(),
+    queryFn: () => Organizer.list(),
   });
 
   React.useEffect(() => {
@@ -100,7 +100,7 @@ export default function EditGuideProfilePage() {
   }, [guide, currentUser, navigate, guideId, language]);
 
   const updateGuideMutation = useMutation({
-    mutationFn: (/** @type {any} */ data) => base44.entities.MountainGuide.update(guideId, data),
+    mutationFn: (/** @type {any} */ data) => MountainGuide.update(guideId, data),
     ...createOptimisticUpdate(queryClient, ['guide', guideId], (old, updated) =>
       old ? { ...old, ...updated } : old
     ),
@@ -120,7 +120,7 @@ export default function EditGuideProfilePage() {
       if (!guide || guide.user_id !== currentUser?.id) {
         throw new Error('Permission denied');
       }
-      return await base44.entities.MountainGuide.delete(guideId);
+      return await MountainGuide.delete(guideId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mountain-guides'] });
@@ -138,12 +138,18 @@ export default function EditGuideProfilePage() {
   const handleImageUpload = async (file, type) => {
     const uploader = type === 'profile' ? setUploadingProfile : setUploadingCover;
     uploader(true);
-    
+
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const fileExt = file.name.split('.').pop();
+      const fileName = `guide-${type}-${Date.now()}.${fileExt}`;
+      const { data, error } = await supabase.storage
+        .from('profile-images')
+        .upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { data: { publicUrl } } = supabase.storage.from('profile-images').getPublicUrl(data.path);
       setFormData(prev => ({
         ...prev,
-        [type === 'profile' ? 'profile_photo_url' : 'cover_photo_url']: file_url
+        [type === 'profile' ? 'profile_photo_url' : 'cover_photo_url']: publicUrl
       }));
     } catch (error) {
       toast.error(language === 'el' ? 'Σφάλμα μεταφόρτωσης εικόνας' : 'Error uploading image');

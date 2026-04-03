@@ -1,9 +1,2 @@
-import { base44 } from './base44Client';
-
-
-export const Query = base44.entities.Query;
-
-
-
-// auth sdk:
-export const User = base44.auth;
+// entities.js — re-exports from the new db layer for backward compatibility
+export { HikingTrip, Organizer, Booking, Notification, OrganizerFollow, MountainGuide, Refuge, Profile } from './db';

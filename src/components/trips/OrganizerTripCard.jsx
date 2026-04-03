@@ -3,13 +3,14 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import MobileSelect from "@/components/ui/MobileSelect";
-import { MapPin, Users, ListOrdered, Edit, XCircle, Trash2, Plus, RefreshCw } from "lucide-react";
+import { MapPin, Users, ListOrdered, Edit, XCircle, Trash2, Plus, RefreshCw, Euro } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { formatDateRange } from "../helpers/dateHelpers";
 import { getTripImage, handleImageError } from "../helpers/imageHelpers";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 import { getTripInsights } from "../helpers/bookingHelpers";
+import { formatPriceForCard } from "../helpers/pricingHelpers";
 
 const STATUS_BADGE = {
   draft: "bg-muted-foreground",
@@ -45,7 +46,19 @@ function OrganizerTripCard({
     : '';
 
   const confirmedBookings = allBookings.filter(b => b.trip_id === trip.id && b.status === "confirmed");
-  const bookedSlots = confirmedBookings.reduce((sum, b) => sum + b.number_of_people, 0);
+  const bookedSlots = confirmedBookings.reduce((sum, b) => sum + (b.number_of_people || 0), 0);
+  const totalSlots = trip.total_attendees ?? trip.total_slots ?? null;
+  const tiersWithSlots = (trip.pricing_options || []).filter(t => t.slots > 0);
+
+  // If all tiers have per-tier limits, sum their `remaining` values (set by BookingCard on confirm/decline).
+  // Otherwise fall back to simple total − booked.
+  const remainingSlots = (() => {
+    if (totalSlots === null) return null;
+    if (tiersWithSlots.length > 0 && tiersWithSlots.length === (trip.pricing_options || []).length) {
+      return tiersWithSlots.reduce((sum, t) => sum + (t.remaining ?? t.slots ?? 0), 0);
+    }
+    return Math.max(0, totalSlots - bookedSlots);
+  })();
   const pendingBookings = allBookings.filter(b => b.trip_id === trip.id && b.status === "pending").length;
   const insights = getTripInsights(trip.id, allBookings);
 
@@ -96,7 +109,15 @@ function OrganizerTripCard({
             </div>
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4 text-emerald-600" />
-              <span>{bookedSlots} / {trip.total_slots} {t('organizer.confirmed_bookings')}</span>
+              <span>
+                {remainingSlots !== null
+                  ? (language === 'el' ? `${remainingSlots} διαθέσιμες θέσεις` : `${remainingSlots} slots available`)
+                  : (language === 'el' ? 'Άγνωστη διαθεσιμότητα' : 'Availability unknown')}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Euro className="w-4 h-4 text-emerald-600" />
+              <span className="font-medium text-foreground">{formatPriceForCard(trip, language)}</span>
             </div>
             {pendingBookings > 0 && (
               <div className="flex items-center gap-2 text-yellow-600 font-semibold">
@@ -109,9 +130,12 @@ function OrganizerTripCard({
           {insights.total > 0 && (
             <div className="bg-muted/30 rounded-lg p-3 mb-4">
               <p className="text-xs font-semibold text-muted-foreground mb-2">{t('organizer.booking_insights')}</p>
-              <div className="flex gap-4 text-sm">
+              <div className="flex flex-wrap gap-4 text-sm">
                 <span>{t('organizer.insights_pending')}: <strong>{insights.pending}</strong></span>
                 <span>{t('organizer.insights_confirmed')}: <strong className="text-emerald-600">{insights.confirmed}</strong></span>
+                {insights.paid > 0 && (
+                  <span>Paid: <strong className="text-emerald-700">{insights.paid}</strong></span>
+                )}
                 <span>{t('organizer.insights_declined')}: <strong className="text-red-600">{insights.declined}</strong></span>
               </div>
             </div>

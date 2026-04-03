@@ -43,9 +43,10 @@ export default function MobileSelect({
           aria-haspopup="listbox"
           aria-expanded={open}
           aria-label={label || placeholder}
+          onClick={(e) => e.currentTarget.blur()}
           className={
             triggerClassName ||
-            'inline-flex items-center justify-between gap-2 px-3 py-2 min-h-[44px] text-[16px] md:text-sm rounded-md border border-input bg-background text-left transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation'
+            'mt-1 inline-flex items-center justify-between gap-2 px-3 py-2 min-h-[44px] text-[16px] md:text-sm rounded-md border border-input bg-background text-left transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation'
           }
         >
           <span className={selectedOption ? 'text-foreground' : 'text-muted-foreground'}>

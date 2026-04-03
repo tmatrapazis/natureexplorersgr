@@ -1,6 +1,8 @@
 import React, { useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { MountainGuide, Organizer } from "@/api/db";
+import { useAuth } from "@/lib/AuthContext";
 import PullToRefresh from '../components/ui/PullToRefresh';
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -35,26 +37,22 @@ export default function GuidesPage() {
     type: 'website',
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-    retry: false,
-  });
+  const { user } = useAuth();
 
   const { data: guides = [], isLoading: guidesLoading } = useQuery({
     queryKey: ['mountain-guides'],
-    queryFn: () => base44.entities.MountainGuide.filter({ status: 'active' }),
+    queryFn: () => MountainGuide.filter({ status: 'active' }),
   });
 
   const { data: organizers = [] } = useQuery({
     queryKey: ['all-organizers'],
-    queryFn: () => base44.entities.Organizer.list(),
+    queryFn: () => Organizer.list(),
   });
 
   // Check if logged-in user has a guide profile
   const { data: userGuideProfile } = useQuery({
     queryKey: ['user-guide-profile', user?.id],
-    queryFn: () => base44.entities.MountainGuide.filter({ user_id: user.id }),
+    queryFn: () => MountainGuide.filter({ user_id: user.id }),
     enabled: !!user,
   });
 
@@ -126,7 +124,7 @@ export default function GuidesPage() {
                 <Button
                   onClick={() => {
                     if (!user) {
-                      base44.auth.redirectToLogin(createPageUrl('CreateGuideProfile'));
+                      navigate('/login');
                     } else {
                       navigate(createPageUrl('CreateGuideProfile'));
                     }

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Heart, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { base44 } from '@/api/base44Client';
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { OrganizerFollow } from '@/api/db';
+import { useAuth } from '@/lib/AuthContext';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/components/contexts/LanguageContext';
@@ -17,20 +19,14 @@ export default function FollowButton({
 }) {
   const queryClient = useQueryClient();
   const { language } = useLanguage();
-
-  // Get current user
-  const { data: currentUser } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-    retry: false,
-  });
+  const { user: currentUser } = useAuth();
 
   // Check if user is following this organizer
   const { data: followRecord, isLoading } = useQuery({
     queryKey: ['organizer-follow', organizer.organizer_code, currentUser?.id],
     queryFn: async () => {
       if (!currentUser) return null;
-      const follows = await base44.entities.OrganizerFollow.filter({
+      const follows = await OrganizerFollow.filter({
         user_id: currentUser.id,
         organizer_code: organizer.organizer_code
       });
@@ -43,7 +39,7 @@ export default function FollowButton({
   const { data: followerCount = 0 } = useQuery({
     queryKey: ['organizer-followers-count', organizer.organizer_code],
     queryFn: async () => {
-      const follows = await base44.entities.OrganizerFollow.filter({
+      const follows = await OrganizerFollow.filter({
         organizer_code: organizer.organizer_code
       });
       return follows.length;
@@ -56,7 +52,7 @@ export default function FollowButton({
   // Follow mutation with optimistic updates
   const followMutation = useMutation({
     mutationFn: async () => {
-      return await base44.entities.OrganizerFollow.create({
+      return await OrganizerFollow.create({
         user_id: currentUser.id,
         user_email: currentUser.email,
         user_name: currentUser.full_name || currentUser.username || '',
@@ -91,7 +87,7 @@ export default function FollowButton({
   // Unfollow mutation with optimistic updates
   const unfollowMutation = useMutation({
     mutationFn: async () => {
-      await base44.entities.OrganizerFollow.deleteMany({
+      await OrganizerFollow.deleteMany({
         user_id: currentUser.id,
         organizer_code: organizer.organizer_code
       });

@@ -1,6 +1,8 @@
 import React from "react";
-import { base44 } from "@/api/base44Client";
+
 import { useQuery } from "@tanstack/react-query";
+import { MountainGuide, Organizer, HikingTrip } from "@/api/db";
+import { useAuth } from "@/lib/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import DOMPurify from "dompurify";
@@ -33,16 +35,12 @@ export default function GuideProfilePage() {
     }
   }, [guideId]);
 
-  const { data: currentUser } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-    retry: false,
-  });
+  const { user: currentUser } = useAuth();
 
   const { data: guide, isLoading: guideLoading } = useQuery({
     queryKey: ['guide', guideId],
     queryFn: async () => {
-      const guides = await base44.entities.MountainGuide.filter({ id: guideId });
+      const guides = await MountainGuide.filter({ id: guideId });
       return guides[0];
     },
     enabled: !!guideId,
@@ -52,7 +50,7 @@ export default function GuideProfilePage() {
     queryKey: ['guide-organizers', guide?.organizer_codes],
     queryFn: async () => {
       if (!guide?.organizer_codes?.length) return [];
-      const allOrganizers = await base44.entities.Organizer.list();
+      const allOrganizers = await Organizer.list();
       return allOrganizers.filter(org => guide.organizer_codes.includes(org.organizer_code));
     },
     enabled: !!guide?.organizer_codes,
@@ -61,7 +59,7 @@ export default function GuideProfilePage() {
   const { data: upcomingTrips = [] } = useQuery({
     queryKey: ['guide-trips', guideId],
     queryFn: async () => {
-      const allTrips = await base44.entities.HikingTrip.filter({ guide_id: guideId });
+      const allTrips = await HikingTrip.filter({ guide_id: guideId });
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       return allTrips.filter(trip => {

@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Mountain, Calendar, Users, LogIn, LogOut, Globe, User, Compass, Menu, Home, Info } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/lib/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslation } from '../translations/useTranslations';
 import { useTabNavigation } from '@/lib/TabNavigationContext';
@@ -25,19 +25,16 @@ export default function PublicHeader() {
   const { t } = useTranslation(language);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const { pushInTab } = useTabNavigation();
-
-  const { data: user } = useQuery({
-    queryKey: ['current-user-public-header'],
-    queryFn: () => base44.auth.me(),
-    retry: false,
-  });
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleLogin = () => {
-    base44.auth.redirectToLogin(window.location.pathname);
+    navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
   };
 
-  const handleLogout = () => {
-    base44.auth.logout(createPageUrl("Home"));
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
   };
   
   const handleNavClick = (url) => (e) => {

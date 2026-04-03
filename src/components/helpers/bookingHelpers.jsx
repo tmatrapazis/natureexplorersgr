@@ -35,6 +35,7 @@ export const getTripInsights = (tripId, allBookings) => {
     total: bookings.length,
     pending: bookings.filter(b => b.status === 'pending').length,
     confirmed: bookings.filter(b => b.status === 'confirmed').length,
+    paid: bookings.filter(b => b.status === 'paid').length,
     declined: bookings.filter(b => b.status === 'declined').length,
     cancelled: bookings.filter(b => b.status === 'cancelled').length
   };

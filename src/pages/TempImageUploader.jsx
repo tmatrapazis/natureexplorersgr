@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,9 +39,15 @@ export default function TempImageUploaderPage() {
     setUploading(true);
     setError('');
     try {
-      const response = await base44.integrations.Core.UploadFile({ file });
-      setFileUrl(response.file_url);
-      console.log('✅ Uploaded File URL:', response.file_url);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `temp-${Date.now()}.${fileExt}`;
+      const { data, error: uploadError } = await supabase.storage
+        .from('profile-images')
+        .upload(fileName, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from('profile-images').getPublicUrl(data.path);
+      setFileUrl(publicUrl);
+      console.log('✅ Uploaded File URL:', publicUrl);
       console.log('📋 Copy this URL and paste it into your Organizer\'s profile_picture_url field in the dashboard.');
     } catch (err) {
       console.error('❌ Upload error:', err);

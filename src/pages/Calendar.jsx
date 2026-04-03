@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { X, List, Map } from "lucide-react";
@@ -17,6 +17,7 @@ import { useTranslation } from "../components/translations/useTranslations";
 import useSEO from "../components/seo/useSEO";
 import StructuredData from "../components/seo/StructuredData";
 import { toZonedTime } from "date-fns-tz";
+import { HikingTrip, Organizer } from "@/api/db";
 
 // Athens timezone
 const ATHENS_TIMEZONE = 'Europe/Athens';
@@ -67,13 +68,13 @@ export default function CalendarPage() {
 
   const { data: trips, isLoading } = useQuery({
     queryKey: ['hiking-trips'],
-    queryFn: () => base44.entities.HikingTrip.list("start_date"),
+    queryFn: () => HikingTrip.list("start_date"),
     initialData: []
   });
 
   const { data: organizers = [] } = useQuery({
     queryKey: ['organizers-calendar'],
-    queryFn: () => base44.entities.Organizer.list(),
+    queryFn: () => Organizer.list(),
     initialData: []
   });
 
@@ -145,7 +146,7 @@ export default function CalendarPage() {
   // Sort trips based on selected sort option
   const sortedTrips = React.useMemo(() => {
     const sorted = [...filteredTrips];
-    
+
     switch (sortBy) {
       case "date-asc":
         return sorted.sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
@@ -202,7 +203,7 @@ export default function CalendarPage() {
   const totalPages = selectedDate ? 1 : Math.ceil(sortedTrips.length / tripsPerPage);
   const startIndex = (currentPage - 1) * tripsPerPage;
   const endIndex = startIndex + tripsPerPage;
-  
+
   // Find promoted trips in the current month
   const promotedTrip = React.useMemo(() => {
     if (!activeTrips.length) return null;
@@ -360,7 +361,7 @@ export default function CalendarPage() {
                 >
                       {language === 'el' ? 'Προηγούμενη' : 'Previous'}
                     </Button>
-                    
+
                     <div className="flex items-center gap-2">
                       {[...Array(totalPages)].map((_, i) => {
                         const pageNum = i + 1;

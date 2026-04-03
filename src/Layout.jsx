@@ -1,7 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/lib/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { createPageUrl } from "@/utils";
@@ -109,24 +108,9 @@ function LayoutContent({ children, currentPageName }) {
     };
   }, [navType, location.pathname, isTabRoot]);
 
-  const { data: user, isLoading: userLoading, error: userError, isError } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-  });
+  const { user, isLoadingAuth: userLoading } = useAuth();
 
-  // Surface non-401/403 errors
-  React.useEffect(() => {
-    if (isError && userError) {
-      const status = /** @type {any} */(userError).status;
-      if (status && status !== 401 && status !== 403) {
-        toast.error('Failed to load user session. Please refresh the page.');
-      }
-    }
-  }, [isError, userError]);
-
-  // Mark auth check done when query settles
+  // Mark auth check done when loading settles
   React.useEffect(() => {
     if (!userLoading) setAuthCheckComplete(true);
   }, [userLoading]);

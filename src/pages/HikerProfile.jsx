@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { Profile } from '@/api/db';
+
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useBackNavigation } from '../lib/useBackNavigation';
@@ -44,8 +45,7 @@ export default function HikerProfilePage() {
   const { data: hiker, isLoading } = useQuery({
     queryKey: ['hiker-profile', userId],
     queryFn: async () => {
-      const users = await base44.entities.User.filter({ id: userId });
-      return users[0];
+      return await Profile.get(userId);
     },
     enabled: !!userId,
   });

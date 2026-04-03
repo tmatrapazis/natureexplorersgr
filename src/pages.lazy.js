@@ -27,8 +27,12 @@ const GuideProfile        = React.lazy(() => import('./pages/GuideProfile'));
 const Guides              = React.lazy(() => import('./pages/Guides'));
 const HikerProfile        = React.lazy(() => import('./pages/HikerProfile'));
 const Home                = React.lazy(() => import('./pages/Home'));
-const MyTrips             = React.lazy(() => import('./pages/MyTrips'));
-const OrganizerProfile    = React.lazy(() => import('./pages/OrganizerProfile'));
+const ManageBookings      = React.lazy(() => import('./pages/ManageBookings'));
+const MyBookings          = React.lazy(() => import('./pages/MyBookings'));
+const MyTrips               = React.lazy(() => import('./pages/MyTrips'));
+const OrganizerAnalytics    = React.lazy(() => import('./pages/OrganizerAnalytics'));
+const OrganizerPlans        = React.lazy(() => import('./pages/OrganizerPlans'));
+const OrganizerProfile      = React.lazy(() => import('./pages/OrganizerProfile'));
 const OrganizersList      = React.lazy(() => import('./pages/OrganizersList'));
 const PrivacyPolicy       = React.lazy(() => import('./pages/PrivacyPolicy'));
 const RequestVerification = React.lazy(() => import('./pages/RequestVerification'));
@@ -53,7 +57,11 @@ export const LAZY_PAGES = {
   Guides,
   HikerProfile,
   Home,
+  ManageBookings,
+  MyBookings,
   MyTrips,
+  OrganizerAnalytics,
+  OrganizerPlans,
   OrganizerProfile,
   OrganizersList,
   PrivacyPolicy,

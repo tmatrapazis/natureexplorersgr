@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/lib/AuthContext';
+import { supabase } from '@/api/supabaseClient';
+
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
@@ -31,10 +33,7 @@ export default function RequestVerificationPage() {
     noindex: true
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
-  });
+  const { user, refreshUser } = useAuth();
 
   const [formData, setFormData] = useState({
     years_of_experience: '',
@@ -50,13 +49,14 @@ export default function RequestVerificationPage() {
 
   const requestVerificationMutation = useMutation({
     mutationFn: async (/** @type {any} */ data) => {
-      return await base44.auth.updateMe({
-        ...data,
-        verification_status: 'pending'
-      });
+      const { error } = await supabase
+        .from('profiles')
+        .update({ ...data, verification_status: 'pending' })
+        .eq('id', user.id);
+      if (error) throw error;
+      await refreshUser();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['current-user'] });
       setSubmitSuccess(true);
       setTimeout(() => navigate(createPageUrl("Calendar")), 3000);
     },

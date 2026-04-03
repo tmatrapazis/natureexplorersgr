@@ -4,74 +4,68 @@
 
 /**
  * Get the lowest price from pricing options or fallback to legacy price field
- * @param {Object} trip - The trip object
- * @returns {number|null} - The lowest price or null if no price available
  */
 export const getLowestPrice = (trip) => {
-  // Check if trip has pricing_options array
   if (trip.pricing_options && Array.isArray(trip.pricing_options) && trip.pricing_options.length > 0) {
     const prices = trip.pricing_options.map(option => option.price).filter(price => price != null);
     return prices.length > 0 ? Math.min(...prices) : null;
   }
-  
-  // Fallback to legacy price field
   return trip.price != null ? trip.price : null;
 };
 
 /**
  * Get the highest price from pricing options or fallback to legacy price field
- * @param {Object} trip - The trip object
- * @returns {number|null} - The highest price or null if no price available
  */
 export const getHighestPrice = (trip) => {
-  // Check if trip has pricing_options array
   if (trip.pricing_options && Array.isArray(trip.pricing_options) && trip.pricing_options.length > 0) {
     const prices = trip.pricing_options.map(option => option.price).filter(price => price != null);
     return prices.length > 0 ? Math.max(...prices) : null;
   }
-  
-  // Fallback to legacy price field
   return trip.price != null ? trip.price : null;
 };
 
 /**
- * Format price display for trip cards (shows "From €X" for multiple options or "€X" for single price)
- * @param {Object} trip - The trip object
- * @param {string} language - Current language ('en' or 'el')
- * @returns {string} - Formatted price string
+ * Format price display for trip cards — always shows "From €X"
  */
 export const formatPriceForCard = (trip, language = 'en') => {
   const lowestPrice = getLowestPrice(trip);
-  const highestPrice = getHighestPrice(trip);
-  
-  if (lowestPrice === null) {
-    return 'TBA';
-  }
-  
-  // If there are multiple pricing options and they differ, show "From €X"
-  if (trip.pricing_options && trip.pricing_options.length > 1 && lowestPrice !== highestPrice) {
-    return language === 'el' ? `Από €${lowestPrice}` : `From €${lowestPrice}`;
-  }
-  
-  // Single price or all same price
-  return `€${lowestPrice}`;
+  if (lowestPrice === null) return language === 'el' ? 'ΤΒΑ' : 'TBA';
+  return language === 'el' ? `Από €${lowestPrice}` : `From €${lowestPrice}`;
 };
 
 /**
- * Get all pricing options for display on trip details page
- * @param {Object} trip - The trip object
- * @returns {Array} - Array of pricing options with label and price
+ * Get all pricing options for display on trip details / booking form
  */
 export const getPricingOptions = (trip) => {
-  // Return pricing_options if available
   if (trip.pricing_options && Array.isArray(trip.pricing_options) && trip.pricing_options.length > 0) {
     return trip.pricing_options;
   }
-  
-  // Fallback: create a single option from legacy price field
   if (trip.price != null) {
     return [{ label: 'Standard', price: trip.price }];
   }
-  
   return [];
+};
+
+/**
+ * Get remaining available slots for a specific pricing tier.
+ * Returns null if the tier has no slot limit defined (no per-tier cap).
+ *
+ * @param {Object} trip - The trip object (needs pricing_options and id)
+ * @param {Array}  bookings - Array of booking objects
+ * @param {string} tierLabel - The label of the pricing tier to check
+ * @returns {number|null} Remaining slots, or null if no per-tier limit
+ */
+export const getTierAvailability = (trip, bookings, tierLabel) => {
+  const tier = (trip.pricing_options || []).find(t => t.label === tierLabel);
+  if (!tier || !tier.slots) return null;
+
+  const confirmedForTier = (bookings || [])
+    .filter(b =>
+      b.trip_id === trip.id &&
+      b.status === 'confirmed' &&
+      b.pricing_option_label === tierLabel
+    )
+    .reduce((sum, b) => sum + (b.number_of_people || 0), 0);
+
+  return Math.max(0, tier.slots - confirmedForTier);
 };

@@ -1,11 +1,10 @@
 import React, { useCallback, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X, ArrowLeft } from "lucide-react";
+import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X, ArrowLeft, ClipboardList, BookOpen, BarChart2, Sparkles } from "lucide-react";
 import { useTabNavigation } from "@/lib/TabNavigationContext";
 import { useBackNavigation } from "@/lib/useBackNavigation";
-import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/lib/AuthContext";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useTranslation } from "../translations/useTranslations";
 import { Button } from "@/components/ui/button";
@@ -30,13 +29,17 @@ import NotificationsBell from "../layout/NotificationsBell";
 
 // ─── Static nav arrays — no i18n, stable for the app lifetime ─────────────────
 const CLIENT_NAV = [
+  { title: "My Bookings", url: createPageUrl("MyBookings"), icon: ClipboardList },
   { title: "Edit Profile", url: createPageUrl("EditProfile"), icon: Edit },
 ];
 
 const ORGANIZER_NAV = [
-  { title: "Create Trip", url: createPageUrl("TripForm"), icon: PlusCircle },
-  { title: "My Trips",    url: createPageUrl("MyTrips"),    icon: Map },
-  { title: "Edit Profile", url: createPageUrl("EditProfile"), icon: Edit },
+  { title: "Create Trip",      url: createPageUrl("TripForm"),             icon: PlusCircle },
+  { title: "My Trips",         url: createPageUrl("MyTrips"),               icon: Map },
+  { title: "Manage Bookings",  url: createPageUrl("ManageBookings"),        icon: BookOpen },
+  { title: "Analytics",        url: createPageUrl("OrganizerAnalytics"),    icon: BarChart2 },
+  { title: "Plans",            url: createPageUrl("OrganizerPlans"),        icon: Sparkles },
+  { title: "Edit Profile",     url: createPageUrl("EditProfile"),           icon: Edit },
 ];
 
 // ─── BottomNav — memoised so it only re-renders when props actually change ────
@@ -124,13 +127,16 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
   }, [user, navigate, location.pathname]);
 
   // ─── Stable handlers ────────────────────────────────────────────────────────
-  const handleLogout = useCallback(() => {
-    base44.auth.logout(createPageUrl("Home"));
-  }, []);
+  const { logout } = useAuth();
+
+  const handleLogout = useCallback(async () => {
+    await logout();
+    navigate('/');
+  }, [logout, navigate]);
 
   const handleLogin = useCallback(() => {
-    base44.auth.redirectToLogin(window.location.pathname);
-  }, []);
+    navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+  }, [navigate]);
 
   /** Close mobile sidebar — used by every nav link click. */
   const handleNavClick = useCallback(() => {
@@ -444,15 +450,8 @@ export default function Layout({ children, currentPageName, user: propUser, isOr
   const routerLocation = useLocation();
   const location = propLocation || routerLocation;
 
-  const { data: queryUser } = useQuery({
-    queryKey: ['current-user-layout'],
-    queryFn: () => base44.auth.me(),
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-    enabled: !propUser,
-  });
-
-  const user = propUser || queryUser;
+  const { user: authUser } = useAuth();
+  const user = propUser || authUser;
   const isOrganizer = propIsOrganizer ?? !!(user?.organizer_code && user.organizer_code.trim().length > 0);
 
   const publicOnlyPages = ['Home', 'RoleSelection'];

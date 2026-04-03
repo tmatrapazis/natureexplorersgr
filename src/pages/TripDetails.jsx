@@ -1,7 +1,8 @@
-import React from "react";
-import { base44 } from "@/api/base44Client";
+import React, { useState } from "react";
+
 import { useQuery } from "@tanstack/react-query";
-import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import BookingForm from "@/components/bookings/BookingForm";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -21,8 +22,10 @@ import { getTripImage, handleImageError } from "../components/helpers/imageHelpe
 import OptimizedImage from "@/components/ui/OptimizedImage";
 import ShareButton from "../components/trip/ShareButton";
 import DOMPurify from "dompurify";
-import { getPricingOptions } from "../components/helpers/pricingHelpers";
+import { getPricingOptions, getLowestPrice } from "../components/helpers/pricingHelpers";
 import LazyTripLocationMap from "@/components/lazy/LazyTripLocationMap";
+import { useAuth } from "@/lib/AuthContext";
+import { HikingTrip, Organizer } from "@/api/db";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
@@ -48,10 +51,11 @@ export default function TripDetailsPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const tripId = searchParams.get("id");
   const { goBack: handleGoBack } = useBackNavigation(createPageUrl("Calendar"));
+  const { user } = useAuth();
+  const [showBookingForm, setShowBookingForm] = useState(false);
 
   // Redirect to homepage if no trip ID provided - only on initial mount
   React.useEffect(() => {
@@ -60,22 +64,10 @@ export default function TripDetailsPage() {
     }
   }, []);
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: async () => {
-      try {
-        return await base44.auth.me();
-      } catch (error) {
-        return null;
-      }
-    },
-    retry: false,
-  });
-
   const { data: trip, isLoading: tripLoading } = useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
-      const trips = await base44.entities.HikingTrip.filter({ id: tripId });
+      const trips = await HikingTrip.filter({ id: tripId });
       return trips[0];
     },
     enabled: !!tripId,
@@ -85,11 +77,14 @@ export default function TripDetailsPage() {
   const { data: organizer } = useQuery({
     queryKey: ['trip-organizer', trip?.organizer_code],
     queryFn: async () => {
-      const organizers = await base44.entities.Organizer.filter({ organizer_code: trip.organizer_code });
+      const organizers = await Organizer.filter({ organizer_code: trip.organizer_code });
       return organizers[0];
     },
     enabled: !!trip?.organizer_code,
   });
+
+  // Availability is read directly from trip.pricing_options[tier].remaining.
+  // That field is maintained by BookingCard when the organizer confirms/declines.
 
   // Track trip page view when trip data is loaded
   React.useEffect(() => {
@@ -111,14 +106,14 @@ export default function TripDetailsPage() {
     if (trip?.id && user?.role !== 'admin') {
       const viewedTripsKey = 'viewed_trips';
       const viewedTrips = JSON.parse(sessionStorage.getItem(viewedTripsKey) || '[]');
-      
+
       if (!viewedTrips.includes(trip.id)) {
         // Mark as viewed in session
         sessionStorage.setItem(viewedTripsKey, JSON.stringify([...viewedTrips, trip.id]));
-        
-        // Increment view count in database
+
+        // Increment view count in database (best-effort — hikers may lack write RLS)
         const newCount = (trip.view_count || 0) + 1;
-        base44.entities.HikingTrip.update(trip.id, { view_count: newCount });
+        HikingTrip.update(trip.id, { view_count: newCount }).catch(() => {});
       }
     }
   }, [trip?.id, user?.role]);
@@ -129,9 +124,9 @@ export default function TripDetailsPage() {
       const tripTitle = language === 'el'
         ? `${trip.title} | Πεζοπορία ${trip.location} | Trekking Ελλάδα | Nature Explorers`
         : `${trip.title} - Hiking in ${trip.location} | Trekking Greece | Nature Explorers`;
-      
+
       document.title = tripTitle;
-      
+
       const updateMetaTag = (name, content, isProperty = false) => {
         if (!content) return;
         const attribute = isProperty ? 'property' : 'name';
@@ -144,14 +139,14 @@ export default function TripDetailsPage() {
         element.setAttribute('content', content);
       };
 
-      const description = trip.description 
+      const description = trip.description
         ? trip.description.substring(0, 150) + (trip.description.length > 150 ? '...' : '')
         : language === 'el'
           ? `Συμμετάσχετε σε αυτή την ${trip.difficulty} πεζοπορική εκδρομή στο ${trip.location}. ${trip.distance_km ? `Διαδρομή ${trip.distance_km}km.` : ''} Outdoor περιπέτεια ορειβασίας με έμπειρο οδηγό. Οργανωμένες εκδρομές βουνό και hiking adventures Greece.`
           : `Join this ${trip.difficulty} hiking trip in ${trip.location}. ${trip.distance_km ? `${trip.distance_km}km mountain trekking route.` : ''} Outdoor adventure with experienced guide. Hiking tours Greece and weekend hiking trips.`;
 
       updateMetaTag('description', description);
-      updateMetaTag('keywords', language === 'el' 
+      updateMetaTag('keywords', language === 'el'
         ? `πεζοπορία, ${trip.location}, εκδρομές, ορειβασία, trekking, outdoor activities, ${trip.difficulty}, hiking greece, οργανωμένες εκδρομές βουνού, πεζοπορικές διαδρομές`
         : `hiking, ${trip.location}, trekking, outdoor activities, mountain adventure, ${trip.difficulty}, hiking greece, hiking trips greece, weekend hiking, one day hikes`);
       const canonicalUrl = `https://natureexplorers.gr/tripdetails?id=${trip.id}`;
@@ -181,7 +176,7 @@ export default function TripDetailsPage() {
     "@context": "https://schema.org",
     "@type": "SportsEvent",
     "name": trip.title,
-    "description": trip.description || (language === 'el' 
+    "description": trip.description || (language === 'el'
       ? `Πεζοπορική εκδρομή ${trip.difficulty} επιπέδου στο ${trip.location}. Οργανωμένες εκδρομές βουνό, outdoor περιπέτεια ορειβασίας και trekking με έμπειρο οδηγό. Ημερολόγιο εκδρομών Nature Explorers Greece.`
       : `${trip.difficulty} level hiking trip and trekking adventure in ${trip.location}. Outdoor mountain expedition with experienced guide. Hiking calendar and weekend hiking trips Greece.`),
     "image": [trip.image_url || getTripImage(null, trip.id)],
@@ -215,17 +210,17 @@ export default function TripDetailsPage() {
     } : undefined,
     "offers": {
       "@type": "Offer",
-      "price": trip.price || 0,
+      "price": getLowestPrice(trip) || 0,
       "priceCurrency": "EUR",
       "url": trip.event_url || window.location.href,
-      "availability": trip.status === 'cancelled' ? "https://schema.org/SoldOut" : 
-                      trip.status === 'almost soldout' ? "https://schema.org/LimitedAvailability" : 
+      "availability": trip.status === 'cancelled' ? "https://schema.org/SoldOut" :
+                      trip.status === 'almost soldout' ? "https://schema.org/LimitedAvailability" :
                       "https://schema.org/InStock",
       "validFrom": trip.created_date || trip.start_date
     },
-    "eventStatus": trip.status === 'cancelled' 
-      ? "https://schema.org/EventCancelled" 
-      : trip.status === 'completed' 
+    "eventStatus": trip.status === 'cancelled'
+      ? "https://schema.org/EventCancelled"
+      : trip.status === 'completed'
       ? "https://schema.org/EventScheduled"
       : "https://schema.org/EventScheduled",
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
@@ -236,12 +231,10 @@ export default function TripDetailsPage() {
     "inLanguage": language === 'el' ? "el" : "en",
     "typicalAgeRange": "18-65",
     "maximumAttendeeCapacity": trip.max_participants,
-    // remainingAttendeeCapacity omitted: booking count not fetched on this page,
-    // so we cannot compute it accurately. Omission is better than a wrong value.
     "isAccessibleForFree": trip.price === 0 || !trip.price,
     "url": window.location.href
   } : null;
-  
+
   // Breadcrumb structured data for better navigation
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -292,6 +285,11 @@ export default function TripDetailsPage() {
   const computedStatus = getComputedTripStatus(trip);
   const isSocialMedia = isSocialMediaUrl(trip.event_url);
 
+  // Considers plan_expires_at — raw organizer.plan column is not enough
+  const organizerIsActivePremium =
+    organizer?.plan === 'premium' &&
+    (!organizer?.plan_expires_at || new Date(organizer.plan_expires_at) > new Date());
+
   // Handler for "Book Now" button clicks
   const handleBookNowClick = () => {
     trackEvent('book_now_click', {
@@ -304,8 +302,7 @@ export default function TripDetailsPage() {
       price: trip.price,
       difficulty: trip.difficulty,
     });
-    // Track click server-side (excludes admins and the trip's own organizer)
-    base44.functions.invoke('trackBookClick', { trip_id: trip.id });
+    // trackBookClick removed — base44 function no longer available
   };
 
   // Handler for external link button clicks
@@ -419,7 +416,7 @@ export default function TripDetailsPage() {
                       {t('trip.login_message')}
                     </p>
                     <Button
-                      onClick={() => base44.auth.redirectToLogin(window.location.href)}
+                      onClick={() => navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`)}
                       className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
                       aria-label={t('trip.login_to_continue')}
                     >
@@ -439,7 +436,7 @@ export default function TripDetailsPage() {
                       {t('trip.login_message')}
                     </p>
                     <Button
-                      onClick={() => base44.auth.redirectToLogin(window.location.href)}
+                      onClick={() => navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`)}
                       className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
                       aria-label={t('common.login')}
                     >
@@ -495,7 +492,7 @@ export default function TripDetailsPage() {
                 <div className="absolute top-6 right-6 hidden md:block">
                   <ShareButton trip={trip} language={language} />
                 </div>
-                
+
                 {/* pr-20 only on md+ where the absolute ShareButton is visible */}
                 <h1 className="text-3xl font-bold text-foreground mb-2 pr-0 md:pr-20">{trip.title}</h1>
 
@@ -558,15 +555,24 @@ export default function TripDetailsPage() {
                       {(() => {
                         const pricingOptions = getPricingOptions(trip);
                         if (pricingOptions.length === 0) return <p className="font-medium text-foreground">TBA</p>;
-                        if (pricingOptions.length === 1) return <p className="font-medium text-foreground">€{pricingOptions[0].price} {t('trip.per_person')}</p>;
                         return (
                           <div className="space-y-1 mt-1">
-                            {pricingOptions.map((option, i) => (
-                              <div key={i} className="flex items-center gap-2">
-                                <span className="text-sm font-medium text-foreground">€{option.price}</span>
-                                <span className="text-sm text-muted-foreground">— {option.label}</span>
-                              </div>
-                            ))}
+                            {pricingOptions.map((option, i) => {
+                              const availability = option.slots
+                                ? (option.remaining ?? option.slots)
+                                : null;
+                              return (
+                                <div key={i} className="flex items-center gap-2 flex-wrap">
+                                  <span className="text-sm font-medium text-foreground">€{option.price}</span>
+                                  <span className="text-sm text-muted-foreground">— {option.label}</span>
+                                  {availability !== null && (
+                                    <span className={`text-xs ${availability === 0 ? 'text-red-500 font-medium' : 'text-muted-foreground'}`}>
+                                      ({availability === 0 ? (language === 'el' ? 'Πλήρες' : 'Full') : `${availability} ${language === 'el' ? 'θέσεις' : 'spots left'}`})
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
                           </div>
                         );
                       })()}
@@ -618,9 +624,9 @@ export default function TripDetailsPage() {
                 {trip.description && (
                   <div className="mb-6">
                     <h3 className="font-semibold text-foreground mb-2">{t('trip.description')}</h3>
-                    <div 
-                      className="text-muted-foreground break-words overflow-hidden" 
-                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(trip.description) }} 
+                    <div
+                      className="text-muted-foreground break-words overflow-hidden"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(trip.description) }}
                     />
                   </div>
                 )}
@@ -684,15 +690,43 @@ export default function TripDetailsPage() {
                   <Users className="w-16 h-16 text-emerald-300 mx-auto mb-4" />
                   <h3 className="text-lg font-bold text-foreground mb-2">{t('trip.interested_in_trip')}</h3>
                   <p className="text-muted-foreground mb-4">
-                    {isSocialMedia 
-                      ? t('trip.contact_organizer')
-                      : t('trip.click_to_book')
+                    {organizerIsActivePremium
+                      ? 'Request your spot directly through the platform.'
+                      : isSocialMedia
+                        ? t('trip.contact_organizer')
+                        : t('trip.click_to_book')
                     }
                   </p>
-                  {trip.event_url ? (
-                    <Button 
+
+                  {/* Active premium organizer — in-app booking */}
+                  {organizerIsActivePremium && computedStatus === 'upcoming' && (
+                    <Button
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                      onClick={() => {
+                        if (!user) {
+                          navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`);
+                          return;
+                        }
+                        setShowBookingForm(true);
+                        handleBookNowClick();
+                      }}
+                    >
+                      {t('trip.book_now')}
+                    </Button>
+                  )}
+
+                  {/* Expired premium organizer with no fallback URL */}
+                  {!organizerIsActivePremium && organizer?.plan === 'premium' && !trip.event_url && (
+                    <p className="text-sm text-center text-muted-foreground py-2">
+                      Booking is temporarily unavailable for this trip.
+                    </p>
+                  )}
+
+                  {/* Free organizer or expired premium with external URL */}
+                  {!organizerIsActivePremium && trip.event_url && (
+                    <Button
                       asChild
-                      className="w-full bg-emerald-600 hover:bg-emerald-700"
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
                       onClick={handleBookNowClick}
                     >
                       <a href={trip.event_url} target="_blank" rel="noopener noreferrer">
@@ -700,15 +734,17 @@ export default function TripDetailsPage() {
                         {isSocialMedia ? t('trip.contact_organizer') : t('trip.book_now')}
                       </a>
                     </Button>
-                  ) : organizer ? ( 
-                    <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}> 
-                      <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+                  )}
+
+                  {!organizerIsActivePremium && !trip.event_url && organizer?.plan !== 'premium' && organizer ? (
+                    <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}>
+                      <Button className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]">
                         {t('trip.view_organizer_profile')}
                       </Button>
                     </Link>
-                  ) : (
+                  ) : !organizerIsActivePremium && !trip.event_url && organizer?.plan !== 'premium' && !organizer ? (
                     <p className="text-sm text-muted-foreground">{t('trip.no_booking_info')}</p>
-                  )}
+                  ) : null}
                 </div>
               </Card>
 
@@ -720,13 +756,23 @@ export default function TripDetailsPage() {
               </div>
             </div>
           </div>
-          
+
           {/* Mobile Share Button - Sticky at bottom */}
           <div className="md:hidden">
             <ShareButton trip={trip} language={language} />
           </div>
         </div>
       </div>
+
+      {/* In-app booking modal — only rendered for Premium organizer trips */}
+      {showBookingForm && (
+        <BookingForm
+          trip={trip}
+          organizer={organizer}
+          open={showBookingForm}
+          onClose={() => setShowBookingForm(false)}
+        />
+      )}
     </>
   );
 }

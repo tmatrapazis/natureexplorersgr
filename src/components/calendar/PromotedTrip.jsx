@@ -11,8 +11,8 @@ import { useTranslation } from '../translations/useTranslations';
 import { getTripImage, handleImageError } from '../helpers/imageHelpers';
 import OptimizedImage from '@/components/ui/OptimizedImage';
 import { formatPriceForCard } from '../helpers/pricingHelpers';
-import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+
+import { useAuth } from '@/lib/AuthContext';
 
 const difficultyColors = {
   easy: "bg-emerald-100 text-emerald-800 border-emerald-300",
@@ -25,17 +25,7 @@ function PromotedTrip({ trips, currentDate }) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: async () => {
-      try {
-        return await base44.auth.me();
-      } catch (error) {
-        return null;
-      }
-    },
-    retry: false,
-  });
+  const { user } = useAuth();
 
   // Filter trips by the current month and find promoted trips
   const promotedTrip = React.useMemo(() => {

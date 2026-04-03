@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Mountain, MapPin, Users, ArrowUpDown, ExternalLink, Facebook, Instagram } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+
 import { useQuery } from '@tanstack/react-query';
+import { Refuge } from '@/api/db';
 import { useLanguage } from '@/components/contexts/LanguageContext';
 import { useTranslation } from '@/components/translations/useTranslations';
 import PageWrapper from '../components/layout/PageWrapper';
@@ -42,7 +43,7 @@ export default function GreekRefuges() {
 
   const { data: refugesData = [], isLoading } = useQuery({
     queryKey: ['refuges'],
-    queryFn: () => base44.entities.Refuge.list(),
+    queryFn: () => Refuge.list(),
   });
 
   const sortedRefuges = React.useMemo(() => {

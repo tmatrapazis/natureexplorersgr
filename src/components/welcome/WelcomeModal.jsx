@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { supabase } from '@/api/supabaseClient';
+import { useAuth } from '@/lib/AuthContext';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -7,24 +9,27 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { CheckCircle2, Mountain } from 'lucide-react';
 import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
+
 import { useLanguage } from '../contexts/LanguageContext';
 
 export default function WelcomeModal({ user, onClose }) {
   const { language } = useLanguage();
+  const { refreshUser } = useAuth();
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleContinue = async () => {
     if (!acceptedTerms) return;
-    
+
     setIsSubmitting(true);
     try {
-      await base44.auth.updateMe({
-        has_accepted_terms: true,
-        newsletter_subscribed: newsletterSubscribed
-      });
+      const { error } = await supabase
+        .from('profiles')
+        .update({ has_accepted_terms: true, newsletter_subscribed: newsletterSubscribed })
+        .eq('id', user.id);
+      if (error) throw error;
+      await refreshUser();
       onClose();
     } catch (error) {
       console.error('Failed to update user preferences:', error);
