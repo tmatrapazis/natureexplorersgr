@@ -37,7 +37,6 @@ const OrganizersList      = React.lazy(() => import('./pages/OrganizersList'));
 const PrivacyPolicy       = React.lazy(() => import('./pages/PrivacyPolicy'));
 const RequestVerification = React.lazy(() => import('./pages/RequestVerification'));
 const RoleSelection       = React.lazy(() => import('./pages/RoleSelection'));
-const TempImageUploader   = React.lazy(() => import('./pages/TempImageUploader'));
 const TermsOfUse          = React.lazy(() => import('./pages/TermsOfUse'));
 const TripDetails         = React.lazy(() => import('./pages/TripDetails'));
 const TripForm            = React.lazy(() => import('./pages/TripForm'));
@@ -67,7 +66,6 @@ export const LAZY_PAGES = {
   PrivacyPolicy,
   RequestVerification,
   RoleSelection,
-  TempImageUploader,
   TermsOfUse,
   TripDetails,
   TripForm,

@@ -3,7 +3,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { MountainGuide, Organizer, HikingTrip } from "@/api/db";
 import { useAuth } from "@/lib/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import DOMPurify from "dompurify";
 import { useBackNavigation } from '../lib/useBackNavigation';
@@ -25,15 +25,17 @@ export default function GuideProfilePage() {
   const navigate = useNavigate();
   const { goBack } = useBackNavigation(createPageUrl("Guides"));
   
-  const urlParams = new URLSearchParams(window.location.search);
-  const guideId = urlParams.get("id");
+  const [searchParams] = useSearchParams();
+  // Freeze at mount time — prevents redirect firing during AnimatePresence
+  // exit animation when the URL has already changed to the next page.
+  const guideId = React.useRef(searchParams.get("id")).current;
 
-  // Redirect to Guides page if no guide ID provided (301 redirect)
+  // Redirect to Guides page if no guide ID provided
   React.useEffect(() => {
     if (!guideId) {
-      window.location.replace(createPageUrl("Guides"));
+      navigate(createPageUrl("Guides"), { replace: true });
     }
-  }, [guideId]);
+  }, [guideId, navigate]);
 
   const { user: currentUser } = useAuth();
 
@@ -196,7 +198,7 @@ export default function GuideProfilePage() {
           <Button
             variant="outline"
             className="bg-background min-h-[44px]"
-            onClick={goBack}
+            onClick={() => navigate(createPageUrl("Guides"))}
             aria-label={language === 'el' ? 'Πίσω στους Οδηγούς' : 'Back to Guides'}
           >
             <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -377,21 +379,29 @@ export default function GuideProfilePage() {
                     {organizers.map(organizer => (
                       <Link
                         key={organizer.organizer_code}
-                        to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
+                        to={organizer.username
+                          ? `/organizerprofile/${organizer.username}`
+                          : `/organizerprofile?code=${organizer.organizer_code}`}
                         className="flex items-center gap-3 p-3 rounded-lg border hover:border-emerald-600 hover:shadow-md transition-all"
                       >
-                        {organizer.profile_picture_url && (
+                        {organizer.profile_picture_url ? (
                           <img
                             src={organizer.profile_picture_url}
-                            alt={organizer.username || organizer.full_name}
-                            className="w-12 h-12 rounded-full object-cover"
+                            alt={organizer.full_name}
+                            className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                           />
+                        ) : (
+                          <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                            <span className="text-emerald-700 font-semibold text-lg">
+                              {(organizer.full_name || organizer.username || '?')[0].toUpperCase()}
+                            </span>
+                          </div>
                         )}
                         <div>
                           <p className="font-semibold text-foreground">
-                            {organizer.username || organizer.full_name}
+                            {organizer.full_name || organizer.username}
                           </p>
-                          {organizer.is_verified && (
+                          {organizer.verified && (
                             <Badge variant="outline" className="mt-1">
                               <Shield className="w-3 h-3 mr-1" />
                               {language === 'el' ? 'Επαληθευμένος' : 'Verified'}

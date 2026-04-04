@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { MountainGuide, Organizer } from "@/api/db";
 import { useAuth } from "@/lib/AuthContext";
 import { supabase } from "@/api/supabaseClient";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useBackNavigation } from '../lib/useBackNavigation';
 import { createOptimisticUpdate } from '../lib/optimistic-mutations';
@@ -37,8 +37,9 @@ export default function EditGuideProfilePage() {
   const queryClient = useQueryClient();
   const { goBack } = useBackNavigation(createPageUrl("Guides"));
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const guideId = urlParams.get("id");
+  const [searchParams] = useSearchParams();
+  // Freeze at mount time — prevents stale reads during AnimatePresence exit animation
+  const guideId = React.useRef(searchParams.get("id")).current;
 
   const [formData, setFormData] = useState({
     full_name: "",

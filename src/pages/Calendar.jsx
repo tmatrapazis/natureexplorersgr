@@ -121,7 +121,7 @@ export default function CalendarPage() {
 
     if (filters.verifiedOnly) {
       const organizer = trip.organizer_code ? organizerMap[trip.organizer_code] : null;
-      if (!organizer || !organizer.is_verified) {
+      if (!organizer || !organizer.verified) {
         return false;
       }
     }
@@ -214,10 +214,13 @@ export default function CalendarPage() {
       return d >= today && d.getMonth() === currentDate.getMonth() && d.getFullYear() === currentDate.getFullYear();
     });
     if (!inMonth.length) return null;
-    // Find trips marked as promoted
-    const promoted = inMonth.filter(trip => trip.is_promoted === true);
+    // Find trips marked as promoted for the calendar and whose promotion hasn't expired
+    const now = new Date();
+    const promoted = inMonth.filter(trip =>
+      trip.is_promoted_calendar === true &&
+      (!trip.promoted_calendar_until || new Date(trip.promoted_calendar_until) > now)
+    );
     if (!promoted.length) return null;
-    // Return the first promoted trip (or you could randomize here)
     return promoted[0];
   }, [activeTrips, currentDate]);
 
@@ -283,8 +286,8 @@ export default function CalendarPage() {
         </div>
 
         <div className="flex flex-col gap-8">
-          <div className="grid lg:grid-cols-2 gap-6 items-stretch">
-            <div className="flex flex-col">
+          <div className={promotedTrip ? "grid lg:grid-cols-2 gap-6 items-stretch" : "flex justify-center"}>
+            <div className={promotedTrip ? "flex flex-col" : "w-full max-w-xl"}>
               <CalendarGrid
                 currentDate={currentDate}
                 onDateChange={setCurrentDate}
@@ -293,9 +296,11 @@ export default function CalendarPage() {
                 selectedDate={selectedDate} />
             </div>
 
-            <div className="flex flex-col">
-              <PromotedTrip trips={activeTrips} currentDate={currentDate} />
-            </div>
+            {promotedTrip && (
+              <div className="flex flex-col">
+                <PromotedTrip trips={activeTrips} currentDate={currentDate} />
+              </div>
+            )}
           </div>
 
           <div ref={tripsListRef}>

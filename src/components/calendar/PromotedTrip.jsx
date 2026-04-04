@@ -43,10 +43,13 @@ function PromotedTrip({ trips, currentDate }) {
 
     if (tripsInCurrentMonth.length === 0) return null;
 
-    // Find trips marked as promoted
-    const promoted = tripsInCurrentMonth.filter(trip => trip.is_promoted === true);
+    // Find trips marked as promoted for the calendar and whose promotion hasn't expired
+    const now = new Date();
+    const promoted = tripsInCurrentMonth.filter(trip =>
+      trip.is_promoted_calendar === true &&
+      (!trip.promoted_calendar_until || new Date(trip.promoted_calendar_until) > now)
+    );
     if (!promoted.length) return null;
-    // Return the first promoted trip
     return promoted[0];
   }, [trips, currentDate]);
 

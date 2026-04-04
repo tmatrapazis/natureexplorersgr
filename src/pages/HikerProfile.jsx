@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Profile } from '@/api/db';
 
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useBackNavigation } from '../lib/useBackNavigation';
 import { Button } from '@/components/ui/button';
@@ -38,9 +38,11 @@ export default function HikerProfilePage() {
     noindex: true
   });
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const userId = urlParams.get("id");
-  const tripId = urlParams.get("tripId");
+  const [searchParams] = useSearchParams();
+  // Freeze at mount time — prevents stale reads during AnimatePresence exit animation
+  const searchParamsAtMount = React.useRef(searchParams).current;
+  const userId = searchParamsAtMount.get("id");
+  const tripId = searchParamsAtMount.get("tripId");
 
   const { data: hiker, isLoading } = useQuery({
     queryKey: ['hiker-profile', userId],

@@ -48,18 +48,28 @@ Register (Supabase Auth)
 ```
 Browse (Home / Calendar)
   └─ TripDetails
-       ├─ [premium organizer] Book Now → BookingForm modal
-       │    └─ Submit request → status: pending
-       │         └─ Organizer confirms → Notification → status: confirmed
-       │              └─ Pay organizer (offline) → status: paid
-       └─ [free organizer]  External booking link (Google Forms, Eventbrite, etc.)
+       ├─ [premium organizer, spots available] "Book Now" → BookingForm modal
+       │    ├─ Select pricing tier (shows remaining slots per tier)
+       │    ├─ Choose participant count (capped to tier availability)
+       │    ├─ Add optional notes → Submit → status: pending
+       │    └─ Organizer responds:
+       │         ├─ Confirmed → Notification + payment instructions → status: confirmed
+       │         │    └─ Pay organizer (offline) → organizer marks paid → status: paid
+       │         └─ Declined → Notification with optional reason
+       ├─ [premium organizer, fully booked] "Fully Booked" button (disabled)
+       └─ [free organizer] External booking link (Google Forms, Eventbrite, etc.)
 
 MyBookings
-  └─ View all booking statuses (pending / confirmed / paid / declined / cancelled)
+  └─ View all bookings with status badges and contextual messages
+       ├─ pending   → "Cancel" button available (inline confirmation before cancelling)
+       ├─ confirmed → payment instructions shown; link to trip
+       ├─ paid      → confirmation message
+       └─ declined / cancelled → reason shown if provided
 ```
 
 - Hikers cannot see other hikers' bookings (RLS-enforced).
-- Cancellation by the organizer triggers a notification and frees the slot.
+- Cancelling a pending booking notifies the organizer and removes the request.
+- When switching pricing tiers in `BookingForm`, if the new tier has fewer available spots than the current participant count, a toast explains the automatic reduction.
 
 ---
 
@@ -103,8 +113,9 @@ OrganizerAnalytics → revenue KPIs, monthly bar chart, status pie chart, top tr
 
 Per-tier slot tracking:
 - Each pricing tier can have a `slots` limit set in TripForm.
-- `pricing_options[].remaining` is decremented on confirm, restored on decline/cancel.
+- `pricing_options[].remaining` is decremented on confirm, restored on decline/cancel (including hiker-initiated cancellations).
 - `BookingForm` and `TripDetails` read `remaining` directly — no extra query, no RLS issues.
+- When all tiers with slot limits reach `remaining = 0` and no unlimited tiers exist, TripDetails shows a disabled "Fully Booked" button instead of "Book Now".
 
 ---
 
@@ -242,6 +253,17 @@ All database access goes through plain async functions that throw on error. No d
 | `Refuge` | `refuges` | `list` |
 | `Profile` | `profiles` | `get`, `update`, `delete` |
 | `Promotion` | `promotions` | `getActive`, `filterByOrganizer`, `create`, `cancel` |
+
+### Booking Status Lifecycle
+
+```
+pending → confirmed → paid        (happy path)
+pending → cancelled               (hiker self-cancels via MyBookings)
+pending → declined                (organizer declines, optional reason)
+confirmed → declined              (organizer reverses; slot restored)
+```
+
+`src/components/helpers/bookingHelpers.jsx` exports `bookingStatusConfig` with display styles for all five active statuses: `pending`, `confirmed`, `paid`, `declined`, `cancelled`.
 
 ### RLS Notes
 

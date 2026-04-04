@@ -10,7 +10,7 @@ export default function GoogleAnalytics({ enabled = false }) {
 
   // Initialize or cleanup GA based on enabled state
   useEffect(() => {
-    if (enabled && !isInitializedRef.current) {
+    if (enabled && !isInitializedRef.current && import.meta.env.PROD) {
       // Enable GA tracking
       window[`ga-disable-${GA_MEASUREMENT_ID}`] = false;
       
@@ -64,7 +64,7 @@ export default function GoogleAnalytics({ enabled = false }) {
 
   // Track page views on route change (only when enabled)
   useEffect(() => {
-    if (enabled && window['gtag']) {
+    if (enabled && import.meta.env.PROD && window['gtag']) {
       window['gtag']('event', 'page_view', {
         page_path: location.pathname + location.search,
         page_location: window.location.href,
@@ -77,7 +77,7 @@ export default function GoogleAnalytics({ enabled = false }) {
 
 // Helper function to track custom events
 export const trackEvent = (eventName, eventParams = {}) => {
-  if (window['gtag']) {
+  if (import.meta.env.PROD && window['gtag']) {
     window['gtag']('event', eventName, eventParams);
   }
 };

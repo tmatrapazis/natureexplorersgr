@@ -73,15 +73,15 @@ export default function RoleSelectionPage() {
       }
     },
     onSuccess: async (data, intendedRole) => {
-      toast.success('Role selection completed successfully!');
+      toast.success(t('role_selection.success_toast'));
       queryClient.invalidateQueries({ queryKey: ['current-user'] });
-      
+
       // Navigate to edit profile to complete required fields
       navigate(createPageUrl("EditProfile"));
     },
     onError: (error) => {
       console.error('[RoleSelection] ❌ Role assignment failed:', error);
-      toast.error(error.message || 'Failed to complete registration. Please try again.');
+      toast.error(t('role_selection.error_toast'));
     }
   });
 
@@ -104,8 +104,8 @@ export default function RoleSelectionPage() {
           <div className="flex justify-center mb-4">
             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png" alt="Nature Explorers" className="h-16 w-auto" />
           </div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Welcome to Nature Explorers!</h1>
-          <p className="text-muted-foreground">Choose how you'd like to join our community</p>
+          <h1 className="text-4xl font-bold text-foreground mb-2">{t('role_selection.title')}</h1>
+          <p className="text-muted-foreground">{t('role_selection.subtitle')}</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -115,41 +115,27 @@ export default function RoleSelectionPage() {
               <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <UserCircle2 className="w-12 h-12 text-blue-600" />
               </div>
-              <CardTitle className="text-2xl">Join as a Hiker</CardTitle>
-              <CardDescription>Discover and book amazing hiking adventures</CardDescription>
+              <CardTitle className="text-2xl">{t('role_selection.hiker_title')}</CardTitle>
+              <CardDescription>{t('role_selection.hiker_description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Browse and search hiking events</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Book spots in upcoming expeditions</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Rate and review events</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Follow your favorite organizers</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Get personalized notifications</span>
-                </li>
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <li key={n} className="flex items-start gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>{t(`role_selection.hiker_benefit_${n}`)}</span>
+                  </li>
+                ))}
               </ul>
-              <Button 
-                className="w-full mt-4" 
+              <Button
+                className="w-full mt-4"
                 onClick={() => handleRoleSelection('hiker')}
                 disabled={assignRoleMutation.isPending}
               >
                 {assignRoleMutation.isPending && assignRoleMutation.variables === 'hiker' ? (
-                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...</>
+                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('role_selection.processing')}</>
                 ) : (
-                  'Continue as Hiker'
+                  t('role_selection.continue_hiker')
                 )}
               </Button>
             </CardContent>
@@ -161,41 +147,27 @@ export default function RoleSelectionPage() {
               <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Mountain className="w-12 h-12 text-emerald-600" />
               </div>
-              <CardTitle className="text-2xl">Join as an Organizer</CardTitle>
-              <CardDescription>Create and manage hiking expeditions</CardDescription>
+              <CardTitle className="text-2xl">{t('role_selection.organizer_title')}</CardTitle>
+              <CardDescription>{t('role_selection.organizer_description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Create, edit, and manage events</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Accept/decline booking requests</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Build your public organizer profile</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>View feedback and ratings</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Apply for verified organizer badge</span>
-                </li>
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <li key={n} className="flex items-start gap-2">
+                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span>{t(`role_selection.organizer_benefit_${n}`)}</span>
+                  </li>
+                ))}
               </ul>
-              <Button 
-                className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700" 
+              <Button
+                className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700"
                 onClick={() => handleRoleSelection('organizer')}
                 disabled={assignRoleMutation.isPending}
               >
                 {assignRoleMutation.isPending && assignRoleMutation.variables === 'organizer' ? (
-                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Processing...</>
+                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('role_selection.processing')}</>
                 ) : (
-                  'Continue as Organizer'
+                  t('role_selection.continue_organizer')
                 )}
               </Button>
             </CardContent>
@@ -203,7 +175,7 @@ export default function RoleSelectionPage() {
         </div>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          You can always update your preferences later in your profile settings
+          {t('role_selection.preferences_note')}
         </p>
       </div>
     </div>

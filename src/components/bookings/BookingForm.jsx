@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Minus, Plus, Loader2, CheckCircle2, Users, Euro } from 'lucide-react';
+import { Minus, Plus, Loader2, CheckCircle2, Users, Euro, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import { getPricingOptions, getLowestPrice } from '@/components/helpers/pricingHelpers';
 
@@ -168,10 +168,16 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                           onClick={() => {
                             if (!isFull) {
                               setSelectedPricingOption(opt);
-                              setPeople(p => Math.min(p, availability ?? p));
+                              setPeople(p => {
+                                if (availability !== null && p > availability) {
+                                  toast.info(`Participant count reduced to ${availability} to fit available spots in "${opt.label}".`);
+                                  return availability;
+                                }
+                                return p;
+                              });
                             }
                           }}
-                          disabled={isFull}
+                          disabled={isFull || bookingMutation.isPending}
                           className={`flex items-center justify-between p-3 rounded-lg border text-left transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                             isSelected
                               ? 'border-emerald-500 bg-emerald-50'
@@ -201,8 +207,8 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                   <button
                     type="button"
                     onClick={() => setPeople(p => Math.max(1, p - 1))}
-                    className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-accent transition-colors"
-                    disabled={people <= 1}
+                    className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-accent transition-colors disabled:opacity-40"
+                    disabled={people <= 1 || bookingMutation.isPending}
                   >
                     <Minus className="w-4 h-4" />
                   </button>
@@ -213,8 +219,8 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                   <button
                     type="button"
                     onClick={() => setPeople(p => Math.min(maxPeople, p + 1))}
-                    className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-accent transition-colors"
-                    disabled={people >= maxPeople}
+                    className="w-9 h-9 rounded-full border border-border flex items-center justify-center hover:bg-accent transition-colors disabled:opacity-40"
+                    disabled={people >= maxPeople || bookingMutation.isPending}
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -230,6 +236,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
                   rows={3}
+                  disabled={bookingMutation.isPending}
                 />
               </div>
 
@@ -252,13 +259,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
             </div>
 
             <Button
-              onClick={() => {
-                if (currentTierAvailability !== null && people > currentTierAvailability) {
-                  toast.error('Not enough spots available for this pricing tier.');
-                  return;
-                }
-                bookingMutation.mutate();
-              }}
+              onClick={() => bookingMutation.mutate()}
               disabled={bookingMutation.isPending || currentTierAvailability === 0}
               className="w-full bg-emerald-600 hover:bg-emerald-700"
             >

@@ -19,11 +19,11 @@ export const getBookingStats = (allBookings, tripId, totalSlots) => {
  * Get booking status configuration for display
  */
 export const bookingStatusConfig = {
-  pending: { color: "bg-yellow-100 text-yellow-800", label: "Pending Approval" },
+  pending:   { color: "bg-yellow-100 text-yellow-800",  label: "Pending Approval" },
   confirmed: { color: "bg-emerald-100 text-emerald-800", label: "Confirmed" },
-  declined: { color: "bg-red-100 text-red-800", label: "Declined" },
-  cancelled: { color: "border-red-300 text-red-700", label: "Trip Cancelled" },
-  completed: { variant: "outline", label: "Completed"},
+  paid:      { color: "bg-blue-100 text-blue-800",      label: "Paid" },
+  declined:  { color: "bg-red-100 text-red-800",        label: "Declined" },
+  cancelled: { color: "bg-muted text-muted-foreground", label: "Cancelled" },
 };
 
 /**

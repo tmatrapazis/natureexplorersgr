@@ -101,7 +101,7 @@ export default function MyTripsPage() {
       if (context?.previous) {
         queryClient.setQueryData(['my-trips', user?.organizer_code], context.previous);
       }
-      toast.error('Failed to delete trip. Please try again.');
+      toast.error(t('organizer.delete_trip_error'));
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['my-trips', user?.organizer_code] });
@@ -167,7 +167,7 @@ export default function MyTripsPage() {
       if (context?.previous) {
         queryClient.setQueryData(['my-trips', user?.organizer_code], context.previous);
       }
-      toast.error('Failed to update trip status. Please try again.');
+      toast.error(t('organizer.status_update_error'));
     },
     onSuccess: async (_result, { tripId, status }) => {
       // Notify followers when organizer publishes a draft trip
@@ -235,14 +235,14 @@ export default function MyTripsPage() {
       return await HikingTrip.update(trip.id, { status: "cancelled" });
     },
     onSuccess: () => {
-      toast.success(language === 'el' ? 'Η εκδρομή ακυρώθηκε με επιτυχία' : 'Trip cancelled successfully');
+      toast.success(t('organizer.trip_cancelled'));
       queryClient.invalidateQueries({ queryKey: ['my-trips'] });
       queryClient.invalidateQueries({ queryKey: ['all-bookings'] });
       queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
     },
     onError: (error) => {
       console.error('Trip cancellation error:', error);
-      toast.error(language === 'el' ? 'Σφάλμα ακύρωσης εκδρομής' : 'Error cancelling trip');
+      toast.error(t('errors.generic'));
     },
   });
 
@@ -253,7 +253,7 @@ export default function MyTripsPage() {
   };
 
   const handleDeleteTrip = (tripId) => {
-    if (window.confirm(language === 'el' ? 'Είστε σίγουροι ότι θέλετε να διαγράψετε αυτή την εκδρομή; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.' : 'Are you sure you want to delete this trip? This action cannot be undone.')) {
+    if (window.confirm(t('organizer.delete_trip_confirm'))) {
       deleteTripMutation.mutate(tripId);
     }
   };
@@ -317,10 +317,10 @@ export default function MyTripsPage() {
       <PageWrapper>
         <div className="max-w-5xl mx-auto pb-20 pt-8 text-center">
           <p className="text-muted-foreground mb-4">
-            {language === 'el' ? 'Σφάλμα φόρτωσης εκδρομών.' : 'Failed to load trips.'} Please refresh the page.
+            {t('organizer.failed_to_load')} {t('organizer.please_refresh')}
           </p>
           <Button onClick={() => window.location.reload()} variant="outline">
-            {language === 'el' ? 'Ανανέωση' : 'Refresh'}
+            {t('common.refresh')}
           </Button>
         </div>
       </PageWrapper>
@@ -346,15 +346,15 @@ export default function MyTripsPage() {
                 </Button>
               </Link>
             )}
-            {isPremium && (
+            {(isPremium || isExpired) && (
               <Link to={createPageUrl("ManageBookings")} className="w-full sm:w-auto">
                 <Button
                   variant="outline"
                   className="w-full sm:w-auto min-h-[44px]"
-                  aria-label={language === 'el' ? 'Διαχείριση Κρατήσεων' : 'Manage Bookings'}
+                  aria-label={t('manage_bookings.title')}
                 >
                   <ClipboardList className="w-4 h-4 mr-2" />
-                  {language === 'el' ? 'Κρατήσεις' : 'Manage Bookings'}
+                  {t('manage_bookings.title')}
                 </Button>
               </Link>
             )}
@@ -390,12 +390,12 @@ export default function MyTripsPage() {
             <div className="hidden md:block mb-4">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-6">
-                  <TabsTrigger value="draft">{language === 'el' ? 'Πρόχειρα' : 'Drafts'}</TabsTrigger>
+                  <TabsTrigger value="draft">{t('organizer.tab_drafts')}</TabsTrigger>
                   <TabsTrigger value="upcoming">{t('organizer.tab_upcoming')}</TabsTrigger>
                   <TabsTrigger value="happening">{t('organizer.tab_happening')}</TabsTrigger>
                   <TabsTrigger value="completed">{t('organizer.tab_completed')}</TabsTrigger>
                   <TabsTrigger value="cancelled">{t('organizer.tab_cancelled')}</TabsTrigger>
-                  <TabsTrigger value="bookings">{language === 'el' ? 'Κρατήσεις' : 'Bookings'}</TabsTrigger>
+                  <TabsTrigger value="bookings">{t('organizer.tab_bookings')}</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -406,15 +406,15 @@ export default function MyTripsPage() {
                 value={activeTab}
                 onValueChange={setActiveTab}
                 options={[
-                  { value: 'draft', label: language === 'el' ? 'Πρόχειρα' : 'Drafts' },
+                  { value: 'draft', label: t('organizer.tab_drafts') },
                   { value: 'upcoming', label: t('organizer.tab_upcoming') },
                   { value: 'happening', label: t('organizer.tab_happening') },
                   { value: 'completed', label: t('organizer.tab_completed') },
                   { value: 'cancelled', label: t('organizer.tab_cancelled') },
-                  { value: 'bookings', label: language === 'el' ? 'Κρατήσεις' : 'Bookings' },
+                  { value: 'bookings', label: t('organizer.tab_bookings') },
                 ]}
-                placeholder={language === 'el' ? 'Επιλέξτε κατηγορία' : 'Select category'}
-                label={language === 'el' ? 'Κατηγορία Εκδρομών' : 'Trip Category'}
+                placeholder={t('organizer.select_category')}
+                label={t('organizer.trip_category')}
               />
             </div>
 
@@ -492,10 +492,8 @@ export default function MyTripsPage() {
             <TabsContent value="bookings">
               {!isPremium && !isExpired ? (
                 <UpgradePrompt
-                  feature={language === 'el' ? 'Διαχείριση Κρατήσεων' : 'Booking Management'}
-                  description={language === 'el'
-                    ? 'Αναβαθμίστε σε Premium για να διαχειρίζεστε κρατήσεις απευθείας μέσα στην πλατφόρμα.'
-                    : 'Upgrade to Premium to manage booking requests directly inside the platform.'}
+                  feature={t('manage_bookings.title')}
+                  description={t('organizer.upgrade_booking_feature')}
                 />
               ) : (
                 <div className="space-y-6">
@@ -504,7 +502,7 @@ export default function MyTripsPage() {
                       <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div className="flex-1">
                         <p className="text-sm font-semibold text-amber-800">
-                          {language === 'el' ? 'Το πλάνο σας έχει λήξει — εμφάνιση υπαρχουσών κρατήσεων' : 'Plan expired — existing bookings shown'}
+                          {t('organizer.plan_expired_banner')}
                         </p>
                       </div>
                       <Button
@@ -513,13 +511,13 @@ export default function MyTripsPage() {
                         className="border-amber-400 text-amber-700 flex-shrink-0"
                         onClick={() => navigate(createPageUrl('OrganizerPlans'))}
                       >
-                        {language === 'el' ? 'Ανανέωση' : 'Renew'}
+                        {t('organizer.renew_plan')}
                       </Button>
                     </div>
                   )}
                   {[...draftTrips, ...upcomingTrips, ...happeningTrips].length === 0 ? (
                     <div className="text-center py-10 text-muted-foreground">
-                      {language === 'el' ? 'Δεν υπάρχουν ενεργές εκδρομές.' : 'No active trips.'}
+                      {t('organizer.no_active_trips')}
                     </div>
                   ) : (
                     [...draftTrips, ...upcomingTrips, ...happeningTrips].map(trip => (

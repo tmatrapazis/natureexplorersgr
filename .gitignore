@@ -28,3 +28,7 @@ dist-ssr
 *.sw?
 
 .env
+
+# Migration — CSV exports may contain personal data
+migration/data/*.csv
+migration/.env

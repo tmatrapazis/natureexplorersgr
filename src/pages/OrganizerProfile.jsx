@@ -3,7 +3,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Organizer, HikingTrip } from "@/api/db";
 import { useAuth } from "@/lib/AuthContext";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,10 +25,10 @@ export default function OrganizerProfilePage() {
   const { t } = useTranslation(language);
   const { username } = useParams();
   const navigate = useNavigate();
-  
+  const [searchParams] = useSearchParams();
+
   // Backward compatibility: support old ?code= format
-  const urlParams = new URLSearchParams(window.location.search);
-  const legacyCode = urlParams.get("code");
+  const legacyCode = searchParams.get("code");
 
   const { user } = useAuth();
 
@@ -37,20 +37,22 @@ export default function OrganizerProfilePage() {
     queryFn: async () => {
       if (username) {
         const organizers = await Organizer.filter({ username: username });
-        return organizers[0];
+        return organizers[0] ?? null;
       } else if (legacyCode) {
         const organizers = await Organizer.filter({ organizer_code: legacyCode });
-        const org = organizers[0];
-        // Redirect to new URL format
-        if (org?.username) {
-          navigate(`/organizerprofile/${org.username}`, { replace: true });
-        }
-        return org;
+        return organizers[0] ?? null;
       }
       return null;
     },
     enabled: !!username || !!legacyCode,
   });
+
+  // Upgrade legacy ?code= URL to /organizerprofile/:username once we have the data
+  React.useEffect(() => {
+    if (legacyCode && !username && organizer?.username) {
+      navigate(`/organizerprofile/${organizer.username}`, { replace: true });
+    }
+  }, [legacyCode, username, organizer?.username, navigate]);
 
   const { data: allTrips = [], isLoading: tripsLoading } = useQuery({
     queryKey: ['organizer-trips', organizer?.organizer_code],
@@ -78,7 +80,7 @@ export default function OrganizerProfilePage() {
         event_category: 'Organizer Discovery',
         event_label: organizer.full_name,
         organizer_code: organizer.organizer_code,
-        is_verified: organizer.is_verified,
+        is_verified: organizer.verified,
         upcoming_trips_count: trips.length,
       });
     }
@@ -304,7 +306,7 @@ export default function OrganizerProfilePage() {
               <div className="flex-1 text-center md:text-left">
                 <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2">
                   <h1 className="text-3xl md:text-4xl font-bold text-foreground">{organizer.full_name}</h1>
-                  {organizer.is_verified && (
+                  {organizer.verified && (
                     <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 self-center md:self-start">
                       <ShieldCheck className="w-4 h-4 mr-1" />
                       {t('common.verified')}

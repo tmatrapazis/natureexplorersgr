@@ -67,7 +67,6 @@ import OrganizersList from './pages/OrganizersList';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import RequestVerification from './pages/RequestVerification';
 import RoleSelection from './pages/RoleSelection';
-import TempImageUploader from './pages/TempImageUploader';
 import TermsOfUse from './pages/TermsOfUse';
 import TripDetails from './pages/TripDetails';
 import TripForm from './pages/TripForm';
@@ -95,7 +94,6 @@ export const PAGES = {
     "PrivacyPolicy": PrivacyPolicy,
     "RequestVerification": RequestVerification,
     "RoleSelection": RoleSelection,
-    "TempImageUploader": TempImageUploader,
     "TermsOfUse": TermsOfUse,
     "TripDetails": TripDetails,
     "TripForm": TripForm,

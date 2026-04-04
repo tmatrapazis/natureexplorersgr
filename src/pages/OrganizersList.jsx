@@ -182,7 +182,7 @@ export default function OrganizersListPage() {
                   <CardContent className="p-6 flex flex-col flex-grow">
                     <div className="flex items-center justify-center gap-2 mb-2">
                       <h2 className="text-xl font-bold">{organizer.full_name}</h2>
-                      {organizer.is_verified && <VerifiedBadge showText={false} />}
+                      {organizer.verified && <VerifiedBadge showText={false} />}
                     </div>
                     {organizer.years_of_experience && (
                       <p className="text-sm text-muted-foreground mb-2">

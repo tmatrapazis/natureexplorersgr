@@ -108,6 +108,11 @@ function RoutesWithAnimation() {
             {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
           </LayoutWrapper>
         } />
+        <Route path="/organizerprofile" element={
+          <LayoutWrapper currentPageName="OrganizerProfile">
+            {Pages.OrganizerProfile ? <Pages.OrganizerProfile /> : <></>}
+          </LayoutWrapper>
+        } />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </>

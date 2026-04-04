@@ -74,9 +74,9 @@ export default function RequestVerificationPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="p-8 text-center">
-          <p className="text-muted-foreground mb-4">Only organizers can request verification.</p>
-          <Link to={createPageUrl("Calendar")} aria-label="Back to Calendar">
-            <Button className="min-h-[44px]" tabIndex={-1}>Back to Calendar</Button>
+          <p className="text-muted-foreground mb-4">{t('request_verification.only_organizers')}</p>
+          <Link to={createPageUrl("Calendar")} aria-label={t('request_verification.back_to_calendar')}>
+            <Button className="min-h-[44px]" tabIndex={-1}>{t('request_verification.back_to_calendar')}</Button>
           </Link>
         </Card>
       </div>
@@ -88,10 +88,10 @@ export default function RequestVerificationPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="max-w-md p-8 text-center">
           <Shield className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Verification Pending</h2>
-          <p className="text-muted-foreground mb-4">Your verification request is under review. We'll notify you once it's processed.</p>
-          <Link to={createPageUrl("Calendar")} aria-label="Back to Calendar">
-            <Button className="min-h-[44px]" tabIndex={-1}>Back to Calendar</Button>
+          <h2 className="text-2xl font-bold mb-2">{t('request_verification.pending_title')}</h2>
+          <p className="text-muted-foreground mb-4">{t('request_verification.pending_message')}</p>
+          <Link to={createPageUrl("Calendar")} aria-label={t('request_verification.back_to_calendar')}>
+            <Button className="min-h-[44px]" tabIndex={-1}>{t('request_verification.back_to_calendar')}</Button>
           </Link>
         </Card>
       </div>
@@ -103,10 +103,10 @@ export default function RequestVerificationPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="max-w-md p-8 text-center">
           <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">You're Verified!</h2>
-          <p className="text-muted-foreground mb-4">Your organizer profile is verified and trusted by our community.</p>
-          <Link to={createPageUrl("Calendar")} aria-label="Back to Calendar">
-            <Button className="min-h-[44px]" tabIndex={-1}>Back to Calendar</Button>
+          <h2 className="text-2xl font-bold mb-2">{t('request_verification.verified_title')}</h2>
+          <p className="text-muted-foreground mb-4">{t('request_verification.verified_message')}</p>
+          <Link to={createPageUrl("Calendar")} aria-label={t('request_verification.back_to_calendar')}>
+            <Button className="min-h-[44px]" tabIndex={-1}>{t('request_verification.back_to_calendar')}</Button>
           </Link>
         </Card>
       </div>
@@ -125,10 +125,10 @@ export default function RequestVerificationPage() {
           <CardHeader>
             <div className="flex items-center gap-3 mb-2">
               <Shield className="w-8 h-8 text-emerald-600" />
-              <CardTitle className="text-2xl">Request Organizer Verification</CardTitle>
+              <CardTitle className="text-2xl">{t('request_verification.card_title')}</CardTitle>
             </div>
             <CardDescription>
-              Become a verified organizer to build trust with hikers and gain more visibility on the platform.
+              {t('request_verification.card_description')}
             </CardDescription>
           </CardHeader>
 
@@ -137,13 +137,13 @@ export default function RequestVerificationPage() {
               <Alert className="bg-emerald-50 border-emerald-200">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                 <AlertDescription className="text-emerald-800">
-                  Your verification request has been submitted successfully! We'll review it and notify you soon.
+                  {t('request_verification.success_message')}
                 </AlertDescription>
               </Alert>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <Label htmlFor="experience">Years of Hiking/Guiding Experience *</Label>
+                  <Label htmlFor="experience">{t('request_verification.experience_label')}</Label>
                   <Input
                     id="experience"
                     type="number"
@@ -155,19 +155,19 @@ export default function RequestVerificationPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="certifications">Certifications & Qualifications</Label>
+                  <Label htmlFor="certifications">{t('request_verification.certifications_label')}</Label>
                   <Textarea
                     id="certifications"
-                    placeholder="e.g., Wilderness First Aid, Mountain Guide License, First Responder..."
+                    placeholder={t('request_verification.certifications_placeholder')}
                     value={formData.certifications}
                     onChange={(e) => setFormData({...formData, certifications: e.target.value})}
                     rows={3}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">List any relevant certifications or training</p>
+                  <p className="text-xs text-muted-foreground mt-1">{t('request_verification.certifications_help')}</p>
                 </div>
 
                 <div className="space-y-3">
-                  <Label>Social Media Profiles (Optional)</Label>
+                  <Label>{t('request_verification.social_media_label')}</Label>
                   <div>
                     <Label htmlFor="facebook" className="text-sm text-muted-foreground">Facebook</Label>
                     <Input
@@ -210,12 +210,11 @@ export default function RequestVerificationPage() {
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-900 mb-2">What happens next?</h4>
+                  <h4 className="font-semibold text-blue-900 mb-2">{t('request_verification.what_happens_title')}</h4>
                   <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-                    <li>Our team will review your application within 2-3 business days</li>
-                    <li>We may contact you for additional information</li>
-                    <li>Once approved, you'll receive a verified badge on your profile</li>
-                    <li>Verified organizers get priority visibility in search results</li>
+                    {[1, 2, 3, 4].map((n) => (
+                      <li key={n}>{t(`request_verification.what_happens_${n}`)}</li>
+                    ))}
                   </ul>
                 </div>
 
@@ -223,12 +222,12 @@ export default function RequestVerificationPage() {
                   type="submit"
                   className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
                   disabled={requestVerificationMutation.isPending}
-                  aria-label={requestVerificationMutation.isPending ? 'Submitting verification request…' : 'Submit verification request'}
+                  aria-label={requestVerificationMutation.isPending ? t('request_verification.submitting') : t('request_verification.submit')}
                 >
                   {requestVerificationMutation.isPending ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Submitting...</>
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('request_verification.submitting')}</>
                   ) : (
-                    'Submit Verification Request'
+                    t('request_verification.submit')
                   )}
                 </Button>
               </form>

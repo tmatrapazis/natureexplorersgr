@@ -1,11 +1,13 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Booking, HikingTrip, Organizer } from '@/api/db';
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Booking, HikingTrip, Organizer, Notification } from '@/api/db';
+import { supabase } from '@/api/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Loader2, Inbox, CalendarDays, Users, Euro, ExternalLink } from 'lucide-react';
+import { Loader2, Inbox, CalendarDays, Users, Euro, ExternalLink, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { formatDistanceToNow, format } from 'date-fns';
@@ -40,6 +42,8 @@ const STATUS_MESSAGES = {
 export default function MyBookingsPage() {
   const { user } = useAuth();
   const { language } = useLanguage();
+  const queryClient = useQueryClient();
+  const [confirmCancelId, setConfirmCancelId] = useState(null);
 
   useSEO({ title: 'My Bookings', noindex: true });
 
@@ -82,6 +86,46 @@ export default function MyBookingsPage() {
     enabled: confirmedOrganizerCodes.length > 0,
   });
   const organizerMap = Object.fromEntries(organizers.map(o => [o.organizer_code, o]));
+
+  const cancelMutation = useMutation({
+    mutationFn: async (booking) => {
+      await Booking.update(booking.id, { status: 'cancelled' });
+
+      // Notify organizer
+      try {
+        const trip = tripMap[booking.trip_id];
+        const organizerCode = trip?.organizer_code;
+        if (organizerCode) {
+          const { data: orgProfile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('organizer_code', organizerCode)
+            .single();
+          if (orgProfile?.id) {
+            const hikerName = user.full_name || user.username || user.email;
+            await Notification.create({
+              user_id: orgProfile.id,
+              title: `Booking cancelled for "${trip?.title || 'a trip'}"`,
+              message: `${hikerName} cancelled their booking request (${booking.number_of_people} ${booking.number_of_people === 1 ? 'person' : 'people'}).`,
+              link: '/managebookings',
+              is_read: false,
+            });
+          }
+        }
+      } catch {
+        // Non-critical
+      }
+    },
+    onSuccess: () => {
+      toast.success(language === 'el' ? 'Η κράτηση ακυρώθηκε.' : 'Booking cancelled.');
+      setConfirmCancelId(null);
+      queryClient.invalidateQueries({ queryKey: ['my-bookings', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
+    },
+    onError: () => {
+      toast.error(language === 'el' ? 'Αποτυχία ακύρωσης.' : 'Failed to cancel booking.');
+    },
+  });
 
   if (bookingsLoading) {
     return (
@@ -186,19 +230,61 @@ export default function MyBookingsPage() {
                       </p>
                     ) : null}
 
+                    {/* Cancel confirmation */}
+                    {confirmCancelId === booking.id && (
+                      <div className="flex items-center justify-between gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <p className="text-sm text-red-800 font-medium">
+                          {language === 'el' ? 'Να ακυρωθεί η κράτηση;' : 'Cancel this booking request?'}
+                        </p>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-xs"
+                            onClick={() => setConfirmCancelId(null)}
+                          >
+                            {language === 'el' ? 'Όχι' : 'No'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            className="h-7 text-xs bg-red-600 hover:bg-red-700 text-white"
+                            disabled={cancelMutation.isPending}
+                            onClick={() => cancelMutation.mutate(booking)}
+                          >
+                            {cancelMutation.isPending
+                              ? <Loader2 className="w-3 h-3 animate-spin" />
+                              : (language === 'el' ? 'Ναι, ακύρωση' : 'Yes, cancel')}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Footer */}
                     <div className="flex items-center justify-between pt-1">
                       <span className="text-xs text-muted-foreground">
                         {formatDistanceToNow(new Date(booking.created_at), { addSuffix: true })}
                       </span>
-                      {trip && (
-                        <Link to={`${createPageUrl('TripDetails')}?id=${trip.id}`}>
-                          <Button variant="outline" size="sm" className="h-8 text-xs">
-                            <ExternalLink className="w-3 h-3 mr-1" />
-                            {language === 'el' ? 'Δες εκδρομή' : 'View trip'}
+                      <div className="flex items-center gap-2">
+                        {booking.status === 'pending' && confirmCancelId !== booking.id && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 text-xs border-red-200 text-red-600 hover:bg-red-50"
+                            onClick={() => setConfirmCancelId(booking.id)}
+                          >
+                            <X className="w-3 h-3 mr-1" />
+                            {language === 'el' ? 'Ακύρωση' : 'Cancel'}
                           </Button>
-                        </Link>
-                      )}
+                        )}
+                        {trip && (
+                          <Link to={`${createPageUrl('TripDetails')}?id=${trip.id}`}>
+                            <Button variant="outline" size="sm" className="h-8 text-xs">
+                              <ExternalLink className="w-3 h-3 mr-1" />
+                              {language === 'el' ? 'Δες εκδρομή' : 'View trip'}
+                            </Button>
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </Card>

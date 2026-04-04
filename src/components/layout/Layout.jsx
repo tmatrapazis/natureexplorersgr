@@ -27,23 +27,23 @@ import PublicHeader from "../layout/PublicHeader";
 import PublicFooter from "../layout/PublicFooter";
 import NotificationsBell from "../layout/NotificationsBell";
 
-// ─── Static nav arrays — no i18n, stable for the app lifetime ─────────────────
-const CLIENT_NAV = [
-  { title: "My Bookings", url: createPageUrl("MyBookings"), icon: ClipboardList },
-  { title: "Edit Profile", url: createPageUrl("EditProfile"), icon: Edit },
+// Nav URLs are stable constants — titles are resolved inside the component with t()
+const CLIENT_NAV_URLS = [
+  { key: "navigation.my_bookings", url: createPageUrl("MyBookings"), icon: ClipboardList },
+  { key: "navigation.edit_profile", url: createPageUrl("EditProfile"), icon: Edit },
 ];
 
-const ORGANIZER_NAV = [
-  { title: "Create Trip",      url: createPageUrl("TripForm"),             icon: PlusCircle },
-  { title: "My Trips",         url: createPageUrl("MyTrips"),               icon: Map },
-  { title: "Manage Bookings",  url: createPageUrl("ManageBookings"),        icon: BookOpen },
-  { title: "Analytics",        url: createPageUrl("OrganizerAnalytics"),    icon: BarChart2 },
-  { title: "Plans",            url: createPageUrl("OrganizerPlans"),        icon: Sparkles },
-  { title: "Edit Profile",     url: createPageUrl("EditProfile"),           icon: Edit },
+const ORGANIZER_NAV_URLS = [
+  { key: "navigation.create_trip",     url: createPageUrl("TripForm"),          icon: PlusCircle },
+  { key: "navigation.my_trips",        url: createPageUrl("MyTrips"),            icon: Map },
+  { key: "navigation.manage_bookings", url: createPageUrl("ManageBookings"),     icon: BookOpen },
+  { key: "navigation.analytics",       url: createPageUrl("OrganizerAnalytics"), icon: BarChart2 },
+  { key: "navigation.plans",           url: createPageUrl("OrganizerPlans"),     icon: Sparkles },
+  { key: "navigation.edit_profile",    url: createPageUrl("EditProfile"),        icon: Edit },
 ];
 
 // ─── BottomNav — memoised so it only re-renders when props actually change ────
-const BottomNav = React.memo(function BottomNav({ publicNav, pathname, navigateToTab, user }) {
+const BottomNav = React.memo(function BottomNav({ publicNav, pathname, navigateToTab, user, t }) {
   return (
     <nav
       aria-label="Main navigation"
@@ -91,7 +91,7 @@ const BottomNav = React.memo(function BottomNav({ publicNav, pathname, navigateT
             ) : (
               <User className="w-5 h-5 mb-1" aria-hidden="true" />
             )}
-            <span className="text-[10px] font-medium">Profile</span>
+            <span className="text-[10px] font-medium">{t('navigation.profile')}</span>
           </Link>
         )}
       </div>
@@ -163,10 +163,14 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
     { title: t('navigation.refuges'),    url: createPageUrl("GreekRefuges"),   icon: Home },
   ], [t]);
 
-  // Role-based nav: CLIENT_NAV / ORGANIZER_NAV are module-level constants.
+  // Role-based nav: translate titles on every language change.
   const roleBasedNav = useMemo(
-    () => (user ? (isOrganizer ? ORGANIZER_NAV : CLIENT_NAV) : []),
-    [user, isOrganizer]
+    () => {
+      if (!user) return [];
+      const urls = isOrganizer ? ORGANIZER_NAV_URLS : CLIENT_NAV_URLS;
+      return urls.map(({ key, url, icon }) => ({ title: t(key), url, icon }));
+    },
+    [user, isOrganizer, t]
   );
 
   const pathname = location.pathname;
@@ -205,7 +209,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
           {/* Public Navigation */}
           <SidebarGroup>
             <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
-              {user ? (isOrganizer ? "Hello Organizer" : "Hello Hiker") : t('common.explore')}
+              {user ? (isOrganizer ? t('layout.hello_organizer') : t('layout.hello_hiker')) : t('common.explore')}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -238,7 +242,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
           {user && roleBasedNav.length > 0 && (
             <SidebarGroup>
               <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
-                {isOrganizer ? "Organizer Tools" : "My Activities"}
+                {isOrganizer ? t('layout.organizer_tools') : t('layout.my_activities')}
               </SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
@@ -313,7 +317,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-foreground text-sm truncate">{user.full_name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{isOrganizer ? "Organizer" : "Hiker"}</p>
+                    <p className="text-xs text-muted-foreground truncate">{isOrganizer ? t('roles.organizer') : t('roles.hiker')}</p>
                   </div>
                 </Link>
                 <NotificationsBell user={user} />
@@ -421,6 +425,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
           pathname={pathname}
           navigateToTab={navigateToTab}
           user={user}
+          t={t}
         />
       </main>
     </div>

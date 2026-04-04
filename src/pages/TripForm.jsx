@@ -26,7 +26,7 @@ export default function TripFormPage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(location.search);
   const tripId = urlParams.get("id");
   const isEditing = !!tripId;
 

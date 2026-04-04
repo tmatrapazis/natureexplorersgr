@@ -17,8 +17,11 @@ import {
 import {
   Sheet,
   SheetContent,
+  SheetTitle,
+  SheetDescription,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 
 export default function PublicHeader() {
   const { language, setLanguage } = useLanguage();
@@ -180,6 +183,10 @@ export default function PublicHeader() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[280px] bg-background">
+                <VisuallyHidden>
+                  <SheetTitle>Navigation Menu</SheetTitle>
+                  <SheetDescription>Main navigation links</SheetDescription>
+                </VisuallyHidden>
                 <div className="flex flex-col gap-6 mt-8">
                   <Link 
                     to={createPageUrl("Calendar")} 

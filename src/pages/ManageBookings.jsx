@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { HikingTrip } from '@/api/db';
+import { HikingTrip, Booking } from '@/api/db';
 import { useAuth } from '@/lib/AuthContext';
 import { useOrganizerPlan } from '@/lib/useOrganizerPlan';
 import BookingList from '@/components/bookings/BookingList';
@@ -31,7 +31,18 @@ export default function ManageBookingsPage() {
     staleTime: 2 * 60 * 1000,
   });
 
-  if (planLoading || tripsLoading) {
+  const tripIds = trips.map(t => t.id);
+  const { data: allBookings = [], isLoading: bookingsLoading } = useQuery({
+    queryKey: ['all-bookings', user?.organizer_code],
+    queryFn: () => Booking.filterByTripIds(tripIds),
+    enabled: tripIds.length > 0,
+    staleTime: 60 * 1000,
+  });
+
+  // Set of trip IDs that have at least one booking
+  const tripsWithBookings = new Set(allBookings.map(b => b.trip_id));
+
+  if (planLoading || tripsLoading || bookingsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
@@ -54,8 +65,8 @@ export default function ManageBookingsPage() {
     );
   }
 
-  const activeTrips = trips.filter(t => t.status !== 'cancelled' && t.status !== 'completed');
-  const allTrips = trips;
+  const activeTrips = trips.filter(t => t.status !== 'cancelled' && t.status !== 'completed' && tripsWithBookings.has(t.id));
+  const allTrips = trips.filter(t => tripsWithBookings.has(t.id));
   const displayedTrips = tripFilter === 'active' ? activeTrips : allTrips;
 
   return (
@@ -118,7 +129,7 @@ export default function ManageBookingsPage() {
           <Card className="p-12 text-center text-muted-foreground">
             <ClipboardList className="w-12 h-12 mx-auto mb-3 opacity-30" />
             <p className="text-sm">
-              {language === 'el' ? 'Δεν υπάρχουν εκδρομές.' : 'No trips found.'}
+              {language === 'el' ? 'Δεν υπάρχουν εκδρομές με κρατήσεις.' : 'No trips with booking requests.'}
             </p>
           </Card>
         ) : (

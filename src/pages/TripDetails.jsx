@@ -52,17 +52,19 @@ export default function TripDetailsPage() {
   const { t } = useTranslation(language);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const tripId = searchParams.get("id");
+  // Freeze at mount time — prevents redirect firing during AnimatePresence
+  // exit animation when the URL has already changed to the next page.
+  const tripId = React.useRef(searchParams.get("id")).current;
   const { goBack: handleGoBack } = useBackNavigation(createPageUrl("Calendar"));
   const { user } = useAuth();
   const [showBookingForm, setShowBookingForm] = useState(false);
 
-  // Redirect to homepage if no trip ID provided - only on initial mount
+  // Redirect to homepage if no trip ID provided
   React.useEffect(() => {
     if (!tripId) {
       navigate('/', { replace: true });
     }
-  }, []);
+  }, [tripId, navigate]);
 
   const { data: trip, isLoading: tripLoading } = useQuery({
     queryKey: ['trip', tripId],
@@ -195,7 +197,7 @@ export default function TripDetailsPage() {
     "organizer": organizer ? {
       "@type": organizer.website ? "Organization" : "Person",
       "name": organizer.username || organizer.full_name,
-      "url": organizer.website || `${window.location.origin}${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`,
+      "url": organizer.website || `${window.location.origin}/organizerprofile/${organizer.username || organizer.organizer_code}`,
       "telephone": organizer.phone,
       "email": organizer.email,
       "image": organizer.profile_picture_url
@@ -289,6 +291,15 @@ export default function TripDetailsPage() {
   const organizerIsActivePremium =
     organizer?.plan === 'premium' &&
     (!organizer?.plan_expires_at || new Date(organizer.plan_expires_at) > new Date());
+
+  // Trip is fully booked when every tier that has a slot limit is at 0 remaining
+  // and there are no unlimited tiers.
+  const pricingOptionsForCheck = trip?.pricing_options?.length > 0 ? trip.pricing_options : [];
+  const hasUnlimitedTier = pricingOptionsForCheck.some(t => !t.slots);
+  const allLimitedTiersFull = pricingOptionsForCheck.length > 0 &&
+    !hasUnlimitedTier &&
+    pricingOptionsForCheck.every(t => t.slots && (t.remaining ?? t.slots) === 0);
+  const tripFullyBooked = allLimitedTiersFull;
 
   // Handler for "Book Now" button clicks
   const handleBookNowClick = () => {
@@ -700,19 +711,25 @@ export default function TripDetailsPage() {
 
                   {/* Active premium organizer — in-app booking */}
                   {organizerIsActivePremium && computedStatus === 'upcoming' && (
-                    <Button
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
-                      onClick={() => {
-                        if (!user) {
-                          navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`);
-                          return;
-                        }
-                        setShowBookingForm(true);
-                        handleBookNowClick();
-                      }}
-                    >
-                      {t('trip.book_now')}
-                    </Button>
+                    tripFullyBooked ? (
+                      <Button disabled className="w-full min-h-[44px]">
+                        {language === 'el' ? 'Πλήρες' : 'Fully Booked'}
+                      </Button>
+                    ) : (
+                      <Button
+                        className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                        onClick={() => {
+                          if (!user) {
+                            navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`);
+                            return;
+                          }
+                          setShowBookingForm(true);
+                          handleBookNowClick();
+                        }}
+                      >
+                        {t('trip.book_now')}
+                      </Button>
+                    )
                   )}
 
                   {/* Expired premium organizer with no fallback URL */}
