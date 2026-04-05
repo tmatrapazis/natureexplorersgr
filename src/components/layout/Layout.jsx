@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X, ArrowLeft, ClipboardList, BookOpen, BarChart2, Sparkles } from "lucide-react";
+import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X, ArrowLeft, ClipboardList, BookOpen, BarChart2, Sparkles, Backpack } from "lucide-react";
+import DesktopHeader from "./DesktopHeader";
 import { useTabNavigation } from "@/lib/TabNavigationContext";
 import { useBackNavigation } from "@/lib/useBackNavigation";
 import { useAuth } from "@/lib/AuthContext";
@@ -42,58 +43,71 @@ const ORGANIZER_NAV_URLS = [
   { key: "navigation.edit_profile",    url: createPageUrl("EditProfile"),        icon: Edit },
 ];
 
-// ─── BottomNav — memoised so it only re-renders when props actually change ────
-const BottomNav = React.memo(function BottomNav({ publicNav, pathname, navigateToTab, user, t }) {
+// ─── BottomNav — 5-tab brand design with center FAB ──────────────────────────
+const BottomNav = React.memo(function BottomNav({ pathname, navigateToTab, user, isOrganizer, t }) {
+  const myPackUrl = isOrganizer ? createPageUrl("MyTrips") : createPageUrl("MyBookings");
+  const myPackLabel = isOrganizer ? t('navigation.my_trips') : t('navigation.my_bookings');
+  const fabUrl = isOrganizer ? createPageUrl("TripForm") : createPageUrl("Calendar");
+
+  const tabs = [
+    { icon: Compass,  label: t('navigation.calendar'),   url: createPageUrl("Calendar"),       matchPrefix: '/calendar' },
+    { icon: Map,      label: t('navigation.refuges'),    url: createPageUrl("GreekRefuges"),   matchPrefix: '/greekrefuges' },
+    null, // FAB placeholder
+    { icon: Users,    label: t('navigation.organizers'), url: createPageUrl("OrganizersList"), matchPrefix: '/organizerslist' },
+    { icon: Backpack, label: myPackLabel,                url: myPackUrl,                       matchPrefix: user && isOrganizer ? '/mytrips' : '/mybookings' },
+  ];
+
   return (
     <nav
       aria-label="Main navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-50 select-none shadow-lg"
+      className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0c281c] z-50 select-none shadow-lg"
       style={{
         paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)',
-        paddingTop: '0.5rem',
       }}
     >
-      <div className="flex items-center justify-around px-2">
-        {publicNav.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname.startsWith(item.url.split('?')[0]);
+      <div className="flex items-end justify-around px-2 h-16">
+        {tabs.map((tab, i) => {
+          if (tab === null) {
+            // Center FAB
+            return (
+              <button
+                key="fab"
+                onClick={() => navigateToTab(fabUrl)}
+                className="relative flex flex-col items-center justify-center -mt-6"
+                aria-label={isOrganizer ? t('navigation.create_trip') : t('navigation.calendar')}
+              >
+                <div className="w-14 h-14 rounded-full bg-[#8B6914] text-[#0c281c] shadow-lg flex items-center justify-center">
+                  <PlusCircle className="w-7 h-7" aria-hidden="true" />
+                </div>
+              </button>
+            );
+          }
+          const Icon = tab.icon;
+          const isActive = pathname.startsWith(tab.matchPrefix);
           return (
             <button
-              key={item.title}
-              onClick={() => navigateToTab(item.url)}
-              className={`flex flex-col items-center justify-center py-1 px-3 min-h-[48px] min-w-[48px] transition-colors rounded-lg ${
-                isActive
-                  ? "text-[#0c281c] bg-[#f0e3c7]/40 dark:bg-[#0c281c]/90"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
-              }`}
-              aria-label={`Navigate to ${item.title}`}
+              key={tab.url}
+              onClick={() => navigateToTab(tab.url)}
+              className="flex flex-col items-center justify-center pt-2 pb-1 px-2 min-h-[48px] min-w-[48px] transition-colors flex-1"
+              aria-label={`Navigate to ${tab.label}`}
               aria-current={isActive ? 'page' : undefined}
             >
-              <Icon className="w-5 h-5 mb-1" aria-hidden="true" />
-              <span className="text-[10px] font-medium">{item.title}</span>
+              {/* Gold dot above active icon */}
+              <span className={`w-1 h-1 rounded-full mb-1 ${isActive ? 'bg-[#8B6914]' : 'bg-transparent'}`} aria-hidden="true" />
+              <div className={`flex flex-col items-center justify-center rounded-full px-3 py-1 transition-colors ${
+                isActive ? 'bg-[#f0e3c7]/10' : ''
+              }`}>
+                <Icon className={`w-5 h-5 ${isActive ? 'text-[#f0e3c7]' : 'text-[#f0e3c7]/70'}`} aria-hidden="true" />
+                <span
+                  className={`text-[10px] mt-0.5 font-medium ${isActive ? 'text-[#f0e3c7]' : 'text-[#f0e3c7]/70'}`}
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  {tab.label}
+                </span>
+              </div>
             </button>
           );
         })}
-
-        {user && (
-          <Link
-            to={createPageUrl("EditProfile")}
-            className={`flex flex-col items-center justify-center py-1 px-3 min-h-[48px] min-w-[48px] transition-colors rounded-lg ${
-              pathname.includes('/EditProfile')
-                ? "text-[#0c281c] bg-[#f0e3c7]/40 dark:bg-[#0c281c]/90"
-                : "text-muted-foreground hover:text-foreground hover:bg-accent"
-            }`}
-            aria-label="View and edit profile"
-            aria-current={pathname.includes('/EditProfile') ? 'page' : undefined}
-          >
-            {user.profile_picture_url ? (
-              <img src={user.profile_picture_url} alt={`${user.username || 'User'}'s profile picture`} className="w-6 h-6 rounded-full object-cover mb-1" />
-            ) : (
-              <User className="w-5 h-5 mb-1" aria-hidden="true" />
-            )}
-            <span className="text-[10px] font-medium">{t('navigation.profile')}</span>
-          </Link>
-        )}
       </div>
     </nav>
   );
@@ -176,8 +190,12 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
   const pathname = location.pathname;
 
   return (
-    <div className="min-h-screen flex w-full bg-background">
-      <Sidebar className="border-r border-border">
+    <div className="min-h-screen flex flex-col w-full bg-background">
+      {/* Desktop top header — md+ only, rendered outside the sidebar/main flex row */}
+      <DesktopHeader />
+
+      <div className="flex flex-1 w-full">
+      <Sidebar className="border-r border-border hidden">{/* hidden — sidebar kept for mobile drawer trigger */}
         <SidebarHeader className="border-b border-border p-6">
           <div className="flex items-center justify-between">
             <Link to={createPageUrl("Home")} className="flex items-center gap-3" onClick={handleNavClick}>
@@ -421,13 +439,14 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
         </div>
 
         <BottomNav
-          publicNav={publicNav}
           pathname={pathname}
           navigateToTab={navigateToTab}
           user={user}
+          isOrganizer={isOrganizer}
           t={t}
         />
       </main>
+      </div>{/* end flex flex-1 w-full row */}
     </div>
   );
 });
