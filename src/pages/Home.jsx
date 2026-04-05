@@ -2,13 +2,10 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 
-import { MapPin, Calendar, TrendingUp, User as UserIcon } from 'lucide-react';
+import { Calendar, User as UserIcon } from 'lucide-react';
 import { format } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
-import { formatDateRange } from '../components/helpers/dateHelpers';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import useSEO from '../components/seo/useSEO';
@@ -20,12 +17,6 @@ import { formatPriceForCard } from '../components/helpers/pricingHelpers';
 import { useAuth } from '@/lib/AuthContext';
 import { HikingTrip, Organizer } from '@/api/db';
 
-const difficultyColors = {
-  easy: "bg-green-100 text-green-800",
-  moderate: "bg-yellow-100 text-yellow-800",
-  challenging: "bg-orange-100 text-orange-800",
-  difficult: "bg-red-100 text-red-800"
-};
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -297,54 +288,54 @@ export default function HomePage() {
                 <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
                   {t('home.featured_expeditions')}
                 </h2>
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {featuredExpeditions.map(trip => {
                     const organizer = organizerMap[trip.organizer_code];
+                    const formattedDate = format(new Date(trip.start_date), "MMM d, yyyy");
+                    const price = formatPriceForCard(trip, language);
                     return (
-                      <Card key={trip.id} className="overflow-hidden hover:shadow-xl transition-shadow flex flex-col">
-                        <div className="h-48 bg-muted overflow-hidden relative" style={{ aspectRatio: '16/9' }}>
+                      <Link key={trip.id} to={`${createPageUrl("TripDetails")}?id=${trip.id}`} className="block" aria-label={`${t('home.view_details')}: ${trip.title}`}>
+                        <div className="relative rounded-xl overflow-hidden group cursor-pointer aspect-[4/3] shadow-md hover:shadow-xl transition-shadow duration-300">
+                          {/* Full-bleed photo */}
                           <OptimizedImage
                             src={getTripImage(trip.image_url, trip.id)}
                             alt={trip.title}
                             width={800}
-                            height={450}
-                            className="w-full h-full"
-                            objectFit="cover"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            height={600}
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             onError={(e) => handleImageError(e, trip.id)}
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
-                        </div>
-                        <CardContent className="p-6 flex flex-col flex-grow">
-                          <h3 className="text-xl font-bold text-foreground mb-2">{trip.title}</h3>
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            <Badge className={difficultyColors[trip.difficulty]}>
-                              {trip.difficulty}
-                            </Badge>
-                            <Badge variant="outline" className="text-[#0c281c] border-emerald-300">
-                              {formatPriceForCard(trip, language)}
-                            </Badge>
-                            <Badge variant="outline">
-                              <Calendar className="w-3 h-3 mr-1" />
-                              {formatDateRange(trip.start_date, trip.end_date)}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                            <MapPin className="w-4 h-4 text-[#0c281c]" />
-                            <span>{trip.location}</span>
-                          </div>
-                          {organizer && (
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                              <UserIcon className="w-4 h-4" />
-                              <span>{organizer.username || organizer.full_name}</span>
+                          {/* Deep Forest gradient overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0c281c] via-[#0c281c]/50 to-transparent" />
+                          {/* Content */}
+                          <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
+                            {trip.difficulty && (
+                              <span className="text-xs font-bold bg-[#8B6914] text-[#f0e3c7] px-2.5 py-0.5 rounded-full uppercase tracking-wide" style={{ fontFamily: 'var(--font-heading)' }}>
+                                {trip.difficulty}
+                              </span>
+                            )}
+                            <h3 className="font-bold text-[#f0e3c7] text-lg leading-tight line-clamp-2" style={{ fontFamily: 'var(--font-heading)' }}>
+                              {trip.title}
+                            </h3>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1.5 text-[#f0e3c7]/80 text-sm">
+                                <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
+                                <span>{formattedDate}</span>
+                              </div>
+                              <span className="font-bold text-[#8B6914] text-base" style={{ fontFamily: 'var(--font-heading)' }}>
+                                {price}
+                              </span>
                             </div>
-                          )}
-                          <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`} className="mt-auto">
-                            <Button className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90">
-                              {t('home.view_details')}
-                            </Button>
-                          </Link>
-                        </CardContent>
-                      </Card>
+                            {organizer && (
+                              <div className="flex items-center gap-1.5 text-[#f0e3c7]/60 text-xs">
+                                <UserIcon className="w-3 h-3" aria-hidden="true" />
+                                <span>by {organizer.full_name || organizer.username}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
                     );
                   })}
                 </div>

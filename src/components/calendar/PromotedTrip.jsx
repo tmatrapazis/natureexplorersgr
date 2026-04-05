@@ -1,9 +1,7 @@
 import React from "react";
 import { format } from "date-fns";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, TrendingUp, Star, Eye } from "lucide-react";
+import { Calendar, MapPin, Star, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useLanguage } from '../contexts/LanguageContext';
@@ -13,13 +11,6 @@ import OptimizedImage from '@/components/ui/OptimizedImage';
 import { formatPriceForCard } from '../helpers/pricingHelpers';
 
 import { useAuth } from '@/lib/AuthContext';
-
-const difficultyColors = {
-  easy: "bg-emerald-100 text-emerald-800 border-emerald-300",
-  moderate: "bg-amber-100 text-amber-800 border-amber-300",
-  challenging: "bg-orange-100 text-orange-800 border-orange-300",
-  difficult: "bg-red-100 text-red-800 border-red-300"
-};
 
 function PromotedTrip({ trips, currentDate }) {
   const { language } = useLanguage();
@@ -57,80 +48,89 @@ function PromotedTrip({ trips, currentDate }) {
     return null;
   }
 
-  return (
-    <Card className="overflow-hidden h-full flex flex-col">
-      <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-2 flex items-center gap-2">
-        <Star className="w-4 h-4 text-white fill-white" />
-        <span className="text-white font-semibold text-sm">
-        </span>
-        {user?.organizer_code && user.organizer_code.trim().length > 0 && (
-          <div className="ml-auto flex items-center gap-1 text-white/90 text-xs">
-            <Eye className="w-3 h-3" />
-            <span>{promotedTrip.view_count || 0} {language === 'el' ? 'προβολές' : 'views'}</span>
-          </div>
-        )}
-      </div>
+  const formattedDate = format(new Date(promotedTrip.start_date), "MMMM d, yyyy");
+  const price = formatPriceForCard(promotedTrip, language);
 
-      <div className="relative w-full h-48 bg-muted overflow-hidden">
+  return (
+    <Link
+      to={`${createPageUrl("TripDetails")}?id=${promotedTrip.id}`}
+      aria-label={`${t('trip.view_details')}: ${promotedTrip.title}`}
+      className="block"
+    >
+      <div className="relative rounded-xl overflow-hidden group cursor-pointer aspect-[4/3] md:aspect-[16/9] shadow-md hover:shadow-xl transition-shadow duration-300">
+        {/* Full-bleed photo */}
         <OptimizedImage
           src={getTripImage(promotedTrip.image_url, promotedTrip.id)}
           alt={promotedTrip.title}
           width={800}
-          height={384}
+          height={450}
           sizes="(max-width: 1024px) 100vw, 50vw"
           onError={(e) => handleImageError(e, promotedTrip.id)}
           priority
+          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-      </div>
-      
-      <div className="p-4 flex-1 flex flex-col">
-        <h3 className="text-xl font-bold text-foreground mb-2 line-clamp-2">
-          {promotedTrip.title}
-        </h3>
 
-        <div className="flex flex-wrap items-center gap-2 mb-3">
-          <Badge className={`${difficultyColors[promotedTrip.difficulty]} border`}>
-            <TrendingUp className="w-3 h-3 mr-1" />
-            {promotedTrip.difficulty}
-          </Badge>
-          <Badge variant="outline" className="text-[#0c281c] border-emerald-300">
-            {formatPriceForCard(promotedTrip, language)}
-          </Badge>
-          {promotedTrip.status === 'upcoming' && (
-            <Badge className="bg-green-100 text-green-800 border-green-200 border text-xs">
-              {language === 'el' ? 'Διαθέσιμο' : 'Available'}
-            </Badge>
-          )}
-          {promotedTrip.status === 'almost soldout' && (
-            <Badge className="bg-orange-100 text-orange-800 border-orange-200 border text-xs">
-              {language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Full'}
-            </Badge>
-          )}
+        {/* Deep Forest gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0c281c] via-[#0c281c]/50 to-transparent" />
+
+        {/* Promoted badge — top-left */}
+        <div className="absolute top-3 left-3 flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+          <Star className="w-3 h-3 fill-white" aria-hidden="true" />
+          {language === 'el' ? 'Δημοφιλής εκδρομή' : 'Featured Trip'}
         </div>
 
-        <div className="space-y-2 text-sm text-muted-foreground mb-4">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
-            <span>{format(new Date(promotedTrip.start_date), "MMMM d, yyyy")}</span>
+        {/* View count for organizers — top-right */}
+        {user?.organizer_code && user.organizer_code.trim().length > 0 && (
+          <div className="absolute top-3 right-3 flex items-center gap-1 bg-[#0c281c]/70 text-[#f0e3c7]/90 text-xs px-2 py-1 rounded-full">
+            <Eye className="w-3 h-3" aria-hidden="true" />
+            <span>{promotedTrip.view_count || 0}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
-            <span className="line-clamp-1">{promotedTrip.location}</span>
-          </div>
-        </div>
+        )}
 
-        <div className="mt-auto">
-          <Link
-            to={`${createPageUrl("TripDetails")}?id=${promotedTrip.id}`}
-            aria-label={`${t('trip.view_details')}: ${promotedTrip.title}`}
+        {/* Content anchored to bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
+          {/* Difficulty badge */}
+          {promotedTrip.difficulty && (
+            <div>
+              <span
+                className="text-xs font-bold bg-[#8B6914] text-[#f0e3c7] px-2.5 py-0.5 rounded-full uppercase tracking-wide"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
+                {promotedTrip.difficulty}
+              </span>
+            </div>
+          )}
+
+          {/* Title */}
+          <h3
+            className="font-bold text-[#f0e3c7] text-xl md:text-2xl leading-tight line-clamp-2"
+            style={{ fontFamily: 'var(--font-heading)' }}
           >
-            <Button className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]" tabIndex={-1}>
-              {t('trip.view_details')}
-            </Button>
-          </Link>
+            {promotedTrip.title}
+          </h3>
+
+          {/* Meta row */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 text-[#f0e3c7]/80 text-sm">
+              <span className="flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
+                {formattedDate}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5" aria-hidden="true" />
+                <span className="line-clamp-1">{promotedTrip.location}</span>
+              </span>
+            </div>
+            <span
+              className="font-bold text-[#8B6914] text-lg"
+              style={{ fontFamily: 'var(--font-heading)' }}
+            >
+              {price}
+            </span>
+          </div>
         </div>
       </div>
-    </Card>
+    </Link>
   );
 }
 export default React.memo(PromotedTrip);

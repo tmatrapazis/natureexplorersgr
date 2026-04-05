@@ -1,9 +1,6 @@
 import React from "react";
 import { format } from "date-fns";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, ExternalLink, User, Star } from "lucide-react";
+import { Calendar, MapPin, User, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -17,12 +14,7 @@ import { getTripImage, handleImageError } from '../helpers/imageHelpers';
 import OptimizedImage from '@/components/ui/OptimizedImage';
 import { formatPriceForCard } from '../helpers/pricingHelpers';
 
-const difficultyColors = {
-  easy: "bg-emerald-100 text-emerald-800 border-emerald-300",
-  moderate: "bg-amber-100 text-amber-800 border-amber-300",
-  challenging: "bg-orange-100 text-orange-800 border-orange-300",
-  difficult: "bg-red-100 text-red-800 border-red-300"
-};
+const difficultyBadgeClass = "bg-[#8B6914] text-[#f0e3c7] text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wide";
 
 const TripsList = React.memo(React.forwardRef(function TripsList({ trips, selectedDate, promotedTripId }, ref) {
   const { language } = useLanguage();
@@ -73,141 +65,101 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
 
   return (
     <div ref={ref}>
-      {/* CSS grid with content-visibility:auto for browser-native render skipping of off-screen cards */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {trips.map((trip) => {
           const organizer = organizerMap[trip.organizer_code];
+          const formattedDate = format(new Date(trip.start_date), "MMM d, yyyy");
+          const price = formatPriceForCard(trip, language);
 
           return (
-            /* content-visibility:auto tells the browser to skip layout/paint for off-screen cards,
-               achieving the same performance benefit as JS-based virtualization without extra dependencies */
             <div
               key={trip.id}
-              style={{ contentVisibility: 'auto', containIntrinsicSize: '0 468px' }}
+              style={{ contentVisibility: 'auto', containIntrinsicSize: '0 340px' }}
             >
-              <Card
-                role="article"
-                aria-label={trip.title}
-                className={`overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full ${trip.id === promotedTripId ? 'border-amber-400 ring-2 ring-amber-300' : 'border-border'}`}
+              <Link
+                to={`${createPageUrl("TripDetails")}?id=${trip.id}`}
+                onClick={() => handleViewDetailsClick(trip)}
+                aria-label={`${t('trip.view_details')}: ${trip.title}`}
+                className="block"
               >
-                <div className="w-full h-40 bg-muted relative overflow-hidden">
+                <div
+                  role="article"
+                  aria-label={trip.title}
+                  className="relative rounded-xl overflow-hidden group cursor-pointer aspect-[4/3] md:aspect-[4/3] shadow-md hover:shadow-xl transition-shadow duration-300"
+                >
+                  {/* Full-bleed photo */}
                   <OptimizedImage
                     src={getTripImage(trip.image_url, trip.id)}
                     alt={language === 'el'
                       ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} - ορειβασία trekking outdoor adventure Ελλάδα`
                       : `${trip.title} - hiking trip ${trip.location} - mountain trekking outdoor activity Greece`}
                     width={800}
-                    height={320}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                    height={600}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     onError={(e) => handleImageError(e, trip.id)}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  {trip.id === promotedTripId && (
-                    <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow">
-                      <Star className="w-3 h-3 fill-white" aria-hidden="true" />
-                      {language === 'el' ? 'Δημοφιλής' : 'Popular'}
-                    </div>
-                  )}
-                </div>
 
-                <div className="p-4 flex flex-col flex-1">
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-base font-bold text-foreground mb-2 line-clamp-2 h-12">{trip.title}</h4>
-                        <div className="flex flex-wrap items-center gap-1.5 mb-2">
-                          <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
-                            {trip.difficulty}
-                          </Badge>
-                          {trip.status === 'upcoming' && (
-                            <Badge className="bg-green-100 text-green-800 border-green-200 border text-xs">
-                              {language === 'el' ? 'Διαθέσιμο' : 'Available'}
-                            </Badge>
-                          )}
-                          {trip.status === 'almost soldout' && (
-                            <Badge className="bg-orange-100 text-orange-800 border-orange-200 border text-xs">
-                              {language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Full'}
-                            </Badge>
-                          )}
-                          {trip.tags && trip.tags.includes('bus') && (
-                            <Badge className="bg-purple-100 text-purple-800 border-purple-300 border text-xs font-semibold">
-                              🚌 bus
-                            </Badge>
-                          )}
-                          {trip.tags && trip.tags.includes('organized-carpooling') && (
-                            <Badge className="bg-purple-100 text-purple-800 border-purple-300 border text-xs font-semibold">
-                              🚗 carpooling
-                            </Badge>
-                          )}
-                        </div>
-                        {trip.departure_from && trip.departure_from.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-2">
-                            {trip.departure_from.map((location, idx) => (
-                              <Badge key={idx} variant="outline" className="border-blue-300 text-blue-700 text-xs">
-                                📍 {location}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                  {/* Deep Forest gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c281c] via-[#0c281c]/50 to-transparent" />
 
-                    <div className="h-6 mb-2">
-                      {organizer && organizer.username && (
-                        <Link
-                          to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`}
-                          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-[#0c281c]"
+                  {/* Content anchored to bottom */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
+                    {/* Badges row */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {trip.difficulty && (
+                        <span
+                          className={difficultyBadgeClass}
+                          style={{ fontFamily: 'var(--font-heading)' }}
                         >
-                          <User className="w-3 h-3" aria-hidden="true" />
-                          <span>by {organizer.full_name}</span>
-                        </Link>
+                          {trip.difficulty}
+                        </span>
+                      )}
+                      {trip.id === promotedTripId && (
+                        <span className="flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                          <Star className="w-3 h-3 fill-white" aria-hidden="true" />
+                          {language === 'el' ? 'Δημοφιλής' : 'Popular'}
+                        </span>
+                      )}
+                      {trip.status === 'almost soldout' && (
+                        <span className="bg-orange-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                          {language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Full'}
+                        </span>
                       )}
                     </div>
 
-                    <div className="space-y-1 text-xs text-muted-foreground mb-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-3 h-3 text-[#0c281c] flex-shrink-0" aria-hidden="true" />
-                          <span>{format(new Date(trip.start_date), "MMM d, yyyy")}</span>
-                        </div>
-                        <span className="font-bold text-[#0c281c]">
-                          {formatPriceForCard(trip, language)}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3 h-3 text-[#0c281c] flex-shrink-0" aria-hidden="true" />
-                        <span className="line-clamp-1">{trip.location}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 mt-auto">
-                    <Link
-                      to={`${createPageUrl("TripDetails")}?id=${trip.id}`}
-                      className="flex-1"
-                      onClick={() => handleViewDetailsClick(trip)}
-                      aria-label={`${t('trip.view_details')}: ${trip.title}`}
+                    {/* Trip title */}
+                    <h4
+                      className="font-bold text-[#f0e3c7] text-lg leading-tight line-clamp-2"
+                      style={{ fontFamily: 'var(--font-heading)' }}
                     >
-                      <Button size="sm" className="bg-[#0c281c] hover:bg-[#0c281c]/90 w-full min-h-[44px]" tabIndex={-1}>
-                        {t('trip.view_details')}
-                      </Button>
-                    </Link>
-                    {user && trip.external_link && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="min-h-[44px] min-w-[44px]"
-                        aria-label={`${language === 'el' ? 'Εξωτερικός σύνδεσμος για' : 'External link for'} ${trip.title}`}
-                        asChild
+                      {trip.title}
+                    </h4>
+
+                    {/* Meta row: date + price */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-[#f0e3c7]/80 text-sm">
+                        <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>{formattedDate}</span>
+                      </div>
+                      <span
+                        className="font-bold text-[#8B6914] text-base"
+                        style={{ fontFamily: 'var(--font-heading)' }}
                       >
-                        <a href={trip.external_link} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                        </a>
-                      </Button>
+                        {price}
+                      </span>
+                    </div>
+
+                    {/* Organizer */}
+                    {organizer && organizer.full_name && (
+                      <div className="flex items-center gap-1.5 text-[#f0e3c7]/60 text-xs">
+                        <User className="w-3 h-3" aria-hidden="true" />
+                        <span>by {organizer.full_name}</span>
+                      </div>
                     )}
                   </div>
                 </div>
-              </Card>
+              </Link>
             </div>
           );
         })}
