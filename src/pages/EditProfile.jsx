@@ -263,7 +263,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-emerald-50/30 dark:via-emerald-950/10 to-background p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-[#f0e3c7]/30 dark:via-[#0c281c]/10 to-background p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
         {!isNewUser && (
           <Button
@@ -435,7 +435,7 @@ export default function EditProfilePage() {
             )}
 
             {updateSuccess && (
-              <Alert variant="default" className="bg-[#f0e3c7]/40 border-[#0c281c]/20 text-emerald-800">
+              <Alert variant="default" className="bg-[#f0e3c7]/40 border-[#0c281c]/20 text-[#0c281c]">
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
                   {isNewUser ? "Profile created successfully! Redirecting..." : "Your profile has been updated successfully!"}

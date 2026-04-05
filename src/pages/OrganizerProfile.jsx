@@ -276,7 +276,7 @@ export default function OrganizerProfilePage() {
     <>
       {organizerSchema && <StructuredData data={organizerSchema} />}
       {breadcrumbSchema && <StructuredData data={breadcrumbSchema} />}
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
           
           {/* Organizer Header */}
@@ -307,7 +307,7 @@ export default function OrganizerProfilePage() {
                 <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2">
                   <h1 className="text-3xl md:text-4xl font-bold text-foreground">{organizer.full_name}</h1>
                   {organizer.verified && (
-                    <Badge className="bg-emerald-100 text-[#0c281c] border-[#0c281c]/20 self-center md:self-start">
+                    <Badge className="bg-[#f0e3c7]/40 text-[#0c281c] border-[#0c281c]/20 self-center md:self-start">
                       <ShieldCheck className="w-4 h-4 mr-1" />
                       {t('common.verified')}
                     </Badge>

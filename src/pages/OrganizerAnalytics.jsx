@@ -217,7 +217,7 @@ export default function OrganizerAnalyticsPage() {
             icon={Euro}
             label={t('analytics.kpi_total_revenue')}
             value={`€${totalRevenue.toLocaleString()}`}
-            iconBg="bg-emerald-100"
+            iconBg="bg-[#f0e3c7]/40"
             iconColor="text-[#0c281c]"
           />
           <KpiCard

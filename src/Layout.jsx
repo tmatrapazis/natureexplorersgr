@@ -140,9 +140,9 @@ function LayoutContent({ children, currentPageName }) {
   // Loading state
   if (userLoading && !authCheckComplete) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-stone-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f0e3c7]/40 to-stone-50">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" />
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#0c281c]" />
           <p className="mt-4 text-muted-foreground">Loading...</p>
         </div>
       </div>

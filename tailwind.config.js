@@ -4,6 +4,10 @@ module.exports = {
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
+  		fontFamily: {
+  			heading: ["Century Gothic", "Century Gothic Pro", "Futura", "Trebuchet MS", "sans-serif"],
+  			body: ["system-ui", "-apple-system", "Inter", "sans-serif"],
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

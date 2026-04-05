@@ -102,7 +102,7 @@ export default function RequestVerificationPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="max-w-md p-8 text-center">
-          <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+          <CheckCircle2 className="w-16 h-16 text-[#0c281c]/60 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">{t('request_verification.verified_title')}</h2>
           <p className="text-muted-foreground mb-4">{t('request_verification.verified_message')}</p>
           <Link to={createPageUrl("Calendar")} aria-label={t('request_verification.back_to_calendar')}>
@@ -114,7 +114,7 @@ export default function RequestVerificationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
         <Button variant="outline" className="mb-6 min-h-[44px]" onClick={goBack} aria-label={`Go back to ${backLabel}`}>
           <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -136,7 +136,7 @@ export default function RequestVerificationPage() {
             {submitSuccess ? (
               <Alert className="bg-[#f0e3c7]/40 border-[#0c281c]/20">
                 <CheckCircle2 className="h-4 w-4 text-[#0c281c]" />
-                <AlertDescription className="text-emerald-800">
+                <AlertDescription className="text-[#0c281c]">
                   {t('request_verification.success_message')}
                 </AlertDescription>
               </Alert>

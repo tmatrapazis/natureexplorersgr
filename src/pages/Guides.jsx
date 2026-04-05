@@ -75,7 +75,7 @@ export default function GuidesPage() {
   if (guidesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center" role="status" aria-label={language === 'el' ? 'Φόρτωση οδηγών…' : 'Loading guides…'}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" aria-hidden="true" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0c281c]" aria-hidden="true" />
       </div>
     );
   }
@@ -83,8 +83,8 @@ export default function GuidesPage() {
   return (
     <PullToRefresh onRefresh={handleRefresh}>
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-emerald-700 to-emerald-900 text-white py-12 md:py-16 px-4 bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1547233528-b4d311a5be41?w=1400&q=80)' }}>
-        <div className="absolute inset-0 bg-emerald-900/70 z-0"></div>
+      <div className="relative bg-gradient-to-r from-[#0c281c] to-[#0c281c] text-white py-12 md:py-16 px-4 bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1547233528-b4d311a5be41?w=1400&q=80)' }}>
+        <div className="absolute inset-0 bg-[#0c281c]/70 z-0"></div>
         <div className="container mx-auto max-w-6xl relative z-10">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
             <Compass className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0" aria-hidden="true" />
@@ -92,7 +92,7 @@ export default function GuidesPage() {
               {language === 'el' ? 'Συνοδοί Βουνού' : 'Mountain Guides'}
             </h1>
           </div>
-          <p className="text-base md:text-lg text-emerald-100 max-w-2xl mx-auto text-center px-2 break-words">
+          <p className="text-base md:text-lg text-[#f0e3c7] max-w-2xl mx-auto text-center px-2 break-words">
             {language === 'el'
               ? 'Γνωρίστε τους πιστοποιημένους επαγγελματίες συνοδούς που κάνουν κάθε εκδρομή ασφαλή και αξέχαστη'
               : 'Meet the certified professionals who make every adventure safe and unforgettable'
@@ -106,11 +106,11 @@ export default function GuidesPage() {
 
         {/* Create Profile CTA - shown to all users */}
         {(!user || !hasGuideProfile) && (
-          <Card className="mb-8 border-2 border-[#0c281c]/20 bg-gradient-to-r from-emerald-50 to-teal-50">
+          <Card className="mb-8 border-2 border-[#0c281c]/20 bg-gradient-to-r from-[#f0e3c7]/40 to-teal-50">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-emerald-900 mb-2">
+                  <h3 className="text-xl font-bold text-[#0c281c] mb-2">
                     {language === 'el'
                         ? 'Είστε Συνοδός Βουνού;'
                         : 'Are You a Mountain Guide?'}
@@ -183,7 +183,7 @@ export default function GuidesPage() {
                 <Button
                   variant="outline"
                   onClick={() => setVisibleCount(c => c + GUIDES_PER_PAGE)}
-                  className="border-emerald-300 text-[#0c281c] hover:bg-[#f0e3c7]/40 gap-2 min-h-[44px]"
+                  className="border-[#0c281c]/20 text-[#0c281c] hover:bg-[#f0e3c7]/40 gap-2 min-h-[44px]"
                   aria-label={language === 'el' ? 'Φόρτωση περισσότερων οδηγών' : 'Load more guides'}
                 >
                   <ChevronDown className="w-4 h-4" aria-hidden="true" />

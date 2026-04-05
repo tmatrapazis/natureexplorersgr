@@ -177,7 +177,7 @@ export default function EditOrganizerProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
         <Button
           variant="outline"
@@ -204,7 +204,7 @@ export default function EditOrganizerProfilePage() {
                       <img 
                         src={formData.profile_picture_url} 
                         alt="Profile" 
-                        className="w-32 h-32 rounded-full object-cover border-4 border-emerald-100"
+                        className="w-32 h-32 rounded-full object-cover border-4 border-[#f0e3c7]"
                       />
                     </div>
                   )}
@@ -425,7 +425,7 @@ export default function EditOrganizerProfilePage() {
           <DialogContent>
             <DialogHeader>
               <div className="flex items-center justify-center mb-4">
-                <div className="bg-emerald-100 rounded-full p-3">
+                <div className="bg-[#f0e3c7]/40 rounded-full p-3">
                   <CheckCircle className="h-8 w-8 text-[#0c281c]" />
                 </div>
               </div>

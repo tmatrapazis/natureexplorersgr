@@ -98,7 +98,7 @@ export default function RoleSelectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -144,7 +144,7 @@ export default function RoleSelectionPage() {
           {/* Organizer Card */}
           <Card className="hover:shadow-xl transition-all cursor-pointer border-2 border-[#0c281c]/20">
             <CardHeader className="text-center">
-              <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-20 h-20 bg-[#f0e3c7]/40 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Mountain className="w-12 h-12 text-[#0c281c]" />
               </div>
               <CardTitle className="text-2xl">{t('role_selection.organizer_title')}</CardTitle>

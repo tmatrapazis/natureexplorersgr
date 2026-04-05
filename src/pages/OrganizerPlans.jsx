@@ -78,7 +78,7 @@ export default function OrganizerPlans() {
               )}
             </div>
             {isPremium && (
-              <Badge className="bg-emerald-100 text-[#0c281c] border-[#0c281c]/20">
+              <Badge className="bg-[#f0e3c7]/40 text-[#0c281c] border-[#0c281c]/20">
                 <Sparkles className="w-3 h-3 mr-1" />
                 {t('organizer_plans.active')}
               </Badge>
@@ -115,7 +115,7 @@ export default function OrganizerPlans() {
           </Card>
 
           {/* Premium */}
-          <Card className={`border-2 ${isPremium ? 'border-emerald-500' : 'border-amber-400'} relative overflow-hidden`}>
+          <Card className={`border-2 ${isPremium ? 'border-[#0c281c]/60' : 'border-amber-400'} relative overflow-hidden`}>
             {!isPremium && (
               <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
                 {t('organizer_plans.recommended')}
@@ -128,7 +128,7 @@ export default function OrganizerPlans() {
                   {t('organizer_plans.premium_plan')}
                 </span>
                 {isPremium && (
-                  <Badge className="bg-emerald-100 text-[#0c281c] border-[#0c281c]/20">
+                  <Badge className="bg-[#f0e3c7]/40 text-[#0c281c] border-[#0c281c]/20">
                     {t('organizer_plans.active')}
                   </Badge>
                 )}

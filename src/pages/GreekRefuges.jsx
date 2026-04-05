@@ -79,7 +79,7 @@ export default function GreekRefuges() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0c281c]" />
       </div>
     );
   }
@@ -184,7 +184,7 @@ export default function GreekRefuges() {
                       key={refuge.id}
                       onClick={() => handleRowClick(refuge)}
                       className={`border-b cursor-pointer hover:bg-[#f0e3c7]/40 transition-colors ${
-                        selectedRefuge?.id === refuge.id ? 'bg-emerald-100' : ''
+                        selectedRefuge?.id === refuge.id ? 'bg-[#f0e3c7]/40' : ''
                       }`}
                     >
                       <td className="p-3">
@@ -308,8 +308,8 @@ export default function GreekRefuges() {
                 <div
                   key={refuge.id}
                   onClick={() => handleRowClick(refuge)}
-                  className={`border rounded-lg p-4 cursor-pointer hover:border-emerald-600 transition-all w-full max-w-full ${
-                    selectedRefuge?.id === refuge.id ? 'bg-[#f0e3c7]/40 border-emerald-600' : 'bg-card'
+                  className={`border rounded-lg p-4 cursor-pointer hover:border-[#0c281c] transition-all w-full max-w-full ${
+                    selectedRefuge?.id === refuge.id ? 'bg-[#f0e3c7]/40 border-[#0c281c]' : 'bg-card'
                   }`}
                 >
                   <div className="space-y-2">

@@ -195,7 +195,7 @@ export default function TripFormPage() {
   const initialData = isEditing ? trip : recreateData;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8 w-full overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8 w-full overflow-x-hidden">
       <div className="max-w-3xl mx-auto w-full min-w-0">
         <Button 
           variant="outline" 

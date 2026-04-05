@@ -165,7 +165,7 @@ function NotificationsBell({ user, compact = false }) {
                 onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), handleNotificationClick(notification))}
               >
                 {!notification.is_read ? (
-                  <Circle className="h-2 w-2 mt-2 text-emerald-500 fill-current flex-shrink-0" />
+                  <Circle className="h-2 w-2 mt-2 text-[#0c281c]/60 fill-current flex-shrink-0" />
                 ) : (
                   <div className="h-2 w-2 mt-2 flex-shrink-0" />
                 )}

@@ -81,7 +81,7 @@ export default function MobileSelect({
                   onClick={() => handleSelect(option.value)}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-colors min-h-[48px] ${
                     isSelected
-                      ? 'bg-emerald-100 text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100'
+                      ? 'bg-[#f0e3c7]/40 text-[#0c281c] dark:bg-[#0c281c] dark:text-[#f0e3c7]'
                       : 'bg-muted hover:bg-muted/70 active:bg-muted/50'
                   }`}
                 >

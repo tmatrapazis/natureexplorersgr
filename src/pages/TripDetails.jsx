@@ -278,7 +278,7 @@ export default function TripDetailsPage() {
   if (tripLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0c281c]" />
       </div>
     );
   }
@@ -344,7 +344,7 @@ export default function TripDetailsPage() {
       <>
         {eventSchema && <StructuredData data={eventSchema} />}
         <StructuredData data={breadcrumbSchema} />
-        <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8">
           <div className="max-w-5xl mx-auto">
             <Button
               variant="outline"
@@ -481,7 +481,7 @@ export default function TripDetailsPage() {
     <>
       {eventSchema && <StructuredData data={eventSchema} />}
       <StructuredData data={breadcrumbSchema} />
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-5xl mx-auto">
           <Button
             variant="outline"
@@ -668,7 +668,7 @@ export default function TripDetailsPage() {
                             key={i}
                             className={isTransportTag
                               ? "bg-purple-100 text-purple-800 border-purple-300 border font-semibold"
-                              : "bg-emerald-100 text-emerald-800 border-[#0c281c]/20 border"
+                              : "bg-[#f0e3c7]/40 text-[#0c281c] border-[#0c281c]/20 border"
                             }
                           >
                             {tag}
@@ -710,7 +710,7 @@ export default function TripDetailsPage() {
             <div className="space-y-6">
               <Card className="p-6">
                 <div className="text-center py-6">
-                  <Users className="w-16 h-16 text-emerald-300 mx-auto mb-4" />
+                  <Users className="w-16 h-16 text-[#f0e3c7]/70 mx-auto mb-4" />
                   <h3 className="text-lg font-bold text-foreground mb-2">{t('trip.interested_in_trip')}</h3>
                   <p className="text-muted-foreground mb-4">
                     {organizerIsActivePremium
@@ -727,7 +727,7 @@ export default function TripDetailsPage() {
                       <div className="space-y-2">
                         <div className={`text-sm rounded-lg px-3 py-2.5 text-center font-medium ${
                           existingBooking.status === 'confirmed' ? 'bg-yellow-50 text-yellow-800 border border-yellow-200' :
-                          existingBooking.status === 'paid'      ? 'bg-[#f0e3c7]/40 text-emerald-800 border border-[#0c281c]/20' :
+                          existingBooking.status === 'paid'      ? 'bg-[#f0e3c7]/40 text-[#0c281c] border border-[#0c281c]/20' :
                           'bg-blue-50 text-blue-800 border border-blue-200'
                         }`}>
                           {existingBooking.status === 'confirmed' ? t('booking.already_confirmed') :

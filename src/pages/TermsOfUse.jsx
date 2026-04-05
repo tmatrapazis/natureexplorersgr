@@ -16,7 +16,7 @@ export default function TermsOfUsePage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <Card className="p-8 md:p-12">
           {language === 'el' ? (

@@ -7,12 +7,12 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 // Custom marker icon
-const createMarkerIcon = (color = 'emerald') => {
+const createMarkerIcon = (color = 'forest') => {
   return L.icon({
     iconUrl: `data:image/svg+xml;base64,${btoa(
       `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40" width="32" height="40">
-        <path d="M16 0C9 0 4 5 4 12c0 8 12 28 12 28s12-20 12-28c0-7-5-12-12-12z" fill="#10b981" />
-        <circle cx="16" cy="12" r="5" fill="white" />
+        <path d="M16 0C9 0 4 5 4 12c0 8 12 28 12 28s12-20 12-28c0-7-5-12-12-12z" fill="#0c281c" />
+        <circle cx="16" cy="12" r="5" fill="#f0e3c7" />
       </svg>`
     )}`,
     iconSize: [32, 40],

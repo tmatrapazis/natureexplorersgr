@@ -150,13 +150,13 @@ export default function CreateGuideProfilePage() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0c281c]" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-emerald-50/30 to-stone-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 py-12 px-4">
       <div className="container mx-auto max-w-4xl">
         <Button
           variant="ghost"
@@ -296,7 +296,7 @@ export default function CreateGuideProfilePage() {
                 </div>
                 <div className="flex flex-wrap gap-2 mt-3">
                   {formData.certifications.map((cert, index) => (
-                    <div key={index} className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full flex items-center gap-2">
+                    <div key={index} className="bg-[#f0e3c7]/40 text-[#0c281c] px-3 py-1 rounded-full flex items-center gap-2">
                       <span>{cert}</span>
                       <button
                         type="button"

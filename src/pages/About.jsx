@@ -35,11 +35,11 @@ export default function About() {
   const valueIcons   = [Shield, Sprout, Users, Heart];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-stone-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#f0e3c7]/40 via-white to-stone-50">
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <section className="relative py-20 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/10 to-stone-600/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0c281c]/10 to-stone-600/10" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           {/* H1 — primary SEO heading */}
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
@@ -166,10 +166,10 @@ export default function About() {
       </section>
 
       {/* ── CTA ─────────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-4 bg-gradient-to-r from-emerald-600 to-emerald-700">
+      <section className="py-20 px-4 bg-gradient-to-r from-[#0c281c] to-[#0c281c]/80">
         <div className="max-w-4xl mx-auto text-center text-white">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.cta.title}</h2>
-          <p className="text-xl mb-8 text-emerald-50">{t.cta.description}</p>
+          <p className="text-xl mb-8 text-[#f0e3c7]">{t.cta.description}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"

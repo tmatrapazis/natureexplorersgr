@@ -131,7 +131,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
       <DialogContent className="sm:max-w-md">
         {submitted ? (
           <div className="py-6 text-center space-y-4">
-            <div className="mx-auto w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center">
+            <div className="mx-auto w-14 h-14 bg-[#f0e3c7]/40 rounded-full flex items-center justify-center">
               <CheckCircle2 className="w-7 h-7 text-[#0c281c]" />
             </div>
             <DialogHeader>
@@ -180,8 +180,8 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                           disabled={isFull || bookingMutation.isPending}
                           className={`flex items-center justify-between p-3 rounded-lg border text-left transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                             isSelected
-                              ? 'border-emerald-500 bg-[#f0e3c7]/40'
-                              : 'border-border hover:border-emerald-300'
+                              ? 'border-[#0c281c]/60 bg-[#f0e3c7]/40'
+                              : 'border-border hover:border-[#0c281c]/20'
                           }`}
                         >
                           <span className="text-sm font-medium">{opt.label}</span>

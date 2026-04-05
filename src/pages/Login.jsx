@@ -96,10 +96,10 @@ export default function LoginPage() {
 
   if (emailSent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#f0e3c7]/40 to-green-100 flex items-center justify-center p-4">
         <Card className="w-full max-w-md text-center">
           <CardHeader>
-            <div className="mx-auto w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-2">
+            <div className="mx-auto w-12 h-12 bg-[#f0e3c7]/40 rounded-full flex items-center justify-center mb-2">
               <Mountain className="w-6 h-6 text-[#0c281c]" />
             </div>
             <CardTitle>Check your email</CardTitle>
@@ -120,14 +120,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#f0e3c7]/40 to-green-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
 
         {/* Logo */}
         <div className="text-center">
           <div className="inline-flex items-center gap-2 mb-2">
             <Mountain className="w-8 h-8 text-[#0c281c]" />
-            <span className="text-2xl font-bold text-emerald-800">Nature Explorers</span>
+            <span className="text-2xl font-bold text-[#0c281c]">Nature Explorers</span>
           </div>
           <p className="text-sm text-muted-foreground">Discover the wild side of Greece</p>
         </div>

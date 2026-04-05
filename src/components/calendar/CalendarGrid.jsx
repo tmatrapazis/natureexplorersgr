@@ -93,7 +93,7 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
                 aspect-square p-2 rounded-xl transition-all duration-200 relative min-h-[44px] min-w-[44px] touch-manipulation
                 ${!day ? "invisible" : ""}
                 ${isSelected ? "bg-orange-200 border-2 border-orange-500" : ""}
-                ${isToday(day || new Date()) && !isSelected ? "bg-emerald-100 border-2 border-emerald-500" : ""}
+                ${isToday(day || new Date()) && !isSelected ? "bg-[#f0e3c7]/40 border-2 border-[#0c281c]/60" : ""}
                 ${!isSelected && !isToday(day || new Date()) ? "hover:bg-muted active:bg-muted" : ""}
                 ${!isSameMonth(day || new Date(), currentDate) ? "opacity-40" : ""}
                 ${hasTrips ? "cursor-pointer" : "cursor-default"}

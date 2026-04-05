@@ -17,7 +17,7 @@ function GuideCard({ guide, organizers = [], language = 'en' }) {
       aria-label={`${language === 'el' ? 'Προφίλ οδηγού' : 'Guide profile'}: ${guide.full_name}`}
     >
       <Card role="article" aria-label={guide.full_name} className="overflow-hidden hover:shadow-xl transition-all duration-300 group h-full">
-        <div className="relative h-48 bg-gradient-to-br from-emerald-100 to-stone-100">
+        <div className="relative h-48 bg-gradient-to-br from-[#f0e3c7]/40 to-stone-100">
           <img
             src={guide.profile_photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(guide.full_name)}&size=400&background=10b981&color=fff`}
             alt={guide.full_name}
