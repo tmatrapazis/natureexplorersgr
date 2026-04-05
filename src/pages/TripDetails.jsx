@@ -378,7 +378,7 @@ export default function TripDetailsPage() {
                 )}
 
                 <Card className="p-6">
-                  <h1 className="text-3xl font-bold text-foreground mb-2">{trip.title}</h1>
+                  <h1 className="text-3xl md:text-4xl font-bold text-[#0c281c] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>{trip.title}</h1>
 
                   {organizer && (
                     <Link
@@ -517,7 +517,7 @@ export default function TripDetailsPage() {
                 </div>
 
                 {/* pr-20 only on md+ where the absolute ShareButton is visible */}
-                <h1 className="text-3xl font-bold text-foreground mb-2 pr-0 md:pr-20">{trip.title}</h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-[#0c281c] mb-2 pr-0 md:pr-20" style={{ fontFamily: 'var(--font-heading)' }}>{trip.title}</h1>
 
                 {organizer && (
                   <Link

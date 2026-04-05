@@ -255,10 +255,10 @@ export default function CalendarPage() {
     <PullToRefresh onRefresh={handleRefresh}>
       <PageWrapper>
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-[#0c281c] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
             {language === 'el' ? 'Ημερολόγιο Πεζοπορικών Εκδρομών' : t('calendar.title')}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-[#0c281c]/60">
             {language === 'el' ?
             'Ανακαλύψτε επερχόμενες εκδρομές trekking, ορειβασία και hiking events σε όλη την Ελλάδα. Οργανωμένες εκδρομές βουνό και weekend adventures.' :
             'Discover upcoming hiking trips Greece, trekking expeditions and outdoor adventures. Weekend hiking ideas and one day hikes across Greek nature trails.'}

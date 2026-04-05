@@ -44,7 +44,6 @@ export function useInView(rootMargin = '300px 0px') {
 
     observer.observe(el);
     return () => observer.disconnect();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // intentionally run only once on mount
 
   return [ref, inView];

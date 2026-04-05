@@ -29,13 +29,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
 
-  // Redirect to login if not authenticated
-  if (open && !user) {
-    navigateToLogin();
-    onClose();
-    return null;
-  }
-
+  // All hooks must be called unconditionally (Rules of Hooks)
   const [people, setPeople] = useState(1);
   const [selectedPricingOption, setSelectedPricingOption] = useState(null);
   const [notes, setNotes] = useState('');
@@ -117,6 +111,14 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
       toast.error(err.message || t('errors.generic'));
     },
   });
+
+  // Redirect to login if not authenticated (must be after all hooks)
+  React.useEffect(() => {
+    if (open && !user) {
+      navigateToLogin();
+      onClose();
+    }
+  }, [open, user, navigateToLogin, onClose]);
 
   const handleClose = () => {
     setSubmitted(false);

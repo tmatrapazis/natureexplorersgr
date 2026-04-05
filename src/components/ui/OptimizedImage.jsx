@@ -66,7 +66,7 @@ export default function OptimizedImage({
         height={height}
         loading={priority ? "eager" : "lazy"}
         decoding={priority ? "sync" : "async"}
-        fetchpriority={priority ? "high" : "auto"}
+        fetchPriority={priority ? "high" : "auto"}
         onError={handleError}
         onLoad={handleLoad}
         className={`w-full h-full transition-opacity duration-300 ${

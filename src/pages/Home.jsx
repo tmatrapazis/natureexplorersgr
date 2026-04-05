@@ -235,8 +235,8 @@ export default function HomePage() {
 
       <div className="flex flex-col min-h-screen">
         <main className="flex-1">
-          <section className="relative h-[60vh] md:h-[80vh] flex items-center justify-center text-center text-white">
-            <div className="absolute inset-0 bg-black/50 z-10" />
+          <section className="relative min-h-screen flex items-center justify-center text-center">
+            {/* Full-viewport hero image */}
             <img
               src="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp"
               srcSet="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&q=80&fm=webp 600w,
@@ -248,31 +248,46 @@ export default function HomePage() {
                 : "Hiking in Greek mountains - hiking teams Greece on mountain trekking trail with panoramic views - outdoor activities"}
               className="absolute inset-0 w-full h-full object-cover"
               loading="eager"
-              fetchpriority="high"
+              fetchPriority="high"
               decoding="sync"
               width="1920"
               height="1280"
             />
-            <div className="relative z-20 container px-4 max-w-2xl mx-auto">
-              <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight drop-shadow-lg leading-tight">
+            {/* Deep Forest gradient overlay — bottom 50% */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0c281c] via-[#0c281c]/40 to-transparent" />
+
+            <div className="relative z-10 container px-4 max-w-3xl mx-auto">
+              <h1
+                className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight text-[#f0e3c7] drop-shadow-lg"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
                 {t('home.hero_title_seo')}
               </h1>
-              <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg lg:text-xl text-white/80 drop-shadow-md leading-relaxed">
+              <p className="mt-4 text-base sm:text-lg md:text-xl text-[#f0e3c7]/80 drop-shadow-md leading-relaxed">
                 {t('home.hero_subtitle_seo')}
               </p>
-              <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Link to={createPageUrl("Calendar")}>
-                  <Button size="lg" className="w-full sm:w-auto bg-[#0c281c] hover:bg-[#0c281c]/90 text-white">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto bg-[#8B6914] hover:bg-[#8B6914]/90 text-[#0c281c] font-bold rounded-full px-8 min-h-[48px] text-base shadow-lg"
+                    style={{ fontFamily: 'var(--font-heading)' }}
+                  >
                     {t('home.browse_expeditions')}
                   </Button>
                 </Link>
                 <Link to={createPageUrl("OrganizersList")}>
-                  <Button size="lg" variant="secondary" className="w-full sm:w-auto">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto border-[#f0e3c7]/50 text-[#f0e3c7] hover:bg-[#f0e3c7]/10 rounded-full px-8 min-h-[48px] text-base"
+                    style={{ fontFamily: 'var(--font-heading)' }}
+                  >
                     {t('home.meet_organizers')}
                   </Button>
                 </Link>
               </div>
-              <p className="mt-5 sm:mt-6 text-xs sm:text-sm text-white/75 max-w-md mx-auto leading-relaxed">
+              <p className="mt-6 text-sm text-[#f0e3c7]/60 max-w-md mx-auto leading-relaxed">
                 {t('home.signup_free')}
               </p>
             </div>
@@ -285,7 +300,10 @@ export default function HomePage() {
               style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}
             >
               <div className="container mx-auto max-w-6xl">
-                <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
+                <h2
+                  className="text-3xl md:text-4xl font-bold text-center mb-12 text-[#0c281c]"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
                   {t('home.featured_expeditions')}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

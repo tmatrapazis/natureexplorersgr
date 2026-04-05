@@ -96,21 +96,21 @@ export default function LoginPage() {
 
   if (emailSent) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#f0e3c7]/40 to-green-100 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md text-center">
+      <div className="min-h-screen bg-[#0c281c] flex items-center justify-center p-4">
+        <Card className="w-full max-w-md text-center bg-[#f0e3c7] rounded-2xl shadow-2xl border-0">
           <CardHeader>
-            <div className="mx-auto w-12 h-12 bg-[#f0e3c7]/40 rounded-full flex items-center justify-center mb-2">
+            <div className="mx-auto w-12 h-12 bg-[#0c281c]/10 rounded-full flex items-center justify-center mb-2">
               <Mountain className="w-6 h-6 text-[#0c281c]" />
             </div>
-            <CardTitle>Check your email</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-[#0c281c]" style={{ fontFamily: 'var(--font-heading)' }}>Check your email</CardTitle>
+            <CardDescription className="text-[#0c281c]/60">
               {mode === 'forgot'
                 ? `We sent a password reset link to ${email}`
                 : `We sent a confirmation link to ${email}. Click it to activate your account.`}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full" onClick={() => { setEmailSent(false); setMode('signin'); }}>
+            <Button variant="outline" className="w-full border-[#0c281c]/20 text-[#0c281c] hover:bg-[#0c281c]/10" onClick={() => { setEmailSent(false); setMode('signin'); }}>
               Back to sign in
             </Button>
           </CardContent>
@@ -120,26 +120,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f0e3c7]/40 to-green-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#0c281c] flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
 
         {/* Logo */}
         <div className="text-center">
           <div className="inline-flex items-center gap-2 mb-2">
-            <Mountain className="w-8 h-8 text-[#0c281c]" />
-            <span className="text-2xl font-bold text-[#0c281c]">Nature Explorers</span>
+            <Mountain className="w-8 h-8 text-[#f0e3c7]" />
+            <span className="text-2xl font-bold text-[#f0e3c7]" style={{ fontFamily: 'var(--font-heading)' }}>Nature Explorers</span>
           </div>
-          <p className="text-sm text-muted-foreground">Discover the wild side of Greece</p>
+          <p className="text-sm text-[#f0e3c7]/60">Discover the wild side of Greece</p>
         </div>
 
-        <Card>
+        <Card className="bg-[#f0e3c7] rounded-2xl shadow-2xl border-0">
           <CardHeader>
-            <CardTitle>
+            <CardTitle className="text-[#0c281c]" style={{ fontFamily: 'var(--font-heading)' }}>
               {mode === 'signin' && 'Sign in'}
               {mode === 'signup' && 'Create account'}
               {mode === 'forgot' && 'Reset password'}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-[#0c281c]/60">
               {mode === 'signin' && 'Welcome back to Nature Explorers'}
               {mode === 'signup' && 'Join the hiking community'}
               {mode === 'forgot' && "We'll send you a reset link"}
@@ -235,7 +235,8 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90"
+                className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 text-[#f0e3c7] min-h-[44px]"
+                style={{ fontFamily: 'var(--font-heading)' }}
                 disabled={loading}
               >
                 {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
