@@ -63,7 +63,7 @@ const BottomNav = React.memo(function BottomNav({ publicNav, pathname, navigateT
               onClick={() => navigateToTab(item.url)}
               className={`flex flex-col items-center justify-center py-1 px-3 min-h-[48px] min-w-[48px] transition-colors rounded-lg ${
                 isActive
-                  ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-950"
+                  ? "text-[#0c281c] bg-[#f0e3c7]/40 dark:bg-[#0c281c]/90"
                   : "text-muted-foreground hover:text-foreground hover:bg-accent"
               }`}
               aria-label={`Navigate to ${item.title}`}
@@ -80,7 +80,7 @@ const BottomNav = React.memo(function BottomNav({ publicNav, pathname, navigateT
             to={createPageUrl("EditProfile")}
             className={`flex flex-col items-center justify-center py-1 px-3 min-h-[48px] min-w-[48px] transition-colors rounded-lg ${
               pathname.includes('/EditProfile')
-                ? "text-emerald-600 bg-emerald-50 dark:bg-emerald-950"
+                ? "text-[#0c281c] bg-[#f0e3c7]/40 dark:bg-[#0c281c]/90"
                 : "text-muted-foreground hover:text-foreground hover:bg-accent"
             }`}
             aria-label="View and edit profile"
@@ -217,8 +217,8 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      className={`hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-200 rounded-lg mb-1 ${
-                        pathname.startsWith(item.url.split('?')[0]) ? 'bg-emerald-50 text-emerald-700 font-medium' : ''
+                      className={`hover:bg-[#f0e3c7]/40 hover:text-[#0c281c] transition-all duration-200 rounded-lg mb-1 ${
+                        pathname.startsWith(item.url.split('?')[0]) ? 'bg-[#f0e3c7]/40 text-[#0c281c] font-medium' : ''
                       }`}
                     >
                       <Link
@@ -250,8 +250,8 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
-                        className={`hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-200 rounded-lg mb-1 ${
-                          pathname.startsWith(item.url.split('?')[0]) ? 'bg-emerald-50 text-emerald-700 font-medium' : ''
+                        className={`hover:bg-[#f0e3c7]/40 hover:text-[#0c281c] transition-all duration-200 rounded-lg mb-1 ${
+                          pathname.startsWith(item.url.split('?')[0]) ? 'bg-[#f0e3c7]/40 text-[#0c281c] font-medium' : ''
                         }`}
                       >
                         <Link
@@ -309,7 +309,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
             <div className="space-y-3">
               <div className="flex items-center gap-3 p-2">
                 <Link to={createPageUrl("EditProfile")} className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center shadow">
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#0c281c] to-[#0c281c]/80 rounded-full flex items-center justify-center shadow">
                     {user.profile_picture_url
                       ? <img src={user.profile_picture_url} alt=" " className="w-full h-full object-cover rounded-full" />
                       : <User className="w-5 h-5 text-white" aria-hidden="true" />
@@ -334,7 +334,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
           ) : (
             <Button
               onClick={handleLogin}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+              className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
               aria-label={t('common.login')}
             >
               <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -387,7 +387,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                   variant="ghost"
                   size="icon"
                   onClick={handleNavigateCreateTrip}
-                  className="min-h-[44px] min-w-[44px] text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                  className="min-h-[44px] min-w-[44px] text-[#0c281c] hover:text-[#0c281c] hover:bg-[#f0e3c7]/40"
                   aria-label={t('create_trip.title')}
                 >
                   <PlusCircle className="w-5 h-5" aria-hidden="true" />

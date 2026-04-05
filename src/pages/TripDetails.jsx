@@ -383,7 +383,7 @@ export default function TripDetailsPage() {
                   {organizer && (
                     <Link
                       to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
-                      className="inline-flex items-center gap-2 text-muted-foreground hover:text-emerald-700 mb-4"
+                      className="inline-flex items-center gap-2 text-muted-foreground hover:text-[#0c281c] mb-4"
                     >
                       <UserIcon className="w-4 h-4" />
                       <span>{t('trip.organized_by')} {organizer.username || organizer.full_name}</span>
@@ -402,7 +402,7 @@ export default function TripDetailsPage() {
 
                   <div className="grid md:grid-cols-2 gap-4 mb-6">
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-emerald-600" />
+                      <MapPin className="w-5 h-5 text-[#0c281c]" />
                       <div>
                         <p className="text-sm text-muted-foreground">Location</p>
                         <p className="font-medium text-foreground">{trip.location}</p>
@@ -410,7 +410,7 @@ export default function TripDetailsPage() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-emerald-600" />
+                      <Clock className="w-5 h-5 text-[#0c281c]" />
                       <div>
                         <p className="text-sm text-muted-foreground">Date</p>
                         <p className="font-medium text-foreground">
@@ -440,7 +440,7 @@ export default function TripDetailsPage() {
                     </p>
                     <Button
                       onClick={() => navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`)}
-                      className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                      className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
                       aria-label={t('trip.login_to_continue')}
                     >
                       <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -460,7 +460,7 @@ export default function TripDetailsPage() {
                     </p>
                     <Button
                       onClick={() => navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`)}
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                      className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
                       aria-label={t('common.login')}
                     >
                       <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -522,7 +522,7 @@ export default function TripDetailsPage() {
                 {organizer && (
                   <Link
                     to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
-                    className="inline-flex items-center gap-2 text-muted-foreground hover:text-emerald-700 mb-4 transition-colors"
+                    className="inline-flex items-center gap-2 text-muted-foreground hover:text-[#0c281c] mb-4 transition-colors"
                   >
                     <UserIcon className="w-4 h-4" />
                     <span>{t('trip.organized_by')} {organizer.username || organizer.full_name}</span>
@@ -544,7 +544,7 @@ export default function TripDetailsPage() {
 
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
                   <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-emerald-600" />
+                    <MapPin className="w-5 h-5 text-[#0c281c]" />
                     <div>
                       <p className="text-sm text-muted-foreground">{t('trip.location')}</p>
                       <p className="font-medium text-foreground">{trip.location}</p>
@@ -552,7 +552,7 @@ export default function TripDetailsPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Clock className="w-5 h-5 text-emerald-600" />
+                    <Clock className="w-5 h-5 text-[#0c281c]" />
                     <div>
                       <p className="text-sm text-muted-foreground">{t('trip.date')}</p>
                       <p className="font-medium text-foreground">
@@ -563,7 +563,7 @@ export default function TripDetailsPage() {
 
                   {trip.duration_hours && (
                     <div className="flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-emerald-600" />
+                      <Clock className="w-5 h-5 text-[#0c281c]" />
                       <div>
                         <p className="text-sm text-muted-foreground">{t('trip.duration')}</p>
                         <p className="font-medium text-foreground">{trip.duration_hours} {t('trip.hours')}</p>
@@ -572,7 +572,7 @@ export default function TripDetailsPage() {
                   )}
 
                   <div className="flex items-start gap-3">
-                    <Euro className="w-5 h-5 text-emerald-600 mt-0.5" />
+                    <Euro className="w-5 h-5 text-[#0c281c] mt-0.5" />
                     <div>
                       <p className="text-sm text-muted-foreground">{t('trip.price')}</p>
                       {(() => {
@@ -604,7 +604,7 @@ export default function TripDetailsPage() {
 
                   {trip.departure_from && trip.departure_from.length > 0 && (
                     <div className="flex items-center gap-3 md:col-start-2">
-                      <MapPin className="w-5 h-5 text-emerald-600" />
+                      <MapPin className="w-5 h-5 text-[#0c281c]" />
                       <div>
                         <p className="text-sm text-muted-foreground">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -626,7 +626,7 @@ export default function TripDetailsPage() {
                       {trip.meeting_points.map((point, index) => (
                         <div key={index} className="bg-muted/30 p-3 rounded-lg">
                           <div className="flex items-start gap-3">
-                            <MapPin className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+                            <MapPin className="w-5 h-5 text-[#0c281c] mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
                               <p className="font-medium text-foreground">{point.name}</p>
                               <p className="text-sm text-muted-foreground mt-1">{point.location}</p>
@@ -668,7 +668,7 @@ export default function TripDetailsPage() {
                             key={i}
                             className={isTransportTag
                               ? "bg-purple-100 text-purple-800 border-purple-300 border font-semibold"
-                              : "bg-emerald-100 text-emerald-800 border-emerald-200 border"
+                              : "bg-emerald-100 text-emerald-800 border-[#0c281c]/20 border"
                             }
                           >
                             {tag}
@@ -697,7 +697,7 @@ export default function TripDetailsPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={handleExternalLinkClick}
-                      className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium"
+                      className="inline-flex items-center gap-2 text-[#0c281c] hover:text-[#0c281c] font-medium"
                     >
                       <ExternalLink className="w-4 h-4" />
                       {t('trip.external_link')}
@@ -727,7 +727,7 @@ export default function TripDetailsPage() {
                       <div className="space-y-2">
                         <div className={`text-sm rounded-lg px-3 py-2.5 text-center font-medium ${
                           existingBooking.status === 'confirmed' ? 'bg-yellow-50 text-yellow-800 border border-yellow-200' :
-                          existingBooking.status === 'paid'      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
+                          existingBooking.status === 'paid'      ? 'bg-[#f0e3c7]/40 text-emerald-800 border border-[#0c281c]/20' :
                           'bg-blue-50 text-blue-800 border border-blue-200'
                         }`}>
                           {existingBooking.status === 'confirmed' ? t('booking.already_confirmed') :
@@ -746,7 +746,7 @@ export default function TripDetailsPage() {
                       </Button>
                     ) : (
                       <Button
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                        className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
                         onClick={() => {
                           if (!user) {
                             navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`);
@@ -772,7 +772,7 @@ export default function TripDetailsPage() {
                   {!organizerIsActivePremium && trip.event_url && (
                     <Button
                       asChild
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                      className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
                       onClick={handleBookNowClick}
                     >
                       <a href={trip.event_url} target="_blank" rel="noopener noreferrer">
@@ -784,7 +784,7 @@ export default function TripDetailsPage() {
 
                   {!organizerIsActivePremium && !trip.event_url && organizer?.plan !== 'premium' && organizer ? (
                     <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}>
-                      <Button className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]">
+                      <Button className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]">
                         {t('trip.view_organizer_profile')}
                       </Button>
                     </Link>

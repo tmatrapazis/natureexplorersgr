@@ -106,7 +106,7 @@ export default function GuidesPage() {
 
         {/* Create Profile CTA - shown to all users */}
         {(!user || !hasGuideProfile) && (
-          <Card className="mb-8 border-2 border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50">
+          <Card className="mb-8 border-2 border-[#0c281c]/20 bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <div className="flex-1">
@@ -129,7 +129,7 @@ export default function GuidesPage() {
                       navigate(createPageUrl('CreateGuideProfile'));
                     }
                   }}
-                  className="bg-emerald-600 hover:bg-emerald-700 flex items-center gap-2 min-h-[44px]"
+                  className="bg-[#0c281c] hover:bg-[#0c281c]/90 flex items-center gap-2 min-h-[44px]"
                   aria-label={language === 'el' ? 'Δημιουργία προφίλ οδηγού' : 'Create guide profile'}
                 >
                   <Plus className="w-5 h-5" aria-hidden="true" />
@@ -183,7 +183,7 @@ export default function GuidesPage() {
                 <Button
                   variant="outline"
                   onClick={() => setVisibleCount(c => c + GUIDES_PER_PAGE)}
-                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 gap-2 min-h-[44px]"
+                  className="border-emerald-300 text-[#0c281c] hover:bg-[#f0e3c7]/40 gap-2 min-h-[44px]"
                   aria-label={language === 'el' ? 'Φόρτωση περισσότερων οδηγών' : 'Load more guides'}
                 >
                   <ChevronDown className="w-4 h-4" aria-hidden="true" />

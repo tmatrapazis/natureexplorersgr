@@ -155,7 +155,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                       {organizer && organizer.username && (
                         <Link
                           to={`${createPageUrl("OrganizerProfile")}/${organizer.username}`}
-                          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-emerald-700"
+                          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-[#0c281c]"
                         >
                           <User className="w-3 h-3" aria-hidden="true" />
                           <span>by {organizer.full_name}</span>
@@ -166,16 +166,16 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                     <div className="space-y-1 text-xs text-muted-foreground mb-3">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
-                          <Calendar className="w-3 h-3 text-emerald-600 flex-shrink-0" aria-hidden="true" />
+                          <Calendar className="w-3 h-3 text-[#0c281c] flex-shrink-0" aria-hidden="true" />
                           <span>{format(new Date(trip.start_date), "MMM d, yyyy")}</span>
                         </div>
-                        <span className="font-bold text-emerald-700">
+                        <span className="font-bold text-[#0c281c]">
                           {formatPriceForCard(trip, language)}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3 h-3 text-emerald-600 flex-shrink-0" aria-hidden="true" />
+                        <MapPin className="w-3 h-3 text-[#0c281c] flex-shrink-0" aria-hidden="true" />
                         <span className="line-clamp-1">{trip.location}</span>
                       </div>
                     </div>
@@ -188,7 +188,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                       onClick={() => handleViewDetailsClick(trip)}
                       aria-label={`${t('trip.view_details')}: ${trip.title}`}
                     >
-                      <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 w-full min-h-[44px]" tabIndex={-1}>
+                      <Button size="sm" className="bg-[#0c281c] hover:bg-[#0c281c]/90 w-full min-h-[44px]" tabIndex={-1}>
                         {t('trip.view_details')}
                       </Button>
                     </Link>

@@ -25,7 +25,7 @@ function GuideCard({ guide, organizers = [], language = 'en' }) {
           />
           {guide.is_verified && (
             <div className="absolute top-3 right-3">
-              <Badge className="bg-emerald-600 text-white flex items-center gap-1">
+              <Badge className="bg-[#0c281c] text-white flex items-center gap-1">
                 <Shield className="w-3 h-3" aria-hidden="true" />
                 {language === 'el' ? 'Πιστοποιημένος' : 'Verified'}
               </Badge>
@@ -33,7 +33,7 @@ function GuideCard({ guide, organizers = [], language = 'en' }) {
           )}
         </div>
         <CardContent className="p-5">
-          <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-emerald-700 transition-colors">
+          <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-[#0c281c] transition-colors">
             {guide.full_name}
           </h3>
           

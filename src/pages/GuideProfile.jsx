@@ -213,7 +213,7 @@ export default function GuideProfilePage() {
             <ShareGuideButton guide={guide} language={language} />
             <Button
               onClick={() => navigate(createPageUrl('EditGuideProfile') + `?id=${guideId}`)}
-              className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+              className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
               aria-label={language === 'el' ? 'Επεξεργασία προφίλ οδηγού' : 'Edit guide profile'}
             >
               <Edit className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -235,7 +235,7 @@ export default function GuideProfilePage() {
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-3xl font-bold text-foreground">{guide.full_name}</h1>
                   {guide.is_verified && (
-                    <Badge className="bg-emerald-600 text-white flex items-center gap-1">
+                    <Badge className="bg-[#0c281c] text-white flex items-center gap-1">
                       <Shield className="w-4 h-4" />
                       {language === 'el' ? 'Πιστοποιημένος Οδηγός' : 'Verified Guide'}
                     </Badge>
@@ -255,7 +255,7 @@ export default function GuideProfilePage() {
                         href={guide.social_media.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-emerald-600 transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
+                        className="text-muted-foreground hover:text-[#0c281c] transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
                         aria-label={`${guide.full_name} on Instagram`}
                       >
                         <Instagram className="w-5 h-5" aria-hidden="true" />
@@ -266,7 +266,7 @@ export default function GuideProfilePage() {
                         href={guide.social_media.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-emerald-600 transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
+                        className="text-muted-foreground hover:text-[#0c281c] transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
                         aria-label={`${guide.full_name} on Facebook`}
                       >
                         <Facebook className="w-5 h-5" aria-hidden="true" />
@@ -298,7 +298,7 @@ export default function GuideProfilePage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-emerald-600" />
+                    <Award className="w-5 h-5 text-[#0c281c]" />
                     {language === 'el' ? 'Πιστοποιήσεις' : 'Certifications'}
                   </CardTitle>
                 </CardHeader>
@@ -319,7 +319,7 @@ export default function GuideProfilePage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-emerald-600" />
+                    <Calendar className="w-5 h-5 text-[#0c281c]" />
                     {language === 'el' ? 'Επερχόμενες Εκδρομές' : 'Upcoming Adventures'}
                   </CardTitle>
                 </CardHeader>
@@ -370,7 +370,7 @@ export default function GuideProfilePage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Briefcase className="w-5 h-5 text-emerald-600" />
+                    <Briefcase className="w-5 h-5 text-[#0c281c]" />
                     {language === 'el' ? 'Συνεργάζεται με' : 'Collaborates With'}
                   </CardTitle>
                 </CardHeader>
@@ -392,7 +392,7 @@ export default function GuideProfilePage() {
                           />
                         ) : (
                           <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                            <span className="text-emerald-700 font-semibold text-lg">
+                            <span className="text-[#0c281c] font-semibold text-lg">
                               {(organizer.full_name || organizer.username || '?')[0].toUpperCase()}
                             </span>
                           </div>

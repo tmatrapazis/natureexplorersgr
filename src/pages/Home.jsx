@@ -271,7 +271,7 @@ export default function HomePage() {
               </p>
               <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
                 <Link to={createPageUrl("Calendar")}>
-                  <Button size="lg" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white">
+                  <Button size="lg" className="w-full sm:w-auto bg-[#0c281c] hover:bg-[#0c281c]/90 text-white">
                     {t('home.browse_expeditions')}
                   </Button>
                 </Link>
@@ -320,7 +320,7 @@ export default function HomePage() {
                             <Badge className={difficultyColors[trip.difficulty]}>
                               {trip.difficulty}
                             </Badge>
-                            <Badge variant="outline" className="text-emerald-700 border-emerald-300">
+                            <Badge variant="outline" className="text-[#0c281c] border-emerald-300">
                               {formatPriceForCard(trip, language)}
                             </Badge>
                             <Badge variant="outline">
@@ -329,7 +329,7 @@ export default function HomePage() {
                             </Badge>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                            <MapPin className="w-4 h-4 text-emerald-600" />
+                            <MapPin className="w-4 h-4 text-[#0c281c]" />
                             <span>{trip.location}</span>
                           </div>
                           {organizer && (
@@ -339,7 +339,7 @@ export default function HomePage() {
                             </div>
                           )}
                           <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`} className="mt-auto">
-                            <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
+                            <Button className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90">
                               {t('home.view_details')}
                             </Button>
                           </Link>

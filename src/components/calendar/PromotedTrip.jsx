@@ -93,7 +93,7 @@ function PromotedTrip({ trips, currentDate }) {
             <TrendingUp className="w-3 h-3 mr-1" />
             {promotedTrip.difficulty}
           </Badge>
-          <Badge variant="outline" className="text-emerald-700 border-emerald-300">
+          <Badge variant="outline" className="text-[#0c281c] border-emerald-300">
             {formatPriceForCard(promotedTrip, language)}
           </Badge>
           {promotedTrip.status === 'upcoming' && (
@@ -110,11 +110,11 @@ function PromotedTrip({ trips, currentDate }) {
 
         <div className="space-y-2 text-sm text-muted-foreground mb-4">
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <Calendar className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
             <span>{format(new Date(promotedTrip.start_date), "MMMM d, yyyy")}</span>
           </div>
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <MapPin className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
             <span className="line-clamp-1">{promotedTrip.location}</span>
           </div>
         </div>
@@ -124,7 +124,7 @@ function PromotedTrip({ trips, currentDate }) {
             to={`${createPageUrl("TripDetails")}?id=${promotedTrip.id}`}
             aria-label={`${t('trip.view_details')}: ${promotedTrip.title}`}
           >
-            <Button className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]" tabIndex={-1}>
+            <Button className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]" tabIndex={-1}>
               {t('trip.view_details')}
             </Button>
           </Link>

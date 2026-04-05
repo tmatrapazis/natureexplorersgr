@@ -89,7 +89,7 @@ export default function GreekRefuges() {
         {/* Header */}
         <div className="text-center mb-6 md:mb-8">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
-            <Mountain className="w-8 h-8 md:w-12 md:h-12 text-emerald-600 flex-shrink-0" />
+            <Mountain className="w-8 h-8 md:w-12 md:h-12 text-[#0c281c] flex-shrink-0" />
             <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-foreground break-words min-w-0">
               {t('refuges.page_title')}
             </h1>
@@ -116,7 +116,7 @@ export default function GreekRefuges() {
         <Card className="w-full max-w-full">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-              <MapPin className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+              <MapPin className="w-5 h-5 text-[#0c281c] flex-shrink-0" />
               <span className="break-words min-w-0">{t('refuges.list_title')}</span>
             </CardTitle>
             <p className="text-xs md:text-sm text-muted-foreground mt-2 break-words">
@@ -183,7 +183,7 @@ export default function GreekRefuges() {
                     <tr
                       key={refuge.id}
                       onClick={() => handleRowClick(refuge)}
-                      className={`border-b cursor-pointer hover:bg-emerald-50 transition-colors ${
+                      className={`border-b cursor-pointer hover:bg-[#f0e3c7]/40 transition-colors ${
                         selectedRefuge?.id === refuge.id ? 'bg-emerald-100' : ''
                       }`}
                     >
@@ -195,7 +195,7 @@ export default function GreekRefuges() {
                               href={refuge.website}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-xs text-emerald-600 hover:underline inline-flex items-center gap-1"
+                              className="text-xs text-[#0c281c] hover:underline inline-flex items-center gap-1"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <ExternalLink className="w-3 h-3" />
@@ -262,7 +262,7 @@ export default function GreekRefuges() {
                         {refuge.capacity > 0 ? `${refuge.capacity} ${t('refuges.people')}` : '-'}
                       </td>
                       <td className="p-3">
-                        <Badge className="bg-emerald-600 text-white">
+                        <Badge className="bg-[#0c281c] text-white">
                           {refuge.type}
                         </Badge>
                       </td>
@@ -309,13 +309,13 @@ export default function GreekRefuges() {
                   key={refuge.id}
                   onClick={() => handleRowClick(refuge)}
                   className={`border rounded-lg p-4 cursor-pointer hover:border-emerald-600 transition-all w-full max-w-full ${
-                    selectedRefuge?.id === refuge.id ? 'bg-emerald-50 border-emerald-600' : 'bg-card'
+                    selectedRefuge?.id === refuge.id ? 'bg-[#f0e3c7]/40 border-emerald-600' : 'bg-card'
                   }`}
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="font-semibold text-foreground text-base break-words min-w-0 flex-1">{refuge.name}</h3>
-                      <Badge className="bg-emerald-600 text-white flex-shrink-0 text-xs">
+                      <Badge className="bg-[#0c281c] text-white flex-shrink-0 text-xs">
                         {refuge.type}
                       </Badge>
                     </div>
@@ -342,7 +342,7 @@ export default function GreekRefuges() {
                           href={refuge.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-emerald-600 hover:underline inline-flex items-center gap-1"
+                          className="text-xs text-[#0c281c] hover:underline inline-flex items-center gap-1"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <ExternalLink className="w-3 h-3" />
@@ -413,7 +413,7 @@ export default function GreekRefuges() {
               href="https://www.topoguide.gr/greece/mountain_refuges.php"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-600 hover:underline"
+              className="text-[#0c281c] hover:underline"
             >
               Topoguide.gr
             </a>

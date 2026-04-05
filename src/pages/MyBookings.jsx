@@ -20,7 +20,7 @@ import useSEO from '@/components/seo/useSEO';
 const STATUS_STYLES = {
   pending:   'bg-blue-100 text-blue-800 border-blue-200',
   confirmed: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  paid:      'bg-emerald-100 text-emerald-800 border-emerald-200',
+  paid:      'bg-emerald-100 text-emerald-800 border-[#0c281c]/20',
   declined:  'bg-red-100 text-red-800 border-red-200',
   cancelled: 'bg-muted text-muted-foreground border-border',
 };
@@ -127,7 +127,7 @@ export default function MyBookingsPage() {
   if (bookingsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#0c281c]" />
       </div>
     );
   }
@@ -145,7 +145,7 @@ export default function MyBookingsPage() {
             <p className="font-medium mb-1">{t('booking.no_bookings_yet')}</p>
             <p className="text-sm mb-4">{t('booking.browse_available')}</p>
             <Link to={createPageUrl('Calendar')}>
-              <Button className="bg-emerald-600 hover:bg-emerald-700">
+              <Button className="bg-[#0c281c] hover:bg-[#0c281c]/90">
                 {t('booking.explore_trips')}
               </Button>
             </Link>
@@ -210,7 +210,7 @@ export default function MyBookingsPage() {
                       </div>
                     ) : (
                       <p className={`text-sm rounded-lg px-3 py-2 ${
-                        booking.status === 'paid'     ? 'bg-emerald-50 text-emerald-800' :
+                        booking.status === 'paid'     ? 'bg-[#f0e3c7]/40 text-emerald-800' :
                         booking.status === 'declined' ? 'bg-red-50 text-red-700' :
                         'bg-muted/50 text-muted-foreground'
                       }`}>

@@ -187,7 +187,7 @@ export default function TripFormPage() {
   if (isEditing && (tripLoading || !trip)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
+        <Loader2 className="w-12 h-12 animate-spin text-[#0c281c]" />
       </div>
     );
   }
@@ -246,7 +246,7 @@ export default function TripFormPage() {
               <AlertDialogFooter>
                 <AlertDialogCancel onClick={handleDiscardAndExit}>{language === 'el' ? 'Απόρριψη Αλλαγών' : 'Discard Changes'}</AlertDialogCancel>
                 <AlertDialogAction onClick={() => setShowExitDialog(false)}>{language === 'el' ? 'Ακύρωση' : 'Cancel'}</AlertDialogAction>
-                <AlertDialogAction onClick={handleSaveAndExit} className="bg-emerald-600 hover:bg-emerald-700">{language === 'el' ? 'Αποθήκευση & Έξοδος' : 'Save & Exit'}</AlertDialogAction>
+                <AlertDialogAction onClick={handleSaveAndExit} className="bg-[#0c281c] hover:bg-[#0c281c]/90">{language === 'el' ? 'Αποθήκευση & Έξοδος' : 'Save & Exit'}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

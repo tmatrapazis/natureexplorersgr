@@ -7,7 +7,7 @@ const GreekRefugesMapComponent = lazy(() => import('../refuges/GreekRefugesMap')
 const MapFallback = () => (
   <div className="h-[300px] md:h-[500px] w-full max-w-full bg-muted/30 rounded-lg flex items-center justify-center">
     <div className="text-center">
-      <Mountain className="w-8 h-8 text-emerald-600 animate-pulse mx-auto mb-2" />
+      <Mountain className="w-8 h-8 text-[#0c281c] animate-pulse mx-auto mb-2" />
       <p className="text-sm text-muted-foreground">Loading map...</p>
     </div>
   </div>

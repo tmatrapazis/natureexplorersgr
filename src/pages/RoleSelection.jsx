@@ -92,7 +92,7 @@ export default function RoleSelectionPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
+        <Loader2 className="w-12 h-12 animate-spin text-[#0c281c]" />
       </div>
     );
   }
@@ -122,7 +122,7 @@ export default function RoleSelectionPage() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <li key={n} className="flex items-start gap-2">
-                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span className="text-[#0c281c] font-bold">✓</span>
                     <span>{t(`role_selection.hiker_benefit_${n}`)}</span>
                   </li>
                 ))}
@@ -142,10 +142,10 @@ export default function RoleSelectionPage() {
           </Card>
 
           {/* Organizer Card */}
-          <Card className="hover:shadow-xl transition-all cursor-pointer border-2 border-emerald-200">
+          <Card className="hover:shadow-xl transition-all cursor-pointer border-2 border-[#0c281c]/20">
             <CardHeader className="text-center">
               <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Mountain className="w-12 h-12 text-emerald-600" />
+                <Mountain className="w-12 h-12 text-[#0c281c]" />
               </div>
               <CardTitle className="text-2xl">{t('role_selection.organizer_title')}</CardTitle>
               <CardDescription>{t('role_selection.organizer_description')}</CardDescription>
@@ -154,13 +154,13 @@ export default function RoleSelectionPage() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <li key={n} className="flex items-start gap-2">
-                    <span className="text-emerald-600 font-bold">✓</span>
+                    <span className="text-[#0c281c] font-bold">✓</span>
                     <span>{t(`role_selection.organizer_benefit_${n}`)}</span>
                   </li>
                 ))}
               </ul>
               <Button
-                className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700"
+                className="w-full mt-4 bg-[#0c281c] hover:bg-[#0c281c]/90"
                 onClick={() => handleRoleSelection('organizer')}
                 disabled={assignRoleMutation.isPending}
               >

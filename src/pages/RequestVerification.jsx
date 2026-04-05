@@ -124,7 +124,7 @@ export default function RequestVerificationPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3 mb-2">
-              <Shield className="w-8 h-8 text-emerald-600" />
+              <Shield className="w-8 h-8 text-[#0c281c]" />
               <CardTitle className="text-2xl">{t('request_verification.card_title')}</CardTitle>
             </div>
             <CardDescription>
@@ -134,8 +134,8 @@ export default function RequestVerificationPage() {
 
           <CardContent>
             {submitSuccess ? (
-              <Alert className="bg-emerald-50 border-emerald-200">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+              <Alert className="bg-[#f0e3c7]/40 border-[#0c281c]/20">
+                <CheckCircle2 className="h-4 w-4 text-[#0c281c]" />
                 <AlertDescription className="text-emerald-800">
                   {t('request_verification.success_message')}
                 </AlertDescription>
@@ -220,7 +220,7 @@ export default function RequestVerificationPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                  className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
                   disabled={requestVerificationMutation.isPending}
                   aria-label={requestVerificationMutation.isPending ? t('request_verification.submitting') : t('request_verification.submit')}
                 >

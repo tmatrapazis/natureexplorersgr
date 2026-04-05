@@ -268,7 +268,7 @@ export default function CalendarPage() {
         <div className="flex gap-3 mb-6 items-center flex-wrap">
           <TripFilters filters={filters} onFilterChange={setFilters} />
 
-          <div className="bg-emerald-100 text-emerald-800 px-4 py-2.5 text-sm font-medium rounded-md border border-emerald-200 inline-flex items-center justify-center h-9">
+          <div className="bg-emerald-100 text-emerald-800 px-4 py-2.5 text-sm font-medium rounded-md border border-[#0c281c]/20 inline-flex items-center justify-center h-9">
             {sortedTrips.length} {language === 'el' ? 'εκδρομές' : 'trips'}
           </div>
 
@@ -319,7 +319,7 @@ export default function CalendarPage() {
                   onClick={() => setTripsView("list")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                     tripsView === "list"
-                      ? "bg-background text-emerald-700 shadow-sm"
+                      ? "bg-background text-[#0c281c] shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -333,7 +333,7 @@ export default function CalendarPage() {
                   onClick={() => setTripsView("map")}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                     tripsView === "map"
-                      ? "bg-background text-emerald-700 shadow-sm"
+                      ? "bg-background text-[#0c281c] shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -361,7 +361,7 @@ export default function CalendarPage() {
                   variant="outline"
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 min-h-[44px]"
+                  className="border-emerald-300 text-[#0c281c] hover:bg-[#f0e3c7]/40 disabled:opacity-50 min-h-[44px]"
                   aria-label={language === 'el' ? 'Προηγούμενη σελίδα' : 'Previous page'}
                 >
                       {language === 'el' ? 'Προηγούμενη' : 'Previous'}
@@ -381,7 +381,7 @@ export default function CalendarPage() {
                               key={pageNum}
                               variant={currentPage === pageNum ? "default" : "outline"}
                               onClick={() => setCurrentPage(pageNum)}
-                              className={currentPage === pageNum ? "bg-emerald-600 hover:bg-emerald-700 min-h-[44px] min-w-[44px]" : "border-emerald-300 text-emerald-700 hover:bg-emerald-50 min-h-[44px] min-w-[44px]"}
+                              className={currentPage === pageNum ? "bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px] min-w-[44px]" : "border-emerald-300 text-[#0c281c] hover:bg-[#f0e3c7]/40 min-h-[44px] min-w-[44px]"}
                               size="sm"
                               aria-label={language === 'el' ? `Σελίδα ${pageNum}` : `Page ${pageNum}`}
                               aria-current={currentPage === pageNum ? 'page' : undefined}
@@ -403,7 +403,7 @@ export default function CalendarPage() {
                   variant="outline"
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="border-emerald-300 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 min-h-[44px]"
+                  className="border-emerald-300 text-[#0c281c] hover:bg-[#f0e3c7]/40 disabled:opacity-50 min-h-[44px]"
                   aria-label={language === 'el' ? 'Επόμενη σελίδα' : 'Next page'}
                 >
                       {language === 'el' ? 'Επόμενη' : 'Next'}

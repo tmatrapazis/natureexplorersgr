@@ -380,7 +380,7 @@ export default function CreateGuideProfilePage() {
                 <Button
                   type="submit"
                   disabled={createGuideMutation.isPending}
-                  className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                  className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
                   aria-label={createGuideMutation.isPending ? (language === 'el' ? 'Αποθήκευση…' : 'Saving…') : (language === 'el' ? 'Δημιουργία προφίλ οδηγού' : 'Create guide profile')}
                 >
                   {createGuideMutation.isPending ? (

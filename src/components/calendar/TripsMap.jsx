@@ -197,7 +197,7 @@ export default function TripsMap({ trips, organizerMap }) {
       {/* Header */}
       <div className="bg-card px-4 py-3 border-b border-border flex items-center justify-between flex-wrap gap-2 flex-shrink-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <Mountain className="w-4 h-4 text-emerald-600" />
+          <Mountain className="w-4 h-4 text-[#0c281c]" />
           <span className="font-semibold text-foreground text-sm">
             {language === 'el' ? 'Χάρτης Εκδρομών' : 'Trip Map'}
           </span>

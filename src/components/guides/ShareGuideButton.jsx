@@ -75,7 +75,7 @@ export default function ShareGuideButton({ guide, language, className = "" }) {
     return (
       <Button
         onClick={handleNativeShare}
-        className={`fixed bottom-6 right-6 z-50 shadow-lg bg-emerald-600 hover:bg-emerald-700 min-h-[56px] min-w-[56px] rounded-full ${className}`}
+        className={`fixed bottom-6 right-6 z-50 shadow-lg bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[56px] min-w-[56px] rounded-full ${className}`}
         size="icon"
         aria-label={language === 'el' ? 'Κοινοποίηση προφίλ' : 'Share profile'}
       >

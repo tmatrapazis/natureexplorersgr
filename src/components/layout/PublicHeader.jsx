@@ -81,7 +81,7 @@ export default function PublicHeader() {
             <Link 
               to={createPageUrl("Calendar")} 
               onClick={handleNavClick(createPageUrl("Calendar"))}
-              className="text-foreground hover:text-emerald-600 transition-colors font-medium"
+              className="text-foreground hover:text-[#0c281c] transition-colors font-medium"
               aria-label={t('navigation.calendar')}
             >
               {t('navigation.calendar')}
@@ -89,7 +89,7 @@ export default function PublicHeader() {
             <Link 
               to={createPageUrl("OrganizersList")} 
               onClick={handleNavClick(createPageUrl("OrganizersList"))}
-              className="text-foreground hover:text-emerald-600 transition-colors font-medium"
+              className="text-foreground hover:text-[#0c281c] transition-colors font-medium"
               aria-label={t('navigation.organizers')}
             >
               {t('navigation.organizers')}
@@ -97,7 +97,7 @@ export default function PublicHeader() {
             <Link 
               to={createPageUrl("Guides")} 
               onClick={handleNavClick(createPageUrl("Guides"))}
-              className="text-foreground hover:text-emerald-600 transition-colors font-medium"
+              className="text-foreground hover:text-[#0c281c] transition-colors font-medium"
               aria-label={t('navigation.guides')}
             >
               {t('navigation.guides')}
@@ -105,7 +105,7 @@ export default function PublicHeader() {
             <Link 
               to={createPageUrl("GreekRefuges")} 
               onClick={handleNavClick(createPageUrl("GreekRefuges"))}
-              className="text-foreground hover:text-emerald-600 transition-colors font-medium"
+              className="text-foreground hover:text-[#0c281c] transition-colors font-medium"
               aria-label={t('navigation.refuges')}
             >
               {t('navigation.refuges')}
@@ -113,7 +113,7 @@ export default function PublicHeader() {
             <Link 
               to="/about" 
               onClick={handleNavClick("/about")}
-              className="text-foreground hover:text-emerald-600 transition-colors font-medium"
+              className="text-foreground hover:text-[#0c281c] transition-colors font-medium"
               aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
             >
               {language === 'el' ? 'Σχετικά' : 'About'}
@@ -191,7 +191,7 @@ export default function PublicHeader() {
                   <Link 
                     to={createPageUrl("Calendar")} 
                     onClick={handleNavClick(createPageUrl("Calendar"))}
-                    className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    className="text-foreground hover:text-[#0c281c] transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={t('navigation.calendar')}
                   >
                     <Calendar className="w-5 h-5" aria-hidden="true" />
@@ -200,7 +200,7 @@ export default function PublicHeader() {
                   <Link 
                     to={createPageUrl("OrganizersList")} 
                     onClick={handleNavClick(createPageUrl("OrganizersList"))}
-                    className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    className="text-foreground hover:text-[#0c281c] transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={t('navigation.organizers')}
                   >
                     <Users className="w-5 h-5" aria-hidden="true" />
@@ -209,7 +209,7 @@ export default function PublicHeader() {
                   <Link 
                     to={createPageUrl("Guides")} 
                     onClick={handleNavClick(createPageUrl("Guides"))}
-                    className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    className="text-foreground hover:text-[#0c281c] transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={t('navigation.guides')}
                   >
                     <Compass className="w-5 h-5" aria-hidden="true" />
@@ -218,7 +218,7 @@ export default function PublicHeader() {
                   <Link 
                     to={createPageUrl("GreekRefuges")} 
                     onClick={handleNavClick(createPageUrl("GreekRefuges"))}
-                    className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    className="text-foreground hover:text-[#0c281c] transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={t('navigation.refuges')}
                   >
                     <Home className="w-5 h-5" aria-hidden="true" />
@@ -227,7 +227,7 @@ export default function PublicHeader() {
                   <Link 
                     to="/about" 
                     onClick={handleNavClick("/about")}
-                    className="text-foreground hover:text-emerald-600 transition-colors text-lg flex items-center gap-2 min-h-[44px]"
+                    className="text-foreground hover:text-[#0c281c] transition-colors text-lg flex items-center gap-2 min-h-[44px]"
                     aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
                   >
                     <Info className="w-5 h-5" aria-hidden="true" />
@@ -262,7 +262,7 @@ export default function PublicHeader() {
                     {!user ? (
                       <Button 
                         onClick={handleLogin}
-                        className="w-full bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                        className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
                         aria-label={t('common.login')}
                       >
                         <LogIn className="w-4 h-4 mr-2" />

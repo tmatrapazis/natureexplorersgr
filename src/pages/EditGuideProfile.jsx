@@ -490,7 +490,7 @@ export default function EditGuideProfilePage() {
                 <Button
                   type="submit"
                   disabled={updateGuideMutation.isPending}
-                  className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                  className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
                   aria-label={updateGuideMutation.isPending ? (language === 'el' ? 'Αποθήκευση…' : 'Saving…') : (language === 'el' ? 'Αποθήκευση αλλαγών' : 'Save changes')}
                 >
                   {updateGuideMutation.isPending ? (
@@ -523,7 +523,7 @@ export default function EditGuideProfilePage() {
             <AlertDialogFooter>
               <AlertDialogAction
                 onClick={() => navigate(createPageUrl('GuideProfile') + `?id=${guideId}`)}
-                className="bg-emerald-600 hover:bg-emerald-700"
+                className="bg-[#0c281c] hover:bg-[#0c281c]/90"
               >
                 {language === 'el' ? 'Προβολή Προφίλ' : 'View Profile'}
               </AlertDialogAction>

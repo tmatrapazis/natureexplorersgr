@@ -39,7 +39,7 @@ export default function MobileBottomTab({ user }) {
               onClick={() => navigateToTab(tab.path)}
               className={`flex flex-col items-center justify-center py-2 px-4 min-h-[44px] min-w-[44px] transition-colors rounded-lg ${
                 active 
-                  ? "text-emerald-600 dark:text-emerald-400" 
+                  ? "text-[#0c281c] dark:text-[#f0e3c7]" 
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >

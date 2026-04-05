@@ -257,7 +257,7 @@ export default function EditProfilePage() {
   if (userLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-emerald-600" />
+        <Loader2 className="h-12 w-12 animate-spin text-[#0c281c]" />
       </div>
     );
   }
@@ -357,7 +357,7 @@ export default function EditProfilePage() {
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                    <ShieldCheck className="w-5 h-5 text-[#0c281c]" />
                     <CardTitle>Safety & Health Information</CardTitle>
                   </div>
                   <CardDescription>
@@ -435,7 +435,7 @@ export default function EditProfilePage() {
             )}
 
             {updateSuccess && (
-              <Alert variant="default" className="bg-emerald-50 border-emerald-200 text-emerald-800">
+              <Alert variant="default" className="bg-[#f0e3c7]/40 border-[#0c281c]/20 text-emerald-800">
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
                   {isNewUser ? "Profile created successfully! Redirecting..." : "Your profile has been updated successfully!"}

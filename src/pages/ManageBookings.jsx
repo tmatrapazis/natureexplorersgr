@@ -45,7 +45,7 @@ export default function ManageBookingsPage() {
   if (planLoading || tripsLoading || bookingsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#0c281c]" />
       </div>
     );
   }
@@ -81,7 +81,7 @@ export default function ManageBookingsPage() {
             </Button>
           </Link>
           <div className="flex items-center gap-2">
-            <ClipboardList className="w-6 h-6 text-emerald-600" />
+            <ClipboardList className="w-6 h-6 text-[#0c281c]" />
             <h1 className="text-2xl font-bold text-foreground">
               {language === 'el' ? 'Διαχείριση Κρατήσεων' : 'Manage Bookings'}
             </h1>

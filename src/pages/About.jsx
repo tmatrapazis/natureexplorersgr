@@ -60,7 +60,7 @@ export default function About() {
               return (
                 <Card key={idx} className="text-center hover:shadow-lg transition-shadow">
                   <CardContent className="pt-6">
-                    <Icon className="w-8 h-8 mx-auto mb-3 text-emerald-600" />
+                    <Icon className="w-8 h-8 mx-auto mb-3 text-[#0c281c]" />
                     <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
                     <div className="text-sm text-muted-foreground">{stat.label}</div>
                   </CardContent>
@@ -113,7 +113,7 @@ export default function About() {
               return (
                 <Card key={idx} className="hover:shadow-xl transition-shadow">
                   <CardHeader>
-                    <Icon className="w-10 h-10 text-emerald-600 mb-3" />
+                    <Icon className="w-10 h-10 text-[#0c281c] mb-3" />
                     <CardTitle className="text-xl">{feature.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -151,7 +151,7 @@ export default function About() {
                 <Card key={idx} className="hover:shadow-xl transition-shadow">
                   <CardHeader>
                     <div className="flex items-center gap-3">
-                      <Icon className="w-8 h-8 text-emerald-600" />
+                      <Icon className="w-8 h-8 text-[#0c281c]" />
                       <CardTitle className="text-xl">{value.title}</CardTitle>
                     </div>
                   </CardHeader>
@@ -174,7 +174,7 @@ export default function About() {
             <Button
               size="lg"
               onClick={() => navigate(createPageUrl("Calendar"))}
-              className="bg-background text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6 min-h-[44px]"
+              className="bg-background text-[#0c281c] hover:bg-[#f0e3c7]/40 text-lg px-8 py-6 min-h-[44px]"
               aria-label={t.cta.button}
             >
               {t.cta.button}

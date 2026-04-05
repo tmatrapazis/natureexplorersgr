@@ -62,12 +62,12 @@ export default function OrganizerPlans() {
         {/* Current plan banner */}
         {!isLoading && (
           <div className={`mb-6 flex items-center justify-between p-4 rounded-lg border ${
-            isPremium ? 'bg-emerald-50 border-emerald-200' : 'bg-muted/50 border-border'
+            isPremium ? 'bg-[#f0e3c7]/40 border-[#0c281c]/20' : 'bg-muted/50 border-border'
           }`}>
             <div>
               <p className="text-sm font-medium">
                 {t('organizer_plans.current_plan')}{' '}
-                <span className={isPremium ? 'text-emerald-700' : 'text-foreground'}>
+                <span className={isPremium ? 'text-[#0c281c]' : 'text-foreground'}>
                   {isPremium ? t('organizer_plans.premium_plan') : t('organizer_plans.free_plan')}
                 </span>
               </p>
@@ -78,7 +78,7 @@ export default function OrganizerPlans() {
               )}
             </div>
             {isPremium && (
-              <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">
+              <Badge className="bg-emerald-100 text-[#0c281c] border-[#0c281c]/20">
                 <Sparkles className="w-3 h-3 mr-1" />
                 {t('organizer_plans.active')}
               </Badge>
@@ -105,7 +105,7 @@ export default function OrganizerPlans() {
               {FEATURES.map((f) => (
                 <div key={f.key} className="flex items-center gap-2.5 text-sm">
                   {f.free
-                    ? <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                    ? <Check className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
                     : <X className="w-4 h-4 text-muted-foreground/40 flex-shrink-0" />
                   }
                   <span className={f.free ? '' : 'text-muted-foreground'}>{t(`organizer_plans.${f.key}`)}</span>
@@ -128,7 +128,7 @@ export default function OrganizerPlans() {
                   {t('organizer_plans.premium_plan')}
                 </span>
                 {isPremium && (
-                  <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">
+                  <Badge className="bg-emerald-100 text-[#0c281c] border-[#0c281c]/20">
                     {t('organizer_plans.active')}
                   </Badge>
                 )}
@@ -142,7 +142,7 @@ export default function OrganizerPlans() {
             <CardContent className="space-y-2.5">
               {FEATURES.map((f) => (
                 <div key={f.key} className="flex items-center gap-2.5 text-sm">
-                  <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                  <Check className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
                   <span>{t(`organizer_plans.${f.key}`)}</span>
                 </div>
               ))}

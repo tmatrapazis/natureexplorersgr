@@ -131,7 +131,7 @@ export default function LocationPicker({ latitude, longitude, onLocationChange, 
       </div>
 
       {pinPos ? (
-        <p className="text-xs text-emerald-700 flex items-center gap-1">
+        <p className="text-xs text-[#0c281c] flex items-center gap-1">
           <MapPin className="w-3 h-3" />
           {language === 'el' ? 'Συντεταγμένες:' : 'Coordinates:'} {pinPos.lat.toFixed(5)}, {pinPos.lng.toFixed(5)}
         </p>

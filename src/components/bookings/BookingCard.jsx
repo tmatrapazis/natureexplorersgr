@@ -20,7 +20,7 @@ import {
 const STATUS_STYLES = {
   pending:   'bg-blue-100 text-blue-800 border-blue-200',
   confirmed: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  paid:      'bg-emerald-100 text-emerald-800 border-emerald-200',
+  paid:      'bg-emerald-100 text-emerald-800 border-[#0c281c]/20',
   declined:  'bg-red-100 text-red-800 border-red-200',
   cancelled: 'bg-muted text-muted-foreground border-border',
 };
@@ -270,7 +270,7 @@ export default function BookingCard({ booking, hikerProfile, paymentInstructions
                   </div>
                 ) : (
                   <div className="flex gap-2">
-                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 flex-1" onClick={handleConfirm} disabled={updateMutation.isPending}>
+                    <Button size="sm" className="bg-[#0c281c] hover:bg-[#0c281c]/90 flex-1" onClick={handleConfirm} disabled={updateMutation.isPending}>
                       <Check className="w-3 h-3 mr-1" /> {t('booking.approve')}
                     </Button>
                     <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50 flex-1" onClick={() => setShowRejectInput(true)}>
@@ -282,7 +282,7 @@ export default function BookingCard({ booking, hikerProfile, paymentInstructions
             )}
 
             {booking.status === 'confirmed' && (
-              <Button size="sm" className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={handleMarkPaid} disabled={updateMutation.isPending}>
+              <Button size="sm" className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90" onClick={handleMarkPaid} disabled={updateMutation.isPending}>
                 <CreditCard className="w-3 h-3 mr-1" /> {t('booking.mark_paid')}
               </Button>
             )}

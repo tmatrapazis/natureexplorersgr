@@ -156,7 +156,7 @@ export default function EditOrganizerProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-emerald-600" />
+        <Loader2 className="h-12 w-12 animate-spin text-[#0c281c]" />
       </div>
     );
   }
@@ -426,7 +426,7 @@ export default function EditOrganizerProfilePage() {
             <DialogHeader>
               <div className="flex items-center justify-center mb-4">
                 <div className="bg-emerald-100 rounded-full p-3">
-                  <CheckCircle className="h-8 w-8 text-emerald-600" />
+                  <CheckCircle className="h-8 w-8 text-[#0c281c]" />
                 </div>
               </div>
               <DialogTitle className="text-center">

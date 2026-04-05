@@ -1,6 +1,6 @@
 # Nature Explorers v2 — Claude Code Redesign Prompt
 
-You are redesigning the **Nature Explorers** app (a Greek hiking & nature events marketplace) from its generic v1 shadcn/Tailwind scaffold into a premium **"National Geographic meets Modern Tech"** product. The approved design direction is **Candidate C** from the Phase 1 proposal.
+You are redesigning the **Nature Explorers** app (a Greek hiking & nature events marketplace) from its generic v1 shadcn/Tailwind scaffold into a premium **"National Geographic meets Modern Tech"** product.
 
 Work through each phase below in order. Do not skip steps. Commit after each phase with a descriptive message.
 

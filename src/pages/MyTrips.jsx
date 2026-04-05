@@ -360,7 +360,7 @@ export default function MyTripsPage() {
             )}
             <Link to={createPageUrl("TripForm")} className="w-full sm:w-auto">
             <Button
-              className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto min-h-[44px]"
+              className="bg-[#0c281c] hover:bg-[#0c281c]/90 w-full sm:w-auto min-h-[44px]"
               aria-label={t('organizer.create_new_trip')}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -377,7 +377,7 @@ export default function MyTripsPage() {
             <p className="text-muted-foreground mb-4">{t('organizer.no_trips_message')}</p>
             <Link to={createPageUrl("TripForm")}>
               <Button 
-                className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
                 aria-label={t('organizer.create_first_trip')}
               >
                 {t('organizer.create_first_trip')}

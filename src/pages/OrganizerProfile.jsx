@@ -247,7 +247,7 @@ export default function OrganizerProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
+        <Loader2 className="w-12 h-12 animate-spin text-[#0c281c]" />
       </div>
     );
   }
@@ -307,7 +307,7 @@ export default function OrganizerProfilePage() {
                 <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2">
                   <h1 className="text-3xl md:text-4xl font-bold text-foreground">{organizer.full_name}</h1>
                   {organizer.verified && (
-                    <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 self-center md:self-start">
+                    <Badge className="bg-emerald-100 text-[#0c281c] border-[#0c281c]/20 self-center md:self-start">
                       <ShieldCheck className="w-4 h-4 mr-1" />
                       {t('common.verified')}
                     </Badge>
@@ -329,7 +329,7 @@ export default function OrganizerProfilePage() {
                 )}
                 
                 <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm text-muted-foreground justify-center md:justify-start">
-                  <a href={`mailto:${organizer.email}`} className="flex items-center gap-2 hover:text-emerald-600 min-h-[44px]" aria-label={`Email ${organizer.full_name}: ${organizer.email}`}>
+                  <a href={`mailto:${organizer.email}`} className="flex items-center gap-2 hover:text-[#0c281c] min-h-[44px]" aria-label={`Email ${organizer.full_name}: ${organizer.email}`}>
                     <Mail className="w-4 h-4" aria-hidden="true" />
                     {organizer.email}
                   </a>
@@ -344,7 +344,7 @@ export default function OrganizerProfilePage() {
                       href={organizer.website.startsWith('http://') || organizer.website.startsWith('https://') ? organizer.website : `https://${organizer.website}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 hover:text-emerald-600 min-h-[44px]"
+                      className="flex items-center gap-2 hover:text-[#0c281c] min-h-[44px]"
                       aria-label={`${language === 'el' ? 'Ιστοσελίδα' : 'Website'}: ${organizer.website.replace(/https?:\/\//, '')}`}
                     >
                       <Globe className="w-4 h-4" aria-hidden="true" />
@@ -411,7 +411,7 @@ export default function OrganizerProfilePage() {
                       </Button>
                     </Link>
                     <Link to={createPageUrl("TripForm")} aria-label={language === 'el' ? 'Δημιουργία Νέας Εκδρομής' : 'Create new trip'}>
-                      <Button className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]" tabIndex={-1}>
+                      <Button className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]" tabIndex={-1}>
                         <PlusCircle className="w-4 h-4 mr-2" aria-hidden="true" />
                         {language === 'el' ? 'Δημιουργία Νέας Εκδρομής' : 'Create New Trip'}
                       </Button>
@@ -471,7 +471,7 @@ export default function OrganizerProfilePage() {
                             <TrendingUp className="w-3 h-3 mr-1" />
                             {trip.difficulty}
                           </Badge>
-                          <Badge variant="outline" className="text-xs text-emerald-700">
+                          <Badge variant="outline" className="text-xs text-[#0c281c]">
                             {formatPriceForCard(trip, language)}
                           </Badge>
                           {trip.status === 'upcoming' && (
@@ -507,19 +507,19 @@ export default function OrganizerProfilePage() {
 
                         <div className="space-y-2 text-sm text-muted-foreground mb-3">
                           <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                            <Calendar className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
                             <span>{formatDateRange(trip.start_date, trip.end_date)}</span>
                           </div>
                           
                           {trip.start_time && (
                             <div className="flex items-center gap-2">
-                              <Clock className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                              <Clock className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
                               <span>{trip.start_time} • {trip.duration_hours}{t('common.duration_unit_hours_short')}</span>
                             </div>
                           )}
                           
                           <div className="flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                            <MapPin className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
                             <span className="line-clamp-1">{trip.location}</span>
                           </div>
                         </div>
@@ -529,7 +529,7 @@ export default function OrganizerProfilePage() {
                         <div className="flex gap-2 mt-auto">
                           <Button
                             size="sm"
-                            className="bg-emerald-600 hover:bg-emerald-700 flex-1 min-h-[44px]"
+                            className="bg-[#0c281c] hover:bg-[#0c281c]/90 flex-1 min-h-[44px]"
                             aria-label={`${t('trip.view_details')}: ${trip.title}`}
                           >
                             {t('trip.view_details')}

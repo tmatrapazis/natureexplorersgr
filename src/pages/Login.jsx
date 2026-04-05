@@ -89,7 +89,7 @@ export default function LoginPage() {
   if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#0c281c]" />
       </div>
     );
   }
@@ -100,7 +100,7 @@ export default function LoginPage() {
         <Card className="w-full max-w-md text-center">
           <CardHeader>
             <div className="mx-auto w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mb-2">
-              <Mountain className="w-6 h-6 text-emerald-600" />
+              <Mountain className="w-6 h-6 text-[#0c281c]" />
             </div>
             <CardTitle>Check your email</CardTitle>
             <CardDescription>
@@ -126,7 +126,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center">
           <div className="inline-flex items-center gap-2 mb-2">
-            <Mountain className="w-8 h-8 text-emerald-600" />
+            <Mountain className="w-8 h-8 text-[#0c281c]" />
             <span className="text-2xl font-bold text-emerald-800">Nature Explorers</span>
           </div>
           <p className="text-sm text-muted-foreground">Discover the wild side of Greece</p>
@@ -214,7 +214,7 @@ export default function LoginPage() {
                     {mode === 'signin' && (
                       <button
                         type="button"
-                        className="text-xs text-emerald-600 hover:underline"
+                        className="text-xs text-[#0c281c] hover:underline"
                         onClick={() => setMode('forgot')}
                       >
                         Forgot password?
@@ -235,7 +235,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90"
                 disabled={loading}
               >
                 {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
@@ -250,7 +250,7 @@ export default function LoginPage() {
               {mode === 'signin' && (
                 <>
                   Don't have an account?{' '}
-                  <button className="text-emerald-600 font-medium hover:underline" onClick={() => setMode('signup')}>
+                  <button className="text-[#0c281c] font-medium hover:underline" onClick={() => setMode('signup')}>
                     Sign up
                   </button>
                 </>
@@ -258,7 +258,7 @@ export default function LoginPage() {
               {(mode === 'signup' || mode === 'forgot') && (
                 <>
                   Already have an account?{' '}
-                  <button className="text-emerald-600 font-medium hover:underline" onClick={() => setMode('signin')}>
+                  <button className="text-[#0c281c] font-medium hover:underline" onClick={() => setMode('signin')}>
                     Sign in
                   </button>
                 </>

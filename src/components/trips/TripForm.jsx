@@ -205,7 +205,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
             <Badge 
               key={tag} 
               variant={tripData.tags.includes(tag) ? "default" : "outline"}
-              className={`cursor-pointer whitespace-normal break-words text-center min-h-[44px] px-4 flex items-center ${tripData.tags.includes(tag) ? 'bg-emerald-600' : ''}`}
+              className={`cursor-pointer whitespace-normal break-words text-center min-h-[44px] px-4 flex items-center ${tripData.tags.includes(tag) ? 'bg-[#0c281c]' : ''}`}
               onClick={() => toggleTag(tag)}
               role="button"
               tabIndex={0}
@@ -588,7 +588,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         )}
         <Button 
           type="submit" 
-          className="bg-emerald-600 hover:bg-emerald-700 w-full sm:w-auto min-h-[44px]" 
+          className="bg-[#0c281c] hover:bg-[#0c281c]/90 w-full sm:w-auto min-h-[44px]" 
           disabled={isSubmitting}
           aria-label={isEditing 
             ? (language === 'el' ? 'Αποθήκευση Αλλαγών' : 'Save Changes')

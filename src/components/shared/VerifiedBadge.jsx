@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 
 function VerifiedBadge({ className = "", showText = true }) {
   return (
-    <Badge variant="secondary" className={`bg-emerald-100 text-emerald-700 border-emerald-200 ${className}`}>
+    <Badge variant="secondary" className={`bg-emerald-100 text-[#0c281c] border-[#0c281c]/20 ${className}`}>
       <ShieldCheck className="w-3 h-3 mr-1" />
       {showText && "Verified"}
     </Badge>

@@ -53,7 +53,7 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
             variant="outline"
             size="icon"
             onClick={previousMonth}
-            className="hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 min-h-[44px] min-w-[44px]"
+            className="hover:bg-[#f0e3c7]/40 hover:text-[#0c281c] hover:border-[#0c281c]/20 min-h-[44px] min-w-[44px]"
             aria-label="Previous month"
           >
             <ChevronLeft className="w-4 h-4" aria-hidden="true" />
@@ -62,7 +62,7 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
             variant="outline"
             size="icon"
             onClick={nextMonth}
-            className="hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 min-h-[44px] min-w-[44px]"
+            className="hover:bg-[#f0e3c7]/40 hover:text-[#0c281c] hover:border-[#0c281c]/20 min-h-[44px] min-w-[44px]"
             aria-label="Next month"
           >
             <ChevronRight className="w-4 h-4" aria-hidden="true" />
@@ -101,13 +101,13 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
             >
               {day && (
                 <>
-                  <div className={`text-sm font-medium ${isSelected ? "text-orange-700" : isToday(day) ? "text-emerald-700" : "text-foreground"}`}>
+                  <div className={`text-sm font-medium ${isSelected ? "text-orange-700" : isToday(day) ? "text-[#0c281c]" : "text-foreground"}`}>
                     {format(day, "d")}
                   </div>
                   {hasTrips && (
                     <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
                       {dayTrips.slice(0, 3).map((_, i) => (
-                        <div key={i} className={`w-1.5 h-1.5 rounded-full ${isSelected ? "bg-orange-500" : "bg-emerald-500"}`} />
+                        <div key={i} className={`w-1.5 h-1.5 rounded-full ${isSelected ? "bg-orange-500" : "bg-[#f0e3c7]/400"}`} />
                       ))}
                     </div>
                   )}
