@@ -148,6 +148,7 @@ export default function ManageBookingsPage() {
                 </div>
                 <BookingList
                   tripId={trip.id}
+                  tripTitle={trip.title}
                   paymentInstructions={organizerData?.payment_instructions || null}
                 />
               </Card>

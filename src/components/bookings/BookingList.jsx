@@ -6,16 +6,21 @@ import { useAuth } from '@/lib/AuthContext';
 import BookingCard from './BookingCard';
 import { Loader2, Inbox } from 'lucide-react';
 import MobileSelect from '@/components/ui/MobileSelect';
+import { useLanguage } from '@/components/contexts/LanguageContext';
+import { useTranslation } from '@/components/translations/useTranslations';
 
 /**
  * Full booking list for an organizer's trip.
  *
  * Props:
- *   tripId             — the trip UUID
+ *   tripId              — the trip UUID
+ *   tripTitle           — the trip title (passed to BookingCard for notifications)
  *   paymentInstructions — string to pass down to BookingCard
  */
-export default function BookingList({ tripId, paymentInstructions }) {
+export default function BookingList({ tripId, tripTitle, paymentInstructions }) {
   const { user } = useAuth();
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
   const [statusFilter, setStatusFilter] = useState('all');
 
   const { data: bookings = [], isLoading } = useQuery({
@@ -67,7 +72,7 @@ export default function BookingList({ tripId, paymentInstructions }) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground gap-2">
         <Inbox className="w-8 h-8" />
-        <p className="text-sm">No booking requests yet.</p>
+        <p className="text-sm">{t('booking.no_booking_requests')}</p>
       </div>
     );
   }
@@ -79,17 +84,17 @@ export default function BookingList({ tripId, paymentInstructions }) {
         value={statusFilter}
         onValueChange={setStatusFilter}
         options={[
-          { value: 'all',       label: `All (${counts.all})` },
-          { value: 'pending',   label: `Pending (${counts.pending})` },
-          { value: 'confirmed', label: `Confirmed (${counts.confirmed})` },
-          { value: 'paid',      label: `Paid (${counts.paid})` },
-          { value: 'declined',  label: `Declined (${counts.declined})` },
+          { value: 'all',       label: `${t('booking.status_filter_all')} (${counts.all})` },
+          { value: 'pending',   label: `${t('booking.status_filter_pending')} (${counts.pending})` },
+          { value: 'confirmed', label: `${t('booking.status_filter_confirmed')} (${counts.confirmed})` },
+          { value: 'paid',      label: `${t('booking.status_filter_paid')} (${counts.paid})` },
+          { value: 'declined',  label: `${t('booking.status_filter_declined')} (${counts.declined})` },
         ]}
-        label="Filter by status"
+        label={t('booking.filter_by_status')}
       />
 
       {filtered.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-4">No bookings with this status.</p>
+        <p className="text-sm text-muted-foreground text-center py-4">{t('booking.no_bookings_status')}</p>
       ) : (
         filtered.map(booking => (
           <BookingCard
@@ -97,6 +102,7 @@ export default function BookingList({ tripId, paymentInstructions }) {
             booking={booking}
             hikerProfile={profileMap[booking.user_id] || null}
             paymentInstructions={paymentInstructions}
+            tripTitle={tripTitle}
           />
         ))
       )}

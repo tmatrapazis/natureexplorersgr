@@ -264,29 +264,25 @@ export default function HomePage() {
             />
             <div className="relative z-20 container px-4 max-w-2xl mx-auto">
               <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight drop-shadow-lg leading-tight">
-                {language === 'el' ? 'Οργανωμένες Εκδρομές Πεζοπορίας στην Ελλάδα' : 'Organized Hiking Trips in Greece'}
+                {t('home.hero_title_seo')}
               </h1>
               <p className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg lg:text-xl text-white/80 drop-shadow-md leading-relaxed">
-                {language === 'el'
-                  ? 'Ομαδικές εκδρομές, trekking και ταξίδια ορειβασίας με έμπειρους οδηγούς - Βρείτε την επόμενη περιπέτειά σας!'
-                  : 'Group expeditions, trekking and mountain adventures with expert guides - Find your next adventure!'}
+                {t('home.hero_subtitle_seo')}
               </p>
               <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
                 <Link to={createPageUrl("Calendar")}>
                   <Button size="lg" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white">
-                    {language === 'el' ? 'Δείτε Πεζοπορικές Εκδρομές' : t('home.browse_expeditions')}
+                    {t('home.browse_expeditions')}
                   </Button>
                 </Link>
                 <Link to={createPageUrl("OrganizersList")}>
                   <Button size="lg" variant="secondary" className="w-full sm:w-auto">
-                    {language === 'el' ? 'Γνωρίστε τους Οδηγούς' : t('home.meet_organizers')}
+                    {t('home.meet_organizers')}
                   </Button>
                 </Link>
               </div>
               <p className="mt-5 sm:mt-6 text-xs sm:text-sm text-white/75 max-w-md mx-auto leading-relaxed">
-                {language === 'el'
-                  ? 'Εγγραφείτε δωρεάν και ξεκινήστε την επόμενη outdoor περιπέτειά σας σήμερα!'
-                  : 'Sign up free and start your next outdoor adventure today!'}
+                {t('home.signup_free')}
               </p>
             </div>
           </section>
@@ -299,7 +295,7 @@ export default function HomePage() {
             >
               <div className="container mx-auto max-w-6xl">
                 <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
-                  {language === 'el' ? 'Επιλεγμένες Εκδρομές' : 'Featured Expeditions'}
+                  {t('home.featured_expeditions')}
                 </h2>
                 <div className="grid md:grid-cols-3 gap-6">
                   {featuredExpeditions.map(trip => {
@@ -344,7 +340,7 @@ export default function HomePage() {
                           )}
                           <Link to={`${createPageUrl("TripDetails")}?id=${trip.id}`} className="mt-auto">
                             <Button className="w-full bg-emerald-600 hover:bg-emerald-700">
-                              {language === 'el' ? 'Δείτε Λεπτομέρειες' : 'View Details'}
+                              {t('home.view_details')}
                             </Button>
                           </Link>
                         </CardContent>

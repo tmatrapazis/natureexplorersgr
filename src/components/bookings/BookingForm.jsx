@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Minus, Plus, Loader2, CheckCircle2, Users, Euro, Info } from 'lucide-react';
+import { Minus, Plus, Loader2, CheckCircle2, Users, Euro } from 'lucide-react';
 import { toast } from 'sonner';
 import { getPricingOptions, getLowestPrice } from '@/components/helpers/pricingHelpers';
+import { useLanguage } from '@/components/contexts/LanguageContext';
+import { useTranslation } from '@/components/translations/useTranslations';
 
 /**
  * Modal booking form shown on TripDetails for Premium-organizer trips.
@@ -24,6 +26,8 @@ import { getPricingOptions, getLowestPrice } from '@/components/helpers/pricingH
 export default function BookingForm({ trip, organizer, open, onClose }) {
   const { user, navigateToLogin } = useAuth();
   const queryClient = useQueryClient();
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
 
   // Redirect to login if not authenticated
   if (open && !user) {
@@ -46,13 +50,10 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
 
   const pricePerPerson = selectedPrice?.price ?? trip?.price ?? 0;
 
-  // Read remaining slots directly from trip.pricing_options[tier].remaining.
-  // This field is maintained by the organizer's confirm/decline actions in BookingCard.
-  // No cross-table query needed — no RLS issues.
   const getAvailability = (label) => {
     const tier = (trip?.pricing_options || []).find(t => t.label === label);
-    if (!tier || !tier.slots) return null; // no per-tier limit set
-    return tier.remaining ?? tier.slots;   // fallback to slots if remaining not yet initialized
+    if (!tier || !tier.slots) return null;
+    return tier.remaining ?? tier.slots;
   };
 
   const currentTierAvailability = getAvailability(selectedPrice?.label);
@@ -79,7 +80,6 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
       // Notify the organizer in-app
       if (organizer?.organizer_code) {
         try {
-          // Prefer organizer.user_id; fall back to looking up the profile row
           let organizerUserId = organizer.user_id ?? null;
           if (!organizerUserId) {
             const { data: orgProfile } = await supabase
@@ -114,7 +114,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
       queryClient.invalidateQueries({ queryKey: ['trip', trip?.id] });
     },
     onError: (err) => {
-      toast.error(err.message || 'Failed to submit booking. Please try again.');
+      toast.error(err.message || t('errors.generic'));
     },
   });
 
@@ -135,19 +135,19 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
               <CheckCircle2 className="w-7 h-7 text-emerald-600" />
             </div>
             <DialogHeader>
-              <DialogTitle className="text-center">Request Sent!</DialogTitle>
+              <DialogTitle className="text-center">{t('booking.request_sent_title')}</DialogTitle>
               <DialogDescription className="text-center">
-                Your booking request has been sent to the organizer. You'll be notified once they review it.
+                {t('booking.request_sent_message')}
               </DialogDescription>
             </DialogHeader>
             <Button onClick={handleClose} className="w-full bg-emerald-600 hover:bg-emerald-700">
-              Done
+              {t('booking.done')}
             </Button>
           </div>
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Book this trip</DialogTitle>
+              <DialogTitle>{t('booking.form_title')}</DialogTitle>
               <DialogDescription className="line-clamp-2">{trip?.title}</DialogDescription>
             </DialogHeader>
 
@@ -155,7 +155,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
               {/* Pricing option selector */}
               {hasPricingOptions && (
                 <div className="space-y-2">
-                  <Label>Pricing option</Label>
+                  <Label>{t('booking.pricing_option')}</Label>
                   <div className="flex flex-col gap-2">
                     {pricingOptions.map((opt) => {
                       const isSelected = (selectedPricingOption ?? pricingOptions[0]).label === opt.label;
@@ -170,7 +170,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                               setSelectedPricingOption(opt);
                               setPeople(p => {
                                 if (availability !== null && p > availability) {
-                                  toast.info(`Participant count reduced to ${availability} to fit available spots in "${opt.label}".`);
+                                  toast.info(`${t('booking.participants')} ${availability}`);
                                   return availability;
                                 }
                                 return p;
@@ -188,7 +188,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                           <div className="flex items-center gap-2">
                             {availability !== null && (
                               <span className={`text-xs ${isFull ? 'text-red-500 font-medium' : 'text-muted-foreground'}`}>
-                                {isFull ? 'Full' : `${availability} left`}
+                                {isFull ? t('booking.tier_full') : `${availability} ${t('booking.left')}`}
                               </span>
                             )}
                             <span className="text-sm font-bold text-emerald-700">€{opt.price}</span>
@@ -202,7 +202,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
 
               {/* Number of people */}
               <div className="space-y-2">
-                <Label>Number of participants</Label>
+                <Label>{t('booking.participants')}</Label>
                 <div className="flex items-center gap-4">
                   <button
                     type="button"
@@ -229,10 +229,13 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
 
               {/* Notes */}
               <div className="space-y-2">
-                <Label htmlFor="booking-notes">Notes for the organizer <span className="text-muted-foreground font-normal">(optional)</span></Label>
+                <Label htmlFor="booking-notes">
+                  {t('booking.notes_label')}{' '}
+                  <span className="text-muted-foreground font-normal">{t('booking.notes_optional')}</span>
+                </Label>
                 <Textarea
                   id="booking-notes"
-                  placeholder="Any questions, dietary needs, or information the organizer should know..."
+                  placeholder={t('booking.notes_placeholder')}
                   value={notes}
                   onChange={e => setNotes(e.target.value)}
                   rows={3}
@@ -244,7 +247,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
               {pricePerPerson > 0 && (
                 <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <span className="text-sm text-muted-foreground">
-                    €{pricePerPerson} × {people} {people === 1 ? 'person' : 'people'}
+                    €{pricePerPerson} × {people} {people === 1 ? t('booking.person') : t('booking.people')}
                   </span>
                   <div className="flex items-center gap-1 font-bold text-emerald-700">
                     <Euro className="w-4 h-4" />
@@ -254,7 +257,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
               )}
 
               <p className="text-xs text-muted-foreground">
-                This is a booking <strong>request</strong>. The organizer will review and confirm it. Payment instructions will be shared upon confirmation.
+                {t('booking.request_notice')}
               </p>
             </div>
 
@@ -264,8 +267,8 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
               className="w-full bg-emerald-600 hover:bg-emerald-700"
             >
               {bookingMutation.isPending
-                ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Sending request...</>
-                : 'Send booking request'
+                ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('booking.sending_request')}</>
+                : t('booking.send_request')
               }
             </Button>
           </>

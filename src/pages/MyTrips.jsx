@@ -525,6 +525,7 @@ export default function MyTripsPage() {
                         <h3 className="font-semibold text-base mb-3 text-foreground">{trip.title}</h3>
                         <BookingList
                           tripId={trip.id}
+                          tripTitle={trip.title}
                           paymentInstructions={organizerData?.payment_instructions || null}
                         />
                       </Card>

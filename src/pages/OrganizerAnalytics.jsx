@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Loader2, TrendingUp, Users, Euro, Target, Plus } from 'lucide-react';
 import { useLanguage } from '@/components/contexts/LanguageContext';
+import { useTranslation } from '@/components/translations/useTranslations';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
@@ -64,6 +65,7 @@ export default function OrganizerAnalyticsPage() {
   const { user } = useAuth();
   const { isPremium, isLoading: planLoading } = useOrganizerPlan();
   const { language } = useLanguage();
+  const { t } = useTranslation(language);
 
   useSEO({ title: 'Analytics — Nature Explorers', noindex: true });
 
@@ -104,11 +106,11 @@ export default function OrganizerAnalyticsPage() {
 
     // Booking funnel
     const funnelData = [
-      { label: 'Paid',      count: paidBookings.length },
-      { label: 'Confirmed', count: confirmedBookings.length },
-      { label: 'Pending',   count: pendingBookings.length },
-      { label: 'Declined',  count: bookings.filter(b => b.status === 'declined').length },
-      { label: 'Cancelled', count: bookings.filter(b => b.status === 'cancelled').length },
+      { label: t('analytics.funnel_paid'),      key: 'paid',      count: paidBookings.length },
+      { label: t('analytics.funnel_confirmed'), key: 'confirmed', count: confirmedBookings.length },
+      { label: t('analytics.funnel_pending'),   key: 'pending',   count: pendingBookings.length },
+      { label: t('analytics.funnel_declined'),  key: 'declined',  count: bookings.filter(b => b.status === 'declined').length },
+      { label: t('analytics.funnel_cancelled'), key: 'cancelled', count: bookings.filter(b => b.status === 'cancelled').length },
     ];
 
     // Monthly revenue — last 6 months
@@ -159,7 +161,7 @@ export default function OrganizerAnalyticsPage() {
     const pieData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
 
     return { totalRevenue, pendingRevenue, totalBookings: bookings.length, fillRate, funnelData, monthlyRevenueData, topTrips, pieData };
-  }, [trips, bookings]);
+  }, [trips, bookings, t]);
 
   if (planLoading || tripsLoading || bookingsLoading) {
     return (
@@ -174,10 +176,8 @@ export default function OrganizerAnalyticsPage() {
       <PageWrapper>
         <div className="max-w-2xl mx-auto pt-12">
           <UpgradePrompt
-            feature={language === 'el' ? 'Αναλυτικά Στοιχεία' : 'Analytics'}
-            description={language === 'el'
-              ? 'Αναβαθμίστε σε Premium για να δείτε αναλυτικά στοιχεία κρατήσεων και εσόδων.'
-              : 'Upgrade to Premium to view booking analytics, revenue trends, and trip performance.'}
+            feature={t('analytics.upgrade_feature')}
+            description={t('analytics.upgrade_description')}
           />
         </div>
       </PageWrapper>
@@ -189,12 +189,12 @@ export default function OrganizerAnalyticsPage() {
       <PageWrapper>
         <div className="max-w-5xl mx-auto pb-20 pt-8 text-center">
           <p className="text-muted-foreground mb-4">
-            {language === 'el' ? 'Δεν υπάρχουν ακόμα εκδρομές.' : 'No trips yet. Create your first trip to see analytics.'}
+            {t('analytics.no_trips')}
           </p>
           <Link to={createPageUrl('TripForm')}>
             <Button className="bg-emerald-600 hover:bg-emerald-700">
               <Plus className="w-4 h-4 mr-2" />
-              {language === 'el' ? 'Δημιουργία Εκδρομής' : 'Create Trip'}
+              {t('analytics.create_trip')}
             </Button>
           </Link>
         </div>
@@ -208,35 +208,35 @@ export default function OrganizerAnalyticsPage() {
     <PageWrapper>
       <div className="max-w-5xl mx-auto pb-20">
         <h1 className="text-3xl font-bold text-foreground mb-6">
-          {language === 'el' ? 'Αναλυτικά Στοιχεία' : 'Analytics'}
+          {t('analytics.title')}
         </h1>
 
         {/* KPI cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <KpiCard
             icon={Euro}
-            label={language === 'el' ? 'Συνολικά Έσοδα (Πληρωμένα)' : 'Total Revenue (Paid)'}
+            label={t('analytics.kpi_total_revenue')}
             value={`€${totalRevenue.toLocaleString()}`}
             iconBg="bg-emerald-100"
             iconColor="text-emerald-600"
           />
           <KpiCard
             icon={TrendingUp}
-            label={language === 'el' ? 'Αναμενόμενα Έσοδα' : 'Pending Revenue'}
+            label={t('analytics.kpi_pending_revenue')}
             value={`€${pendingRevenue.toLocaleString()}`}
             iconBg="bg-amber-100"
             iconColor="text-amber-600"
           />
           <KpiCard
             icon={Users}
-            label={language === 'el' ? 'Συνολικές Κρατήσεις' : 'Total Bookings'}
+            label={t('analytics.kpi_total_bookings')}
             value={totalBookings}
             iconBg="bg-blue-100"
             iconColor="text-blue-600"
           />
           <KpiCard
             icon={Target}
-            label={language === 'el' ? 'Πλήρωση Θέσεων' : 'Slot Fill Rate'}
+            label={t('analytics.kpi_fill_rate')}
             value={`${fillRate}%`}
             iconBg="bg-violet-100"
             iconColor="text-violet-600"
@@ -248,7 +248,7 @@ export default function OrganizerAnalyticsPage() {
           <Card className="md:col-span-2">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                {language === 'el' ? 'Έσοδα ανά Μήνα (τελευταίοι 6 μήνες)' : 'Monthly Revenue (last 6 months)'}
+                {t('analytics.monthly_revenue')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -257,7 +257,7 @@ export default function OrganizerAnalyticsPage() {
                   <BarChart data={monthlyRevenueData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
                     <XAxis dataKey="month" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
                     <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} tickFormatter={v => `€${v}`} />
-                    <Tooltip formatter={(value) => [`€${value}`, language === 'el' ? 'Έσοδα' : 'Revenue']} />
+                    <Tooltip formatter={(value) => [`€${value}`, t('analytics.revenue_tooltip')]} />
                     <Bar dataKey="revenue" fill="#10b981" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -268,7 +268,7 @@ export default function OrganizerAnalyticsPage() {
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                {language === 'el' ? 'Κατάσταση Εκδρομών' : 'Trip Status'}
+                {t('analytics.trip_status')}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -307,7 +307,7 @@ export default function OrganizerAnalyticsPage() {
         <Card className="mb-6">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              {language === 'el' ? 'Ανάλυση Κρατήσεων' : 'Booking Breakdown'}
+              {t('analytics.booking_breakdown')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -323,7 +323,7 @@ export default function OrganizerAnalyticsPage() {
                   <Tooltip formatter={(value, _name, props) => [value, props.payload.label]} />
                   <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                     {funnelData.map((entry, i) => (
-                      <Cell key={i} fill={FUNNEL_COLORS[entry.label.toLowerCase()] ?? '#9ca3af'} />
+                      <Cell key={i} fill={FUNNEL_COLORS[entry.key] ?? '#9ca3af'} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -336,7 +336,7 @@ export default function OrganizerAnalyticsPage() {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              {language === 'el' ? 'Κορυφαίες Εκδρομές (κατά Έσοδα)' : 'Top Trips by Revenue'}
+              {t('analytics.top_trips')}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -346,16 +346,16 @@ export default function OrganizerAnalyticsPage() {
                   <tr className="border-b border-border">
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">#</th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">
-                      {language === 'el' ? 'Εκδρομή' : 'Trip'}
+                      {t('analytics.col_trip')}
                     </th>
                     <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">
-                      {language === 'el' ? 'Κατάσταση' : 'Status'}
+                      {t('analytics.col_status')}
                     </th>
                     <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground">
-                      {language === 'el' ? 'Κρατήσεις' : 'Bookings'}
+                      {t('analytics.col_bookings')}
                     </th>
                     <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground">
-                      {language === 'el' ? 'Έσοδα' : 'Revenue'}
+                      {t('analytics.col_revenue')}
                     </th>
                   </tr>
                 </thead>
@@ -385,7 +385,7 @@ export default function OrganizerAnalyticsPage() {
                   {topTrips.length === 0 && (
                     <tr>
                       <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground text-sm">
-                        {language === 'el' ? 'Δεν υπάρχουν δεδομένα ακόμα.' : 'No data yet.'}
+                        {t('analytics.no_data')}
                       </td>
                     </tr>
                   )}

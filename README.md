@@ -322,9 +322,60 @@ Bilingual (English / Greek). Language preference stored in localStorage under `a
 
 ---
 
+## Email Notifications
+
+Transactional emails are sent via a Supabase Edge Function backed by [Resend](https://resend.com).
+
+### Edge Function
+
+Location: `supabase/functions/send-booking-email/index.ts`
+
+Accepts a POST body `{ to, subject, html }` and forwards it to the Resend API. Called from the frontend via `supabase.functions.invoke('send-booking-email', { body: {...} })`.
+
+Frontend helper: `src/api/emailNotifications.js` — four exported functions:
+
+| Function | Trigger | Recipient |
+|---|---|---|
+| `sendBookingConfirmedEmail` | Organizer confirms booking | Hiker |
+| `sendBookingDeclinedEmail` | Organizer declines booking | Hiker |
+| `sendBookingPaidEmail` | Organizer marks booking as paid | Hiker |
+| `sendBookingCancelledByHikerEmail` | Hiker cancels booking | Organizer |
+
+All calls are fire-and-forget — failures are swallowed so they never block the booking flow.
+
+### Activation
+
+1. Sign up at [resend.com](https://resend.com) and create an API key.
+2. Add a verified sending domain (or use the default Resend sandbox domain for testing).
+3. Set secrets in **Supabase Dashboard → Project Settings → Edge Functions → Secrets**:
+
+   | Secret | Value |
+   |---|---|
+   | `RESEND_API_KEY` | Your Resend API key |
+   | `FROM_EMAIL` | e.g. `Nature Explorers <noreply@yourdomain.gr>` |
+
+4. Deploy the function:
+
+   ```bash
+   supabase functions deploy send-booking-email
+   ```
+
+   If this is your first deployment, log in first:
+
+   ```bash
+   supabase login
+   supabase link --project-ref <your-project-ref>
+   supabase functions deploy send-booking-email
+   ```
+
+> Until `RESEND_API_KEY` is set the function returns a 500 and the call is silently ignored — no booking action is blocked.
+
+---
+
 ## Analytics and Cookies
 
 - GA4 loader: `src/components/analytics/GoogleAnalytics.jsx` — measurement ID `G-JZQZ0VT8XK`
+- GA4 only fires in production (`import.meta.env.PROD`). Dev builds skip all GA calls to avoid 503 errors from localhost origins.
 - Cookie consent: `src/components/cookie/CookieConsent.jsx` — stored under `cookie_consent_preferences`
 
 ---

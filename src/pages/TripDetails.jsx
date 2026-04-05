@@ -25,7 +25,7 @@ import DOMPurify from "dompurify";
 import { getPricingOptions, getLowestPrice } from "../components/helpers/pricingHelpers";
 import LazyTripLocationMap from "@/components/lazy/LazyTripLocationMap";
 import { useAuth } from "@/lib/AuthContext";
-import { HikingTrip, Organizer } from "@/api/db";
+import { HikingTrip, Organizer, Booking } from "@/api/db";
 
 // Helper function to check if URL is a social media link
 const isSocialMediaUrl = (url) => {
@@ -83,6 +83,18 @@ export default function TripDetailsPage() {
       return organizers[0];
     },
     enabled: !!trip?.organizer_code,
+  });
+
+  // Check if the current hiker already has a booking for this trip
+  const { data: existingBooking } = useQuery({
+    queryKey: ['my-booking-for-trip', tripId, user?.id],
+    queryFn: async () => {
+      const results = await Booking.filter({ trip_id: tripId, user_id: user.id });
+      // Return the most recent active booking (ignore cancelled/declined)
+      return results.find(b => b.status !== 'cancelled' && b.status !== 'declined') ?? null;
+    },
+    enabled: !!user?.id && !!tripId,
+    staleTime: 30 * 1000,
   });
 
   // Availability is read directly from trip.pricing_options[tier].remaining.
@@ -711,9 +723,26 @@ export default function TripDetailsPage() {
 
                   {/* Active premium organizer — in-app booking */}
                   {organizerIsActivePremium && computedStatus === 'upcoming' && (
-                    tripFullyBooked ? (
+                    existingBooking ? (
+                      <div className="space-y-2">
+                        <div className={`text-sm rounded-lg px-3 py-2.5 text-center font-medium ${
+                          existingBooking.status === 'confirmed' ? 'bg-yellow-50 text-yellow-800 border border-yellow-200' :
+                          existingBooking.status === 'paid'      ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' :
+                          'bg-blue-50 text-blue-800 border border-blue-200'
+                        }`}>
+                          {existingBooking.status === 'confirmed' ? t('booking.already_confirmed') :
+                           existingBooking.status === 'paid'      ? t('booking.already_paid') :
+                                                                    t('booking.already_pending')}
+                        </div>
+                        <Link to={createPageUrl('MyBookings')}>
+                          <Button variant="outline" className="w-full min-h-[44px]">
+                            {t('booking.view_my_bookings')}
+                          </Button>
+                        </Link>
+                      </div>
+                    ) : tripFullyBooked ? (
                       <Button disabled className="w-full min-h-[44px]">
-                        {language === 'el' ? 'Πλήρες' : 'Fully Booked'}
+                        {t('booking.fully_booked')}
                       </Button>
                     ) : (
                       <Button

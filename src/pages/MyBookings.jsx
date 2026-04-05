@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Booking, HikingTrip, Organizer, Notification } from '@/api/db';
 import { supabase } from '@/api/supabaseClient';
 import { useAuth } from '@/lib/AuthContext';
+import { sendBookingCancelledByHikerEmail } from '@/api/emailNotifications';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { formatDistanceToNow, format } from 'date-fns';
 import { useLanguage } from '@/components/contexts/LanguageContext';
+import { useTranslation } from '@/components/translations/useTranslations';
 import PageWrapper from '@/components/layout/PageWrapper';
 import useSEO from '@/components/seo/useSEO';
 
@@ -23,29 +25,14 @@ const STATUS_STYLES = {
   cancelled: 'bg-muted text-muted-foreground border-border',
 };
 
-const STATUS_LABELS = {
-  pending:   { en: 'Pending Review',                el: 'Αναμονή Έγκρισης' },
-  confirmed: { en: 'Confirmed — Awaiting Payment',  el: 'Εγκρίθηκε — Αναμονή Πληρωμής' },
-  paid:      { en: 'Paid — Confirmed',              el: 'Πληρώθηκε — Επιβεβαιώθηκε' },
-  declined:  { en: 'Declined',                      el: 'Απορρίφθηκε' },
-  cancelled: { en: 'Cancelled',                     el: 'Ακυρώθηκε' },
-};
-
-const STATUS_MESSAGES = {
-  pending:   { en: 'Your request has been sent. The organizer will review it shortly.', el: 'Το αίτημά σας εστάλη. Ο διοργανωτής θα το εξετάσει σύντομα.' },
-  confirmed: { en: 'Your booking is confirmed! Please contact the organizer to arrange payment.', el: 'Η κράτησή σας εγκρίθηκε! Επικοινωνήστε με τον διοργανωτή για την πληρωμή.' },
-  paid:      { en: 'Payment received. You\'re all set for the trip!', el: 'Η πληρωμή ελήφθη. Είστε έτοιμοι για την εκδρομή!' },
-  declined:  { en: 'Your booking was not accepted. You may try booking another trip.', el: 'Η κράτησή σας δεν έγινε αποδεκτή.' },
-  cancelled: { en: 'This booking was cancelled.', el: 'Αυτή η κράτηση ακυρώθηκε.' },
-};
-
 export default function MyBookingsPage() {
   const { user } = useAuth();
   const { language } = useLanguage();
+  const { t } = useTranslation(language);
   const queryClient = useQueryClient();
   const [confirmCancelId, setConfirmCancelId] = useState(null);
 
-  useSEO({ title: 'My Bookings', noindex: true });
+  useSEO({ title: t('booking.my_bookings'), noindex: true });
 
   const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
     queryKey: ['my-bookings', user?.id],
@@ -67,7 +54,7 @@ export default function MyBookingsPage() {
 
   const tripMap = Object.fromEntries(trips.map(t => [t.id, t]));
 
-  // Fetch organizers for confirmed bookings so we can show payment instructions
+  // Fetch organizers for confirmed bookings to show payment instructions
   const confirmedOrganizerCodes = [...new Set(
     bookings
       .filter(b => b.status === 'confirmed')
@@ -79,7 +66,9 @@ export default function MyBookingsPage() {
     queryFn: async () => {
       if (confirmedOrganizerCodes.length === 0) return [];
       const results = await Promise.all(
-        confirmedOrganizerCodes.map(code => Organizer.filter({ organizer_code: code }).then(r => r[0]).catch(() => null))
+        confirmedOrganizerCodes.map(code =>
+          Organizer.filter({ organizer_code: code }).then(r => r[0]).catch(() => null)
+        )
       );
       return results.filter(Boolean);
     },
@@ -98,7 +87,7 @@ export default function MyBookingsPage() {
         if (organizerCode) {
           const { data: orgProfile } = await supabase
             .from('profiles')
-            .select('id')
+            .select('id, email, full_name, username')
             .eq('organizer_code', organizerCode)
             .single();
           if (orgProfile?.id) {
@@ -110,6 +99,14 @@ export default function MyBookingsPage() {
               link: '/managebookings',
               is_read: false,
             });
+            // Email organizer (fire-and-forget)
+            sendBookingCancelledByHikerEmail({
+              organizerEmail: orgProfile.email,
+              organizerName: orgProfile.full_name || orgProfile.username || '',
+              hikerName,
+              tripTitle: trip?.title || '',
+              numberOfPeople: booking.number_of_people,
+            });
           }
         }
       } catch {
@@ -117,13 +114,13 @@ export default function MyBookingsPage() {
       }
     },
     onSuccess: () => {
-      toast.success(language === 'el' ? 'Η κράτηση ακυρώθηκε.' : 'Booking cancelled.');
+      toast.success(t('booking.cancelled_toast'));
       setConfirmCancelId(null);
       queryClient.invalidateQueries({ queryKey: ['my-bookings', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['notifications-list'] });
     },
     onError: () => {
-      toast.error(language === 'el' ? 'Αποτυχία ακύρωσης.' : 'Failed to cancel booking.');
+      toast.error(t('booking.cancel_failed_toast'));
     },
   });
 
@@ -139,21 +136,17 @@ export default function MyBookingsPage() {
     <PageWrapper>
       <div className="max-w-2xl mx-auto pb-20">
         <h1 className="text-2xl font-bold text-foreground mb-6">
-          {language === 'el' ? 'Οι Κρατήσεις μου' : 'My Bookings'}
+          {t('booking.my_bookings')}
         </h1>
 
         {bookings.length === 0 ? (
           <Card className="p-12 text-center text-muted-foreground">
             <Inbox className="w-12 h-12 mx-auto mb-3 opacity-30" />
-            <p className="font-medium mb-1">
-              {language === 'el' ? 'Δεν έχετε κρατήσεις ακόμα.' : 'No bookings yet.'}
-            </p>
-            <p className="text-sm mb-4">
-              {language === 'el' ? 'Εξερευνήστε τις διαθέσιμες εκδρομές.' : 'Browse available trips to get started.'}
-            </p>
+            <p className="font-medium mb-1">{t('booking.no_bookings_yet')}</p>
+            <p className="text-sm mb-4">{t('booking.browse_available')}</p>
             <Link to={createPageUrl('Calendar')}>
               <Button className="bg-emerald-600 hover:bg-emerald-700">
-                {language === 'el' ? 'Εξερεύνηση Εκδρομών' : 'Explore Trips'}
+                {t('booking.explore_trips')}
               </Button>
             </Link>
           </Card>
@@ -161,8 +154,7 @@ export default function MyBookingsPage() {
           <div className="space-y-4">
             {bookings.map(booking => {
               const trip = tripMap[booking.trip_id];
-              const statusLabel = STATUS_LABELS[booking.status]?.[language] || booking.status;
-              const statusMessage = STATUS_MESSAGES[booking.status]?.[language];
+              const statusLabel = t(`booking.status_label_${booking.status}`) || booking.status;
               const organizer = organizerMap[trip?.organizer_code];
               const paymentInstructions = organizer?.payment_instructions;
 
@@ -173,7 +165,7 @@ export default function MyBookingsPage() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <h2 className="font-semibold text-base text-foreground leading-snug">
-                          {trip?.title || booking.trip_title || (language === 'el' ? 'Εκδρομή' : 'Trip')}
+                          {trip?.title || t('booking.trip_fallback')}
                         </h2>
                         {trip?.start_date && (
                           <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
@@ -192,8 +184,8 @@ export default function MyBookingsPage() {
                       <span className="flex items-center gap-1">
                         <Users className="w-3.5 h-3.5" />
                         {booking.number_of_people} {booking.number_of_people === 1
-                          ? (language === 'el' ? 'άτομο' : 'person')
-                          : (language === 'el' ? 'άτομα' : 'people')}
+                          ? t('booking.person')
+                          : t('booking.people')}
                       </span>
                       {booking.total_price > 0 && (
                         <span className="flex items-center gap-1">
@@ -209,32 +201,28 @@ export default function MyBookingsPage() {
                     {/* Status message */}
                     {booking.status === 'confirmed' ? (
                       <div className="text-sm rounded-lg px-3 py-2 bg-yellow-50 text-yellow-800 space-y-1">
-                        <p className="font-medium">
-                          {language === 'el'
-                            ? 'Η κράτησή σας εγκρίθηκε! Παρακαλούμε προχωρήστε στην πληρωμή με έναν από τους παρακάτω τρόπους:'
-                            : 'Your booking is confirmed! Please proceed with payment using one of the following methods:'}
-                        </p>
+                        <p className="font-medium">{t('booking.msg_confirmed_payment')}</p>
                         {paymentInstructions ? (
                           <p className="whitespace-pre-line">{paymentInstructions}</p>
                         ) : (
-                          <p>{language === 'el' ? 'Επικοινωνήστε με τον διοργανωτή για την πληρωμή.' : 'Please contact the organizer to arrange payment.'}</p>
+                          <p>{t('booking.msg_confirmed_contact')}</p>
                         )}
                       </div>
-                    ) : statusMessage ? (
+                    ) : (
                       <p className={`text-sm rounded-lg px-3 py-2 ${
                         booking.status === 'paid'     ? 'bg-emerald-50 text-emerald-800' :
                         booking.status === 'declined' ? 'bg-red-50 text-red-700' :
                         'bg-muted/50 text-muted-foreground'
                       }`}>
-                        {statusMessage}
+                        {t(`booking.msg_${booking.status}`) || ''}
                       </p>
-                    ) : null}
+                    )}
 
                     {/* Cancel confirmation */}
                     {confirmCancelId === booking.id && (
                       <div className="flex items-center justify-between gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
                         <p className="text-sm text-red-800 font-medium">
-                          {language === 'el' ? 'Να ακυρωθεί η κράτηση;' : 'Cancel this booking request?'}
+                          {t('booking.cancel_confirm_prompt')}
                         </p>
                         <div className="flex gap-2">
                           <Button
@@ -243,7 +231,7 @@ export default function MyBookingsPage() {
                             className="h-7 text-xs"
                             onClick={() => setConfirmCancelId(null)}
                           >
-                            {language === 'el' ? 'Όχι' : 'No'}
+                            {t('booking.cancel_no')}
                           </Button>
                           <Button
                             size="sm"
@@ -253,7 +241,7 @@ export default function MyBookingsPage() {
                           >
                             {cancelMutation.isPending
                               ? <Loader2 className="w-3 h-3 animate-spin" />
-                              : (language === 'el' ? 'Ναι, ακύρωση' : 'Yes, cancel')}
+                              : t('booking.cancel_yes')}
                           </Button>
                         </div>
                       </div>
@@ -273,14 +261,14 @@ export default function MyBookingsPage() {
                             onClick={() => setConfirmCancelId(booking.id)}
                           >
                             <X className="w-3 h-3 mr-1" />
-                            {language === 'el' ? 'Ακύρωση' : 'Cancel'}
+                            {t('booking.cancel_booking')}
                           </Button>
                         )}
                         {trip && (
                           <Link to={`${createPageUrl('TripDetails')}?id=${trip.id}`}>
                             <Button variant="outline" size="sm" className="h-8 text-xs">
                               <ExternalLink className="w-3 h-3 mr-1" />
-                              {language === 'el' ? 'Δες εκδρομή' : 'View trip'}
+                              {t('booking.view_trip')}
                             </Button>
                           </Link>
                         )}
