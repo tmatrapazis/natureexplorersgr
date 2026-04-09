@@ -51,7 +51,7 @@ export default function DesktopHeader() {
   };
 
   return (
-    <header className="hidden md:flex items-center h-16 bg-[#0c281c] sticky top-0 z-50 px-6 gap-8 shadow-md">
+    <header className="hidden md:flex items-center h-16 bg-brand-dark sticky top-0 z-50 px-6 gap-8 shadow-md">
       {/* Logo + Brand */}
       <Link
         to={createPageUrl('Home')}
@@ -64,7 +64,7 @@ export default function DesktopHeader() {
           className="h-8 w-auto"
         />
         <span
-          className="font-bold text-[#f0e3c7] text-lg tracking-tight"
+          className="font-bold text-brand-gold text-lg tracking-tight"
           style={{ fontFamily: 'var(--font-heading)' }}
         >
           Nature Explorers
@@ -83,8 +83,8 @@ export default function DesktopHeader() {
               onClick={handleNavClick(url)}
               className={`text-sm font-medium transition-colors min-h-[44px] flex items-center pb-0.5 ${
                 active
-                  ? 'text-[#f0e3c7] border-b-2 border-[#8B6914]'
-                  : 'text-[#f0e3c7]/75 hover:text-[#f0e3c7]'
+                  ? 'text-brand-gold border-b-2 border-brand-gold-accent'
+                  : 'text-brand-gold/75 hover:text-brand-gold'
               }`}
               style={{ fontFamily: 'var(--font-heading)' }}
               aria-label={t(key)}
@@ -99,8 +99,8 @@ export default function DesktopHeader() {
           onClick={handleNavClick('/about')}
           className={`text-sm font-medium transition-colors min-h-[44px] flex items-center pb-0.5 ${
             location.pathname === '/about'
-              ? 'text-[#f0e3c7] border-b-2 border-[#8B6914]'
-              : 'text-[#f0e3c7]/75 hover:text-[#f0e3c7]'
+              ? 'text-brand-gold border-b-2 border-brand-gold-accent'
+              : 'text-brand-gold/75 hover:text-brand-gold'
           }`}
           style={{ fontFamily: 'var(--font-heading)' }}
           aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
@@ -114,8 +114,8 @@ export default function DesktopHeader() {
             onClick={handleNavClick(createPageUrl('MyTrips'))}
             className={`text-sm font-medium transition-colors min-h-[44px] flex items-center pb-0.5 ${
               isActive('MyTrips')
-                ? 'text-[#f0e3c7] border-b-2 border-[#8B6914]'
-                : 'text-[#f0e3c7]/75 hover:text-[#f0e3c7]'
+                ? 'text-brand-gold border-b-2 border-brand-gold-accent'
+                : 'text-brand-gold/75 hover:text-brand-gold'
             }`}
             style={{ fontFamily: 'var(--font-heading)' }}
             aria-label="Dashboard"
@@ -132,7 +132,7 @@ export default function DesktopHeader() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
-              className="flex items-center gap-1.5 text-[#f0e3c7]/80 hover:text-[#f0e3c7] text-sm font-medium min-h-[44px] px-2 transition-colors"
+              className="flex items-center gap-1.5 text-brand-gold/80 hover:text-brand-gold text-sm font-medium min-h-[44px] px-2 transition-colors"
               aria-label={`Change language (current: ${language === 'en' ? 'English' : 'Greek'})`}
             >
               <Globe className="w-4 h-4" aria-hidden="true" />
@@ -147,7 +147,7 @@ export default function DesktopHeader() {
 
         {/* Notifications (authenticated only) */}
         {user && (
-          <div className="text-[#f0e3c7]">
+          <div className="text-brand-gold">
             <NotificationsBell user={user} compact />
           </div>
         )}
@@ -156,7 +156,7 @@ export default function DesktopHeader() {
         {!user ? (
           <button
             onClick={handleLogin}
-            className="flex items-center gap-2 min-h-[44px] px-5 py-2 rounded-full text-sm font-medium bg-[#8B6914] text-[#0c281c] hover:bg-[#8B6914]/90 transition-colors"
+            className="flex items-center gap-2 min-h-[44px] px-5 py-2 rounded-full text-sm font-medium bg-brand-gold-accent text-brand-dark hover:bg-brand-gold-accent/90 transition-colors"
             style={{ fontFamily: 'var(--font-heading)' }}
             aria-label={t('common.login')}
           >
@@ -167,7 +167,7 @@ export default function DesktopHeader() {
           <div className="flex items-center gap-2">
             <Link
               to={createPageUrl('EditProfile')}
-              className="flex items-center gap-2 text-[#f0e3c7]/80 hover:text-[#f0e3c7] transition-colors min-h-[44px]"
+              className="flex items-center gap-2 text-brand-gold/80 hover:text-brand-gold transition-colors min-h-[44px]"
               aria-label="View profile"
             >
               {user.profile_picture_url ? (
@@ -182,7 +182,7 @@ export default function DesktopHeader() {
             </Link>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 text-[#f0e3c7]/70 hover:text-[#f0e3c7] text-sm min-h-[44px] px-2 transition-colors"
+              className="flex items-center gap-1.5 text-brand-gold/70 hover:text-brand-gold text-sm min-h-[44px] px-2 transition-colors"
               aria-label={t('common.logout')}
             >
               <LogOut className="w-4 h-4" aria-hidden="true" />
@@ -194,7 +194,7 @@ export default function DesktopHeader() {
         <Link
           to={createPageUrl('Calendar')}
           onClick={handleNavClick(createPageUrl('Calendar'))}
-          className="flex items-center min-h-[44px] px-5 py-2 rounded-full text-sm font-bold bg-[#8B6914] text-[#0c281c] hover:bg-[#8B6914]/90 transition-colors ml-1"
+          className="flex items-center min-h-[44px] px-5 py-2 rounded-full text-sm font-bold bg-brand-gold-accent text-brand-dark hover:bg-brand-gold-accent/90 transition-colors ml-1"
           style={{ fontFamily: 'var(--font-heading)' }}
           aria-label={language === 'el' ? 'Βρες εκδρομή' : 'Book a Trip'}
         >

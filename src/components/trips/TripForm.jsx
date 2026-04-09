@@ -205,7 +205,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
             <Badge 
               key={tag} 
               variant={tripData.tags.includes(tag) ? "default" : "outline"}
-              className={`cursor-pointer whitespace-normal break-words text-center min-h-[44px] px-4 flex items-center ${tripData.tags.includes(tag) ? 'bg-[#0c281c]' : ''}`}
+              className={`cursor-pointer whitespace-normal break-words text-center min-h-[44px] px-4 flex items-center ${tripData.tags.includes(tag) ? 'bg-brand-dark' : ''}`}
               onClick={() => toggleTag(tag)}
               role="button"
               tabIndex={0}
@@ -243,7 +243,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         <React.Suspense fallback={
           <div className="h-[400px] flex items-center justify-center bg-muted/30 rounded-lg border border-border">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0c281c] mx-auto mb-2" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-dark mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">Loading map...</p>
             </div>
           </div>
@@ -588,7 +588,7 @@ export default function TripForm({ initialData, onSubmit, onCancel, onSaveDraft 
         )}
         <Button 
           type="submit" 
-          className="bg-[#0c281c] hover:bg-[#0c281c]/90 w-full sm:w-auto min-h-[44px]" 
+          className="bg-brand-dark hover:bg-brand-dark/90 w-full sm:w-auto min-h-[44px]" 
           disabled={isSubmitting}
           aria-label={isEditing 
             ? (language === 'el' ? 'Αποθήκευση Αλλαγών' : 'Save Changes')

@@ -66,7 +66,7 @@ const BottomNav = React.memo(function BottomNav() {
   return (
     <nav
       aria-label="Main navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0c281c] z-50 select-none shadow-lg"
+      className="md:hidden fixed bottom-0 left-0 right-0 bg-brand-dark z-50 select-none shadow-lg"
       style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)' }}
     >
       <div className="flex items-end justify-around px-2 h-16">
@@ -79,7 +79,7 @@ const BottomNav = React.memo(function BottomNav() {
                 className="relative flex flex-col items-center justify-center -mt-6"
                 aria-label={isOrganizer ? t('navigation.create_trip') : t('navigation.calendar')}
               >
-                <div className="w-14 h-14 rounded-full bg-[#8B6914] text-[#0c281c] shadow-lg flex items-center justify-center">
+                <div className="w-14 h-14 rounded-full bg-brand-gold-accent text-brand-dark shadow-lg flex items-center justify-center">
                   <PlusCircle className="w-7 h-7" aria-hidden="true" />
                 </div>
               </button>
@@ -95,11 +95,11 @@ const BottomNav = React.memo(function BottomNav() {
               aria-label={`Navigate to ${tab.label}`}
               aria-current={isActive ? 'page' : undefined}
             >
-              <span className={`w-1 h-1 rounded-full mb-1 ${isActive ? 'bg-[#8B6914]' : 'bg-transparent'}`} aria-hidden="true" />
-              <div className={`flex flex-col items-center justify-center rounded-full px-3 py-1 transition-colors ${isActive ? 'bg-[#f0e3c7]/10' : ''}`}>
-                <Icon className={`w-5 h-5 ${isActive ? 'text-[#f0e3c7]' : 'text-[#f0e3c7]/70'}`} aria-hidden="true" />
+              <span className={`w-1 h-1 rounded-full mb-1 ${isActive ? 'bg-brand-gold-accent' : 'bg-transparent'}`} aria-hidden="true" />
+              <div className={`flex flex-col items-center justify-center rounded-full px-3 py-1 transition-colors ${isActive ? 'bg-brand-gold/10' : ''}`}>
+                <Icon className={`w-5 h-5 ${isActive ? 'text-brand-gold' : 'text-brand-gold/70'}`} aria-hidden="true" />
                 <span
-                  className={`text-[10px] mt-0.5 font-medium ${isActive ? 'text-[#f0e3c7]' : 'text-[#f0e3c7]/70'}`}
+                  className={`text-[10px] mt-0.5 font-medium ${isActive ? 'text-brand-gold' : 'text-brand-gold/70'}`}
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
                   {tab.label}
@@ -180,7 +180,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
       {/* Skip-to-content for keyboard/screen-reader users */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[#0c281c] focus:text-[#f0e3c7] focus:rounded-lg focus:text-sm focus:font-medium"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-brand-dark focus:text-brand-gold focus:rounded-lg focus:text-sm focus:font-medium"
       >
         Skip to content
       </a>
@@ -191,7 +191,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
       <main id="main-content" className="flex-1 flex flex-col">
         {/* Mobile-only top bar */}
         <header
-          className="bg-[#0c281c] px-4 md:hidden sticky top-0 z-40"
+          className="bg-brand-dark px-4 md:hidden sticky top-0 z-40"
           style={{
             paddingTop: 'max(env(safe-area-inset-top), 0.75rem)',
             paddingBottom: '0.75rem',
@@ -202,7 +202,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
               {showBackButton && !isTabRoot() ? (
                 <button
                   onClick={goBackInTab}
-                  className="flex items-center gap-1 text-[#f0e3c7] pl-1 pr-2 py-2 rounded-lg transition-colors min-h-[44px] text-sm font-medium max-w-[140px]"
+                  className="flex items-center gap-1 text-brand-gold pl-1 pr-2 py-2 rounded-lg transition-colors min-h-[44px] text-sm font-medium max-w-[140px]"
                   aria-label={`Go back to ${backLabel}`}
                 >
                   <ArrowLeft className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
@@ -212,7 +212,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                 <>
                   <button
                     onClick={() => setMobileMenuOpen(true)}
-                    className="text-[#f0e3c7] hover:bg-[#f0e3c7]/10 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex-shrink-0"
+                    className="text-brand-gold hover:bg-brand-gold/10 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex-shrink-0"
                     aria-label="Open menu"
                   >
                     <Menu className="w-5 h-5" aria-hidden="true" />
@@ -228,7 +228,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
 
             <div className="flex items-center gap-1">
               {user && (
-                <div className="text-[#f0e3c7]">
+                <div className="text-brand-gold">
                   <NotificationsBell user={user} compact={true} />
                 </div>
               )}
@@ -238,7 +238,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                     variant="ghost"
                     size="icon"
                     onClick={handleNavigateCreateTrip}
-                    className="min-h-[44px] min-w-[44px] text-[#f0e3c7] hover:bg-[#f0e3c7]/10"
+                    className="min-h-[44px] min-w-[44px] text-brand-gold hover:bg-brand-gold/10"
                     aria-label={t('create_trip.title')}
                   >
                     <PlusCircle className="w-5 h-5" aria-hidden="true" />
@@ -247,13 +247,13 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                     variant="ghost"
                     size="icon"
                     onClick={handleNavigateEditProfile}
-                    className="min-h-[44px] min-w-[44px] hover:bg-[#f0e3c7]/10"
+                    className="min-h-[44px] min-w-[44px] hover:bg-brand-gold/10"
                     aria-label="Edit profile"
                   >
                     {user.profile_picture_url ? (
                       <img src={user.profile_picture_url} alt="" className="w-8 h-8 rounded-full object-cover" />
                     ) : (
-                      <User className="w-5 h-5 text-[#f0e3c7]" aria-hidden="true" />
+                      <User className="w-5 h-5 text-brand-gold" aria-hidden="true" />
                     )}
                   </Button>
                 </>
@@ -264,27 +264,27 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
 
         {/* Mobile drawer — custom Sheet, no shadcn Sidebar dependency */}
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetContent side="left" className="w-[280px] bg-[#0c281c] border-r border-[#f0e3c7]/10 p-0 flex flex-col [&>button:first-child]:hidden">
+          <SheetContent side="left" className="w-[280px] bg-brand-dark border-r border-brand-gold/10 p-0 flex flex-col [&>button:first-child]:hidden">
             <VisuallyHidden>
               <SheetTitle>Navigation Menu</SheetTitle>
               <SheetDescription>Main navigation links</SheetDescription>
             </VisuallyHidden>
 
             {/* Sheet header */}
-            <div className="flex items-center justify-between p-5 border-b border-[#f0e3c7]/10">
+            <div className="flex items-center justify-between p-5 border-b border-brand-gold/10">
               <Link to={createPageUrl("Home")} className="flex items-center gap-3" onClick={closeMenu}>
                 <img
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png"
                   alt="Nature Explorers"
                   className="h-8 w-auto"
                 />
-                <span className="font-bold text-[#f0e3c7] text-base" style={{ fontFamily: 'var(--font-heading)' }}>
+                <span className="font-bold text-brand-gold text-base" style={{ fontFamily: 'var(--font-heading)' }}>
                   Nature Explorers
                 </span>
               </Link>
               <button
                 onClick={closeMenu}
-                className="text-[#f0e3c7]/70 hover:text-[#f0e3c7] min-h-[44px] min-w-[44px] flex items-center justify-center"
+                className="text-brand-gold/70 hover:text-brand-gold min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close menu"
               >
                 <X className="w-5 h-5" aria-hidden="true" />
@@ -293,7 +293,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
 
             {/* Navigation links */}
             <div className="flex-1 overflow-y-auto p-4 space-y-1">
-              <p className="text-xs font-semibold text-[#f0e3c7]/40 uppercase tracking-wider px-3 py-2">
+              <p className="text-xs font-semibold text-brand-gold/40 uppercase tracking-wider px-3 py-2">
                 {user ? (isOrganizer ? t('layout.hello_organizer') : t('layout.hello_hiker')) : t('common.explore')}
               </p>
               {publicNav.map((item) => {
@@ -305,7 +305,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                     to={item.url}
                     onClick={closeMenu}
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg min-h-[44px] transition-colors ${
-                      active ? 'bg-[#f0e3c7]/10 text-[#f0e3c7]' : 'text-[#f0e3c7]/75 hover:bg-[#f0e3c7]/5 hover:text-[#f0e3c7]'
+                      active ? 'bg-brand-gold/10 text-brand-gold' : 'text-brand-gold/75 hover:bg-brand-gold/5 hover:text-brand-gold'
                     }`}
                     aria-current={active ? 'page' : undefined}
                   >
@@ -317,7 +317,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
 
               {user && roleBasedNav.length > 0 && (
                 <>
-                  <p className="text-xs font-semibold text-[#f0e3c7]/40 uppercase tracking-wider px-3 py-2 mt-4">
+                  <p className="text-xs font-semibold text-brand-gold/40 uppercase tracking-wider px-3 py-2 mt-4">
                     {isOrganizer ? t('layout.organizer_tools') : t('layout.my_activities')}
                   </p>
                   {roleBasedNav.map((item) => {
@@ -329,7 +329,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                         to={item.url}
                         onClick={closeMenu}
                         className={`flex items-center gap-3 px-3 py-2.5 rounded-lg min-h-[44px] transition-colors ${
-                          active ? 'bg-[#f0e3c7]/10 text-[#f0e3c7]' : 'text-[#f0e3c7]/75 hover:bg-[#f0e3c7]/5 hover:text-[#f0e3c7]'
+                          active ? 'bg-brand-gold/10 text-brand-gold' : 'text-brand-gold/75 hover:bg-brand-gold/5 hover:text-brand-gold'
                         }`}
                         aria-current={active ? 'page' : undefined}
                       >
@@ -342,15 +342,15 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
               )}
 
               {/* Language switcher */}
-              <div className="pt-4 border-t border-[#f0e3c7]/10 mt-4">
-                <p className="text-xs font-semibold text-[#f0e3c7]/40 uppercase tracking-wider px-3 py-2">
+              <div className="pt-4 border-t border-brand-gold/10 mt-4">
+                <p className="text-xs font-semibold text-brand-gold/40 uppercase tracking-wider px-3 py-2">
                   {language === 'el' ? 'Γλώσσα' : 'Language'}
                 </p>
                 <div className="flex gap-2 px-3 py-2">
                   <Button
                     size="sm"
                     onClick={() => setLanguage('en')}
-                    className={`flex-1 min-h-[44px] border border-[#f0e3c7]/30 ${language === 'en' ? 'bg-[#f0e3c7]/15 text-[#f0e3c7]' : 'bg-transparent text-[#f0e3c7]/60 hover:bg-[#f0e3c7]/10'}`}
+                    className={`flex-1 min-h-[44px] border border-brand-gold/30 ${language === 'en' ? 'bg-brand-gold/15 text-brand-gold' : 'bg-transparent text-brand-gold/60 hover:bg-brand-gold/10'}`}
                     aria-pressed={language === 'en'}
                     variant="ghost"
                   >
@@ -359,7 +359,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                   <Button
                     size="sm"
                     onClick={() => setLanguage('el')}
-                    className={`flex-1 min-h-[44px] border border-[#f0e3c7]/30 ${language === 'el' ? 'bg-[#f0e3c7]/15 text-[#f0e3c7]' : 'bg-transparent text-[#f0e3c7]/60 hover:bg-[#f0e3c7]/10'}`}
+                    className={`flex-1 min-h-[44px] border border-brand-gold/30 ${language === 'el' ? 'bg-brand-gold/15 text-brand-gold' : 'bg-transparent text-brand-gold/60 hover:bg-brand-gold/10'}`}
                     aria-pressed={language === 'el'}
                     variant="ghost"
                   >
@@ -370,24 +370,24 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
             </div>
 
             {/* Sheet footer — user or login */}
-            <div className="border-t border-[#f0e3c7]/10 p-4">
+            <div className="border-t border-brand-gold/10 p-4">
               {user ? (
                 <div className="space-y-3">
-                  <Link to={createPageUrl("EditProfile")} onClick={closeMenu} className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#f0e3c7]/5 min-h-[44px]">
-                    <div className="w-9 h-9 bg-[#f0e3c7]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Link to={createPageUrl("EditProfile")} onClick={closeMenu} className="flex items-center gap-3 p-2 rounded-lg hover:bg-brand-gold/5 min-h-[44px]">
+                    <div className="w-9 h-9 bg-brand-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
                       {user.profile_picture_url
                         ? <img src={user.profile_picture_url} alt="" className="w-full h-full object-cover rounded-full" />
-                        : <User className="w-4 h-4 text-[#f0e3c7]" aria-hidden="true" />
+                        : <User className="w-4 h-4 text-brand-gold" aria-hidden="true" />
                       }
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-[#f0e3c7] text-sm truncate">{user.full_name}</p>
-                      <p className="text-xs text-[#f0e3c7]/50 truncate">{isOrganizer ? t('roles.organizer') : t('roles.hiker')}</p>
+                      <p className="font-medium text-brand-gold text-sm truncate">{user.full_name}</p>
+                      <p className="text-xs text-brand-gold/50 truncate">{isOrganizer ? t('roles.organizer') : t('roles.hiker')}</p>
                     </div>
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#f0e3c7]/60 hover:text-[#f0e3c7] hover:bg-[#f0e3c7]/5 rounded-lg transition-colors min-h-[44px]"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-brand-gold/60 hover:text-brand-gold hover:bg-brand-gold/5 rounded-lg transition-colors min-h-[44px]"
                   >
                     <LogOut className="w-4 h-4" aria-hidden="true" />
                     {t('common.logout')}
@@ -396,7 +396,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
               ) : (
                 <Button
                   onClick={() => { handleLogin(); closeMenu(); }}
-                  className="w-full bg-[#8B6914] hover:bg-[#8B6914]/90 text-[#0c281c] font-bold min-h-[44px]"
+                  className="w-full bg-brand-gold-accent hover:bg-brand-gold-accent/90 text-brand-dark font-bold min-h-[44px]"
                   style={{ fontFamily: 'var(--font-heading)' }}
                 >
                   <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />

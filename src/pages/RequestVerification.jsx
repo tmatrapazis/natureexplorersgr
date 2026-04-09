@@ -102,7 +102,7 @@ export default function RequestVerificationPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="max-w-md p-8 text-center">
-          <CheckCircle2 className="w-16 h-16 text-[#0c281c]/60 mx-auto mb-4" />
+          <CheckCircle2 className="w-16 h-16 text-brand-dark/60 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">{t('request_verification.verified_title')}</h2>
           <p className="text-muted-foreground mb-4">{t('request_verification.verified_message')}</p>
           <Link to={createPageUrl("Calendar")} aria-label={t('request_verification.back_to_calendar')}>
@@ -114,7 +114,7 @@ export default function RequestVerificationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-brand-gold/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
         <Button variant="outline" className="mb-6 min-h-[44px]" onClick={goBack} aria-label={`Go back to ${backLabel}`}>
           <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -124,7 +124,7 @@ export default function RequestVerificationPage() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3 mb-2">
-              <Shield className="w-8 h-8 text-[#0c281c]" />
+              <Shield className="w-8 h-8 text-brand-dark" />
               <CardTitle className="text-2xl">{t('request_verification.card_title')}</CardTitle>
             </div>
             <CardDescription>
@@ -134,9 +134,9 @@ export default function RequestVerificationPage() {
 
           <CardContent>
             {submitSuccess ? (
-              <Alert className="bg-[#f0e3c7]/40 border-[#0c281c]/20">
-                <CheckCircle2 className="h-4 w-4 text-[#0c281c]" />
-                <AlertDescription className="text-[#0c281c]">
+              <Alert className="bg-brand-gold/40 border-brand-dark/20">
+                <CheckCircle2 className="h-4 w-4 text-brand-dark" />
+                <AlertDescription className="text-brand-dark">
                   {t('request_verification.success_message')}
                 </AlertDescription>
               </Alert>
@@ -220,7 +220,7 @@ export default function RequestVerificationPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
+                  className="w-full bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]"
                   disabled={requestVerificationMutation.isPending}
                   aria-label={requestVerificationMutation.isPending ? t('request_verification.submitting') : t('request_verification.submit')}
                 >

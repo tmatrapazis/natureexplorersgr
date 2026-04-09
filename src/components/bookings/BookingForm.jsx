@@ -133,8 +133,8 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
       <DialogContent className="sm:max-w-md">
         {submitted ? (
           <div className="py-6 text-center space-y-4">
-            <div className="mx-auto w-14 h-14 bg-[#f0e3c7]/40 rounded-full flex items-center justify-center">
-              <CheckCircle2 className="w-7 h-7 text-[#0c281c]" />
+            <div className="mx-auto w-14 h-14 bg-brand-gold/40 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="w-7 h-7 text-brand-dark" />
             </div>
             <DialogHeader>
               <DialogTitle className="text-center">{t('booking.request_sent_title')}</DialogTitle>
@@ -142,7 +142,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                 {t('booking.request_sent_message')}
               </DialogDescription>
             </DialogHeader>
-            <Button onClick={handleClose} className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90">
+            <Button onClick={handleClose} className="w-full bg-brand-dark hover:bg-brand-dark/90">
               {t('booking.done')}
             </Button>
           </div>
@@ -182,8 +182,8 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                           disabled={isFull || bookingMutation.isPending}
                           className={`flex items-center justify-between p-3 rounded-lg border text-left transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                             isSelected
-                              ? 'border-[#0c281c]/60 bg-[#f0e3c7]/40'
-                              : 'border-border hover:border-[#0c281c]/20'
+                              ? 'border-brand-dark/60 bg-brand-gold/40'
+                              : 'border-border hover:border-brand-dark/20'
                           }`}
                         >
                           <span className="text-sm font-medium">{opt.label}</span>
@@ -193,7 +193,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                                 {isFull ? t('booking.tier_full') : `${availability} ${t('booking.left')}`}
                               </span>
                             )}
-                            <span className="text-sm font-bold text-[#0c281c]">€{opt.price}</span>
+                            <span className="text-sm font-bold text-brand-dark">€{opt.price}</span>
                           </div>
                         </button>
                       );
@@ -251,7 +251,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
                   <span className="text-sm text-muted-foreground">
                     €{pricePerPerson} × {people} {people === 1 ? t('booking.person') : t('booking.people')}
                   </span>
-                  <div className="flex items-center gap-1 font-bold text-[#0c281c]">
+                  <div className="flex items-center gap-1 font-bold text-brand-dark">
                     <Euro className="w-4 h-4" />
                     <span>{totalPrice}</span>
                   </div>
@@ -266,7 +266,7 @@ export default function BookingForm({ trip, organizer, open, onClose }) {
             <Button
               onClick={() => bookingMutation.mutate()}
               disabled={bookingMutation.isPending || currentTierAvailability === 0}
-              className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90"
+              className="w-full bg-brand-dark hover:bg-brand-dark/90"
             >
               {bookingMutation.isPending
                 ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('booking.sending_request')}</>

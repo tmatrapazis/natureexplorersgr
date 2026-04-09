@@ -115,7 +115,7 @@ export default function MyBookingsPage() {
   if (bookingsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0c281c]" />
+        <Loader2 className="w-8 h-8 animate-spin text-brand-dark" />
       </div>
     );
   }
@@ -133,7 +133,7 @@ export default function MyBookingsPage() {
             <p className="font-medium mb-1">{t('booking.no_bookings_yet')}</p>
             <p className="text-sm mb-4">{t('booking.browse_available')}</p>
             <Link to={createPageUrl('Calendar')}>
-              <Button className="bg-[#0c281c] hover:bg-[#0c281c]/90">
+              <Button className="bg-brand-dark hover:bg-brand-dark/90">
                 {t('booking.explore_trips')}
               </Button>
             </Link>
@@ -198,7 +198,7 @@ export default function MyBookingsPage() {
                       </div>
                     ) : (
                       <p className={`text-sm rounded-lg px-3 py-2 ${
-                        booking.status === 'paid'     ? 'bg-[#f0e3c7]/40 text-[#0c281c]' :
+                        booking.status === 'paid'     ? 'bg-brand-gold/40 text-brand-dark' :
                         booking.status === 'declined' ? 'bg-red-50 text-red-700' :
                         'bg-muted/50 text-muted-foreground'
                       }`}>

@@ -17,7 +17,7 @@ function GuideCard({ guide, organizers = [], language = 'en' }) {
       aria-label={`${language === 'el' ? 'Προφίλ οδηγού' : 'Guide profile'}: ${guide.full_name}`}
     >
       <Card role="article" aria-label={guide.full_name} className="overflow-hidden hover:shadow-xl transition-all duration-300 group h-full">
-        <div className="relative h-48 bg-gradient-to-br from-[#f0e3c7]/40 to-stone-100">
+        <div className="relative h-48 bg-gradient-to-br from-brand-gold/40 to-stone-100">
           <img
             src={guide.profile_photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(guide.full_name)}&size=400&background=10b981&color=fff`}
             alt={guide.full_name}
@@ -25,7 +25,7 @@ function GuideCard({ guide, organizers = [], language = 'en' }) {
           />
           {guide.is_verified && (
             <div className="absolute top-3 right-3">
-              <Badge className="bg-[#0c281c] text-white flex items-center gap-1">
+              <Badge className="bg-brand-dark text-white flex items-center gap-1">
                 <Shield className="w-3 h-3" aria-hidden="true" />
                 {language === 'el' ? 'Πιστοποιημένος' : 'Verified'}
               </Badge>
@@ -33,7 +33,7 @@ function GuideCard({ guide, organizers = [], language = 'en' }) {
           )}
         </div>
         <CardContent className="p-5">
-          <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-[#0c281c] transition-colors">
+          <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-brand-dark transition-colors">
             {guide.full_name}
           </h3>
           

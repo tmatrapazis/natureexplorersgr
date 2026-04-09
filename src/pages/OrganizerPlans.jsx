@@ -62,12 +62,12 @@ export default function OrganizerPlans() {
         {/* Current plan banner */}
         {!isLoading && (
           <div className={`mb-6 flex items-center justify-between p-4 rounded-lg border ${
-            isPremium ? 'bg-[#f0e3c7]/40 border-[#0c281c]/20' : 'bg-muted/50 border-border'
+            isPremium ? 'bg-brand-gold/40 border-brand-dark/20' : 'bg-muted/50 border-border'
           }`}>
             <div>
               <p className="text-sm font-medium">
                 {t('organizer_plans.current_plan')}{' '}
-                <span className={isPremium ? 'text-[#0c281c]' : 'text-foreground'}>
+                <span className={isPremium ? 'text-brand-dark' : 'text-foreground'}>
                   {isPremium ? t('organizer_plans.premium_plan') : t('organizer_plans.free_plan')}
                 </span>
               </p>
@@ -78,7 +78,7 @@ export default function OrganizerPlans() {
               )}
             </div>
             {isPremium && (
-              <Badge className="bg-[#f0e3c7]/40 text-[#0c281c] border-[#0c281c]/20">
+              <Badge className="bg-brand-gold/40 text-brand-dark border-brand-dark/20">
                 <Sparkles className="w-3 h-3 mr-1" />
                 {t('organizer_plans.active')}
               </Badge>
@@ -105,7 +105,7 @@ export default function OrganizerPlans() {
               {FEATURES.map((f) => (
                 <div key={f.key} className="flex items-center gap-2.5 text-sm">
                   {f.free
-                    ? <Check className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
+                    ? <Check className="w-4 h-4 text-brand-dark flex-shrink-0" />
                     : <X className="w-4 h-4 text-muted-foreground/40 flex-shrink-0" />
                   }
                   <span className={f.free ? '' : 'text-muted-foreground'}>{t(`organizer_plans.${f.key}`)}</span>
@@ -115,7 +115,7 @@ export default function OrganizerPlans() {
           </Card>
 
           {/* Premium */}
-          <Card className={`border-2 ${isPremium ? 'border-[#0c281c]/60' : 'border-amber-400'} relative overflow-hidden`}>
+          <Card className={`border-2 ${isPremium ? 'border-brand-dark/60' : 'border-amber-400'} relative overflow-hidden`}>
             {!isPremium && (
               <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
                 {t('organizer_plans.recommended')}
@@ -128,7 +128,7 @@ export default function OrganizerPlans() {
                   {t('organizer_plans.premium_plan')}
                 </span>
                 {isPremium && (
-                  <Badge className="bg-[#f0e3c7]/40 text-[#0c281c] border-[#0c281c]/20">
+                  <Badge className="bg-brand-gold/40 text-brand-dark border-brand-dark/20">
                     {t('organizer_plans.active')}
                   </Badge>
                 )}
@@ -142,7 +142,7 @@ export default function OrganizerPlans() {
             <CardContent className="space-y-2.5">
               {FEATURES.map((f) => (
                 <div key={f.key} className="flex items-center gap-2.5 text-sm">
-                  <Check className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
+                  <Check className="w-4 h-4 text-brand-dark flex-shrink-0" />
                   <span>{t(`organizer_plans.${f.key}`)}</span>
                 </div>
               ))}

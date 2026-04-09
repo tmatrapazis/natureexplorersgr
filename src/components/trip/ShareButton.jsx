@@ -108,7 +108,7 @@ export default function ShareButton({ trip, language, className = "" }) {
     return (
       <Button
         onClick={handleNativeShare}
-        className={`fixed bottom-6 right-6 z-50 shadow-lg bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[56px] min-w-[56px] rounded-full ${className}`}
+        className={`fixed bottom-6 right-6 z-50 shadow-lg bg-brand-dark hover:bg-brand-dark/90 min-h-[56px] min-w-[56px] rounded-full ${className}`}
         size="icon"
         aria-label={language === 'el' ? 'Κοινοποίηση εκδρομής' : 'Share trip'}
       >

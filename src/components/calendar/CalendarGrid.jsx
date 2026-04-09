@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -30,17 +30,17 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
     });
   };
 
-  const previousMonth = () => {
+  const previousMonth = useCallback(() => {
     const newDate = new Date(currentDate);
     newDate.setMonth(newDate.getMonth() - 1);
     onDateChange(newDate);
-  };
+  }, [currentDate, onDateChange]);
 
-  const nextMonth = () => {
+  const nextMonth = useCallback(() => {
     const newDate = new Date(currentDate);
     newDate.setMonth(newDate.getMonth() + 1);
     onDateChange(newDate);
-  };
+  }, [currentDate, onDateChange]);
 
   return (
     <div className="bg-card rounded-2xl shadow-lg p-6 h-full">
@@ -53,7 +53,7 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
             variant="outline"
             size="icon"
             onClick={previousMonth}
-            className="hover:bg-[#f0e3c7]/40 hover:text-[#0c281c] hover:border-[#0c281c]/20 min-h-[44px] min-w-[44px]"
+            className="hover:bg-brand-gold/40 hover:text-brand-dark hover:border-brand-dark/20 min-h-[44px] min-w-[44px]"
             aria-label="Previous month"
           >
             <ChevronLeft className="w-4 h-4" aria-hidden="true" />
@@ -62,7 +62,7 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
             variant="outline"
             size="icon"
             onClick={nextMonth}
-            className="hover:bg-[#f0e3c7]/40 hover:text-[#0c281c] hover:border-[#0c281c]/20 min-h-[44px] min-w-[44px]"
+            className="hover:bg-brand-gold/40 hover:text-brand-dark hover:border-brand-dark/20 min-h-[44px] min-w-[44px]"
             aria-label="Next month"
           >
             <ChevronRight className="w-4 h-4" aria-hidden="true" />
@@ -93,7 +93,7 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
                 aspect-square p-2 rounded-xl transition-all duration-200 relative min-h-[44px] min-w-[44px] touch-manipulation
                 ${!day ? "invisible" : ""}
                 ${isSelected ? "bg-orange-200 border-2 border-orange-500" : ""}
-                ${isToday(day || new Date()) && !isSelected ? "bg-[#f0e3c7]/40 border-2 border-[#0c281c]/60" : ""}
+                ${isToday(day || new Date()) && !isSelected ? "bg-brand-gold/40 border-2 border-brand-dark/60" : ""}
                 ${!isSelected && !isToday(day || new Date()) ? "hover:bg-muted active:bg-muted" : ""}
                 ${!isSameMonth(day || new Date(), currentDate) ? "opacity-40" : ""}
                 ${hasTrips ? "cursor-pointer" : "cursor-default"}
@@ -101,13 +101,13 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
             >
               {day && (
                 <>
-                  <div className={`text-sm font-medium ${isSelected ? "text-orange-700" : isToday(day) ? "text-[#0c281c]" : "text-foreground"}`}>
+                  <div className={`text-sm font-medium ${isSelected ? "text-orange-700" : isToday(day) ? "text-brand-dark" : "text-foreground"}`}>
                     {format(day, "d")}
                   </div>
                   {hasTrips && (
                     <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
                       {dayTrips.slice(0, 3).map((_, i) => (
-                        <div key={i} className={`w-1.5 h-1.5 rounded-full ${isSelected ? "bg-orange-500" : "bg-[#f0e3c7]/400"}`} />
+                        <div key={i} className={`w-1.5 h-1.5 rounded-full ${isSelected ? "bg-orange-500" : "bg-brand-gold/400"}`} />
                       ))}
                     </div>
                   )}

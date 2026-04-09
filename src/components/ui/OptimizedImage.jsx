@@ -66,7 +66,8 @@ export default function OptimizedImage({
         height={height}
         loading={priority ? "eager" : "lazy"}
         decoding={priority ? "sync" : "async"}
-        fetchPriority={priority ? "high" : "auto"}
+        // eslint-disable-next-line react/no-unknown-property
+        fetchpriority={priority ? "high" : "auto"}
         onError={handleError}
         onLoad={handleLoad}
         className={`w-full h-full transition-opacity duration-300 ${

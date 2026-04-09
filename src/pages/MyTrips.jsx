@@ -307,7 +307,7 @@ export default function MyTripsPage() {
   if (tripsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0c281c]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-dark" />
       </div>
     );
   }
@@ -360,7 +360,7 @@ export default function MyTripsPage() {
             )}
             <Link to={createPageUrl("TripForm")} className="w-full sm:w-auto">
             <Button
-              className="bg-[#0c281c] hover:bg-[#0c281c]/90 w-full sm:w-auto min-h-[44px]"
+              className="bg-brand-dark hover:bg-brand-dark/90 w-full sm:w-auto min-h-[44px]"
               aria-label={t('organizer.create_new_trip')}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -377,7 +377,7 @@ export default function MyTripsPage() {
             <p className="text-muted-foreground mb-4">{t('organizer.no_trips_message')}</p>
             <Link to={createPageUrl("TripForm")}>
               <Button 
-                className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
+                className="bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]"
                 aria-label={t('organizer.create_first_trip')}
               >
                 {t('organizer.create_first_trip')}

@@ -257,13 +257,13 @@ export default function EditProfilePage() {
   if (userLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-[#0c281c]" />
+        <Loader2 className="h-12 w-12 animate-spin text-brand-dark" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-[#f0e3c7]/30 dark:via-[#0c281c]/10 to-background p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-brand-gold/30 dark:via-brand-dark/10 to-background p-4 md:p-8">
       <div className="max-w-2xl mx-auto">
         {!isNewUser && (
           <Button
@@ -357,7 +357,7 @@ export default function EditProfilePage() {
               <Card>
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-[#0c281c]" />
+                    <ShieldCheck className="w-5 h-5 text-brand-dark" />
                     <CardTitle>Safety & Health Information</CardTitle>
                   </div>
                   <CardDescription>
@@ -435,7 +435,7 @@ export default function EditProfilePage() {
             )}
 
             {updateSuccess && (
-              <Alert variant="default" className="bg-[#f0e3c7]/40 border-[#0c281c]/20 text-[#0c281c]">
+              <Alert variant="default" className="bg-brand-gold/40 border-brand-dark/20 text-brand-dark">
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>
                   {isNewUser ? "Profile created successfully! Redirecting..." : "Your profile has been updated successfully!"}

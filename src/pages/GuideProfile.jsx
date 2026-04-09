@@ -156,7 +156,7 @@ export default function GuideProfilePage() {
   if (guideLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0c281c]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-dark" />
       </div>
     );
   }
@@ -181,9 +181,9 @@ export default function GuideProfilePage() {
   return (
     <>
       {guideSchema && <StructuredData data={guideSchema} />}
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50">
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-brand-gold/30 to-stone-50">
       {/* Hero Section with Cover Photo */}
-      <div className="relative h-64 md:h-96 bg-gradient-to-r from-[#0c281c] to-[#0c281c]">
+      <div className="relative h-64 md:h-96 bg-gradient-to-r from-brand-dark to-brand-dark">
         {guide.cover_photo_url && (
           <img
             src={guide.cover_photo_url}
@@ -213,7 +213,7 @@ export default function GuideProfilePage() {
             <ShareGuideButton guide={guide} language={language} />
             <Button
               onClick={() => navigate(createPageUrl('EditGuideProfile') + `?id=${guideId}`)}
-              className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
+              className="bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]"
               aria-label={language === 'el' ? 'Επεξεργασία προφίλ οδηγού' : 'Edit guide profile'}
             >
               <Edit className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -235,7 +235,7 @@ export default function GuideProfilePage() {
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-3xl font-bold text-foreground">{guide.full_name}</h1>
                   {guide.is_verified && (
-                    <Badge className="bg-[#0c281c] text-white flex items-center gap-1">
+                    <Badge className="bg-brand-dark text-white flex items-center gap-1">
                       <Shield className="w-4 h-4" />
                       {language === 'el' ? 'Πιστοποιημένος Οδηγός' : 'Verified Guide'}
                     </Badge>
@@ -255,7 +255,7 @@ export default function GuideProfilePage() {
                         href={guide.social_media.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-[#0c281c] transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
+                        className="text-muted-foreground hover:text-brand-dark transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
                         aria-label={`${guide.full_name} on Instagram`}
                       >
                         <Instagram className="w-5 h-5" aria-hidden="true" />
@@ -266,7 +266,7 @@ export default function GuideProfilePage() {
                         href={guide.social_media.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-muted-foreground hover:text-[#0c281c] transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
+                        className="text-muted-foreground hover:text-brand-dark transition-colors inline-flex items-center justify-center min-h-[44px] min-w-[44px]"
                         aria-label={`${guide.full_name} on Facebook`}
                       >
                         <Facebook className="w-5 h-5" aria-hidden="true" />
@@ -298,7 +298,7 @@ export default function GuideProfilePage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-[#0c281c]" />
+                    <Award className="w-5 h-5 text-brand-dark" />
                     {language === 'el' ? 'Πιστοποιήσεις' : 'Certifications'}
                   </CardTitle>
                 </CardHeader>
@@ -319,7 +319,7 @@ export default function GuideProfilePage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-[#0c281c]" />
+                    <Calendar className="w-5 h-5 text-brand-dark" />
                     {language === 'el' ? 'Επερχόμενες Εκδρομές' : 'Upcoming Adventures'}
                   </CardTitle>
                 </CardHeader>
@@ -332,7 +332,7 @@ export default function GuideProfilePage() {
                         className="block"
                         aria-label={`${language === 'el' ? 'Προβολή εκδρομής' : 'View trip'}: ${trip.title}`}
                       >
-                        <div className="flex gap-4 p-4 rounded-lg border hover:border-[#0c281c] hover:shadow-md transition-all">
+                        <div className="flex gap-4 p-4 rounded-lg border hover:border-brand-dark hover:shadow-md transition-all">
                           <img
                             src={getTripImage(trip.image_url, trip.id)}
                             alt={trip.title}
@@ -370,7 +370,7 @@ export default function GuideProfilePage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Briefcase className="w-5 h-5 text-[#0c281c]" />
+                    <Briefcase className="w-5 h-5 text-brand-dark" />
                     {language === 'el' ? 'Συνεργάζεται με' : 'Collaborates With'}
                   </CardTitle>
                 </CardHeader>
@@ -382,7 +382,7 @@ export default function GuideProfilePage() {
                         to={organizer.username
                           ? `/organizerprofile/${organizer.username}`
                           : `/organizerprofile?code=${organizer.organizer_code}`}
-                        className="flex items-center gap-3 p-3 rounded-lg border hover:border-[#0c281c] hover:shadow-md transition-all"
+                        className="flex items-center gap-3 p-3 rounded-lg border hover:border-brand-dark hover:shadow-md transition-all"
                       >
                         {organizer.profile_picture_url ? (
                           <img
@@ -391,8 +391,8 @@ export default function GuideProfilePage() {
                             className="w-12 h-12 rounded-full object-cover flex-shrink-0"
                           />
                         ) : (
-                          <div className="w-12 h-12 rounded-full bg-[#f0e3c7]/40 flex items-center justify-center flex-shrink-0">
-                            <span className="text-[#0c281c] font-semibold text-lg">
+                          <div className="w-12 h-12 rounded-full bg-brand-gold/40 flex items-center justify-center flex-shrink-0">
+                            <span className="text-brand-dark font-semibold text-lg">
                               {(organizer.full_name || organizer.username || '?')[0].toUpperCase()}
                             </span>
                           </div>

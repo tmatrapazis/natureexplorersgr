@@ -110,7 +110,7 @@ function TripFilters({ filters, onFilterChange }) {
           <Filter className="w-4 h-4 mr-2" />
           {t('filters.filter_trips')}
           {activeFiltersCount > 0 &&
-          <Badge variant="default" className="ml-2 bg-[#0c281c]">
+          <Badge variant="default" className="ml-2 bg-brand-dark">
               {activeFiltersCount}
             </Badge>
           }
@@ -119,7 +119,7 @@ function TripFilters({ filters, onFilterChange }) {
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto scrollbar-hide">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-[#0c281c]" />
+            <Filter className="w-5 h-5 text-brand-dark" />
             {t('filters.filter_trips')}
           </DialogTitle>
           <DialogDescription>
@@ -208,7 +208,7 @@ function TripFilters({ filters, onFilterChange }) {
               <Badge
                 key={tag}
                 variant={tempFilters.tags.includes(tag) ? "default" : "outline"}
-                className={`cursor-pointer min-h-[44px] px-4 flex items-center ${tempFilters.tags.includes(tag) ? 'bg-[#0c281c]' : ''}`}
+                className={`cursor-pointer min-h-[44px] px-4 flex items-center ${tempFilters.tags.includes(tag) ? 'bg-brand-dark' : ''}`}
                 onClick={() => toggleTag(tag)}
                 role="button"
                 tabIndex={0}
@@ -257,7 +257,7 @@ function TripFilters({ filters, onFilterChange }) {
           </Button>
           <Button 
             onClick={handleApplyFilters} 
-            className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
+            className="bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]"
             aria-label={t('filters.apply')}
           >
             {t('filters.apply')}

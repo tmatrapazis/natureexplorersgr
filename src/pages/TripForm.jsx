@@ -187,7 +187,7 @@ export default function TripFormPage() {
   if (isEditing && (tripLoading || !trip)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-[#0c281c]" />
+        <Loader2 className="w-12 h-12 animate-spin text-brand-dark" />
       </div>
     );
   }
@@ -195,7 +195,7 @@ export default function TripFormPage() {
   const initialData = isEditing ? trip : recreateData;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8 w-full overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-brand-gold/30 to-stone-50 p-4 md:p-8 w-full overflow-x-hidden">
       <div className="max-w-3xl mx-auto w-full min-w-0">
         <Button 
           variant="outline" 
@@ -246,7 +246,7 @@ export default function TripFormPage() {
               <AlertDialogFooter>
                 <AlertDialogCancel onClick={handleDiscardAndExit}>{language === 'el' ? 'Απόρριψη Αλλαγών' : 'Discard Changes'}</AlertDialogCancel>
                 <AlertDialogAction onClick={() => setShowExitDialog(false)}>{language === 'el' ? 'Ακύρωση' : 'Cancel'}</AlertDialogAction>
-                <AlertDialogAction onClick={handleSaveAndExit} className="bg-[#0c281c] hover:bg-[#0c281c]/90">{language === 'el' ? 'Αποθήκευση & Έξοδος' : 'Save & Exit'}</AlertDialogAction>
+                <AlertDialogAction onClick={handleSaveAndExit} className="bg-brand-dark hover:bg-brand-dark/90">{language === 'el' ? 'Αποθήκευση & Έξοδος' : 'Save & Exit'}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

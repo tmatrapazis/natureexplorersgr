@@ -452,7 +452,7 @@ Mobile-first approach well-executed:
 | 1.1 | Remove `three`, `lodash`, `moment`, `moment-timezone` | `package.json` | Low | ✅ Done |
 | 1.2 | Add global `staleTime: 5min` + `gcTime: 10min` | `src/lib/query-client.js` | Low | ✅ Done |
 | 1.3 | Create ErrorBoundary component | New + `src/App.jsx` | Low | ✅ Done |
-| 1.4 | Add preconnect/preload hints | `index.html` | Low | ✅ Done |
+| 1.4 | Add preconnect/preload hints | `index.html` | Low | ✅ Done (preconnect on 2026-04-09; hero image `<link rel="preload">` with responsive `imagesrcset` added on 2026-04-09 review) |
 | 1.5 | Add skip-to-content link | `src/Layout.jsx` | Low | ✅ Done |
 
 ### Phase 2: Performance Deep Dive
@@ -464,8 +464,8 @@ Mobile-first approach well-executed:
 | 2.1 | Parallelize TripDetails queries | `src/pages/TripDetails.jsx` | Low | ✅ Done |
 | 2.2 | Parallelize MyBookings queries | `src/pages/MyBookings.jsx` | Low | ✅ Done |
 | 2.3 | Add Vite chunk splitting | `vite.config.js` | Low | ✅ Done |
-| 2.4 | Implement data prefetching | New `src/lib/prefetch.js` + Home/Calendar | Low | ✅ Done |
-| 2.5 | Add useCallback to hot paths | Home.jsx, CalendarGrid.jsx | Low | ✅ Done (Home.jsx handleSearch) |
+| 2.4 | Implement data prefetching | New `src/lib/prefetch.js` + Home/Calendar | Low | ✅ Done (Home mount prefetch + trip card hover prefetch on both Home.jsx and TripsList.jsx) |
+| 2.5 | Add useCallback to hot paths | Home.jsx, CalendarGrid.jsx | Low | ✅ Done (Home.jsx `handleSearch` + CalendarGrid.jsx `previousMonth`/`nextMonth`) |
 
 ### Phase 3: SEO Hardening
 **Impact: ~30% SEO improvement**
@@ -487,7 +487,7 @@ Mobile-first approach well-executed:
 
 | # | Task | File(s) | Risk | Status |
 |---|------|---------|------|--------|
-| 4.1 | Brand color tokens in Tailwind | `tailwind.config.js` + 20 files | Low | ✅ Done (tokens added; class replacement across 20 files deferred) |
+| 4.1 | Brand color tokens in Tailwind | `tailwind.config.js` + 61 files | Low | ✅ Done (tokens added + all 353 hardcoded hex occurrences replaced with `brand-dark`, `brand-gold`, `brand-gold-accent` across 61 files) |
 | 4.2 | Extract shared constants | New `src/lib/constants.js` | Low | ✅ Done |
 | 4.3 | Form validation (Zod schemas) | BookingForm, TripForm, EditProfile | Medium | ⏳ Deferred |
 | 4.4 | Skeleton loaders | New components in `src/components/ui/` | Low | ⏳ Deferred |

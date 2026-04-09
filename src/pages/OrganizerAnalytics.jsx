@@ -21,7 +21,7 @@ import {
 
 const STATUS_BADGE = {
   draft:           'bg-muted-foreground',
-  upcoming:        'bg-[#0c281c]',
+  upcoming:        'bg-brand-dark',
   'happening now': 'bg-blue-600',
   completed:       'bg-violet-600',
   cancelled:       'bg-red-600',
@@ -166,7 +166,7 @@ export default function OrganizerAnalyticsPage() {
   if (planLoading || tripsLoading || bookingsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0c281c]" />
+        <Loader2 className="w-8 h-8 animate-spin text-brand-dark" />
       </div>
     );
   }
@@ -192,7 +192,7 @@ export default function OrganizerAnalyticsPage() {
             {t('analytics.no_trips')}
           </p>
           <Link to={createPageUrl('TripForm')}>
-            <Button className="bg-[#0c281c] hover:bg-[#0c281c]/90">
+            <Button className="bg-brand-dark hover:bg-brand-dark/90">
               <Plus className="w-4 h-4 mr-2" />
               {t('analytics.create_trip')}
             </Button>
@@ -217,8 +217,8 @@ export default function OrganizerAnalyticsPage() {
             icon={Euro}
             label={t('analytics.kpi_total_revenue')}
             value={`€${totalRevenue.toLocaleString()}`}
-            iconBg="bg-[#f0e3c7]/40"
-            iconColor="text-[#0c281c]"
+            iconBg="bg-brand-gold/40"
+            iconColor="text-brand-dark"
           />
           <KpiCard
             icon={TrendingUp}
@@ -366,7 +366,7 @@ export default function OrganizerAnalyticsPage() {
                       <td className="px-4 py-3 font-medium text-foreground max-w-[200px]">
                         <Link
                           to={`${createPageUrl('TripDetails')}?id=${trip.id}`}
-                          className="hover:text-[#0c281c] transition-colors line-clamp-1"
+                          className="hover:text-brand-dark transition-colors line-clamp-1"
                         >
                           {trip.title}
                         </Link>
@@ -377,7 +377,7 @@ export default function OrganizerAnalyticsPage() {
                         </Badge>
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">{trip.bookings}</td>
-                      <td className="px-4 py-3 text-right tabular-nums font-semibold text-[#0c281c]">
+                      <td className="px-4 py-3 text-right tabular-nums font-semibold text-brand-dark">
                         €{trip.revenue.toLocaleString()}
                       </td>
                     </tr>

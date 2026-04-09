@@ -291,7 +291,7 @@ export default function TripDetailsPage() {
   if (tripLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0c281c]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-dark" />
       </div>
     );
   }
@@ -357,7 +357,7 @@ export default function TripDetailsPage() {
       <>
         {eventSchema && <StructuredData data={eventSchema} />}
         <StructuredData data={breadcrumbSchema} />
-        <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-stone-50 via-brand-gold/30 to-stone-50 p-4 md:p-8">
           <div className="max-w-5xl mx-auto">
             <Button
               variant="outline"
@@ -391,12 +391,12 @@ export default function TripDetailsPage() {
                 )}
 
                 <Card className="p-6">
-                  <h1 className="text-3xl md:text-4xl font-bold text-[#0c281c] mb-2" style={{ fontFamily: 'var(--font-heading)' }}>{trip.title}</h1>
+                  <h1 className="text-3xl md:text-4xl font-bold text-brand-dark mb-2" style={{ fontFamily: 'var(--font-heading)' }}>{trip.title}</h1>
 
                   {organizer && (
                     <Link
                       to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
-                      className="inline-flex items-center gap-2 text-muted-foreground hover:text-[#0c281c] mb-4"
+                      className="inline-flex items-center gap-2 text-muted-foreground hover:text-brand-dark mb-4"
                     >
                       <UserIcon className="w-4 h-4" />
                       <span>{t('trip.organized_by')} {organizer.username || organizer.full_name}</span>
@@ -415,7 +415,7 @@ export default function TripDetailsPage() {
 
                   <div className="grid md:grid-cols-2 gap-4 mb-6">
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-[#0c281c]" />
+                      <MapPin className="w-5 h-5 text-brand-dark" />
                       <div>
                         <p className="text-sm text-muted-foreground">Location</p>
                         <p className="font-medium text-foreground">{trip.location}</p>
@@ -423,7 +423,7 @@ export default function TripDetailsPage() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-[#0c281c]" />
+                      <Clock className="w-5 h-5 text-brand-dark" />
                       <div>
                         <p className="text-sm text-muted-foreground">Date</p>
                         <p className="font-medium text-foreground">
@@ -453,7 +453,7 @@ export default function TripDetailsPage() {
                     </p>
                     <Button
                       onClick={() => navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`)}
-                      className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
+                      className="bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]"
                       aria-label={t('trip.login_to_continue')}
                     >
                       <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -473,7 +473,7 @@ export default function TripDetailsPage() {
                     </p>
                     <Button
                       onClick={() => navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`)}
-                      className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
+                      className="w-full bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]"
                       aria-label={t('common.login')}
                     >
                       <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -494,7 +494,7 @@ export default function TripDetailsPage() {
     <>
       {eventSchema && <StructuredData data={eventSchema} />}
       <StructuredData data={breadcrumbSchema} />
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-brand-gold/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-5xl mx-auto">
           <Button
             variant="outline"
@@ -530,12 +530,12 @@ export default function TripDetailsPage() {
                 </div>
 
                 {/* pr-20 only on md+ where the absolute ShareButton is visible */}
-                <h1 className="text-3xl md:text-4xl font-bold text-[#0c281c] mb-2 pr-0 md:pr-20" style={{ fontFamily: 'var(--font-heading)' }}>{trip.title}</h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-brand-dark mb-2 pr-0 md:pr-20" style={{ fontFamily: 'var(--font-heading)' }}>{trip.title}</h1>
 
                 {organizer && (
                   <Link
                     to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}
-                    className="inline-flex items-center gap-2 text-muted-foreground hover:text-[#0c281c] mb-4 transition-colors"
+                    className="inline-flex items-center gap-2 text-muted-foreground hover:text-brand-dark mb-4 transition-colors"
                   >
                     <UserIcon className="w-4 h-4" />
                     <span>{t('trip.organized_by')} {organizer.username || organizer.full_name}</span>
@@ -557,7 +557,7 @@ export default function TripDetailsPage() {
 
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
                   <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-[#0c281c]" />
+                    <MapPin className="w-5 h-5 text-brand-dark" />
                     <div>
                       <p className="text-sm text-muted-foreground">{t('trip.location')}</p>
                       <p className="font-medium text-foreground">{trip.location}</p>
@@ -565,7 +565,7 @@ export default function TripDetailsPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <Clock className="w-5 h-5 text-[#0c281c]" />
+                    <Clock className="w-5 h-5 text-brand-dark" />
                     <div>
                       <p className="text-sm text-muted-foreground">{t('trip.date')}</p>
                       <p className="font-medium text-foreground">
@@ -576,7 +576,7 @@ export default function TripDetailsPage() {
 
                   {trip.duration_hours && (
                     <div className="flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-[#0c281c]" />
+                      <Clock className="w-5 h-5 text-brand-dark" />
                       <div>
                         <p className="text-sm text-muted-foreground">{t('trip.duration')}</p>
                         <p className="font-medium text-foreground">{trip.duration_hours} {t('trip.hours')}</p>
@@ -585,7 +585,7 @@ export default function TripDetailsPage() {
                   )}
 
                   <div className="flex items-start gap-3">
-                    <Euro className="w-5 h-5 text-[#0c281c] mt-0.5" />
+                    <Euro className="w-5 h-5 text-brand-dark mt-0.5" />
                     <div>
                       <p className="text-sm text-muted-foreground">{t('trip.price')}</p>
                       {(() => {
@@ -617,7 +617,7 @@ export default function TripDetailsPage() {
 
                   {trip.departure_from && trip.departure_from.length > 0 && (
                     <div className="flex items-center gap-3 md:col-start-2">
-                      <MapPin className="w-5 h-5 text-[#0c281c]" />
+                      <MapPin className="w-5 h-5 text-brand-dark" />
                       <div>
                         <p className="text-sm text-muted-foreground">{language === 'el' ? 'Αναχώρηση Από' : 'Departure From'}</p>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -639,7 +639,7 @@ export default function TripDetailsPage() {
                       {trip.meeting_points.map((point, index) => (
                         <div key={index} className="bg-muted/30 p-3 rounded-lg">
                           <div className="flex items-start gap-3">
-                            <MapPin className="w-5 h-5 text-[#0c281c] mt-0.5 flex-shrink-0" />
+                            <MapPin className="w-5 h-5 text-brand-dark mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
                               <p className="font-medium text-foreground">{point.name}</p>
                               <p className="text-sm text-muted-foreground mt-1">{point.location}</p>
@@ -681,7 +681,7 @@ export default function TripDetailsPage() {
                             key={i}
                             className={isTransportTag
                               ? "bg-purple-100 text-purple-800 border-purple-300 border font-semibold"
-                              : "bg-[#f0e3c7]/40 text-[#0c281c] border-[#0c281c]/20 border"
+                              : "bg-brand-gold/40 text-brand-dark border-brand-dark/20 border"
                             }
                           >
                             {tag}
@@ -710,7 +710,7 @@ export default function TripDetailsPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={handleExternalLinkClick}
-                      className="inline-flex items-center gap-2 text-[#0c281c] hover:text-[#0c281c] font-medium"
+                      className="inline-flex items-center gap-2 text-brand-dark hover:text-brand-dark font-medium"
                     >
                       <ExternalLink className="w-4 h-4" />
                       {t('trip.external_link')}
@@ -723,7 +723,7 @@ export default function TripDetailsPage() {
             <div className="space-y-6">
               <Card className="p-6">
                 <div className="text-center py-6">
-                  <Users className="w-16 h-16 text-[#f0e3c7]/70 mx-auto mb-4" />
+                  <Users className="w-16 h-16 text-brand-gold/70 mx-auto mb-4" />
                   <h3 className="text-lg font-bold text-foreground mb-2">{t('trip.interested_in_trip')}</h3>
                   <p className="text-muted-foreground mb-4">
                     {organizerIsActivePremium
@@ -740,7 +740,7 @@ export default function TripDetailsPage() {
                       <div className="space-y-2">
                         <div className={`text-sm rounded-lg px-3 py-2.5 text-center font-medium ${
                           existingBooking.status === 'confirmed' ? 'bg-yellow-50 text-yellow-800 border border-yellow-200' :
-                          existingBooking.status === 'paid'      ? 'bg-[#f0e3c7]/40 text-[#0c281c] border border-[#0c281c]/20' :
+                          existingBooking.status === 'paid'      ? 'bg-brand-gold/40 text-brand-dark border border-brand-dark/20' :
                           'bg-blue-50 text-blue-800 border border-blue-200'
                         }`}>
                           {existingBooking.status === 'confirmed' ? t('booking.already_confirmed') :
@@ -759,7 +759,7 @@ export default function TripDetailsPage() {
                       </Button>
                     ) : (
                       <Button
-                        className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
+                        className="w-full bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]"
                         onClick={() => {
                           if (!user) {
                             navigate(`/login?redirect=${encodeURIComponent(window.location.href)}`);
@@ -785,7 +785,7 @@ export default function TripDetailsPage() {
                   {!organizerIsActivePremium && trip.event_url && (
                     <Button
                       asChild
-                      className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
+                      className="w-full bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]"
                       onClick={handleBookNowClick}
                     >
                       <a href={trip.event_url} target="_blank" rel="noopener noreferrer">
@@ -797,7 +797,7 @@ export default function TripDetailsPage() {
 
                   {!organizerIsActivePremium && !trip.event_url && organizer?.plan !== 'premium' && organizer ? (
                     <Link to={`${createPageUrl("OrganizerProfile")}?code=${organizer.organizer_code}`}>
-                      <Button className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]">
+                      <Button className="w-full bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]">
                         {t('trip.view_organizer_profile')}
                       </Button>
                     </Link>

@@ -23,7 +23,7 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
 
 const LoadingFallback = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-background">
-    <div className="w-8 h-8 border-4 border-[#0c281c]/20 border-t-[#0c281c] rounded-full animate-spin"></div>
+    <div className="w-8 h-8 border-4 border-brand-dark/20 border-t-brand-dark rounded-full animate-spin"></div>
   </div>
 );
 

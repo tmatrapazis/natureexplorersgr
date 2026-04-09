@@ -45,7 +45,7 @@ export default function WelcomeModal({ user, onClose }) {
       <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-[#0c281c] to-[#0c281c]/80 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-brand-dark to-brand-dark/80 rounded-full flex items-center justify-center">
               <Mountain className="w-8 h-8 text-white" />
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function WelcomeModal({ user, onClose }) {
                     <Link 
                       to={createPageUrl("TermsOfUse")} 
                       target="_blank"
-                      className="text-[#0c281c] hover:text-[#0c281c] underline"
+                      className="text-brand-dark hover:text-brand-dark underline"
                     >
                       Όρους Χρήσης
                     </Link>
@@ -87,7 +87,7 @@ export default function WelcomeModal({ user, onClose }) {
                     <Link 
                       to={createPageUrl("TermsOfUse")} 
                       target="_blank"
-                      className="text-[#0c281c] hover:text-[#0c281c] underline"
+                      className="text-brand-dark hover:text-brand-dark underline"
                     >
                       Terms of Use
                     </Link>
@@ -103,7 +103,7 @@ export default function WelcomeModal({ user, onClose }) {
             </div>
           </div>
 
-          <div className="flex items-start gap-3 p-4 bg-[#f0e3c7]/40 rounded-lg border border-[#0c281c]/20">
+          <div className="flex items-start gap-3 p-4 bg-brand-gold/40 rounded-lg border border-brand-dark/20">
             <Checkbox 
               id="newsletter" 
               checked={newsletterSubscribed}
@@ -128,7 +128,7 @@ export default function WelcomeModal({ user, onClose }) {
         <Button 
           onClick={handleContinue}
           disabled={!acceptedTerms || isSubmitting}
-          className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90"
+          className="w-full bg-brand-dark hover:bg-brand-dark/90"
         >
           {isSubmitting ? (
             language === 'el' ? 'Παρακαλώ περιμένετε...' : 'Please wait...'

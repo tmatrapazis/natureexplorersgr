@@ -209,7 +209,7 @@ export default function EditGuideProfilePage() {
   if (guideLoading || !currentUser) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0c281c]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-dark" />
       </div>
     );
   }
@@ -230,7 +230,7 @@ export default function EditGuideProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-brand-gold/30 to-stone-50 py-12 px-4">
       <div className="container mx-auto max-w-4xl">
         <div className="flex items-center justify-between mb-6">
           <Button
@@ -406,7 +406,7 @@ export default function EditGuideProfilePage() {
                 </div>
                 <div className="flex flex-wrap gap-2 mt-3">
                   {formData.certifications.map((cert, index) => (
-                    <div key={index} className="bg-[#f0e3c7]/40 text-[#0c281c] px-3 py-1 rounded-full flex items-center gap-2">
+                    <div key={index} className="bg-brand-gold/40 text-brand-dark px-3 py-1 rounded-full flex items-center gap-2">
                       <span>{cert}</span>
                       <button
                         type="button"
@@ -490,7 +490,7 @@ export default function EditGuideProfilePage() {
                 <Button
                   type="submit"
                   disabled={updateGuideMutation.isPending}
-                  className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
+                  className="bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]"
                   aria-label={updateGuideMutation.isPending ? (language === 'el' ? 'Αποθήκευση…' : 'Saving…') : (language === 'el' ? 'Αποθήκευση αλλαγών' : 'Save changes')}
                 >
                   {updateGuideMutation.isPending ? (
@@ -523,7 +523,7 @@ export default function EditGuideProfilePage() {
             <AlertDialogFooter>
               <AlertDialogAction
                 onClick={() => navigate(createPageUrl('GuideProfile') + `?id=${guideId}`)}
-                className="bg-[#0c281c] hover:bg-[#0c281c]/90"
+                className="bg-brand-dark hover:bg-brand-dark/90"
               >
                 {language === 'el' ? 'Προβολή Προφίλ' : 'View Profile'}
               </AlertDialogAction>

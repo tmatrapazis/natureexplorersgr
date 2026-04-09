@@ -48,7 +48,7 @@ export default function PublicHeader() {
 
       {/* Mobile-only header */}
       <header
-        className="md:hidden bg-[#0c281c] sticky top-0 z-50"
+        className="md:hidden bg-brand-dark sticky top-0 z-50"
         style={{
           paddingTop: 'max(env(safe-area-inset-top), 0.5rem)',
         }}
@@ -70,7 +70,7 @@ export default function PublicHeader() {
               className="h-8 w-auto"
             />
             <span
-              className="font-bold text-[#f0e3c7] text-base"
+              className="font-bold text-brand-gold text-base"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
               Nature Explorers
@@ -83,13 +83,13 @@ export default function PublicHeader() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="min-h-[44px] min-w-[44px] text-[#f0e3c7] hover:bg-[#f0e3c7]/10"
+                className="min-h-[44px] min-w-[44px] text-brand-gold hover:bg-brand-gold/10"
                 aria-label="Open menu"
               >
                 <Menu className="w-6 h-6" aria-hidden="true" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] bg-[#0c281c] border-l border-[#f0e3c7]/10">
+            <SheetContent side="right" className="w-[280px] bg-brand-dark border-l border-brand-gold/10">
               <VisuallyHidden>
                 <SheetTitle>Navigation Menu</SheetTitle>
                 <SheetDescription>Main navigation links</SheetDescription>
@@ -98,7 +98,7 @@ export default function PublicHeader() {
                 <Link
                   to={createPageUrl('Calendar')}
                   onClick={handleNavClick(createPageUrl('Calendar'))}
-                  className="text-[#f0e3c7] hover:text-[#8B6914] transition-colors text-base flex items-center gap-3 min-h-[44px]"
+                  className="text-brand-gold hover:text-brand-gold-accent transition-colors text-base flex items-center gap-3 min-h-[44px]"
                   aria-label={t('navigation.calendar')}
                 >
                   <Calendar className="w-5 h-5" aria-hidden="true" />
@@ -107,7 +107,7 @@ export default function PublicHeader() {
                 <Link
                   to={createPageUrl('OrganizersList')}
                   onClick={handleNavClick(createPageUrl('OrganizersList'))}
-                  className="text-[#f0e3c7] hover:text-[#8B6914] transition-colors text-base flex items-center gap-3 min-h-[44px]"
+                  className="text-brand-gold hover:text-brand-gold-accent transition-colors text-base flex items-center gap-3 min-h-[44px]"
                   aria-label={t('navigation.organizers')}
                 >
                   <Users className="w-5 h-5" aria-hidden="true" />
@@ -116,7 +116,7 @@ export default function PublicHeader() {
                 <Link
                   to={createPageUrl('Guides')}
                   onClick={handleNavClick(createPageUrl('Guides'))}
-                  className="text-[#f0e3c7] hover:text-[#8B6914] transition-colors text-base flex items-center gap-3 min-h-[44px]"
+                  className="text-brand-gold hover:text-brand-gold-accent transition-colors text-base flex items-center gap-3 min-h-[44px]"
                   aria-label={t('navigation.guides')}
                 >
                   <Compass className="w-5 h-5" aria-hidden="true" />
@@ -125,7 +125,7 @@ export default function PublicHeader() {
                 <Link
                   to={createPageUrl('GreekRefuges')}
                   onClick={handleNavClick(createPageUrl('GreekRefuges'))}
-                  className="text-[#f0e3c7] hover:text-[#8B6914] transition-colors text-base flex items-center gap-3 min-h-[44px]"
+                  className="text-brand-gold hover:text-brand-gold-accent transition-colors text-base flex items-center gap-3 min-h-[44px]"
                   aria-label={t('navigation.refuges')}
                 >
                   <Home className="w-5 h-5" aria-hidden="true" />
@@ -134,21 +134,21 @@ export default function PublicHeader() {
                 <Link
                   to="/about"
                   onClick={handleNavClick('/about')}
-                  className="text-[#f0e3c7] hover:text-[#8B6914] transition-colors text-base flex items-center gap-3 min-h-[44px]"
+                  className="text-brand-gold hover:text-brand-gold-accent transition-colors text-base flex items-center gap-3 min-h-[44px]"
                   aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
                 >
                   <Info className="w-5 h-5" aria-hidden="true" />
                   {language === 'el' ? 'Σχετικά' : 'About'}
                 </Link>
 
-                <div className="border-t border-[#f0e3c7]/20 pt-5">
-                  <p className="text-sm text-[#f0e3c7]/60 mb-3">{language === 'el' ? 'Γλώσσα' : 'Language'}</p>
+                <div className="border-t border-brand-gold/20 pt-5">
+                  <p className="text-sm text-brand-gold/60 mb-3">{language === 'el' ? 'Γλώσσα' : 'Language'}</p>
                   <div className="flex gap-2 mb-4">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setLanguage('en')}
-                      className={`flex-1 min-h-[44px] border-[#f0e3c7]/40 text-[#f0e3c7] hover:bg-[#f0e3c7]/10 ${language === 'en' ? 'bg-[#f0e3c7]/10' : 'bg-transparent'}`}
+                      className={`flex-1 min-h-[44px] border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 ${language === 'en' ? 'bg-brand-gold/10' : 'bg-transparent'}`}
                       aria-label="Switch to English"
                       aria-pressed={language === 'en'}
                     >
@@ -158,7 +158,7 @@ export default function PublicHeader() {
                       variant="outline"
                       size="sm"
                       onClick={() => setLanguage('el')}
-                      className={`flex-1 min-h-[44px] border-[#f0e3c7]/40 text-[#f0e3c7] hover:bg-[#f0e3c7]/10 ${language === 'el' ? 'bg-[#f0e3c7]/10' : 'bg-transparent'}`}
+                      className={`flex-1 min-h-[44px] border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10 ${language === 'el' ? 'bg-brand-gold/10' : 'bg-transparent'}`}
                       aria-label="Αλλαγή σε Ελληνικά"
                       aria-pressed={language === 'el'}
                     >
@@ -169,7 +169,7 @@ export default function PublicHeader() {
                   {!user ? (
                     <Button
                       onClick={handleLogin}
-                      className="w-full min-h-[44px] bg-[#8B6914] text-[#0c281c] hover:bg-[#8B6914]/90 font-bold"
+                      className="w-full min-h-[44px] bg-brand-gold-accent text-brand-dark hover:bg-brand-gold-accent/90 font-bold"
                       style={{ fontFamily: 'var(--font-heading)' }}
                       aria-label={t('common.login')}
                     >
@@ -180,7 +180,7 @@ export default function PublicHeader() {
                     <Button
                       onClick={handleLogout}
                       variant="outline"
-                      className="w-full min-h-[44px] border-[#f0e3c7]/40 text-[#f0e3c7] hover:bg-[#f0e3c7]/10"
+                      className="w-full min-h-[44px] border-brand-gold/40 text-brand-gold hover:bg-brand-gold/10"
                       aria-label={t('common.logout')}
                     >
                       <LogOut className="w-4 h-4 mr-2" aria-hidden="true" />

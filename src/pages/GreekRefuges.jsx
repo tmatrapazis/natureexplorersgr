@@ -79,7 +79,7 @@ export default function GreekRefuges() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0c281c]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-dark" />
       </div>
     );
   }
@@ -89,7 +89,7 @@ export default function GreekRefuges() {
         {/* Header */}
         <div className="text-center mb-6 md:mb-8">
           <div className="flex items-center justify-center gap-2 md:gap-3 mb-3 md:mb-4">
-            <Mountain className="w-8 h-8 md:w-12 md:h-12 text-[#0c281c] flex-shrink-0" />
+            <Mountain className="w-8 h-8 md:w-12 md:h-12 text-brand-dark flex-shrink-0" />
             <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-foreground break-words min-w-0">
               {t('refuges.page_title')}
             </h1>
@@ -116,7 +116,7 @@ export default function GreekRefuges() {
         <Card className="w-full max-w-full">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-              <MapPin className="w-5 h-5 text-[#0c281c] flex-shrink-0" />
+              <MapPin className="w-5 h-5 text-brand-dark flex-shrink-0" />
               <span className="break-words min-w-0">{t('refuges.list_title')}</span>
             </CardTitle>
             <p className="text-xs md:text-sm text-muted-foreground mt-2 break-words">
@@ -183,8 +183,8 @@ export default function GreekRefuges() {
                     <tr
                       key={refuge.id}
                       onClick={() => handleRowClick(refuge)}
-                      className={`border-b cursor-pointer hover:bg-[#f0e3c7]/40 transition-colors ${
-                        selectedRefuge?.id === refuge.id ? 'bg-[#f0e3c7]/40' : ''
+                      className={`border-b cursor-pointer hover:bg-brand-gold/40 transition-colors ${
+                        selectedRefuge?.id === refuge.id ? 'bg-brand-gold/40' : ''
                       }`}
                     >
                       <td className="p-3">
@@ -195,7 +195,7 @@ export default function GreekRefuges() {
                               href={refuge.website}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-xs text-[#0c281c] hover:underline inline-flex items-center gap-1"
+                              className="text-xs text-brand-dark hover:underline inline-flex items-center gap-1"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <ExternalLink className="w-3 h-3" />
@@ -262,7 +262,7 @@ export default function GreekRefuges() {
                         {refuge.capacity > 0 ? `${refuge.capacity} ${t('refuges.people')}` : '-'}
                       </td>
                       <td className="p-3">
-                        <Badge className="bg-[#0c281c] text-white">
+                        <Badge className="bg-brand-dark text-white">
                           {refuge.type}
                         </Badge>
                       </td>
@@ -308,14 +308,14 @@ export default function GreekRefuges() {
                 <div
                   key={refuge.id}
                   onClick={() => handleRowClick(refuge)}
-                  className={`border rounded-lg p-4 cursor-pointer hover:border-[#0c281c] transition-all w-full max-w-full ${
-                    selectedRefuge?.id === refuge.id ? 'bg-[#f0e3c7]/40 border-[#0c281c]' : 'bg-card'
+                  className={`border rounded-lg p-4 cursor-pointer hover:border-brand-dark transition-all w-full max-w-full ${
+                    selectedRefuge?.id === refuge.id ? 'bg-brand-gold/40 border-brand-dark' : 'bg-card'
                   }`}
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="font-semibold text-foreground text-base break-words min-w-0 flex-1">{refuge.name}</h3>
-                      <Badge className="bg-[#0c281c] text-white flex-shrink-0 text-xs">
+                      <Badge className="bg-brand-dark text-white flex-shrink-0 text-xs">
                         {refuge.type}
                       </Badge>
                     </div>
@@ -342,7 +342,7 @@ export default function GreekRefuges() {
                           href={refuge.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-[#0c281c] hover:underline inline-flex items-center gap-1"
+                          className="text-xs text-brand-dark hover:underline inline-flex items-center gap-1"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <ExternalLink className="w-3 h-3" />
@@ -413,7 +413,7 @@ export default function GreekRefuges() {
               href="https://www.topoguide.gr/greece/mountain_refuges.php"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#0c281c] hover:underline"
+              className="text-brand-dark hover:underline"
             >
               Topoguide.gr
             </a>

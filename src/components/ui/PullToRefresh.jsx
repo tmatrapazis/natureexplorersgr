@@ -115,10 +115,10 @@ export default function PullToRefresh({ onRefresh, children }) {
       >
         <div className="bg-background rounded-full p-2 shadow-lg">
           {isRefreshing ? (
-            <Loader2 className="w-6 h-6 text-[#0c281c] animate-spin" />
+            <Loader2 className="w-6 h-6 text-brand-dark animate-spin" />
           ) : (
             <RefreshCw
-              className="w-6 h-6 text-[#0c281c]"
+              className="w-6 h-6 text-brand-dark"
               style={{ transform: `rotate(${rotation}deg)` }}
             />
           )}

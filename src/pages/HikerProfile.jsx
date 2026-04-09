@@ -55,7 +55,7 @@ export default function HikerProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-[#0c281c]" />
+        <Loader2 className="w-12 h-12 animate-spin text-brand-dark" />
       </div>
     );
   }
@@ -74,7 +74,7 @@ export default function HikerProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-brand-gold/30 to-stone-50 p-4 md:p-8">
       <div className="max-w-xl mx-auto">
         <Button
           variant="outline"
@@ -88,7 +88,7 @@ export default function HikerProfilePage() {
         <div className="space-y-6">
           <Card>
             <CardHeader className="items-center text-center p-8 bg-muted/30">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#0c281c] to-[#0c281c]/80 flex items-center justify-center shadow-lg mb-4">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-brand-dark to-brand-dark/80 flex items-center justify-center shadow-lg mb-4">
                   {hiker.profile_picture_url ? (
                     <img src={hiker.profile_picture_url} alt={hiker.username || hiker.full_name} className="w-full h-full object-cover rounded-full" />
                   ) : (
@@ -99,7 +99,7 @@ export default function HikerProfilePage() {
               {hiker.training_status && <Badge variant="secondary" className="mt-2">{hiker.training_status} {t('hiker_profile.hiker')}</Badge>}
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-              <InfoField icon={<Mail className="w-5 h-5 text-muted-foreground" />} label={t('hiker_profile.email')} value={<a href={`mailto:${hiker.email}`} className="text-[#0c281c] hover:underline">{hiker.email}</a>} />
+              <InfoField icon={<Mail className="w-5 h-5 text-muted-foreground" />} label={t('hiker_profile.email')} value={<a href={`mailto:${hiker.email}`} className="text-brand-dark hover:underline">{hiker.email}</a>} />
               <InfoField icon={<Phone className="w-5 h-5 text-muted-foreground" />} label={t('hiker_profile.mobile_number')} value={hiker.phone_number} />
             </CardContent>
           </Card>

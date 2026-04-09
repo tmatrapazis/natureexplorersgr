@@ -14,7 +14,7 @@ import { formatPriceForCard } from "../helpers/pricingHelpers";
 
 const STATUS_BADGE = {
   draft: "bg-muted-foreground",
-  upcoming: "bg-[#0c281c]",
+  upcoming: "bg-brand-dark",
   "happening now": "bg-blue-600",
   completed: "bg-muted-foreground",
   cancelled: "bg-red-600",
@@ -104,11 +104,11 @@ function OrganizerTripCard({
 
           <div className="grid sm:grid-cols-2 gap-3 mb-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-[#0c281c]" />
+              <MapPin className="w-4 h-4 text-brand-dark" />
               <span>{trip.location}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-[#0c281c]" />
+              <Users className="w-4 h-4 text-brand-dark" />
               <span>
                 {remainingSlots !== null
                   ? (language === 'el' ? `${remainingSlots} διαθέσιμες θέσεις` : `${remainingSlots} slots available`)
@@ -116,7 +116,7 @@ function OrganizerTripCard({
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <Euro className="w-4 h-4 text-[#0c281c]" />
+              <Euro className="w-4 h-4 text-brand-dark" />
               <span className="font-medium text-foreground">{formatPriceForCard(trip, language)}</span>
             </div>
             {pendingBookings > 0 && (
@@ -132,9 +132,9 @@ function OrganizerTripCard({
               <p className="text-xs font-semibold text-muted-foreground mb-2">{t('organizer.booking_insights')}</p>
               <div className="flex flex-wrap gap-4 text-sm">
                 <span>{t('organizer.insights_pending')}: <strong>{insights.pending}</strong></span>
-                <span>{t('organizer.insights_confirmed')}: <strong className="text-[#0c281c]">{insights.confirmed}</strong></span>
+                <span>{t('organizer.insights_confirmed')}: <strong className="text-brand-dark">{insights.confirmed}</strong></span>
                 {insights.paid > 0 && (
-                  <span>Paid: <strong className="text-[#0c281c]">{insights.paid}</strong></span>
+                  <span>Paid: <strong className="text-brand-dark">{insights.paid}</strong></span>
                 )}
                 <span>{t('organizer.insights_declined')}: <strong className="text-red-600">{insights.declined}</strong></span>
               </div>

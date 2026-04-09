@@ -263,7 +263,7 @@ export default function BookingCard({ booking, hikerProfile, paymentInstructions
                   </div>
                 ) : (
                   <div className="flex gap-2">
-                    <Button size="sm" className="bg-[#0c281c] hover:bg-[#0c281c]/90 flex-1" onClick={handleConfirm} disabled={updateMutation.isPending}>
+                    <Button size="sm" className="bg-brand-dark hover:bg-brand-dark/90 flex-1" onClick={handleConfirm} disabled={updateMutation.isPending}>
                       <Check className="w-3 h-3 mr-1" /> {t('booking.approve')}
                     </Button>
                     <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50 flex-1" onClick={() => setShowRejectInput(true)}>
@@ -275,7 +275,7 @@ export default function BookingCard({ booking, hikerProfile, paymentInstructions
             )}
 
             {booking.status === 'confirmed' && (
-              <Button size="sm" className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90" onClick={handleMarkPaid} disabled={updateMutation.isPending}>
+              <Button size="sm" className="w-full bg-brand-dark hover:bg-brand-dark/90" onClick={handleMarkPaid} disabled={updateMutation.isPending}>
                 <CreditCard className="w-3 h-3 mr-1" /> {t('booking.mark_paid')}
               </Button>
             )}

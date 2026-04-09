@@ -89,28 +89,28 @@ export default function LoginPage() {
   if (isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0c281c]" />
+        <Loader2 className="w-8 h-8 animate-spin text-brand-dark" />
       </div>
     );
   }
 
   if (emailSent) {
     return (
-      <div className="min-h-screen bg-[#0c281c] flex items-center justify-center p-4">
-        <Card className="w-full max-w-md text-center bg-[#f0e3c7] rounded-2xl shadow-2xl border-0">
+      <div className="min-h-screen bg-brand-dark flex items-center justify-center p-4">
+        <Card className="w-full max-w-md text-center bg-brand-gold rounded-2xl shadow-2xl border-0">
           <CardHeader>
-            <div className="mx-auto w-12 h-12 bg-[#0c281c]/10 rounded-full flex items-center justify-center mb-2">
-              <Mountain className="w-6 h-6 text-[#0c281c]" />
+            <div className="mx-auto w-12 h-12 bg-brand-dark/10 rounded-full flex items-center justify-center mb-2">
+              <Mountain className="w-6 h-6 text-brand-dark" />
             </div>
-            <CardTitle className="text-[#0c281c]" style={{ fontFamily: 'var(--font-heading)' }}>Check your email</CardTitle>
-            <CardDescription className="text-[#0c281c]/60">
+            <CardTitle className="text-brand-dark" style={{ fontFamily: 'var(--font-heading)' }}>Check your email</CardTitle>
+            <CardDescription className="text-brand-dark/60">
               {mode === 'forgot'
                 ? `We sent a password reset link to ${email}`
                 : `We sent a confirmation link to ${email}. Click it to activate your account.`}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full border-[#0c281c]/20 text-[#0c281c] hover:bg-[#0c281c]/10" onClick={() => { setEmailSent(false); setMode('signin'); }}>
+            <Button variant="outline" className="w-full border-brand-dark/20 text-brand-dark hover:bg-brand-dark/10" onClick={() => { setEmailSent(false); setMode('signin'); }}>
               Back to sign in
             </Button>
           </CardContent>
@@ -120,26 +120,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0c281c] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-brand-dark flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
 
         {/* Logo */}
         <div className="text-center">
           <div className="inline-flex items-center gap-2 mb-2">
-            <Mountain className="w-8 h-8 text-[#f0e3c7]" />
-            <span className="text-2xl font-bold text-[#f0e3c7]" style={{ fontFamily: 'var(--font-heading)' }}>Nature Explorers</span>
+            <Mountain className="w-8 h-8 text-brand-gold" />
+            <span className="text-2xl font-bold text-brand-gold" style={{ fontFamily: 'var(--font-heading)' }}>Nature Explorers</span>
           </div>
-          <p className="text-sm text-[#f0e3c7]/60">Discover the wild side of Greece</p>
+          <p className="text-sm text-brand-gold/60">Discover the wild side of Greece</p>
         </div>
 
-        <Card className="bg-[#f0e3c7] rounded-2xl shadow-2xl border-0">
+        <Card className="bg-brand-gold rounded-2xl shadow-2xl border-0">
           <CardHeader>
-            <CardTitle className="text-[#0c281c]" style={{ fontFamily: 'var(--font-heading)' }}>
+            <CardTitle className="text-brand-dark" style={{ fontFamily: 'var(--font-heading)' }}>
               {mode === 'signin' && 'Sign in'}
               {mode === 'signup' && 'Create account'}
               {mode === 'forgot' && 'Reset password'}
             </CardTitle>
-            <CardDescription className="text-[#0c281c]/60">
+            <CardDescription className="text-brand-dark/60">
               {mode === 'signin' && 'Welcome back to Nature Explorers'}
               {mode === 'signup' && 'Join the hiking community'}
               {mode === 'forgot' && "We'll send you a reset link"}
@@ -214,7 +214,7 @@ export default function LoginPage() {
                     {mode === 'signin' && (
                       <button
                         type="button"
-                        className="text-xs text-[#0c281c] hover:underline"
+                        className="text-xs text-brand-dark hover:underline"
                         onClick={() => setMode('forgot')}
                       >
                         Forgot password?
@@ -235,7 +235,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 text-[#f0e3c7] min-h-[44px]"
+                className="w-full bg-brand-dark hover:bg-brand-dark/90 text-brand-gold min-h-[44px]"
                 style={{ fontFamily: 'var(--font-heading)' }}
                 disabled={loading}
               >
@@ -251,7 +251,7 @@ export default function LoginPage() {
               {mode === 'signin' && (
                 <>
                   Don't have an account?{' '}
-                  <button className="text-[#0c281c] font-medium hover:underline" onClick={() => setMode('signup')}>
+                  <button className="text-brand-dark font-medium hover:underline" onClick={() => setMode('signup')}>
                     Sign up
                   </button>
                 </>
@@ -259,7 +259,7 @@ export default function LoginPage() {
               {(mode === 'signup' || mode === 'forgot') && (
                 <>
                   Already have an account?{' '}
-                  <button className="text-[#0c281c] font-medium hover:underline" onClick={() => setMode('signin')}>
+                  <button className="text-brand-dark font-medium hover:underline" onClick={() => setMode('signin')}>
                     Sign in
                   </button>
                 </>

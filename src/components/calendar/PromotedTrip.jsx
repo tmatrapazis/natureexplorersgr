@@ -71,7 +71,7 @@ function PromotedTrip({ trips, currentDate }) {
         />
 
         {/* Deep Forest gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0c281c] via-[#0c281c]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/50 to-transparent" />
 
         {/* Promoted badge — top-left */}
         <div className="absolute top-3 left-3 flex items-center gap-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
@@ -81,7 +81,7 @@ function PromotedTrip({ trips, currentDate }) {
 
         {/* View count for organizers — top-right */}
         {user?.organizer_code && user.organizer_code.trim().length > 0 && (
-          <div className="absolute top-3 right-3 flex items-center gap-1 bg-[#0c281c]/70 text-[#f0e3c7]/90 text-xs px-2 py-1 rounded-full">
+          <div className="absolute top-3 right-3 flex items-center gap-1 bg-brand-dark/70 text-brand-gold/90 text-xs px-2 py-1 rounded-full">
             <Eye className="w-3 h-3" aria-hidden="true" />
             <span>{promotedTrip.view_count || 0}</span>
           </div>
@@ -93,7 +93,7 @@ function PromotedTrip({ trips, currentDate }) {
           {promotedTrip.difficulty && (
             <div>
               <span
-                className="text-xs font-bold bg-[#8B6914] text-[#f0e3c7] px-2.5 py-0.5 rounded-full uppercase tracking-wide"
+                className="text-xs font-bold bg-brand-gold-accent text-brand-gold px-2.5 py-0.5 rounded-full uppercase tracking-wide"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
                 {promotedTrip.difficulty}
@@ -103,7 +103,7 @@ function PromotedTrip({ trips, currentDate }) {
 
           {/* Title */}
           <h3
-            className="font-bold text-[#f0e3c7] text-xl md:text-2xl leading-tight line-clamp-2"
+            className="font-bold text-brand-gold text-xl md:text-2xl leading-tight line-clamp-2"
             style={{ fontFamily: 'var(--font-heading)' }}
           >
             {promotedTrip.title}
@@ -111,7 +111,7 @@ function PromotedTrip({ trips, currentDate }) {
 
           {/* Meta row */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 text-[#f0e3c7]/80 text-sm">
+            <div className="flex items-center gap-3 text-brand-gold/80 text-sm">
               <span className="flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                 {formattedDate}
@@ -122,7 +122,7 @@ function PromotedTrip({ trips, currentDate }) {
               </span>
             </div>
             <span
-              className="font-bold text-[#8B6914] text-lg"
+              className="font-bold text-brand-gold-accent text-lg"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
               {price}

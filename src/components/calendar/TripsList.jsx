@@ -13,8 +13,9 @@ import { useTranslation } from '../translations/useTranslations';
 import { getTripImage, handleImageError } from '../helpers/imageHelpers';
 import OptimizedImage from '@/components/ui/OptimizedImage';
 import { formatPriceForCard } from '../helpers/pricingHelpers';
+import { prefetchTripDetails } from '@/lib/prefetch';
 
-const difficultyBadgeClass = "bg-[#8B6914] text-[#f0e3c7] text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wide";
+const difficultyBadgeClass = "bg-brand-gold-accent text-brand-gold text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wide";
 
 const TripsList = React.memo(React.forwardRef(function TripsList({ trips, selectedDate, promotedTripId }, ref) {
   const { language } = useLanguage();
@@ -79,6 +80,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
               <Link
                 to={`${createPageUrl("TripDetails")}?id=${trip.id}`}
                 onClick={() => handleViewDetailsClick(trip)}
+                onPointerEnter={() => prefetchTripDetails(trip.id)}
                 aria-label={`${t('trip.view_details')}: ${trip.title}`}
                 className="block"
               >
@@ -101,7 +103,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
                   />
 
                   {/* Deep Forest gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0c281c] via-[#0c281c]/50 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/50 to-transparent" />
 
                   {/* Content anchored to bottom */}
                   <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
@@ -130,7 +132,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
 
                     {/* Trip title */}
                     <h4
-                      className="font-bold text-[#f0e3c7] text-lg leading-tight line-clamp-2"
+                      className="font-bold text-brand-gold text-lg leading-tight line-clamp-2"
                       style={{ fontFamily: 'var(--font-heading)' }}
                     >
                       {trip.title}
@@ -138,12 +140,12 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
 
                     {/* Meta row: date + price */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-[#f0e3c7]/80 text-sm">
+                      <div className="flex items-center gap-1.5 text-brand-gold/80 text-sm">
                         <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                         <span>{formattedDate}</span>
                       </div>
                       <span
-                        className="font-bold text-[#8B6914] text-base"
+                        className="font-bold text-brand-gold-accent text-base"
                         style={{ fontFamily: 'var(--font-heading)' }}
                       >
                         {price}
@@ -152,7 +154,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
 
                     {/* Organizer */}
                     {organizer && organizer.full_name && (
-                      <div className="flex items-center gap-1.5 text-[#f0e3c7]/60 text-xs">
+                      <div className="flex items-center gap-1.5 text-brand-gold/60 text-xs">
                         <User className="w-3 h-3" aria-hidden="true" />
                         <span>by {organizer.full_name}</span>
                       </div>

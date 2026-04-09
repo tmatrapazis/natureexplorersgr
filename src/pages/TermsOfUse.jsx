@@ -16,7 +16,7 @@ export default function TermsOfUsePage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-brand-gold/30 to-stone-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <Card className="p-8 md:p-12">
           {language === 'el' ? (
@@ -58,7 +58,7 @@ export default function TermsOfUsePage() {
                   </p>
                   <p className="leading-relaxed mt-2">
                     Αν κάποιος διοργανωτής ή κάτοχος περιεχομένου επιθυμεί την αφαίρεση ή τροποποίηση στοιχείων που τον αφορούν, μπορεί να επικοινωνήσει στο email{' '}
-                    <a href="mailto:natureexplorersgr@gmail.com" className="text-[#0c281c] hover:text-[#0c281c] font-medium">
+                    <a href="mailto:natureexplorersgr@gmail.com" className="text-brand-dark hover:text-brand-dark font-medium">
                       natureexplorersgr@gmail.com
                     </a>
                     {' '}και το αίτημα θα ικανοποιηθεί άμεσα.
@@ -91,7 +91,7 @@ export default function TermsOfUsePage() {
                   <h2 className="text-2xl font-bold text-stone-900 mb-3">6. Επικοινωνία</h2>
                   <p className="leading-relaxed">
                     Για οποιοδήποτε θέμα που αφορά δικαιώματα, περιεχόμενο ή πληροφορίες, μπορείτε να επικοινωνείτε στο{' '}
-                    <a href="mailto:natureexplorersgr@gmail.com" className="text-[#0c281c] hover:text-[#0c281c] font-medium">
+                    <a href="mailto:natureexplorersgr@gmail.com" className="text-brand-dark hover:text-brand-dark font-medium">
                       natureexplorersgr@gmail.com
                     </a>
                   </p>
@@ -144,7 +144,7 @@ export default function TermsOfUsePage() {
                   </p>
                   <p className="leading-relaxed mt-2">
                     If any organizer or content owner wishes their materials to be removed or modified, they may contact{' '}
-                    <a href="mailto:natureexplorersgr@gmail.com" className="text-[#0c281c] hover:text-[#0c281c] font-medium">
+                    <a href="mailto:natureexplorersgr@gmail.com" className="text-brand-dark hover:text-brand-dark font-medium">
                       natureexplorersgr@gmail.com
                     </a>
                     , and the request will be processed immediately.
@@ -177,7 +177,7 @@ export default function TermsOfUsePage() {
                   <h2 className="text-2xl font-bold text-stone-900 mb-3">6. Contact</h2>
                   <p className="leading-relaxed">
                     For any matter related to copyrights, content, or information displayed on the Platform, please contact{' '}
-                    <a href="mailto:natureexplorersgr@gmail.com" className="text-[#0c281c] hover:text-[#0c281c] font-medium">
+                    <a href="mailto:natureexplorersgr@gmail.com" className="text-brand-dark hover:text-brand-dark font-medium">
                       natureexplorersgr@gmail.com
                     </a>
                   </p>

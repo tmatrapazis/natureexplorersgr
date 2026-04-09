@@ -121,7 +121,7 @@ export default function OrganizersListPage() {
             {' '}
             <a
               href="mailto:natureexplorersgr@gmail.com"
-              className="inline-flex items-center gap-1 text-[#0c281c] hover:text-[#0c281c] font-medium transition-colors"
+              className="inline-flex items-center gap-1 text-brand-dark hover:text-brand-dark font-medium transition-colors"
             >
               <Mail className="w-4 h-4" aria-hidden="true" />
               Email
@@ -133,7 +133,7 @@ export default function OrganizersListPage() {
               href="https://www.instagram.com/natureexplorers.gr/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[#0c281c] hover:text-[#0c281c] font-medium transition-colors"
+              className="inline-flex items-center gap-1 text-brand-dark hover:text-brand-dark font-medium transition-colors"
             >
               <Instagram className="w-4 h-4" aria-hidden="true" />
               Instagram
@@ -143,7 +143,7 @@ export default function OrganizersListPage() {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-12 h-12 animate-spin text-[#0c281c]" />
+            <Loader2 className="w-12 h-12 animate-spin text-brand-dark" />
           </div>
         ) : sortedOrganizers.length === 0 ? (
           <div className="text-center py-12">
@@ -191,7 +191,7 @@ export default function OrganizersListPage() {
                     )}
 
                     <div className="flex items-center justify-center gap-2 mb-3">
-                      <Badge variant="outline" className="bg-[#f0e3c7]/40 text-[#0c281c] border-[#0c281c]/20">
+                      <Badge variant="outline" className="bg-brand-gold/40 text-brand-dark border-brand-dark/20">
                         <Calendar className="w-3 h-3 mr-1" aria-hidden="true" />
                         {tripCount} {tripCount === 1 ? t('organizer.upcoming_trip') : t('organizer.upcoming_trips_plural')}
                       </Badge>
@@ -205,7 +205,7 @@ export default function OrganizersListPage() {
                       className="mt-auto"
                       aria-label={`${t('organizer.view_profile_trips')}: ${organizer.full_name}`}
                     >
-                      <Button className="bg-[#0c281c] hover:bg-[#0c281c]/90 w-full min-h-[44px]" tabIndex={-1}>{t('organizer.view_profile_trips')}</Button>
+                      <Button className="bg-brand-dark hover:bg-brand-dark/90 w-full min-h-[44px]" tabIndex={-1}>{t('organizer.view_profile_trips')}</Button>
                     </Link>
                   </CardContent>
                 </Card>

@@ -92,13 +92,13 @@ export default function RoleSelectionPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-[#0c281c]" />
+        <Loader2 className="w-12 h-12 animate-spin text-brand-dark" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-brand-gold/30 to-stone-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
@@ -122,7 +122,7 @@ export default function RoleSelectionPage() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <li key={n} className="flex items-start gap-2">
-                    <span className="text-[#0c281c] font-bold">✓</span>
+                    <span className="text-brand-dark font-bold">✓</span>
                     <span>{t(`role_selection.hiker_benefit_${n}`)}</span>
                   </li>
                 ))}
@@ -142,10 +142,10 @@ export default function RoleSelectionPage() {
           </Card>
 
           {/* Organizer Card */}
-          <Card className="hover:shadow-xl transition-all cursor-pointer border-2 border-[#0c281c]/20">
+          <Card className="hover:shadow-xl transition-all cursor-pointer border-2 border-brand-dark/20">
             <CardHeader className="text-center">
-              <div className="w-20 h-20 bg-[#f0e3c7]/40 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Mountain className="w-12 h-12 text-[#0c281c]" />
+              <div className="w-20 h-20 bg-brand-gold/40 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Mountain className="w-12 h-12 text-brand-dark" />
               </div>
               <CardTitle className="text-2xl">{t('role_selection.organizer_title')}</CardTitle>
               <CardDescription>{t('role_selection.organizer_description')}</CardDescription>
@@ -154,13 +154,13 @@ export default function RoleSelectionPage() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <li key={n} className="flex items-start gap-2">
-                    <span className="text-[#0c281c] font-bold">✓</span>
+                    <span className="text-brand-dark font-bold">✓</span>
                     <span>{t(`role_selection.organizer_benefit_${n}`)}</span>
                   </li>
                 ))}
               </ul>
               <Button
-                className="w-full mt-4 bg-[#0c281c] hover:bg-[#0c281c]/90"
+                className="w-full mt-4 bg-brand-dark hover:bg-brand-dark/90"
                 onClick={() => handleRoleSelection('organizer')}
                 disabled={assignRoleMutation.isPending}
               >

@@ -6,12 +6,9 @@ import { useAuth } from "@/lib/AuthContext";
 import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Phone, Globe, User as UserIcon, ShieldCheck, MapPin, Calendar, Clock, TrendingUp, ExternalLink, Loader2, Facebook, Instagram, Twitter, PlusCircle, Edit } from "lucide-react";
+import { Mail, Phone, Globe, User as UserIcon, ShieldCheck, MapPin, Calendar, Loader2, Facebook, Instagram, Twitter, PlusCircle, Edit } from "lucide-react";
 import { format } from "date-fns";
-import { formatDateRange } from "../components/helpers/dateHelpers";
-import { difficultyColors } from "../components/helpers/tripHelpers";
 import { formatPriceForCard } from "../components/helpers/pricingHelpers";
 import { trackEvent } from "../components/analytics/GoogleAnalytics";
 import { useLanguage } from "../components/contexts/LanguageContext";
@@ -247,7 +244,7 @@ export default function OrganizerProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-12 h-12 animate-spin text-[#0c281c]" />
+        <Loader2 className="w-12 h-12 animate-spin text-brand-dark" />
       </div>
     );
   }
@@ -276,7 +273,7 @@ export default function OrganizerProfilePage() {
     <>
       {organizerSchema && <StructuredData data={organizerSchema} />}
       {breadcrumbSchema && <StructuredData data={breadcrumbSchema} />}
-      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-[#f0e3c7]/30 to-stone-50 p-4 md:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-brand-gold/30 to-stone-50 p-4 md:p-8">
         <div className="max-w-7xl mx-auto">
           
           {/* Organizer Header */}
@@ -307,7 +304,7 @@ export default function OrganizerProfilePage() {
                 <div className="flex flex-col md:flex-row md:items-center gap-3 mb-2">
                   <h1 className="text-3xl md:text-4xl font-bold text-foreground">{organizer.full_name}</h1>
                   {organizer.verified && (
-                    <Badge className="bg-[#f0e3c7]/40 text-[#0c281c] border-[#0c281c]/20 self-center md:self-start">
+                    <Badge className="bg-brand-gold/40 text-brand-dark border-brand-dark/20 self-center md:self-start">
                       <ShieldCheck className="w-4 h-4 mr-1" />
                       {t('common.verified')}
                     </Badge>
@@ -329,7 +326,7 @@ export default function OrganizerProfilePage() {
                 )}
                 
                 <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm text-muted-foreground justify-center md:justify-start">
-                  <a href={`mailto:${organizer.email}`} className="flex items-center gap-2 hover:text-[#0c281c] min-h-[44px]" aria-label={`Email ${organizer.full_name}: ${organizer.email}`}>
+                  <a href={`mailto:${organizer.email}`} className="flex items-center gap-2 hover:text-brand-dark min-h-[44px]" aria-label={`Email ${organizer.full_name}: ${organizer.email}`}>
                     <Mail className="w-4 h-4" aria-hidden="true" />
                     {organizer.email}
                   </a>
@@ -344,7 +341,7 @@ export default function OrganizerProfilePage() {
                       href={organizer.website.startsWith('http://') || organizer.website.startsWith('https://') ? organizer.website : `https://${organizer.website}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 hover:text-[#0c281c] min-h-[44px]"
+                      className="flex items-center gap-2 hover:text-brand-dark min-h-[44px]"
                       aria-label={`${language === 'el' ? 'Ιστοσελίδα' : 'Website'}: ${organizer.website.replace(/https?:\/\//, '')}`}
                     >
                       <Globe className="w-4 h-4" aria-hidden="true" />
@@ -411,7 +408,7 @@ export default function OrganizerProfilePage() {
                       </Button>
                     </Link>
                     <Link to={createPageUrl("TripForm")} aria-label={language === 'el' ? 'Δημιουργία Νέας Εκδρομής' : 'Create new trip'}>
-                      <Button className="bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]" tabIndex={-1}>
+                      <Button className="bg-brand-dark hover:bg-brand-dark/90 min-h-[44px]" tabIndex={-1}>
                         <PlusCircle className="w-4 h-4 mr-2" aria-hidden="true" />
                         {language === 'el' ? 'Δημιουργία Νέας Εκδρομής' : 'Create New Trip'}
                       </Button>
@@ -435,120 +432,74 @@ export default function OrganizerProfilePage() {
                 <p className="text-muted-foreground">{t('organizer.check_back_later_for_adventures')}</p>
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {trips.map((trip) => (
-                  /* content-visibility skips layout/paint for off-screen cards on mobile */
-                  <div key={trip.id} style={{ contentVisibility: 'auto', containIntrinsicSize: '0 420px' }}>
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full">
-                    <Link 
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {trips.map((trip) => {
+                  const formattedDate = format(new Date(trip.start_date), "MMM d, yyyy");
+                  const price = formatPriceForCard(trip, language);
+                  return (
+                  <div key={trip.id} style={{ contentVisibility: 'auto', containIntrinsicSize: '0 340px' }}>
+                    <Link
                       to={`${createPageUrl("TripDetails")}?id=${trip.id}`}
                       onClick={() => handleTripViewDetailsClick(trip)}
-                      className="flex flex-col h-full"
+                      aria-label={`${t('trip.view_details')}: ${trip.title}`}
+                      className="block"
                     >
-                      {trip.image_url && (
-                        <div className="w-full h-48 bg-muted overflow-hidden">
-                          <OptimizedImage
-                            src={trip.image_url}
-                            alt={language === 'el'
-                              ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} Ελλάδα outdoor trekking`
-                              : `${trip.title} - ${trip.location} hiking trekking expedition Greece outdoor adventure`}
-                            width={800}
-                            height={384}
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          />
-                        </div>
-                      )}
-                      
-                      <CardContent className="p-4 flex flex-col flex-1">
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className="text-lg font-bold text-foreground line-clamp-2 flex-1">
+                      <div className="relative rounded-xl overflow-hidden group cursor-pointer aspect-[4/3] shadow-md hover:shadow-xl transition-shadow duration-300">
+                        {/* Full-bleed photo */}
+                        <OptimizedImage
+                          src={trip.image_url || `https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=800&q=75&fm=webp`}
+                          alt={language === 'el'
+                            ? `${trip.title} - πεζοπορική εκδρομή ${trip.location} Ελλάδα outdoor trekking`
+                            : `${trip.title} - ${trip.location} hiking trekking expedition Greece outdoor adventure`}
+                          width={800}
+                          height={600}
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        {/* Deep Forest gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/50 to-transparent" />
+                        {/* Content anchored to bottom */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
+                          {/* Badges */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {trip.difficulty && (
+                              <span className="bg-brand-gold-accent text-brand-gold text-xs font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wide" style={{ fontFamily: 'var(--font-heading)' }}>
+                                {trip.difficulty}
+                              </span>
+                            )}
+                            {trip.status === 'almost soldout' && (
+                              <span className="bg-orange-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                                {language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Full'}
+                              </span>
+                            )}
+                          </div>
+                          {/* Title */}
+                          <h3 className="font-bold text-brand-gold text-lg leading-tight line-clamp-2" style={{ fontFamily: 'var(--font-heading)' }}>
                             {trip.title}
                           </h3>
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          <Badge className={`${difficultyColors[trip.difficulty]} border text-xs`}>
-                            <TrendingUp className="w-3 h-3 mr-1" />
-                            {trip.difficulty}
-                          </Badge>
-                          <Badge variant="outline" className="text-xs text-[#0c281c]">
-                            {formatPriceForCard(trip, language)}
-                          </Badge>
-                          {trip.status === 'upcoming' && (
-                            <Badge className="bg-green-100 text-green-800 border-green-200 border text-xs">
-                              {language === 'el' ? 'Διαθέσιμο' : 'Available'}
-                            </Badge>
-                          )}
-                          {trip.status === 'almost soldout' && (
-                            <Badge className="bg-orange-100 text-orange-800 border-orange-200 border text-xs">
-                              {language === 'el' ? 'Σχεδόν γεμάτο' : 'Almost Full'}
-                            </Badge>
-                          )}
-                          {trip.tags && trip.tags.includes('bus') && (
-                            <Badge className="bg-purple-100 text-purple-800 border-purple-300 border text-xs font-semibold">
-                              🚌 bus
-                            </Badge>
-                          )}
-                          {trip.tags && trip.tags.includes('organized-carpooling') && (
-                            <Badge className="bg-purple-100 text-purple-800 border-purple-300 border text-xs font-semibold">
-                              🚗 carpooling
-                            </Badge>
-                          )}
-                        </div>
-                        {trip.departure_from && trip.departure_from.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mb-3">
-                            {trip.departure_from.map((location, idx) => (
-                              <Badge key={idx} variant="outline" className="border-blue-300 text-blue-700 text-xs">
-                                📍 {location}
-                              </Badge>
-                            ))}
+                          {/* Date + Price */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 text-brand-gold/80 text-sm">
+                              <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
+                              <span>{formattedDate}</span>
+                            </div>
+                            <span className="font-bold text-brand-gold-accent text-base" style={{ fontFamily: 'var(--font-heading)' }}>
+                              {price}
+                            </span>
                           </div>
-                        )}
-
-                        <div className="space-y-2 text-sm text-muted-foreground mb-3">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
-                            <span>{formatDateRange(trip.start_date, trip.end_date)}</span>
-                          </div>
-                          
-                          {trip.start_time && (
-                            <div className="flex items-center gap-2">
-                              <Clock className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
-                              <span>{trip.start_time} • {trip.duration_hours}{t('common.duration_unit_hours_short')}</span>
+                          {/* Location */}
+                          {trip.location && (
+                            <div className="flex items-center gap-1.5 text-brand-gold/60 text-xs">
+                              <MapPin className="w-3 h-3" aria-hidden="true" />
+                              <span className="line-clamp-1">{trip.location}</span>
                             </div>
                           )}
-                          
-                          <div className="flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-[#0c281c] flex-shrink-0" />
-                            <span className="line-clamp-1">{trip.location}</span>
-                          </div>
                         </div>
-
-
-
-                        <div className="flex gap-2 mt-auto">
-                          <Button
-                            size="sm"
-                            className="bg-[#0c281c] hover:bg-[#0c281c]/90 flex-1 min-h-[44px]"
-                            aria-label={`${t('trip.view_details')}: ${trip.title}`}
-                          >
-                            {t('trip.view_details')}
-                          </Button>
-                          {user && trip.external_link && (
-                            <button
-                              className="inline-flex items-center justify-center rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm hover:bg-accent hover:text-accent-foreground min-h-[44px] min-w-[44px]"
-                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(trip.external_link, '_blank', 'noopener,noreferrer'); }}
-                              aria-label={`${language === 'el' ? 'Εξωτερικός σύνδεσμος για' : 'External link for'} ${trip.title}`}
-                            >
-                              <ExternalLink className="w-3 h-3" aria-hidden="true" />
-                            </button>
-                          )}
-                        </div>
-                      </CardContent>
+                      </div>
                     </Link>
-                  </Card>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

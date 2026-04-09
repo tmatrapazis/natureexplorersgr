@@ -35,11 +35,11 @@ export default function About() {
   const valueIcons   = [Shield, Sprout, Users, Heart];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f0e3c7]/40 via-white to-stone-50">
+    <div className="min-h-screen bg-gradient-to-br from-brand-gold/40 via-white to-stone-50">
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <section className="relative py-20 px-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0c281c]/10 to-stone-600/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/10 to-stone-600/10" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           {/* H1 — primary SEO heading */}
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
@@ -60,7 +60,7 @@ export default function About() {
               return (
                 <Card key={idx} className="text-center hover:shadow-lg transition-shadow">
                   <CardContent className="pt-6">
-                    <Icon className="w-8 h-8 mx-auto mb-3 text-[#0c281c]" />
+                    <Icon className="w-8 h-8 mx-auto mb-3 text-brand-dark" />
                     <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
                     <div className="text-sm text-muted-foreground">{stat.label}</div>
                   </CardContent>
@@ -113,7 +113,7 @@ export default function About() {
               return (
                 <Card key={idx} className="hover:shadow-xl transition-shadow">
                   <CardHeader>
-                    <Icon className="w-10 h-10 text-[#0c281c] mb-3" />
+                    <Icon className="w-10 h-10 text-brand-dark mb-3" />
                     <CardTitle className="text-xl">{feature.title}</CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -151,7 +151,7 @@ export default function About() {
                 <Card key={idx} className="hover:shadow-xl transition-shadow">
                   <CardHeader>
                     <div className="flex items-center gap-3">
-                      <Icon className="w-8 h-8 text-[#0c281c]" />
+                      <Icon className="w-8 h-8 text-brand-dark" />
                       <CardTitle className="text-xl">{value.title}</CardTitle>
                     </div>
                   </CardHeader>
@@ -166,15 +166,15 @@ export default function About() {
       </section>
 
       {/* ── CTA ─────────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-4 bg-gradient-to-r from-[#0c281c] to-[#0c281c]/80">
+      <section className="py-20 px-4 bg-gradient-to-r from-brand-dark to-brand-dark/80">
         <div className="max-w-4xl mx-auto text-center text-white">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.cta.title}</h2>
-          <p className="text-xl mb-8 text-[#f0e3c7]">{t.cta.description}</p>
+          <p className="text-xl mb-8 text-brand-gold">{t.cta.description}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
               onClick={() => navigate(createPageUrl("Calendar"))}
-              className="bg-background text-[#0c281c] hover:bg-[#f0e3c7]/40 text-lg px-8 py-6 min-h-[44px]"
+              className="bg-background text-brand-dark hover:bg-brand-gold/40 text-lg px-8 py-6 min-h-[44px]"
               aria-label={t.cta.button}
             >
               {t.cta.button}
