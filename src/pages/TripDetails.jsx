@@ -219,16 +219,32 @@ export default function TripDetailsPage() {
       "@type": "Person",
       "name": organizer.username || organizer.full_name
     } : undefined,
-    "offers": {
-      "@type": "Offer",
-      "price": getLowestPrice(trip) || 0,
-      "priceCurrency": "EUR",
-      "url": trip.event_url || window.location.href,
-      "availability": trip.status === 'cancelled' ? "https://schema.org/SoldOut" :
-                      trip.status === 'almost soldout' ? "https://schema.org/LimitedAvailability" :
-                      "https://schema.org/InStock",
-      "validFrom": trip.created_date || trip.start_date
-    },
+    "offers": (() => {
+      const tiers = getPricingOptions(trip);
+      if (tiers.length > 1) {
+        return tiers.map(opt => ({
+          "@type": "Offer",
+          "name": opt.label,
+          "price": opt.price ?? 0,
+          "priceCurrency": "EUR",
+          "url": trip.event_url || window.location.href,
+          "availability": opt.remaining === 0 ? "https://schema.org/SoldOut"
+            : trip.status === 'almost soldout' ? "https://schema.org/LimitedAvailability"
+            : "https://schema.org/InStock",
+          "validFrom": trip.created_date || trip.start_date,
+        }));
+      }
+      return {
+        "@type": "Offer",
+        "price": getLowestPrice(trip) || 0,
+        "priceCurrency": "EUR",
+        "url": trip.event_url || window.location.href,
+        "availability": trip.status === 'cancelled' ? "https://schema.org/SoldOut" :
+                        trip.status === 'almost soldout' ? "https://schema.org/LimitedAvailability" :
+                        "https://schema.org/InStock",
+        "validFrom": trip.created_date || trip.start_date,
+      };
+    })(),
     "eventStatus": trip.status === 'cancelled'
       ? "https://schema.org/EventCancelled"
       : trip.status === 'completed'

@@ -88,10 +88,10 @@ export default function HomePage() {
     return map;
   }, [organizers]);
 
-  // Enhanced Structured Data for Organization with target keywords
+  // Enhanced Structured Data for Organization + LocalBusiness with target keywords
   const organizationSchema = {
     "@context": "https://schema.org",
-    "@type": "TouristInformationCenter",
+    "@type": ["LocalBusiness", "TouristInformationCenter"],
     "name": "Nature Explorers",
     "alternateName": language === 'el' ? "Nature Explorers - Πεζοπορία Ελλάδα" : "Nature Explorers Greece - Hiking & Trekking",
     "url": window.location.origin,
@@ -117,8 +117,18 @@ export default function HomePage() {
     },
     "address": {
       "@type": "PostalAddress",
-      "addressCountry": "GR"
+      "addressCountry": "GR",
+      "addressLocality": "Athens",
+      "addressRegion": "Attica"
     },
+    "priceRange": "€€",
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "opens": "00:00",
+      "closes": "23:59"
+    },
+    "hasMap": "https://www.google.com/maps/place/Greece",
     "makesOffer": [
       {
         "@type": "Offer",
@@ -302,8 +312,12 @@ export default function HomePage() {
               {/* Search bar */}
               <form onSubmit={handleSearch} className="w-full max-w-xl mx-auto mt-2">
                 <div className="flex items-center bg-white rounded-full shadow-2xl overflow-hidden pl-5 pr-2 py-2 gap-2">
+                  <label htmlFor="hero-search" className="sr-only">
+                    {language === 'el' ? 'Αναζήτησε εκδρομή ή τοποθεσία' : 'Search trips or location'}
+                  </label>
                   <Search className="w-5 h-5 text-[#0c281c]/50 flex-shrink-0" aria-hidden="true" />
                   <input
+                    id="hero-search"
                     type="text"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}

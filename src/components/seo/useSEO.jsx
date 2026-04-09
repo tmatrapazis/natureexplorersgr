@@ -6,7 +6,7 @@ import { useEffect } from 'react';
  * @param {string} seo.title - Page title
  * @param {string} seo.description - Meta description
  * @param {string} [seo.image] - OG image URL
- * @param {string} [seo.url] - Canonical URL
+ * @param {string} [seo.url] - Canonical URL (also used for hreflang alternates)
  * @param {string} [seo.type] - OG type (website, article, etc.)
  * @param {boolean} [seo.noindex] - If true, adds noindex meta tag to prevent search engine indexing
  */
@@ -20,22 +20,22 @@ export const useSEO = ({ title, description, image = undefined, url = undefined,
     // Update or create meta tags
     const updateMetaTag = (name, content, isProperty = false) => {
       if (!content) return;
-      
+
       const attribute = isProperty ? 'property' : 'name';
       let element = document.querySelector(`meta[${attribute}="${name}"]`);
-      
+
       if (!element) {
         element = document.createElement('meta');
         element.setAttribute(attribute, name);
         document.head.appendChild(element);
       }
-      
+
       element.setAttribute('content', content);
     };
 
     // Standard meta tags
     updateMetaTag('description', description);
-    
+
     // Robots meta tag for noindex
     if (noindex) {
       updateMetaTag('robots', 'noindex, nofollow');
@@ -46,7 +46,7 @@ export const useSEO = ({ title, description, image = undefined, url = undefined,
         robotsTag.remove();
       }
     }
-    
+
     // Open Graph tags
     updateMetaTag('og:title', title, true);
     updateMetaTag('og:description', description, true);
@@ -54,14 +54,14 @@ export const useSEO = ({ title, description, image = undefined, url = undefined,
     updateMetaTag('og:url', url, true);
     updateMetaTag('og:type', type, true);
     updateMetaTag('og:site_name', 'Nature Explorers', true);
-    
+
     // Twitter Card tags
     updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
     updateMetaTag('twitter:image', image);
-    
-    // Canonical URL
+
+    // Canonical URL + dynamic hreflang alternates
     if (url && !noindex) {
       let canonical = document.querySelector('link[rel="canonical"]');
       if (!canonical) {
@@ -70,6 +70,24 @@ export const useSEO = ({ title, description, image = undefined, url = undefined,
         document.head.appendChild(canonical);
       }
       canonical.setAttribute('href', url);
+
+      // Inject hreflang alternates for bilingual support on dynamic pages.
+      // We use the same URL for both locales since language is runtime-switched.
+      const hreflangData = [
+        { hreflang: 'el', href: url },
+        { hreflang: 'en', href: url },
+        { hreflang: 'x-default', href: url },
+      ];
+      hreflangData.forEach(({ hreflang, href }) => {
+        let link = document.querySelector(`link[rel="alternate"][hreflang="${hreflang}"]`);
+        if (!link) {
+          link = document.createElement('link');
+          link.setAttribute('rel', 'alternate');
+          link.setAttribute('hreflang', hreflang);
+          document.head.appendChild(link);
+        }
+        link.setAttribute('href', href);
+      });
     }
   }, [title, description, image, url, type, noindex]);
 };
