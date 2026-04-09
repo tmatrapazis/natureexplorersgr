@@ -7,11 +7,10 @@
 import { queryClientInstance } from './query-client';
 import { HikingTrip, Organizer } from '@/api/db';
 
-const STALE_TIME = 5 * 60 * 1000; // matches global default
+const STALE_TIME = 60 * 1000; // matches global default
 
 /**
  * Prefetch Calendar page data (trips + organizers).
- * Call from Home.jsx on mount so Calendar renders instantly.
  */
 export function prefetchCalendarData() {
   queryClientInstance.prefetchQuery({
@@ -20,8 +19,24 @@ export function prefetchCalendarData() {
     staleTime: STALE_TIME,
   });
   queryClientInstance.prefetchQuery({
-    queryKey: ['organizers-calendar'],
+    queryKey: ['organizers'],
     queryFn: () => Organizer.list(),
+    staleTime: STALE_TIME,
+  });
+}
+
+/**
+ * Prefetch OrganizersList page data.
+ */
+export function prefetchOrganizersData() {
+  queryClientInstance.prefetchQuery({
+    queryKey: ['organizers'],
+    queryFn: () => Organizer.list(),
+    staleTime: STALE_TIME,
+  });
+  queryClientInstance.prefetchQuery({
+    queryKey: ['hiking-trips'],
+    queryFn: () => HikingTrip.list('start_date'),
     staleTime: STALE_TIME,
   });
 }
@@ -36,11 +51,9 @@ export function prefetchTripDetails(tripId) {
     queryKey: ['trip', tripId],
     queryFn: async () => {
       const trips = await HikingTrip.filter({ id: tripId });
-      const trip = trips[0];
-      if (!trip) return { trip: null, organizer: null };
-      const organizers = await Organizer.filter({ organizer_code: trip.organizer_code });
-      return { trip, organizer: organizers[0] ?? null };
+      return trips[0] ?? null;
     },
     staleTime: STALE_TIME,
   });
+  // Organizers are prefetched via the shared cache — no separate call needed
 }

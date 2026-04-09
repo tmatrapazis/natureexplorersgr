@@ -73,7 +73,7 @@ export default function EditGuideProfilePage() {
   });
 
   const { data: organizers = [] } = useQuery({
-    queryKey: ['all-organizers'],
+    queryKey: ['organizers'],
     queryFn: () => Organizer.list(),
   });
 

@@ -23,6 +23,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import PublicHeader from "../layout/PublicHeader";
 import PublicFooter from "../layout/PublicFooter";
 import NotificationsBell from "../layout/NotificationsBell";
+import { prefetchCalendarData, prefetchOrganizersData } from "@/lib/prefetch";
 
 // Nav URLs are stable constants — titles are resolved inside the component with t()
 const CLIENT_NAV_URLS = [
@@ -56,10 +57,10 @@ const BottomNav = React.memo(function BottomNav() {
   const fabUrl = isOrganizer ? createPageUrl("TripForm") : createPageUrl("Calendar");
 
   const tabs = [
-    { icon: Compass,  label: t('navigation.calendar'),   url: createPageUrl("Calendar"),       matchPrefix: '/calendar' },
+    { icon: Compass,  label: t('navigation.calendar'),   url: createPageUrl("Calendar"),       matchPrefix: '/calendar',       prefetch: prefetchCalendarData },
     { icon: Map,      label: t('navigation.refuges'),    url: createPageUrl("GreekRefuges"),   matchPrefix: '/greekrefuges' },
     null, // FAB placeholder
-    { icon: Users,    label: t('navigation.organizers'), url: createPageUrl("OrganizersList"), matchPrefix: '/organizerslist' },
+    { icon: Users,    label: t('navigation.organizers'), url: createPageUrl("OrganizersList"), matchPrefix: '/organizerslist', prefetch: prefetchOrganizersData },
     { icon: Backpack, label: myPackLabel,                url: myPackUrl,                       matchPrefix: user && isOrganizer ? '/mytrips' : '/mybookings' },
   ];
 
@@ -91,6 +92,7 @@ const BottomNav = React.memo(function BottomNav() {
             <button
               key={tab.url}
               onClick={() => navigateToTab(tab.url)}
+              onPointerEnter={tab.prefetch}
               className="flex flex-col items-center justify-center pt-2 pb-1 px-2 min-h-[48px] min-w-[48px] transition-colors flex-1"
               aria-label={`Navigate to ${tab.label}`}
               aria-current={isActive ? 'page' : undefined}

@@ -25,7 +25,7 @@ const TripsList = React.memo(React.forwardRef(function TripsList({ trips, select
 
   // Fetch all organizers to match with trips
   const { data: organizers = [] } = useQuery({
-    queryKey: ['all-organizers'],
+    queryKey: ['organizers'],
     queryFn: () => Organizer.list(),
   });
 

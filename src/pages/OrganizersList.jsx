@@ -36,13 +36,13 @@ export default function OrganizersListPage() {
   });
 
   const { data: organizers = [], isLoading: organizersLoading } = useQuery({
-    queryKey: ['organizers-list'],
+    queryKey: ['organizers'],
     queryFn: () => Organizer.list(),
   });
 
   const { data: allTrips = [], isLoading: tripsLoading } = useQuery({
-    queryKey: ['all-upcoming-trips'],
-    queryFn: () => HikingTrip.list(),
+    queryKey: ['hiking-trips'],
+    queryFn: () => HikingTrip.list('start_date'),
   });
 
   // Create a map of organizer_code -> trip count (only upcoming or almost soldout trips with start_date > today)
@@ -75,8 +75,8 @@ export default function OrganizersListPage() {
 
   const handleRefresh = useCallback(async () => {
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['organizers-list'] }),
-      queryClient.invalidateQueries({ queryKey: ['all-upcoming-trips'] }),
+      queryClient.invalidateQueries({ queryKey: ['organizers'] }),
+      queryClient.invalidateQueries({ queryKey: ['hiking-trips'] }),
     ]);
   }, [queryClient]);
 

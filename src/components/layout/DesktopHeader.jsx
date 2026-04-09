@@ -13,10 +13,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import NotificationsBell from './NotificationsBell';
+import { prefetchCalendarData, prefetchOrganizersData } from '@/lib/prefetch';
 
 const NAV_LINKS = [
-  { key: 'navigation.calendar',   page: 'Calendar' },
-  { key: 'navigation.organizers', page: 'OrganizersList' },
+  { key: 'navigation.calendar',   page: 'Calendar',       prefetch: prefetchCalendarData },
+  { key: 'navigation.organizers', page: 'OrganizersList',  prefetch: prefetchOrganizersData },
   { key: 'navigation.guides',     page: 'Guides' },
   { key: 'navigation.refuges',    page: 'GreekRefuges' },
 ];
@@ -73,7 +74,7 @@ export default function DesktopHeader() {
 
       {/* Nav Links */}
       <nav className="flex items-center gap-6 flex-1" aria-label="Primary navigation">
-        {NAV_LINKS.map(({ key, page }) => {
+        {NAV_LINKS.map(({ key, page, prefetch }) => {
           const url = createPageUrl(page);
           const active = isActive(page);
           return (
@@ -81,6 +82,7 @@ export default function DesktopHeader() {
               key={page}
               to={url}
               onClick={handleNavClick(url)}
+              onPointerEnter={prefetch}
               className={`text-sm font-medium transition-colors min-h-[44px] flex items-center pb-0.5 ${
                 active
                   ? 'text-brand-gold border-b-2 border-brand-gold-accent'

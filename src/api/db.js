@@ -16,18 +16,18 @@ function throwOnError({ data, error }) {
 // ─── HikingTrip ──────────────────────────────────────────────────────────────
 
 export const HikingTrip = {
-  async list(orderBy = 'start_date') {
+  async list(orderBy = 'start_date', columns = '*') {
     const asc = !orderBy.startsWith('-');
     const col = orderBy.replace(/^-/, '');
     return throwOnError(
-      await supabase.from('hiking_trips').select('*').neq('status', 'draft').order(col, { ascending: asc })
+      await supabase.from('hiking_trips').select(columns).neq('status', 'draft').order(col, { ascending: asc })
     );
   },
 
-  async filter(conditions = {}, orderBy = 'start_date') {
+  async filter(conditions = {}, orderBy = 'start_date', columns = '*') {
     const asc = !orderBy.startsWith('-');
     const col = orderBy.replace(/^-/, '');
-    let q = supabase.from('hiking_trips').select('*').order(col, { ascending: asc });
+    let q = supabase.from('hiking_trips').select(columns).order(col, { ascending: asc });
     Object.entries(conditions).forEach(([k, v]) => { q = q.eq(k, v); });
     return throwOnError(await q);
   },
@@ -60,16 +60,16 @@ export const HikingTrip = {
 // ─── Organizer ───────────────────────────────────────────────────────────────
 
 export const Organizer = {
-  async list(orderBy = 'full_name') {
+  async list(orderBy = 'full_name', columns = '*') {
     const asc = !orderBy.startsWith('-');
     const col = orderBy.replace(/^-/, '');
     return throwOnError(
-      await supabase.from('organizers').select('*').order(col, { ascending: asc })
+      await supabase.from('organizers').select(columns).order(col, { ascending: asc })
     );
   },
 
-  async filter(conditions = {}) {
-    let q = supabase.from('organizers').select('*');
+  async filter(conditions = {}, columns = '*') {
+    let q = supabase.from('organizers').select(columns);
     Object.entries(conditions).forEach(([k, v]) => { q = q.eq(k, v); });
     return throwOnError(await q);
   },

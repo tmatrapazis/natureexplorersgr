@@ -72,7 +72,7 @@ export default function CalendarPage() {
   });
 
   const { data: organizers = [] } = useQuery({
-    queryKey: ['organizers-calendar'],
+    queryKey: ['organizers'],
     queryFn: () => Organizer.list(),
   });
 
@@ -243,7 +243,7 @@ export default function CalendarPage() {
   const handleRefresh = async () => {
     await Promise.all([
       queryClient.refetchQueries({ queryKey: ['hiking-trips'] }),
-      queryClient.refetchQueries({ queryKey: ['organizers-calendar'] })
+      queryClient.refetchQueries({ queryKey: ['organizers'] })
     ]);
   };
 

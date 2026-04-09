@@ -8,8 +8,7 @@ import NavigationTracker from '@/lib/NavigationTracker'
 import { lazyPagesConfig } from './pages.lazy'
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import { AuthProvider } from '@/lib/AuthContext';
 import { TabNavigationProvider } from '@/lib/TabNavigationContext';
 import LoginPage from './pages/Login';
 // All pages are lazy-loaded via pages.lazy.js — no eager About import needed here
@@ -45,29 +44,9 @@ const tabRoutes = [
 ];
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
-
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-border border-t-foreground rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
-    }
-  }
-
-  // Render the main app
+  // Auth loads in the background — public pages render immediately while
+  // it resolves. Pages that require a logged-in user handle null `user`
+  // themselves (redirect or show login prompt).
   return (
     <Suspense fallback={<LoadingFallback />}>
       <TabNavigationProvider tabRoutes={tabRoutes}>
@@ -128,14 +107,12 @@ function App() {
         <QueryClientProvider client={queryClientInstance}>
           <Router>
             <NavigationTracker />
-            <Suspense fallback={<LoadingFallback />}>
-              <Routes>
-                {/* Login lives outside the main layout — no sidebar/header */}
-                <Route path="/login" element={<LoginPage />} />
-                {/* Everything else goes through AuthenticatedApp */}
-                <Route path="*" element={<AuthenticatedApp />} />
-              </Routes>
-            </Suspense>
+            <Routes>
+              {/* Login lives outside the main layout — no sidebar/header */}
+              <Route path="/login" element={<LoginPage />} />
+              {/* Everything else goes through AuthenticatedApp */}
+              <Route path="*" element={<AuthenticatedApp />} />
+            </Routes>
           </Router>
           <Toaster />
         </QueryClientProvider>

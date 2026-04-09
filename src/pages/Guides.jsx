@@ -45,7 +45,7 @@ export default function GuidesPage() {
   });
 
   const { data: organizers = [] } = useQuery({
-    queryKey: ['all-organizers'],
+    queryKey: ['organizers'],
     queryFn: () => Organizer.list(),
   });
 
@@ -61,7 +61,7 @@ export default function GuidesPage() {
   const handleRefresh = useCallback(async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['mountain-guides'] }),
-      queryClient.invalidateQueries({ queryKey: ['all-organizers'] }),
+      queryClient.invalidateQueries({ queryKey: ['organizers'] }),
     ]);
   }, [queryClient]);
 

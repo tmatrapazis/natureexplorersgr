@@ -66,21 +66,22 @@ export default function TripDetailsPage() {
     }
   }, [tripId, navigate]);
 
-  // Fetch trip + organizer in a single query to eliminate the waterfall.
-  // Booking query runs in parallel since it only needs tripId + user.id.
-  const { data: tripData, isLoading: tripLoading } = useQuery({
+  // Trip and organizers fetched in parallel — no sequential waterfall.
+  // The organizers query often hits the shared cache from Calendar/Home.
+  const { data: trip, isLoading: tripLoading } = useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
       const trips = await HikingTrip.filter({ id: tripId });
-      const trip = trips[0];
-      if (!trip) return { trip: null, organizer: null };
-      const organizers = await Organizer.filter({ organizer_code: trip.organizer_code });
-      return { trip, organizer: organizers[0] ?? null };
+      return trips[0] ?? null;
     },
     enabled: !!tripId,
   });
-  const trip = tripData?.trip;
-  const organizer = tripData?.organizer;
+
+  const { data: organizers = [] } = useQuery({
+    queryKey: ['organizers'],
+    queryFn: () => Organizer.list(),
+  });
+  const organizer = organizers.find(o => o.organizer_code === trip?.organizer_code) ?? null;
 
   // Check if the current hiker already has a booking for this trip
   const { data: existingBooking } = useQuery({

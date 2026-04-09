@@ -57,6 +57,7 @@ export default function EditProfilePage() {
 
   const [isUploading, setIsUploading] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [isNewUser, setIsNewUser] = useState(false);
   const [newBankAccount, setNewBankAccount] = useState({
     bank_name: '',
@@ -193,6 +194,11 @@ export default function EditProfilePage() {
   const handleInputChange = (e) => {
     const { id, value } = e.target;
 
+    // Clear error for this field on change
+    if (fieldErrors[id]) {
+      setFieldErrors(prev => { const next = { ...prev }; delete next[id]; return next; });
+    }
+
     // Only allow numbers for phone_number and emergency_contact_number
     if (id === 'phone_number' || id === 'emergency_contact_number') {
       const numbersOnly = value.replace(/[^0-9+\-\s()]/g, '');
@@ -241,13 +247,44 @@ export default function EditProfilePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.username || formData.username.trim() === '') {
-      toast.error(language === 'el' ? "Το όνομα χρήστη είναι υποχρεωτικό πεδίο." : "Username is a required field.");
+    // Validate required fields
+    const errors = {};
+    if (!formData.username?.trim()) {
+      errors.username = language === 'el' ? 'Το όνομα χρήστη είναι υποχρεωτικό.' : 'Username is required.';
+    }
+    if (!formData.full_name?.trim()) {
+      errors.full_name = language === 'el' ? 'Το ονοματεπώνυμο είναι υποχρεωτικό.' : 'Full name is required.';
+    }
+    if (!formData.date_of_birth) {
+      errors.date_of_birth = language === 'el' ? 'Η ημερομηνία γέννησης είναι υποχρεωτική.' : 'Date of birth is required.';
+    }
+    if (!formData.emergency_contact_name?.trim()) {
+      errors.emergency_contact_name = language === 'el' ? 'Το όνομα επαφής έκτακτης ανάγκης είναι υποχρεωτικό.' : 'Emergency contact name is required.';
+    }
+    if (!formData.emergency_contact_number?.trim()) {
+      errors.emergency_contact_number = language === 'el' ? 'Ο αριθμός επαφής έκτακτης ανάγκης είναι υποχρεωτικός.' : 'Emergency contact number is required.';
+    }
+
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      toast.error(language === 'el'
+        ? `Παρακαλώ συμπληρώστε ${Object.keys(errors).length} υποχρεωτικά πεδία.`
+        : `Please fill in ${Object.keys(errors).length} required field${Object.keys(errors).length > 1 ? 's' : ''}.`);
+      // Scroll to first error
+      const firstErrorField = document.getElementById(Object.keys(errors)[0]);
+      firstErrorField?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
     // Remove is_verified — only admins can set this field
-    const { is_verified, ...dataToSubmit } = /** @type {any} */ (formData);
+    const { is_verified, ...raw } = /** @type {any} */ (formData);
+
+    // Convert empty strings to null so PostgreSQL non-text columns
+    // (date, jsonb, etc.) don't reject them with 400.
+    const dataToSubmit = Object.fromEntries(
+      Object.entries(raw).map(([k, v]) => [k, v === '' ? null : v])
+    );
     updateProfileMutation.mutate(dataToSubmit);
   };
 
@@ -310,13 +347,15 @@ export default function EditProfilePage() {
                   <Input id="email" value={user?.email || ''} disabled required />
                 </div>
                 <div>
-                  <Label htmlFor="full_name">Full Name</Label>
+                  <Label htmlFor="full_name">Full Name <span className="text-red-500">*</span></Label>
                   <Input
                     id="full_name"
                     value={formData.full_name}
                     onChange={handleInputChange}
                     placeholder="Your full name"
+                    className={fieldErrors.full_name ? 'border-red-500 focus-visible:ring-red-500' : ''}
                   />
+                  {fieldErrors.full_name && <p className="text-xs text-red-500 mt-1">{fieldErrors.full_name}</p>}
                 </div>
                 <div>
                   <Label htmlFor="username">Username *</Label>
@@ -325,9 +364,11 @@ export default function EditProfilePage() {
                     value={formData.username}
                     onChange={handleInputChange}
                     placeholder="Choose a unique username"
-                    required
+                    className={fieldErrors.username ? 'border-red-500 focus-visible:ring-red-500' : ''}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">This can be used for your profile URL</p>
+                  {fieldErrors.username
+                    ? <p className="text-xs text-red-500 mt-1">{fieldErrors.username}</p>
+                    : <p className="text-xs text-muted-foreground mt-1">This can be used for your profile URL</p>}
                 </div>
                 <div>
                   <Label htmlFor="phone_number">Mobile Number</Label>
@@ -341,14 +382,16 @@ export default function EditProfilePage() {
                   <p className="text-xs text-muted-foreground mt-1">Numbers only</p>
                 </div>
                 <div>
-                  <Label htmlFor="date_of_birth">Date of Birth</Label>
+                  <Label htmlFor="date_of_birth">Date of Birth <span className="text-red-500">*</span></Label>
                   <Input
                     id="date_of_birth"
                     type="date"
                     value={formData.date_of_birth}
                     onChange={handleInputChange}
                     max={new Date().toISOString().split('T')[0]}
+                    className={fieldErrors.date_of_birth ? 'border-red-500 focus-visible:ring-red-500' : ''}
                   />
+                  {fieldErrors.date_of_birth && <p className="text-xs text-red-500 mt-1">{fieldErrors.date_of_birth}</p>}
                 </div>
               </CardContent>
             </Card>
@@ -411,24 +454,29 @@ export default function EditProfilePage() {
                     <Textarea id="dietary_requirements" placeholder="e.g., vegetarian, vegan, gluten-free, halal — relevant for multi-day trips with meals." value={formData.dietary_requirements} onChange={handleInputChange} rows={2} />
                   </div>
                   <div>
-                    <Label htmlFor="emergency_contact_name">Emergency Contact Name</Label>
+                    <Label htmlFor="emergency_contact_name">Emergency Contact Name <span className="text-red-500">*</span></Label>
                     <Input
                       id="emergency_contact_name"
                       placeholder="Name of a trusted contact (e.g., spouse, parent)"
                       value={formData.emergency_contact_name}
                       onChange={handleInputChange}
+                      className={fieldErrors.emergency_contact_name ? 'border-red-500 focus-visible:ring-red-500' : ''}
                     />
+                    {fieldErrors.emergency_contact_name && <p className="text-xs text-red-500 mt-1">{fieldErrors.emergency_contact_name}</p>}
                   </div>
                   <div>
-                    <Label htmlFor="emergency_contact_number">Emergency Contact Number</Label>
+                    <Label htmlFor="emergency_contact_number">Emergency Contact Number <span className="text-red-500">*</span></Label>
                     <Input
                       id="emergency_contact_number"
                       type="tel"
                       placeholder="Phone number of a trusted contact"
                       value={formData.emergency_contact_number}
                       onChange={handleInputChange}
+                      className={fieldErrors.emergency_contact_number ? 'border-red-500 focus-visible:ring-red-500' : ''}
                     />
-                    <p className="text-xs text-muted-foreground mt-1">Numbers only</p>
+                    {fieldErrors.emergency_contact_number
+                      ? <p className="text-xs text-red-500 mt-1">{fieldErrors.emergency_contact_number}</p>
+                      : <p className="text-xs text-muted-foreground mt-1">Numbers only</p>}
                   </div>
                 </CardContent>
               </Card>

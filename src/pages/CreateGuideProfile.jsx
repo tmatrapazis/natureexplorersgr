@@ -48,7 +48,7 @@ export default function CreateGuideProfilePage() {
   const { user, refreshUser } = useAuth();
 
   const { data: organizers = [] } = useQuery({
-    queryKey: ['all-organizers'],
+    queryKey: ['organizers'],
     queryFn: () => Organizer.list(),
   });
 

@@ -49,31 +49,30 @@ export default function HomePage() {
     type: 'website'
   });
 
-  const { data: featuredExpeditions = [] } = useQuery({
-    queryKey: ['featured-expeditions'],
-    queryFn: async () => {
-      const trips = await HikingTrip.list('-start_date');
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const futureTrips = trips.filter(trip => {
-        if (!trip.start_date) return false;
-        const startDate = new Date(trip.start_date);
-        startDate.setHours(0, 0, 0, 0);
-        return startDate > today && (trip.status === 'upcoming' || trip.status === 'almost soldout');
-      });
-
-      // Stable shuffle using trip ID as seed to avoid reshuffling on re-renders
-      const shuffled = [...futureTrips].sort((a, b) => a.id.localeCompare(b.id));
-      return shuffled.slice(0, 3);
-    },
+  // Shared cache with Calendar — one fetch serves both pages
+  const { data: allTrips = [] } = useQuery({
+    queryKey: ['hiking-trips'],
+    queryFn: () => HikingTrip.list('start_date'),
   });
+
+  const featuredExpeditions = React.useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const futureTrips = allTrips.filter(trip => {
+      if (!trip.start_date) return false;
+      const startDate = new Date(trip.start_date);
+      startDate.setHours(0, 0, 0, 0);
+      return startDate > today && (trip.status === 'upcoming' || trip.status === 'almost soldout');
+    });
+    // Stable shuffle using trip ID as seed to avoid reshuffling on re-renders
+    return [...futureTrips].sort((a, b) => a.id.localeCompare(b.id)).slice(0, 3);
+  }, [allTrips]);
 
 
 
   // Fetch organizers for featured trips
   const { data: organizers = [] } = useQuery({
-    queryKey: ['home-organizers'],
+    queryKey: ['organizers'],
     queryFn: () => Organizer.list(),
   });
 
@@ -410,7 +409,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {featuredExpeditions.map(trip => {
+                  {featuredExpeditions.map((trip, idx) => {
                     const organizer = organizerMap[trip.organizer_code];
                     const formattedDate = format(new Date(trip.start_date), "MMM d, yyyy");
                     const price = formatPriceForCard(trip, language);
@@ -422,6 +421,7 @@ export default function HomePage() {
                             alt={trip.title}
                             width={800}
                             height={600}
+                            priority={idx === 0}
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             onError={(e) => handleImageError(e, trip.id)}
                             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
