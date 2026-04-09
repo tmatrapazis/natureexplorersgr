@@ -34,47 +34,42 @@ export default function MyBookingsPage() {
 
   useSEO({ title: t('booking.my_bookings'), noindex: true });
 
-  const { data: bookings = [], isLoading: bookingsLoading } = useQuery({
+  // Single unified query: bookings → parallel trip fetches → organizers for confirmed.
+  // Eliminates the 3-level query waterfall (saves 2 render cycles on slow networks).
+  const { data: bookingsData = { bookings: [], tripMap: {}, organizerMap: {} }, isLoading: bookingsLoading } = useQuery({
     queryKey: ['my-bookings', user?.id],
-    queryFn: () => Booking.filter({ user_id: user.id }),
-    enabled: !!user?.id,
-  });
-
-  // Fetch trip details for all bookings
-  const tripIds = [...new Set(bookings.map(b => b.trip_id))];
-  const { data: trips = [] } = useQuery({
-    queryKey: ['booking-trips', tripIds.join(',')],
     queryFn: async () => {
-      if (tripIds.length === 0) return [];
-      const results = await Promise.all(tripIds.map(id => HikingTrip.get(id).catch(() => null)));
-      return results.filter(Boolean);
-    },
-    enabled: tripIds.length > 0,
-  });
+      const bookings = await Booking.filter({ user_id: user.id });
+      if (bookings.length === 0) return { bookings: [], tripMap: {}, organizerMap: {} };
 
-  const tripMap = Object.fromEntries(trips.map(t => [t.id, t]));
+      // Fetch all trips in parallel
+      const tripIds = [...new Set(bookings.map(b => b.trip_id))];
+      const tripResults = await Promise.all(tripIds.map(id => HikingTrip.get(id).catch(() => null)));
+      const validTrips = tripResults.filter(Boolean);
+      const tripMap = Object.fromEntries(validTrips.map(t => [t.id, t]));
 
-  // Fetch organizers for confirmed bookings to show payment instructions
-  const confirmedOrganizerCodes = [...new Set(
-    bookings
-      .filter(b => b.status === 'confirmed')
-      .map(b => tripMap[b.trip_id]?.organizer_code)
-      .filter(Boolean)
-  )];
-  const { data: organizers = [] } = useQuery({
-    queryKey: ['booking-organizers', confirmedOrganizerCodes.join(',')],
-    queryFn: async () => {
-      if (confirmedOrganizerCodes.length === 0) return [];
-      const results = await Promise.all(
-        confirmedOrganizerCodes.map(code =>
+      // Fetch organizers for confirmed bookings only (parallel)
+      const confirmedOrgCodes = [...new Set(
+        bookings
+          .filter(b => b.status === 'confirmed')
+          .map(b => tripMap[b.trip_id]?.organizer_code)
+          .filter(Boolean)
+      )];
+      const orgResults = await Promise.all(
+        confirmedOrgCodes.map(code =>
           Organizer.filter({ organizer_code: code }).then(r => r[0]).catch(() => null)
         )
       );
-      return results.filter(Boolean);
+      const organizerMap = Object.fromEntries(
+        orgResults.filter(Boolean).map(o => [o.organizer_code, o])
+      );
+
+      return { bookings, tripMap, organizerMap };
     },
-    enabled: confirmedOrganizerCodes.length > 0,
+    enabled: !!user?.id,
   });
-  const organizerMap = Object.fromEntries(organizers.map(o => [o.organizer_code, o]));
+
+  const { bookings, tripMap, organizerMap } = bookingsData;
 
   const cancelMutation = useMutation({
     mutationFn: async (booking) => {

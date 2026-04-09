@@ -66,24 +66,21 @@ export default function TripDetailsPage() {
     }
   }, [tripId, navigate]);
 
-  const { data: trip, isLoading: tripLoading } = useQuery({
+  // Fetch trip + organizer in a single query to eliminate the waterfall.
+  // Booking query runs in parallel since it only needs tripId + user.id.
+  const { data: tripData, isLoading: tripLoading } = useQuery({
     queryKey: ['trip', tripId],
     queryFn: async () => {
       const trips = await HikingTrip.filter({ id: tripId });
-      return trips[0];
+      const trip = trips[0];
+      if (!trip) return { trip: null, organizer: null };
+      const organizers = await Organizer.filter({ organizer_code: trip.organizer_code });
+      return { trip, organizer: organizers[0] ?? null };
     },
     enabled: !!tripId,
   });
-
-  // Fetch organizer data using organizer_code
-  const { data: organizer } = useQuery({
-    queryKey: ['trip-organizer', trip?.organizer_code],
-    queryFn: async () => {
-      const organizers = await Organizer.filter({ organizer_code: trip.organizer_code });
-      return organizers[0];
-    },
-    enabled: !!trip?.organizer_code,
-  });
+  const trip = tripData?.trip;
+  const organizer = tripData?.organizer;
 
   // Check if the current hiker already has a booking for this trip
   const { data: existingBooking } = useQuery({

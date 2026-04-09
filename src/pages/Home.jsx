@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
+import { prefetchCalendarData, prefetchTripDetails } from '@/lib/prefetch';
 
-import { Calendar, User as UserIcon } from 'lucide-react';
+import { Calendar, User as UserIcon, Search, Mountain, ArrowRight, MapPin, Users, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { useLanguage } from '../components/contexts/LanguageContext';
 import { useTranslation } from '../components/translations/useTranslations';
 import useSEO from '../components/seo/useSEO';
 import StructuredData from '../components/seo/StructuredData';
-import { getComputedTripStatus } from '../components/helpers/tripHelpers';
 import { getTripImage, handleImageError } from '../components/helpers/imageHelpers';
 import OptimizedImage from '../components/ui/OptimizedImage';
 import { formatPriceForCard } from '../components/helpers/pricingHelpers';
@@ -23,6 +23,10 @@ export default function HomePage() {
   const { language } = useLanguage();
   const { t } = useTranslation(language);
   const { user } = useAuth();
+  const [searchQuery, setSearchQuery] = React.useState('');
+
+  // Prefetch Calendar data on mount so navigating there is instant
+  useEffect(() => { prefetchCalendarData(); }, []);
 
   // 301 Redirect: /Home and /home to root /
   React.useEffect(() => {
@@ -227,6 +231,25 @@ export default function HomePage() {
     ]
   };
 
+  const handleSearch = useCallback((e) => {
+    e.preventDefault();
+    navigate(`${createPageUrl("Calendar")}?search=${encodeURIComponent(searchQuery.trim())}`);
+  }, [navigate, searchQuery]);
+
+  const difficultyCategories = language === 'el'
+    ? [
+        { label: 'Εύκολο', value: 'easy', icon: '🌿', desc: 'Ιδανικό για αρχάριους' },
+        { label: 'Μέτριο', value: 'moderate', icon: '🏔️', desc: 'Λίγη εμπειρία απαιτείται' },
+        { label: 'Δύσκολο', value: 'hard', icon: '⛰️', desc: 'Για έμπειρους πεζοπόρους' },
+        { label: 'Πολυήμερο', value: 'multi-day', icon: '🏕️', desc: 'Εκδρομές πολλών ημερών' },
+      ]
+    : [
+        { label: 'Easy', value: 'easy', icon: '🌿', desc: 'Perfect for beginners' },
+        { label: 'Moderate', value: 'moderate', icon: '🏔️', desc: 'Some experience needed' },
+        { label: 'Hard', value: 'hard', icon: '⛰️', desc: 'For seasoned hikers' },
+        { label: 'Multi-day', value: 'multi-day', icon: '🏕️', desc: 'Extended expeditions' },
+      ];
+
   return (
     <>
       <StructuredData data={organizationSchema} />
@@ -235,8 +258,10 @@ export default function HomePage() {
 
       <div className="flex flex-col min-h-screen">
         <main className="flex-1">
-          <section className="relative min-h-screen flex items-center justify-center text-center">
-            {/* Full-viewport hero image */}
+
+          {/* ─── Hero Section ─── */}
+          <section className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-4 pt-16 pb-24">
+            {/* Background image */}
             <img
               src="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1200&q=80&fm=webp"
               srcSet="https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=600&q=80&fm=webp 600w,
@@ -244,77 +269,142 @@ export default function HomePage() {
                       https://images.unsplash.com/photo-1501555088652-021faa106b9b?w=1920&q=80&fm=webp 1920w"
               sizes="100vw"
               alt={language === 'el'
-                ? "Πεζοπορία στα ελληνικά βουνά - ομάδες πεζοπορίας σε ορειβατική διαδρομή με πανοραμική θέα - outdoor adventures Greece"
-                : "Hiking in Greek mountains - hiking teams Greece on mountain trekking trail with panoramic views - outdoor activities"}
+                ? "Πεζοπορία στα ελληνικά βουνά - ομάδες πεζοπορίας σε ορειβατική διαδρομή"
+                : "Hiking in Greek mountains - hiking teams on mountain trail with panoramic views"}
               className="absolute inset-0 w-full h-full object-cover"
               loading="eager"
-              fetchPriority="high"
+              // eslint-disable-next-line react/no-unknown-property
+              fetchpriority="high"
               decoding="sync"
               width="1920"
               height="1280"
             />
-            {/* Deep Forest gradient overlay — bottom 50% */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0c281c] via-[#0c281c]/40 to-transparent" />
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0c281c]/70 via-[#0c281c]/50 to-[#0c281c]/80" />
 
-            <div className="relative z-10 container px-4 max-w-3xl mx-auto">
+            <div className="relative z-10 w-full max-w-3xl mx-auto space-y-6">
+              {/* Eyebrow */}
+              <p className="text-[#8B6914] font-semibold text-sm uppercase tracking-widest" style={{ fontFamily: 'var(--font-heading)' }}>
+                {language === 'el' ? 'Nature Explorers — Ελλάδα' : 'Nature Explorers — Greece'}
+              </p>
+
+              {/* Headline */}
               <h1
-                className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight text-[#f0e3c7] drop-shadow-lg"
+                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight text-[#f0e3c7] drop-shadow-lg"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
                 {t('home.hero_title_seo')}
               </h1>
-              <p className="mt-4 text-base sm:text-lg md:text-xl text-[#f0e3c7]/80 drop-shadow-md leading-relaxed">
+              <p className="text-base sm:text-lg text-[#f0e3c7]/80 max-w-xl mx-auto leading-relaxed">
                 {t('home.hero_subtitle_seo')}
               </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Link to={createPageUrl("Calendar")}>
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto bg-[#8B6914] hover:bg-[#8B6914]/90 text-[#0c281c] font-bold rounded-full px-8 min-h-[48px] text-base shadow-lg"
+
+              {/* Search bar */}
+              <form onSubmit={handleSearch} className="w-full max-w-xl mx-auto mt-2">
+                <div className="flex items-center bg-white rounded-full shadow-2xl overflow-hidden pl-5 pr-2 py-2 gap-2">
+                  <Search className="w-5 h-5 text-[#0c281c]/50 flex-shrink-0" aria-hidden="true" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder={language === 'el' ? 'Αναζήτησε εκδρομή, τοποθεσία…' : 'Search trips, location…'}
+                    className="flex-1 bg-transparent text-[#0c281c] placeholder-[#0c281c]/40 text-base outline-none min-w-0"
+                  />
+                  <button
+                    type="submit"
+                    className="bg-[#0c281c] hover:bg-[#0c281c]/90 text-[#f0e3c7] font-bold rounded-full px-5 py-2.5 text-sm transition-colors flex-shrink-0"
                     style={{ fontFamily: 'var(--font-heading)' }}
                   >
-                    {t('home.browse_expeditions')}
-                  </Button>
-                </Link>
-                <Link to={createPageUrl("OrganizersList")}>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="w-full sm:w-auto border-[#f0e3c7]/50 text-[#f0e3c7] hover:bg-[#f0e3c7]/10 rounded-full px-8 min-h-[48px] text-base"
-                    style={{ fontFamily: 'var(--font-heading)' }}
-                  >
-                    {t('home.meet_organizers')}
-                  </Button>
-                </Link>
+                    {language === 'el' ? 'Αναζήτηση' : 'Search'}
+                  </button>
+                </div>
+              </form>
+
+              {/* Quick stats */}
+              <div className="flex items-center justify-center gap-6 text-[#f0e3c7]/70 text-sm flex-wrap mt-2">
+                <span className="flex items-center gap-1.5"><Mountain className="w-4 h-4" />{language === 'el' ? 'Εκατοντάδες εκδρομές' : 'Hundreds of trips'}</span>
+                <span className="text-[#f0e3c7]/30">·</span>
+                <span className="flex items-center gap-1.5"><Users className="w-4 h-4" />{language === 'el' ? 'Έμπειροι οδηγοί' : 'Expert guides'}</span>
+                <span className="text-[#f0e3c7]/30">·</span>
+                <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" />{language === 'el' ? 'Όλη η Ελλάδα' : 'All over Greece'}</span>
               </div>
-              <p className="mt-6 text-sm text-[#f0e3c7]/60 max-w-md mx-auto leading-relaxed">
-                {t('home.signup_free')}
-              </p>
             </div>
           </section>
 
+          {/* ─── Explore by Difficulty ─── */}
+          <section className="py-14 px-4 bg-[#0c281c]" style={{ contentVisibility: 'auto', containIntrinsicSize: '0 280px' }}>
+            <div className="container mx-auto max-w-5xl">
+              <div className="flex items-center justify-between mb-8">
+                <h2
+                  className="text-2xl md:text-3xl font-bold text-[#f0e3c7]"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  {language === 'el' ? 'Εξερεύνησε κατά Δυσκολία' : 'Explore by Difficulty'}
+                </h2>
+                <Link
+                  to={createPageUrl("Calendar")}
+                  className="flex items-center gap-1 text-[#8B6914] hover:text-[#8B6914]/80 text-sm font-semibold transition-colors"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  {language === 'el' ? 'Δες όλες' : 'See all'}
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {difficultyCategories.map(cat => (
+                  <Link
+                    key={cat.value}
+                    to={createPageUrl("Calendar")}
+                    className="group flex flex-col items-center gap-3 p-5 rounded-2xl bg-[#f0e3c7]/10 hover:bg-[#f0e3c7]/20 border border-[#f0e3c7]/10 hover:border-[#8B6914]/40 transition-all duration-200 text-center cursor-pointer"
+                  >
+                    <span className="text-4xl" role="img" aria-label={cat.label}>{cat.icon}</span>
+                    <div>
+                      <p className="font-bold text-[#f0e3c7] text-sm" style={{ fontFamily: 'var(--font-heading)' }}>{cat.label}</p>
+                      <p className="text-[#f0e3c7]/50 text-xs mt-0.5">{cat.desc}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ─── Featured Expeditions ─── */}
           {featuredExpeditions.length > 0 && (
-            /* Below the hero fold — defer layout/paint until the user scrolls */
             <section
               className="py-16 px-4 bg-background"
               style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}
             >
               <div className="container mx-auto max-w-6xl">
-                <h2
-                  className="text-3xl md:text-4xl font-bold text-center mb-12 text-[#0c281c]"
-                  style={{ fontFamily: 'var(--font-heading)' }}
-                >
-                  {t('home.featured_expeditions')}
-                </h2>
+                <div className="flex items-center justify-between mb-10">
+                  <div>
+                    <h2
+                      className="text-3xl md:text-4xl font-bold text-[#0c281c]"
+                      style={{ fontFamily: 'var(--font-heading)' }}
+                    >
+                      {t('home.featured_expeditions')}
+                    </h2>
+                    <p className="text-[#0c281c]/60 mt-1 text-sm">
+                      {language === 'el' ? 'Επιλεγμένες εκδρομές που ξεχωρίζουν' : 'Handpicked trips worth exploring'}
+                    </p>
+                  </div>
+                  <Link
+                    to={createPageUrl("Calendar")}
+                    className="hidden sm:flex items-center gap-1 text-[#8B6914] hover:text-[#8B6914]/80 text-sm font-semibold transition-colors"
+                    style={{ fontFamily: 'var(--font-heading)' }}
+                  >
+                    {language === 'el' ? 'Δες όλες' : 'See all'}
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {featuredExpeditions.map(trip => {
                     const organizer = organizerMap[trip.organizer_code];
                     const formattedDate = format(new Date(trip.start_date), "MMM d, yyyy");
                     const price = formatPriceForCard(trip, language);
                     return (
-                      <Link key={trip.id} to={`${createPageUrl("TripDetails")}?id=${trip.id}`} className="block" aria-label={`${t('home.view_details')}: ${trip.title}`}>
+                      <Link key={trip.id} to={`${createPageUrl("TripDetails")}?id=${trip.id}`} className="block" aria-label={`${t('home.view_details')}: ${trip.title}`} onPointerEnter={() => prefetchTripDetails(trip.id)}>
                         <div className="relative rounded-xl overflow-hidden group cursor-pointer aspect-[4/3] shadow-md hover:shadow-xl transition-shadow duration-300">
-                          {/* Full-bleed photo */}
                           <OptimizedImage
                             src={getTripImage(trip.image_url, trip.id)}
                             alt={trip.title}
@@ -324,9 +414,7 @@ export default function HomePage() {
                             onError={(e) => handleImageError(e, trip.id)}
                             className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
-                          {/* Deep Forest gradient overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-[#0c281c] via-[#0c281c]/50 to-transparent" />
-                          {/* Content */}
                           <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
                             {trip.difficulty && (
                               <span className="text-xs font-bold bg-[#8B6914] text-[#f0e3c7] px-2.5 py-0.5 rounded-full uppercase tracking-wide" style={{ fontFamily: 'var(--font-heading)' }}>
@@ -357,9 +445,62 @@ export default function HomePage() {
                     );
                   })}
                 </div>
+
+                <div className="mt-8 text-center sm:hidden">
+                  <Link to={createPageUrl("Calendar")}>
+                    <Button className="bg-[#0c281c] hover:bg-[#0c281c]/90 rounded-full px-8" style={{ fontFamily: 'var(--font-heading)' }}>
+                      {t('home.browse_expeditions')}
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </section>
           )}
+
+          {/* ─── Organizer CTA strip ─── */}
+          <section
+            className="py-16 px-4 bg-[#f0e3c7]"
+            style={{ contentVisibility: 'auto', containIntrinsicSize: '0 200px' }}
+          >
+            <div className="container mx-auto max-w-4xl text-center space-y-5">
+              <TrendingUp className="w-10 h-10 mx-auto text-[#0c281c]/40" aria-hidden="true" />
+              <h2
+                className="text-3xl md:text-4xl font-bold text-[#0c281c]"
+                style={{ fontFamily: 'var(--font-heading)' }}
+              >
+                {language === 'el' ? 'Είσαι οργανωτής εκδρομών;' : 'Are you a trip organizer?'}
+              </h2>
+              <p className="text-[#0c281c]/70 max-w-lg mx-auto text-base leading-relaxed">
+                {language === 'el'
+                  ? 'Ανέβασε τις εκδρομές σου, διαχειρίσου κρατήσεις και φτάσε σε χιλιάδες πεζοπόρους.'
+                  : 'List your trips, manage bookings, and reach thousands of hikers across Greece.'}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Link to={createPageUrl("OrganizersList")}>
+                  <Button
+                    size="lg"
+                    className="bg-[#0c281c] hover:bg-[#0c281c]/90 text-[#f0e3c7] font-bold rounded-full px-8 min-h-[48px]"
+                    style={{ fontFamily: 'var(--font-heading)' }}
+                  >
+                    {t('home.meet_organizers')}
+                  </Button>
+                </Link>
+                {!user && (
+                  <Link to={createPageUrl("Login")}>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-[#0c281c]/40 text-[#0c281c] hover:bg-[#0c281c]/10 rounded-full px-8 min-h-[48px]"
+                      style={{ fontFamily: 'var(--font-heading)' }}
+                    >
+                      {language === 'el' ? 'Εγγραφή δωρεάν' : 'Sign up free'}
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </section>
+
         </main>
       </div>
     </>
