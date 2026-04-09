@@ -44,7 +44,7 @@ export default function HomePage() {
     description: language === 'el'
       ? 'Οι καλύτερες οργανωμένες εκδρομές και ομαδικές εκδρομές πεζοπορίας στην Ελλάδα. Ταξίδια πεζοπορίας, trekking, ορειβασία σε Πάρνηθα, Όλυμπο, Πήλιο με έμπειρους οδηγούς. Βρείτε ομάδες πεζοπορίας και κρατήστε θέση σε εκδρομές βουνού. Nature Explorers - Η #1 πλατφόρμα outdoor περιπετειών.'
       : 'Best organized hiking trips and group expeditions in Greece. Hiking tours, trekking adventures, mountain climbing in Parnitha, Olympus, Pelion with expert guides. Find hiking groups and book hiking trips. Nature Explorers - #1 outdoor adventure platform.',
-    image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png',
+    image: 'https://ihrvqyglwxqkczfsntur.supabase.co/storage/v1/object/sign/app_photos/Nature%20Explorers%20logo%20Green.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hNmI0OGRkOS0zZWY1LTQ1YzktYjI2MC1jZmYyZGQ2YjU4N2IiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhcHBfcGhvdG9zL05hdHVyZSBFeHBsb3JlcnMgbG9nbyBHcmVlbi5wbmciLCJpYXQiOjE3NzU3NjAwODAsImV4cCI6MTkzMzQ0MDA4MH0.ke7Ht1D_CTQALVRCaVCWsXgcLwrVhMKMmf2ymZ2Sd7A',
     url: window.location.href,
     type: 'website'
   });
@@ -67,7 +67,6 @@ export default function HomePage() {
       const shuffled = [...futureTrips].sort((a, b) => a.id.localeCompare(b.id));
       return shuffled.slice(0, 3);
     },
-    initialData: [],
   });
 
 
@@ -76,7 +75,6 @@ export default function HomePage() {
   const { data: organizers = [] } = useQuery({
     queryKey: ['home-organizers'],
     queryFn: () => Organizer.list(),
-    initialData: [],
   });
 
   // Create organizer map
@@ -95,8 +93,8 @@ export default function HomePage() {
     "name": "Nature Explorers",
     "alternateName": language === 'el' ? "Nature Explorers - Πεζοπορία Ελλάδα" : "Nature Explorers Greece - Hiking & Trekking",
     "url": window.location.origin,
-    "logo": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png",
-    "image": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png",
+    "logo": "https://ihrvqyglwxqkczfsntur.supabase.co/storage/v1/object/sign/app_photos/Nature%20Explorers%20logo%20Green.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hNmI0OGRkOS0zZWY1LTQ1YzktYjI2MC1jZmYyZGQ2YjU4N2IiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhcHBfcGhvdG9zL05hdHVyZSBFeHBsb3JlcnMgbG9nbyBHcmVlbi5wbmciLCJpYXQiOjE3NzU3NjAwODAsImV4cCI6MTkzMzQ0MDA4MH0.ke7Ht1D_CTQALVRCaVCWsXgcLwrVhMKMmf2ymZ2Sd7A",
+    "image": "https://ihrvqyglwxqkczfsntur.supabase.co/storage/v1/object/sign/app_photos/Nature%20Explorers%20logo%20Green.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hNmI0OGRkOS0zZWY1LTQ1YzktYjI2MC1jZmYyZGQ2YjU4N2IiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhcHBfcGhvdG9zL05hdHVyZSBFeHBsb3JlcnMgbG9nbyBHcmVlbi5wbmciLCJpYXQiOjE3NzU3NjAwODAsImV4cCI6MTkzMzQ0MDA4MH0.ke7Ht1D_CTQALVRCaVCWsXgcLwrVhMKMmf2ymZ2Sd7A",
     "description": language === 'el'
       ? "Η #1 πλατφόρμα για οργανωμένες εκδρομές και ομαδικές εκδρομές πεζοπορίας στην Ελλάδα. Βρείτε ταξίδια πεζοπορίας, trekking Greece, ορειβασία και outdoor δραστηριότητες με πιστοποιημένους οδηγούς. Ημερολόγιο εκδρομών βουνό σε Όλυμπο, Πάρνηθα, Πήλιο και όλη την Ελλάδα."
       : "The #1 platform for organized hiking trips and group expeditions in Greece. Find hiking tours, trekking adventures Greece, mountain climbing and outdoor activities with certified guides. Hiking calendar for Olympus, Parnitha, Pelion and all Greece.",
@@ -294,7 +292,7 @@ export default function HomePage() {
 
             <div className="relative z-10 w-full max-w-3xl mx-auto space-y-6">
               {/* Eyebrow */}
-              <p className="text-brand-gold-accent font-semibold text-sm uppercase tracking-widest" style={{ fontFamily: 'var(--font-heading)' }}>
+              <p className="text-brand-gold font-semibold text-sm uppercase tracking-widest" style={{ fontFamily: 'var(--font-heading)' }}>
                 {language === 'el' ? 'Nature Explorers — Ελλάδα' : 'Nature Explorers — Greece'}
               </p>
 

@@ -30,7 +30,7 @@ export default function OrganizersListPage() {
     description: language === 'el'
       ? 'Ανακαλύψτε 14+ ομάδες πεζοπορίας και πιστοποιημένους οδηγούς σε όλη την Ελλάδα. Εκδρομές βουνό, trekking & outdoor περιπέτειες. Βρείτε τη σωστή ομάδα για εσάς!'
       : 'Discover 14+ hiking groups and certified guides across Greece. Browse trekking organizers, outdoor leaders and find your perfect hiking team for mountain adventures.',
-    image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb4/01040e5a0_logo.png',
+    image: 'https://ihrvqyglwxqkczfsntur.supabase.co/storage/v1/object/sign/app_photos/Nature%20Explorers%20logo%20Green.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hNmI0OGRkOS0zZWY1LTQ1YzktYjI2MC1jZmYyZGQ2YjU4N2IiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhcHBfcGhvdG9zL05hdHVyZSBFeHBsb3JlcnMgbG9nbyBHcmVlbi5wbmciLCJpYXQiOjE3NzU3NjAwODAsImV4cCI6MTkzMzQ0MDA4MH0.ke7Ht1D_CTQALVRCaVCWsXgcLwrVhMKMmf2ymZ2Sd7A',
     url: 'https://natureexplorers.gr/organizerslist',
     type: 'website'
   });
@@ -38,13 +38,11 @@ export default function OrganizersListPage() {
   const { data: organizers = [], isLoading: organizersLoading } = useQuery({
     queryKey: ['organizers-list'],
     queryFn: () => Organizer.list(),
-    initialData: [],
   });
 
   const { data: allTrips = [], isLoading: tripsLoading } = useQuery({
     queryKey: ['all-upcoming-trips'],
     queryFn: () => HikingTrip.list(),
-    initialData: [],
   });
 
   // Create a map of organizer_code -> trip count (only upcoming or almost soldout trips with start_date > today)

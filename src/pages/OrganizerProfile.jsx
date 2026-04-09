@@ -55,7 +55,6 @@ export default function OrganizerProfilePage() {
     queryKey: ['organizer-trips', organizer?.organizer_code],
     queryFn: () => HikingTrip.filter({ organizer_code: organizer.organizer_code }, "start_date"),
     enabled: !!organizer?.organizer_code,
-    initialData: [],
   });
 
   // Filter trips to only show future events with upcoming or almost soldout status
@@ -144,14 +143,14 @@ export default function OrganizerProfilePage() {
         : `hiking guide, ${organizer.full_name}, ${organizer.username}, trekking, outdoor activities, mountain guide, hiking greece, hiking teams greece, hiking tours greece, weekend hiking trips`);
       updateMetaTag('og:title', pageTitle, true);
       updateMetaTag('og:description', description, true);
-      updateMetaTag('og:image', organizer.profile_picture_url || 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png', true);
+      updateMetaTag('og:image', organizer.profile_picture_url || 'https://ihrvqyglwxqkczfsntur.supabase.co/storage/v1/object/sign/app_photos/Nature%20Explorers%20logo%20Green.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hNmI0OGRkOS0zZWY1LTQ1YzktYjI2MC1jZmYyZGQ2YjU4N2IiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhcHBfcGhvdG9zL05hdHVyZSBFeHBsb3JlcnMgbG9nbyBHcmVlbi5wbmciLCJpYXQiOjE3NzU3NjAwODAsImV4cCI6MTkzMzQ0MDA4MH0.ke7Ht1D_CTQALVRCaVCWsXgcLwrVhMKMmf2ymZ2Sd7A', true);
       updateMetaTag('og:url', canonicalUrl, true);  // stable canonical, not window.location.href
       updateMetaTag('og:type', 'profile', true);
       updateMetaTag('og:site_name', 'Nature Explorers', true);
       updateMetaTag('twitter:card', 'summary_large_image');
       updateMetaTag('twitter:title', pageTitle);
       updateMetaTag('twitter:description', description);
-      updateMetaTag('twitter:image', organizer.profile_picture_url || 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png');
+      updateMetaTag('twitter:image', organizer.profile_picture_url || 'https://ihrvqyglwxqkczfsntur.supabase.co/storage/v1/object/sign/app_photos/Nature%20Explorers%20logo%20Green.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hNmI0OGRkOS0zZWY1LTQ1YzktYjI2MC1jZmYyZGQ2YjU4N2IiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhcHBfcGhvdG9zL05hdHVyZSBFeHBsb3JlcnMgbG9nbyBHcmVlbi5wbmciLCJpYXQiOjE3NzU3NjAwODAsImV4cCI6MTkzMzQ0MDA4MH0.ke7Ht1D_CTQALVRCaVCWsXgcLwrVhMKMmf2ymZ2Sd7A');
 
       // hreflang self-referencing — use canonical URL, not window.location.href
       const addHreflang = (lang, href) => {

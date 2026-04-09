@@ -218,7 +218,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                     <Menu className="w-5 h-5" aria-hidden="true" />
                   </button>
                   <img
-                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png"
+                    src="https://ihrvqyglwxqkczfsntur.supabase.co/storage/v1/object/sign/app_photos/Nature%20Explorers%20logo%20creme.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hNmI0OGRkOS0zZWY1LTQ1YzktYjI2MC1jZmYyZGQ2YjU4N2IiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhcHBfcGhvdG9zL05hdHVyZSBFeHBsb3JlcnMgbG9nbyBjcmVtZS5wbmciLCJpYXQiOjE3NzU3NjAzODgsImV4cCI6MTkzMzQ0MDM4OH0.r0J2kQGt4XBOhefrLnx7jqQjq5IzlfKlkjxW60fcRfk"
                     alt="Nature Explorers"
                     className="h-8 w-auto"
                   />
@@ -274,7 +274,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
             <div className="flex items-center justify-between p-5 border-b border-brand-gold/10">
               <Link to={createPageUrl("Home")} className="flex items-center gap-3" onClick={closeMenu}>
                 <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png"
+                  src="https://ihrvqyglwxqkczfsntur.supabase.co/storage/v1/object/sign/app_photos/Nature%20Explorers%20logo%20creme.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hNmI0OGRkOS0zZWY1LTQ1YzktYjI2MC1jZmYyZGQ2YjU4N2IiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhcHBfcGhvdG9zL05hdHVyZSBFeHBsb3JlcnMgbG9nbyBjcmVtZS5wbmciLCJpYXQiOjE3NzU3NjAzODgsImV4cCI6MTkzMzQ0MDM4OH0.r0J2kQGt4XBOhefrLnx7jqQjq5IzlfKlkjxW60fcRfk"
                   alt="Nature Explorers"
                   className="h-8 w-auto"
                 />

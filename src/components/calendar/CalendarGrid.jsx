@@ -107,7 +107,7 @@ function CalendarGrid({ currentDate, onDateChange, trips, onDayClick, selectedDa
                   {hasTrips && (
                     <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
                       {dayTrips.slice(0, 3).map((_, i) => (
-                        <div key={i} className={`w-1.5 h-1.5 rounded-full ${isSelected ? "bg-orange-500" : "bg-brand-gold/400"}`} />
+                        <div key={i} className={`w-1.5 h-1.5 rounded-full ${isSelected ? "bg-orange-500" : "bg-brand-dark"}`} />
                       ))}
                     </div>
                   )}

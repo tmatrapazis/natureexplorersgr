@@ -35,7 +35,7 @@ export default function CalendarPage() {
     description: language === 'el' ?
     'Περιηγηθείτε και κλείστε επερχόμενες πεζοπορικές εκδρομές σε όλη την Ελλάδα. Βρείτε trekking περιπέτειες, outdoor δραστηριότητες, ημερολόγιο εκδρομών και ορειβατικές διαδρομές με πιστοποιημένους τοπικούς οδηγούς. Πεζοπορία Πάρνηθα, Όλυμπος, Πήλιο, Κρήτη.' :
     'Browse and book upcoming hiking trips Greece, trekking adventures, and hiking events. Explore weekend hiking trips, one day hikes Greece, mountain trekking calendar with verified organizers. Hiking Parnitha, Olympus, Pelion, Crete.',
-    image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png',
+    image: 'https://ihrvqyglwxqkczfsntur.supabase.co/storage/v1/object/sign/app_photos/Nature%20Explorers%20logo%20Green.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9hNmI0OGRkOS0zZWY1LTQ1YzktYjI2MC1jZmYyZGQ2YjU4N2IiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhcHBfcGhvdG9zL05hdHVyZSBFeHBsb3JlcnMgbG9nbyBHcmVlbi5wbmciLCJpYXQiOjE3NzU3NjAwODAsImV4cCI6MTkzMzQ0MDA4MH0.ke7Ht1D_CTQALVRCaVCWsXgcLwrVhMKMmf2ymZ2Sd7A',
     url: 'https://natureexplorers.gr/calendar',
     type: 'website'
   });
@@ -66,16 +66,14 @@ export default function CalendarPage() {
   const tripsPerPage = 12;
   const tripsListRef = React.useRef(null);
 
-  const { data: trips, isLoading } = useQuery({
+  const { data: trips = [], isLoading } = useQuery({
     queryKey: ['hiking-trips'],
     queryFn: () => HikingTrip.list("start_date"),
-    initialData: []
   });
 
   const { data: organizers = [] } = useQuery({
     queryKey: ['organizers-calendar'],
     queryFn: () => Organizer.list(),
-    initialData: []
   });
 
   // Create organizer map for quick lookup
