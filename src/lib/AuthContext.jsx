@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/api/supabaseClient';
 
 const AuthContext = createContext();
@@ -54,35 +54,39 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Call this after updating the profile so the context stays in sync
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     const { data: { user: authUser } } = await supabase.auth.getUser();
     if (authUser) await fetchUserWithProfile(authUser);
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await supabase.auth.signOut();
     setUser(null);
     setIsAuthenticated(false);
-  };
+  }, []);
 
-  const navigateToLogin = () => {
+  const navigateToLogin = useCallback(() => {
     window.location.href = '/login';
-  };
+  }, []);
+
+  // Memoize context value — prevents all consumers from re-rendering when
+  // unrelated state elsewhere in the tree changes.
+  const contextValue = useMemo(() => ({
+    user,
+    isAuthenticated,
+    isLoadingAuth,
+    // Keep these for compatibility with App.jsx — no longer used by Supabase
+    isLoadingPublicSettings: false,
+    authError: null,
+    appPublicSettings: null,
+    logout,
+    navigateToLogin,
+    checkAppState: refreshUser,
+    refreshUser,
+  }), [user, isAuthenticated, isLoadingAuth, logout, navigateToLogin, refreshUser]);
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      isAuthenticated,
-      isLoadingAuth,
-      // Keep these for compatibility with App.jsx — no longer used by Supabase
-      isLoadingPublicSettings: false,
-      authError: null,
-      appPublicSettings: null,
-      logout,
-      navigateToLogin,
-      checkAppState: refreshUser,
-      refreshUser,
-    }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

@@ -284,3 +284,23 @@ img {
     padding-right: max(env(safe-area-inset-right), 1rem);
   }
 }
+
+/* ─── Reduced-motion accessibility ─────────────────────────────────────────
+   Respect the OS "Reduce Motion" preference. Framer Motion reads this via
+   its built-in useReducedMotion() hook, but we also guard CSS transitions
+   and animations here for anything outside Framer Motion.
+   ─────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .page-transition-layer {
+    transform: none !important;
+  }
+}

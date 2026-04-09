@@ -16,14 +16,7 @@ import { useLanguage } from '@/components/contexts/LanguageContext';
 import { useTranslation } from '@/components/translations/useTranslations';
 import PageWrapper from '@/components/layout/PageWrapper';
 import useSEO from '@/components/seo/useSEO';
-
-const STATUS_STYLES = {
-  pending:   'bg-blue-100 text-blue-800 border-blue-200',
-  confirmed: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  paid:      'bg-[#f0e3c7]/40 text-[#0c281c] border-[#0c281c]/20',
-  declined:  'bg-red-100 text-red-800 border-red-200',
-  cancelled: 'bg-muted text-muted-foreground border-border',
-};
+import { STATUS_STYLES } from '@/lib/constants';
 
 export default function MyBookingsPage() {
   const { user } = useAuth();
