@@ -1,5 +1,6 @@
 import './App.css'
 import { Suspense } from 'react'
+import ErrorBoundary from '@/components/ErrorBoundary'
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -122,22 +123,24 @@ function RoutesWithAnimation() {
 
 function App() {
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <NavigationTracker />
-          <Suspense fallback={<LoadingFallback />}>
-            <Routes>
-              {/* Login lives outside the main layout — no sidebar/header */}
-              <Route path="/login" element={<LoginPage />} />
-              {/* Everything else goes through AuthenticatedApp */}
-              <Route path="*" element={<AuthenticatedApp />} />
-            </Routes>
-          </Suspense>
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <QueryClientProvider client={queryClientInstance}>
+          <Router>
+            <NavigationTracker />
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes>
+                {/* Login lives outside the main layout — no sidebar/header */}
+                <Route path="/login" element={<LoginPage />} />
+                {/* Everything else goes through AuthenticatedApp */}
+                <Route path="*" element={<AuthenticatedApp />} />
+              </Routes>
+            </Suspense>
+          </Router>
+          <Toaster />
+        </QueryClientProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 

@@ -1,7 +1,11 @@
 import React, { useCallback, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home, LogIn, X, ArrowLeft, ClipboardList, BookOpen, BarChart2, Sparkles, Backpack } from "lucide-react";
+import {
+  Calendar, PlusCircle, Map, User, LogOut, Edit, Users, Compass, Home,
+  LogIn, X, ArrowLeft, ClipboardList, BookOpen, BarChart2, Sparkles,
+  Backpack, Menu,
+} from "lucide-react";
 import DesktopHeader from "./DesktopHeader";
 import { useTabNavigation } from "@/lib/TabNavigationContext";
 import { useBackNavigation } from "@/lib/useBackNavigation";
@@ -10,20 +14,12 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { useTranslation } from "../translations/useTranslations";
 import { Button } from "@/components/ui/button";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarHeader,
-  SidebarFooter,
-  SidebarProvider,
-  SidebarTrigger,
-  useSidebar,
-} from "@/components/ui/sidebar";
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import PublicHeader from "../layout/PublicHeader";
 import PublicFooter from "../layout/PublicFooter";
 import NotificationsBell from "../layout/NotificationsBell";
@@ -43,8 +39,18 @@ const ORGANIZER_NAV_URLS = [
   { key: "navigation.edit_profile",    url: createPageUrl("EditProfile"),        icon: Edit },
 ];
 
-// ─── BottomNav — 5-tab brand design with center FAB ──────────────────────────
-const BottomNav = React.memo(function BottomNav({ pathname, navigateToTab, user, isOrganizer, t }) {
+// ─── BottomNav — self-contained, reads all context internally ────────────────
+const BottomNav = React.memo(function BottomNav() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { language } = useLanguage();
+  const { t } = useTranslation(language);
+  const { navigateToTab } = useTabNavigation();
+
+  const pathname = location.pathname;
+  const isOrganizer = !!(user?.organizer_code && user.organizer_code.trim().length > 0);
+
   const myPackUrl = isOrganizer ? createPageUrl("MyTrips") : createPageUrl("MyBookings");
   const myPackLabel = isOrganizer ? t('navigation.my_trips') : t('navigation.my_bookings');
   const fabUrl = isOrganizer ? createPageUrl("TripForm") : createPageUrl("Calendar");
@@ -61,14 +67,11 @@ const BottomNav = React.memo(function BottomNav({ pathname, navigateToTab, user,
     <nav
       aria-label="Main navigation"
       className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0c281c] z-50 select-none shadow-lg"
-      style={{
-        paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)',
-      }}
+      style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)' }}
     >
       <div className="flex items-end justify-around px-2 h-16">
-        {tabs.map((tab, i) => {
+        {tabs.map((tab) => {
           if (tab === null) {
-            // Center FAB
             return (
               <button
                 key="fab"
@@ -92,11 +95,8 @@ const BottomNav = React.memo(function BottomNav({ pathname, navigateToTab, user,
               aria-label={`Navigate to ${tab.label}`}
               aria-current={isActive ? 'page' : undefined}
             >
-              {/* Gold dot above active icon */}
               <span className={`w-1 h-1 rounded-full mb-1 ${isActive ? 'bg-[#8B6914]' : 'bg-transparent'}`} aria-hidden="true" />
-              <div className={`flex flex-col items-center justify-center rounded-full px-3 py-1 transition-colors ${
-                isActive ? 'bg-[#f0e3c7]/10' : ''
-              }`}>
+              <div className={`flex flex-col items-center justify-center rounded-full px-3 py-1 transition-colors ${isActive ? 'bg-[#f0e3c7]/10' : ''}`}>
                 <Icon className={`w-5 h-5 ${isActive ? 'text-[#f0e3c7]' : 'text-[#f0e3c7]/70'}`} aria-hidden="true" />
                 <span
                   className={`text-[10px] mt-0.5 font-medium ${isActive ? 'text-[#f0e3c7]' : 'text-[#f0e3c7]/70'}`}
@@ -113,16 +113,15 @@ const BottomNav = React.memo(function BottomNav({ pathname, navigateToTab, user,
   );
 });
 
-// ─── AppLayoutInner — memoised; re-renders only when props change ──────────────
+// ─── AppLayoutInner — no Sidebar dependency, custom mobile Sheet ──────────────
 const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganizer, user, location }) {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
-  const { setOpenMobile } = useSidebar();
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const { isTabRoot, navigateToTab } = useTabNavigation();
-  const { canGoBack, showBackButton, backLabel, goBack: goBackInTab } = useBackNavigation(null);
+  const { showBackButton, backLabel, goBack: goBackInTab } = useBackNavigation(null);
 
-  // Redirect to incomplete-profile pages when needed
   React.useEffect(() => {
     if (user) {
       const intendedRole = localStorage.getItem('intended_role');
@@ -140,7 +139,6 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
     }
   }, [user, navigate, location.pathname]);
 
-  // ─── Stable handlers ────────────────────────────────────────────────────────
   const { logout } = useAuth();
 
   const handleLogout = useCallback(async () => {
@@ -152,10 +150,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
     navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
   }, [navigate]);
 
-  /** Close mobile sidebar — used by every nav link click. */
-  const handleNavClick = useCallback(() => {
-    setOpenMobile(false);
-  }, [setOpenMobile]);
+  const closeMenu = useCallback(() => setMobileMenuOpen(false), []);
 
   const handleNavigateCreateTrip = useCallback(() => {
     navigate(createPageUrl("TripForm"));
@@ -165,11 +160,6 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
     navigate(createPageUrl("EditProfile"));
   }, [navigate]);
 
-  const handleSetLanguageEn = useCallback(() => setLanguage('en'), [setLanguage]);
-  const handleSetLanguageEl = useCallback(() => setLanguage('el'), [setLanguage]);
-
-  // ─── Nav arrays ─────────────────────────────────────────────────────────────
-  // publicNav uses translated titles so it must depend on `t`.
   const publicNav = useMemo(() => [
     { title: t('navigation.calendar'),   url: createPageUrl("Calendar"),       icon: Calendar },
     { title: t('navigation.organizers'), url: createPageUrl("OrganizersList"), icon: Users },
@@ -177,205 +167,42 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
     { title: t('navigation.refuges'),    url: createPageUrl("GreekRefuges"),   icon: Home },
   ], [t]);
 
-  // Role-based nav: translate titles on every language change.
-  const roleBasedNav = useMemo(
-    () => {
-      if (!user) return [];
-      const urls = isOrganizer ? ORGANIZER_NAV_URLS : CLIENT_NAV_URLS;
-      return urls.map(({ key, url, icon }) => ({ title: t(key), url, icon }));
-    },
-    [user, isOrganizer, t]
-  );
+  const roleBasedNav = useMemo(() => {
+    if (!user) return [];
+    const urls = isOrganizer ? ORGANIZER_NAV_URLS : CLIENT_NAV_URLS;
+    return urls.map(({ key, url, icon }) => ({ title: t(key), url, icon }));
+  }, [user, isOrganizer, t]);
 
   const pathname = location.pathname;
 
   return (
     <div className="min-h-screen flex flex-col w-full bg-background">
-      {/* Desktop top header — md+ only, rendered outside the sidebar/main flex row */}
+      {/* Skip-to-content for keyboard/screen-reader users */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[#0c281c] focus:text-[#f0e3c7] focus:rounded-lg focus:text-sm focus:font-medium"
+      >
+        Skip to content
+      </a>
+
+      {/* Desktop header — visible only md+ */}
       <DesktopHeader />
 
-      <div className="flex flex-1 w-full">
-      <Sidebar className="border-r border-border hidden">{/* hidden — sidebar kept for mobile drawer trigger */}
-        <SidebarHeader className="border-b border-border p-6">
-          <div className="flex items-center justify-between">
-            <Link to={createPageUrl("Home")} className="flex items-center gap-3" onClick={handleNavClick}>
-              <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png"
-                  alt="Nature Explorers"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-              <div>
-                <h2 className="font-bold text-foreground">Nature Explorers</h2>
-                <p className="text-xs text-muted-foreground">Discover the wild side of Greece</p>
-              </div>
-            </Link>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              aria-label="Close menu"
-              onClick={handleNavClick}
-            >
-              <X className="w-5 h-5" aria-hidden="true" />
-            </Button>
-          </div>
-        </SidebarHeader>
-
-        <SidebarContent className="p-3 scrollbar-hide">
-          {/* Public Navigation */}
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
-              {user ? (isOrganizer ? t('layout.hello_organizer') : t('layout.hello_hiker')) : t('common.explore')}
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {publicNav.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      className={`hover:bg-[#f0e3c7]/40 hover:text-[#0c281c] transition-all duration-200 rounded-lg mb-1 ${
-                        pathname.startsWith(item.url.split('?')[0]) ? 'bg-[#f0e3c7]/40 text-[#0c281c] font-medium' : ''
-                      }`}
-                    >
-                      <Link
-                        to={item.url}
-                        className="flex items-center gap-3 px-3 py-2.5 min-h-[44px]"
-                        onClick={handleNavClick}
-                        aria-label={`Navigate to ${item.title}`}
-                        aria-current={pathname.startsWith(item.url.split('?')[0]) ? 'page' : undefined}
-                      >
-                        <item.icon className="w-4 h-4" aria-hidden="true" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-
-          {/* Role-based Navigation */}
-          {user && roleBasedNav.length > 0 && (
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
-                {isOrganizer ? t('layout.organizer_tools') : t('layout.my_activities')}
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {roleBasedNav.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton
-                        asChild
-                        className={`hover:bg-[#f0e3c7]/40 hover:text-[#0c281c] transition-all duration-200 rounded-lg mb-1 ${
-                          pathname.startsWith(item.url.split('?')[0]) ? 'bg-[#f0e3c7]/40 text-[#0c281c] font-medium' : ''
-                        }`}
-                      >
-                        <Link
-                          to={item.url}
-                          className="flex items-center gap-3 px-3 py-2.5 min-h-[44px]"
-                          onClick={handleNavClick}
-                          aria-label={`Navigate to ${item.title}`}
-                          aria-current={pathname.startsWith(item.url.split('?')[0]) ? 'page' : undefined}
-                        >
-                          <item.icon className="w-4 h-4" aria-hidden="true" />
-                          <span>{item.title}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          )}
-
-          {/* Language Switcher */}
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 py-2">
-              {language === 'el' ? 'Γλώσσα' : 'Language'}
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <div className="px-3 py-2 flex gap-2">
-                <Button
-                  variant={language === 'en' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={handleSetLanguageEn}
-                  className="flex-1 min-h-[44px]"
-                  aria-label="Switch to English"
-                  aria-pressed={language === 'en'}
-                >
-                  EN
-                </Button>
-                <Button
-                  variant={language === 'el' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={handleSetLanguageEl}
-                  className="flex-1 min-h-[44px]"
-                  aria-label="Αλλαγή σε Ελληνικά"
-                  aria-pressed={language === 'el'}
-                >
-                  ΕΛ
-                </Button>
-              </div>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
-
-        <SidebarFooter className="border-t border-border p-4">
-          {user ? (
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-2">
-                <Link to={createPageUrl("EditProfile")} className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-10 h-10 bg-gradient-to-br from-[#0c281c] to-[#0c281c]/80 rounded-full flex items-center justify-center shadow">
-                    {user.profile_picture_url
-                      ? <img src={user.profile_picture_url} alt=" " className="w-full h-full object-cover rounded-full" />
-                      : <User className="w-5 h-5 text-white" aria-hidden="true" />
-                    }
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-foreground text-sm truncate">{user.full_name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{isOrganizer ? t('roles.organizer') : t('roles.hiker')}</p>
-                  </div>
-                </Link>
-                <NotificationsBell user={user} />
-              </div>
-              <button
-                onClick={handleLogout}
-                aria-label={t('common.logout')}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors min-h-[44px]"
-              >
-                <LogOut className="w-4 h-4" aria-hidden="true" />
-                {t('common.logout')}
-              </button>
-            </div>
-          ) : (
-            <Button
-              onClick={handleLogin}
-              className="w-full bg-[#0c281c] hover:bg-[#0c281c]/90 min-h-[44px]"
-              aria-label={t('common.login')}
-            >
-              <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
-              {t('common.login')}
-            </Button>
-          )}
-        </SidebarFooter>
-      </Sidebar>
-
-      <main className="flex-1 flex flex-col">
+      <main id="main-content" className="flex-1 flex flex-col">
+        {/* Mobile-only top bar */}
         <header
-          className="bg-background border-b border-border px-4 md:hidden sticky top-0 z-40"
+          className="bg-[#0c281c] px-4 md:hidden sticky top-0 z-40"
           style={{
-            paddingTop: 'max(env(safe-area-inset-top), 1rem)',
-            paddingBottom: '1rem',
+            paddingTop: 'max(env(safe-area-inset-top), 0.75rem)',
+            paddingBottom: '0.75rem',
           }}
         >
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1 min-w-0">
+            <div className="flex items-center gap-2 min-w-0">
               {showBackButton && !isTabRoot() ? (
                 <button
                   onClick={goBackInTab}
-                  className="flex items-center gap-1 hover:bg-accent pl-1 pr-2 py-2 rounded-lg transition-colors min-h-[44px] text-sm font-medium text-foreground max-w-[140px]"
+                  className="flex items-center gap-1 text-[#f0e3c7] pl-1 pr-2 py-2 rounded-lg transition-colors min-h-[44px] text-sm font-medium max-w-[140px]"
                   aria-label={`Go back to ${backLabel}`}
                 >
                   <ArrowLeft className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
@@ -383,10 +210,13 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
                 </button>
               ) : (
                 <>
-                  <SidebarTrigger
-                    className="hover:bg-accent p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex-shrink-0"
+                  <button
+                    onClick={() => setMobileMenuOpen(true)}
+                    className="text-[#f0e3c7] hover:bg-[#f0e3c7]/10 p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex-shrink-0"
                     aria-label="Open menu"
-                  />
+                  >
+                    <Menu className="w-5 h-5" aria-hidden="true" />
+                  </button>
                   <img
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png"
                     alt="Nature Explorers"
@@ -396,73 +226,206 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
               )}
             </div>
 
-            {user && <NotificationsBell user={user} compact={true} />}
-
-            {/* Organizer quick-actions on MyTrips */}
-            {isOrganizer && pathname.includes('/mytrips') && user && (
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleNavigateCreateTrip}
-                  className="min-h-[44px] min-w-[44px] text-[#0c281c] hover:text-[#0c281c] hover:bg-[#f0e3c7]/40"
-                  aria-label={t('create_trip.title')}
-                >
-                  <PlusCircle className="w-5 h-5" aria-hidden="true" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleNavigateEditProfile}
-                  className="min-h-[44px] min-w-[44px] hover:bg-accent"
-                  aria-label="Edit profile"
-                >
-                  {user.profile_picture_url ? (
-                    <img src={user.profile_picture_url} alt="" className="w-8 h-8 rounded-full object-cover" />
-                  ) : (
-                    <User className="w-5 h-5" aria-hidden="true" />
-                  )}
-                </Button>
-              </div>
-            )}
+            <div className="flex items-center gap-1">
+              {user && (
+                <div className="text-[#f0e3c7]">
+                  <NotificationsBell user={user} compact={true} />
+                </div>
+              )}
+              {isOrganizer && pathname.includes('/mytrips') && user && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleNavigateCreateTrip}
+                    className="min-h-[44px] min-w-[44px] text-[#f0e3c7] hover:bg-[#f0e3c7]/10"
+                    aria-label={t('create_trip.title')}
+                  >
+                    <PlusCircle className="w-5 h-5" aria-hidden="true" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleNavigateEditProfile}
+                    className="min-h-[44px] min-w-[44px] hover:bg-[#f0e3c7]/10"
+                    aria-label="Edit profile"
+                  >
+                    {user.profile_picture_url ? (
+                      <img src={user.profile_picture_url} alt="" className="w-8 h-8 rounded-full object-cover" />
+                    ) : (
+                      <User className="w-5 h-5 text-[#f0e3c7]" aria-hidden="true" />
+                    )}
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </header>
 
-        {/*
-          position:relative + overflow:hidden is the clipping boundary for the
-          absolute-positioned sliding motion.div in src/Layout.jsx.
-          The motion.div owns scrolling + paddingBottom — do NOT add
-          overflow-auto or padding here.
-        */}
-        <div className="flex-1 relative overflow-hidden">
+        {/* Mobile drawer — custom Sheet, no shadcn Sidebar dependency */}
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <SheetContent side="left" className="w-[280px] bg-[#0c281c] border-r border-[#f0e3c7]/10 p-0 flex flex-col [&>button:first-child]:hidden">
+            <VisuallyHidden>
+              <SheetTitle>Navigation Menu</SheetTitle>
+              <SheetDescription>Main navigation links</SheetDescription>
+            </VisuallyHidden>
+
+            {/* Sheet header */}
+            <div className="flex items-center justify-between p-5 border-b border-[#f0e3c7]/10">
+              <Link to={createPageUrl("Home")} className="flex items-center gap-3" onClick={closeMenu}>
+                <img
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68edfeced35e3590d79eccb8/01040e5a0_logo.png"
+                  alt="Nature Explorers"
+                  className="h-8 w-auto"
+                />
+                <span className="font-bold text-[#f0e3c7] text-base" style={{ fontFamily: 'var(--font-heading)' }}>
+                  Nature Explorers
+                </span>
+              </Link>
+              <button
+                onClick={closeMenu}
+                className="text-[#f0e3c7]/70 hover:text-[#f0e3c7] min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label="Close menu"
+              >
+                <X className="w-5 h-5" aria-hidden="true" />
+              </button>
+            </div>
+
+            {/* Navigation links */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-1">
+              <p className="text-xs font-semibold text-[#f0e3c7]/40 uppercase tracking-wider px-3 py-2">
+                {user ? (isOrganizer ? t('layout.hello_organizer') : t('layout.hello_hiker')) : t('common.explore')}
+              </p>
+              {publicNav.map((item) => {
+                const Icon = item.icon;
+                const active = pathname.startsWith(item.url.split('?')[0]);
+                return (
+                  <Link
+                    key={item.title}
+                    to={item.url}
+                    onClick={closeMenu}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg min-h-[44px] transition-colors ${
+                      active ? 'bg-[#f0e3c7]/10 text-[#f0e3c7]' : 'text-[#f0e3c7]/75 hover:bg-[#f0e3c7]/5 hover:text-[#f0e3c7]'
+                    }`}
+                    aria-current={active ? 'page' : undefined}
+                  >
+                    <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                    <span className="text-sm font-medium">{item.title}</span>
+                  </Link>
+                );
+              })}
+
+              {user && roleBasedNav.length > 0 && (
+                <>
+                  <p className="text-xs font-semibold text-[#f0e3c7]/40 uppercase tracking-wider px-3 py-2 mt-4">
+                    {isOrganizer ? t('layout.organizer_tools') : t('layout.my_activities')}
+                  </p>
+                  {roleBasedNav.map((item) => {
+                    const Icon = item.icon;
+                    const active = pathname.startsWith(item.url.split('?')[0]);
+                    return (
+                      <Link
+                        key={item.title}
+                        to={item.url}
+                        onClick={closeMenu}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg min-h-[44px] transition-colors ${
+                          active ? 'bg-[#f0e3c7]/10 text-[#f0e3c7]' : 'text-[#f0e3c7]/75 hover:bg-[#f0e3c7]/5 hover:text-[#f0e3c7]'
+                        }`}
+                        aria-current={active ? 'page' : undefined}
+                      >
+                        <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                        <span className="text-sm font-medium">{item.title}</span>
+                      </Link>
+                    );
+                  })}
+                </>
+              )}
+
+              {/* Language switcher */}
+              <div className="pt-4 border-t border-[#f0e3c7]/10 mt-4">
+                <p className="text-xs font-semibold text-[#f0e3c7]/40 uppercase tracking-wider px-3 py-2">
+                  {language === 'el' ? 'Γλώσσα' : 'Language'}
+                </p>
+                <div className="flex gap-2 px-3 py-2">
+                  <Button
+                    size="sm"
+                    onClick={() => setLanguage('en')}
+                    className={`flex-1 min-h-[44px] border border-[#f0e3c7]/30 ${language === 'en' ? 'bg-[#f0e3c7]/15 text-[#f0e3c7]' : 'bg-transparent text-[#f0e3c7]/60 hover:bg-[#f0e3c7]/10'}`}
+                    aria-pressed={language === 'en'}
+                    variant="ghost"
+                  >
+                    EN
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => setLanguage('el')}
+                    className={`flex-1 min-h-[44px] border border-[#f0e3c7]/30 ${language === 'el' ? 'bg-[#f0e3c7]/15 text-[#f0e3c7]' : 'bg-transparent text-[#f0e3c7]/60 hover:bg-[#f0e3c7]/10'}`}
+                    aria-pressed={language === 'el'}
+                    variant="ghost"
+                  >
+                    ΕΛ
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Sheet footer — user or login */}
+            <div className="border-t border-[#f0e3c7]/10 p-4">
+              {user ? (
+                <div className="space-y-3">
+                  <Link to={createPageUrl("EditProfile")} onClick={closeMenu} className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#f0e3c7]/5 min-h-[44px]">
+                    <div className="w-9 h-9 bg-[#f0e3c7]/10 rounded-full flex items-center justify-center flex-shrink-0">
+                      {user.profile_picture_url
+                        ? <img src={user.profile_picture_url} alt="" className="w-full h-full object-cover rounded-full" />
+                        : <User className="w-4 h-4 text-[#f0e3c7]" aria-hidden="true" />
+                      }
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-[#f0e3c7] text-sm truncate">{user.full_name}</p>
+                      <p className="text-xs text-[#f0e3c7]/50 truncate">{isOrganizer ? t('roles.organizer') : t('roles.hiker')}</p>
+                    </div>
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#f0e3c7]/60 hover:text-[#f0e3c7] hover:bg-[#f0e3c7]/5 rounded-lg transition-colors min-h-[44px]"
+                  >
+                    <LogOut className="w-4 h-4" aria-hidden="true" />
+                    {t('common.logout')}
+                  </button>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => { handleLogin(); closeMenu(); }}
+                  className="w-full bg-[#8B6914] hover:bg-[#8B6914]/90 text-[#0c281c] font-bold min-h-[44px]"
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                >
+                  <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
+                  {t('common.login')}
+                </Button>
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        {/* Page content — pb-20 ensures content isn't hidden behind the fixed BottomNav */}
+        <div className="flex-1 relative overflow-hidden pb-20 md:pb-0">
           {children}
         </div>
-
-        <BottomNav
-          pathname={pathname}
-          navigateToTab={navigateToTab}
-          user={user}
-          isOrganizer={isOrganizer}
-          t={t}
-        />
       </main>
-      </div>{/* end flex flex-1 w-full row */}
     </div>
   );
 });
 
-// ─── AppLayout — thin wrapper providing SidebarProvider context ───────────────
+// ─── AppLayout — no longer needs SidebarProvider ─────────────────────────────
 const AppLayout = ({ children, isOrganizer, user, location }) => (
-  <SidebarProvider>
-    <AppLayoutInner user={user} isOrganizer={isOrganizer} location={location}>
-      {children}
-    </AppLayoutInner>
-  </SidebarProvider>
+  <AppLayoutInner user={user} isOrganizer={isOrganizer} location={location}>
+    {children}
+  </AppLayoutInner>
 );
 
 // ─── PublicLayout — used for Home / RoleSelection ─────────────────────────────
 const PublicLayout = ({ children }) => (
-  <div className="flex flex-col min-h-screen">
+  <div className="flex flex-col min-h-screen pb-20 md:pb-0">
     <PublicHeader />
     <main className="flex-1">{children}</main>
     <PublicFooter />
@@ -481,12 +444,20 @@ export default function Layout({ children, currentPageName, user: propUser, isOr
   const publicOnlyPages = ['Home', 'RoleSelection'];
 
   if (publicOnlyPages.includes(currentPageName)) {
-    return <PublicLayout>{children}</PublicLayout>;
+    return (
+      <>
+        <PublicLayout>{children}</PublicLayout>
+        <BottomNav />
+      </>
+    );
   }
 
   return (
-    <AppLayout user={user} isOrganizer={isOrganizer} location={location}>
-      {children}
-    </AppLayout>
+    <>
+      <AppLayout user={user} isOrganizer={isOrganizer} location={location}>
+        {children}
+      </AppLayout>
+      <BottomNav />
+    </>
   );
 }
