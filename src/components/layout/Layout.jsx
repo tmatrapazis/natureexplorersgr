@@ -115,8 +115,129 @@ const BottomNav = React.memo(function BottomNav() {
   );
 });
 
-// ─── AppLayoutInner — no Sidebar dependency, custom mobile Sheet ──────────────
-const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganizer, user, location }) {
+// ─── SidebarContent — shared between mobile drawer and desktop sidebar ───────
+function SidebarContent({ publicNav, roleBasedNav, pathname, user, isOrganizer, language, setLanguage, t, handleLogin, handleLogout, onNavClick }) {
+  return (
+    <>
+      {/* Navigation links */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-1">
+        <p className="text-xs font-semibold text-brand-gold/40 uppercase tracking-wider px-3 py-2">
+          {user ? (isOrganizer ? t('layout.hello_organizer') : t('layout.hello_hiker')) : t('common.explore')}
+        </p>
+        {publicNav.map((item) => {
+          const Icon = item.icon;
+          const active = pathname.startsWith(item.url.split('?')[0]);
+          return (
+            <Link
+              key={item.title}
+              to={item.url}
+              onClick={onNavClick}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg min-h-[44px] transition-colors ${
+                active ? 'bg-brand-gold/10 text-brand-gold' : 'text-brand-gold/75 hover:bg-brand-gold/5 hover:text-brand-gold'
+              }`}
+              aria-current={active ? 'page' : undefined}
+            >
+              <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              <span className="text-sm font-medium">{item.title}</span>
+            </Link>
+          );
+        })}
+
+        {user && roleBasedNav.length > 0 && (
+          <>
+            <p className="text-xs font-semibold text-brand-gold/40 uppercase tracking-wider px-3 py-2 mt-4">
+              {isOrganizer ? t('layout.organizer_tools') : t('layout.my_activities')}
+            </p>
+            {roleBasedNav.map((item) => {
+              const Icon = item.icon;
+              const active = pathname.startsWith(item.url.split('?')[0]);
+              return (
+                <Link
+                  key={item.title}
+                  to={item.url}
+                  onClick={onNavClick}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg min-h-[44px] transition-colors ${
+                    active ? 'bg-brand-gold/10 text-brand-gold' : 'text-brand-gold/75 hover:bg-brand-gold/5 hover:text-brand-gold'
+                  }`}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+                  <span className="text-sm font-medium">{item.title}</span>
+                </Link>
+              );
+            })}
+          </>
+        )}
+
+        {/* Language switcher */}
+        <div className="pt-4 border-t border-brand-gold/10 mt-4">
+          <p className="text-xs font-semibold text-brand-gold/40 uppercase tracking-wider px-3 py-2">
+            {language === 'el' ? 'Γλώσσα' : 'Language'}
+          </p>
+          <div className="flex gap-2 px-3 py-2">
+            <Button
+              size="sm"
+              onClick={() => setLanguage('en')}
+              className={`flex-1 min-h-[44px] border border-brand-gold/30 ${language === 'en' ? 'bg-brand-gold/15 text-brand-gold' : 'bg-transparent text-brand-gold/60 hover:bg-brand-gold/10'}`}
+              aria-pressed={language === 'en'}
+              variant="ghost"
+            >
+              EN
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => setLanguage('el')}
+              className={`flex-1 min-h-[44px] border border-brand-gold/30 ${language === 'el' ? 'bg-brand-gold/15 text-brand-gold' : 'bg-transparent text-brand-gold/60 hover:bg-brand-gold/10'}`}
+              aria-pressed={language === 'el'}
+              variant="ghost"
+            >
+              ΕΛ
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer — user or login */}
+      <div className="border-t border-brand-gold/10 p-4">
+        {user ? (
+          <div className="space-y-3">
+            <Link to={createPageUrl("EditProfile")} onClick={onNavClick} className="flex items-center gap-3 p-2 rounded-lg hover:bg-brand-gold/5 min-h-[44px]">
+              <div className="w-9 h-9 bg-brand-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
+                {user.profile_picture_url
+                  ? <img src={user.profile_picture_url} alt="" className="w-full h-full object-cover rounded-full" />
+                  : <User className="w-4 h-4 text-brand-gold" aria-hidden="true" />
+                }
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-brand-gold text-sm truncate">{user.full_name}</p>
+                <p className="text-xs text-brand-gold/50 truncate">{isOrganizer ? t('roles.organizer') : t('roles.hiker')}</p>
+              </div>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 px-3 py-2 text-sm text-brand-gold/60 hover:text-brand-gold hover:bg-brand-gold/5 rounded-lg transition-colors min-h-[44px]"
+            >
+              <LogOut className="w-4 h-4" aria-hidden="true" />
+              {t('common.logout')}
+            </button>
+          </div>
+        ) : (
+          <Button
+            onClick={() => { handleLogin(); if (onNavClick) onNavClick(); }}
+            className="w-full bg-brand-gold-accent hover:bg-brand-gold-accent/90 text-brand-dark font-bold min-h-[44px]"
+            style={{ fontFamily: 'var(--font-heading)' }}
+          >
+            <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
+            {t('common.login')}
+          </Button>
+        )}
+      </div>
+    </>
+  );
+}
+
+// ─── AppLayoutInner — mobile drawer + persistent desktop sidebar ────────────
+const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganizer, user, location, showFooter, isHomePage }) {
   const navigate = useNavigate();
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
@@ -177,6 +298,8 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
 
   const pathname = location.pathname;
 
+  const sidebarProps = { publicNav, roleBasedNav, pathname, user, isOrganizer, language, setLanguage, t, handleLogin, handleLogout };
+
   return (
     <div className="min-h-screen flex flex-col w-full bg-background">
       {/* Skip-to-content for keyboard/screen-reader users */}
@@ -188,9 +311,19 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
       </a>
 
       {/* Desktop header — visible only md+ */}
-      <DesktopHeader />
+      <DesktopHeader isHomePage={isHomePage} />
 
-      <main id="main-content" className="flex-1 flex flex-col">
+      {/* Desktop persistent sidebar — visible lg+, hidden on Home */}
+      {!isHomePage && (
+        <aside
+          className="hidden lg:flex flex-col fixed left-0 top-16 w-[240px] h-[calc(100vh-4rem)] bg-brand-dark border-r border-brand-gold/10 z-40"
+          aria-label="Sidebar navigation"
+        >
+          <SidebarContent {...sidebarProps} onNavClick={undefined} />
+        </aside>
+      )}
+
+      <main id="main-content" className={`flex-1 flex flex-col ${isHomePage ? '' : 'lg:ml-[240px]'}`}>
         {/* Mobile-only top bar */}
         <header
           className="bg-brand-dark px-4 md:hidden sticky top-0 z-40"
@@ -264,7 +397,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
           </div>
         </header>
 
-        {/* Mobile drawer — custom Sheet, no shadcn Sidebar dependency */}
+        {/* Mobile drawer */}
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
           <SheetContent side="left" className="w-[280px] bg-brand-dark border-r border-brand-gold/10 p-0 flex flex-col [&>button:first-child]:hidden">
             <VisuallyHidden>
@@ -293,119 +426,7 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
               </button>
             </div>
 
-            {/* Navigation links */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-1">
-              <p className="text-xs font-semibold text-brand-gold/40 uppercase tracking-wider px-3 py-2">
-                {user ? (isOrganizer ? t('layout.hello_organizer') : t('layout.hello_hiker')) : t('common.explore')}
-              </p>
-              {publicNav.map((item) => {
-                const Icon = item.icon;
-                const active = pathname.startsWith(item.url.split('?')[0]);
-                return (
-                  <Link
-                    key={item.title}
-                    to={item.url}
-                    onClick={closeMenu}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-lg min-h-[44px] transition-colors ${
-                      active ? 'bg-brand-gold/10 text-brand-gold' : 'text-brand-gold/75 hover:bg-brand-gold/5 hover:text-brand-gold'
-                    }`}
-                    aria-current={active ? 'page' : undefined}
-                  >
-                    <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                    <span className="text-sm font-medium">{item.title}</span>
-                  </Link>
-                );
-              })}
-
-              {user && roleBasedNav.length > 0 && (
-                <>
-                  <p className="text-xs font-semibold text-brand-gold/40 uppercase tracking-wider px-3 py-2 mt-4">
-                    {isOrganizer ? t('layout.organizer_tools') : t('layout.my_activities')}
-                  </p>
-                  {roleBasedNav.map((item) => {
-                    const Icon = item.icon;
-                    const active = pathname.startsWith(item.url.split('?')[0]);
-                    return (
-                      <Link
-                        key={item.title}
-                        to={item.url}
-                        onClick={closeMenu}
-                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg min-h-[44px] transition-colors ${
-                          active ? 'bg-brand-gold/10 text-brand-gold' : 'text-brand-gold/75 hover:bg-brand-gold/5 hover:text-brand-gold'
-                        }`}
-                        aria-current={active ? 'page' : undefined}
-                      >
-                        <Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-                        <span className="text-sm font-medium">{item.title}</span>
-                      </Link>
-                    );
-                  })}
-                </>
-              )}
-
-              {/* Language switcher */}
-              <div className="pt-4 border-t border-brand-gold/10 mt-4">
-                <p className="text-xs font-semibold text-brand-gold/40 uppercase tracking-wider px-3 py-2">
-                  {language === 'el' ? 'Γλώσσα' : 'Language'}
-                </p>
-                <div className="flex gap-2 px-3 py-2">
-                  <Button
-                    size="sm"
-                    onClick={() => setLanguage('en')}
-                    className={`flex-1 min-h-[44px] border border-brand-gold/30 ${language === 'en' ? 'bg-brand-gold/15 text-brand-gold' : 'bg-transparent text-brand-gold/60 hover:bg-brand-gold/10'}`}
-                    aria-pressed={language === 'en'}
-                    variant="ghost"
-                  >
-                    EN
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={() => setLanguage('el')}
-                    className={`flex-1 min-h-[44px] border border-brand-gold/30 ${language === 'el' ? 'bg-brand-gold/15 text-brand-gold' : 'bg-transparent text-brand-gold/60 hover:bg-brand-gold/10'}`}
-                    aria-pressed={language === 'el'}
-                    variant="ghost"
-                  >
-                    ΕΛ
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            {/* Sheet footer — user or login */}
-            <div className="border-t border-brand-gold/10 p-4">
-              {user ? (
-                <div className="space-y-3">
-                  <Link to={createPageUrl("EditProfile")} onClick={closeMenu} className="flex items-center gap-3 p-2 rounded-lg hover:bg-brand-gold/5 min-h-[44px]">
-                    <div className="w-9 h-9 bg-brand-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      {user.profile_picture_url
-                        ? <img src={user.profile_picture_url} alt="" className="w-full h-full object-cover rounded-full" />
-                        : <User className="w-4 h-4 text-brand-gold" aria-hidden="true" />
-                      }
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-brand-gold text-sm truncate">{user.full_name}</p>
-                      <p className="text-xs text-brand-gold/50 truncate">{isOrganizer ? t('roles.organizer') : t('roles.hiker')}</p>
-                    </div>
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-brand-gold/60 hover:text-brand-gold hover:bg-brand-gold/5 rounded-lg transition-colors min-h-[44px]"
-                  >
-                    <LogOut className="w-4 h-4" aria-hidden="true" />
-                    {t('common.logout')}
-                  </button>
-                </div>
-              ) : (
-                <Button
-                  onClick={() => { handleLogin(); closeMenu(); }}
-                  className="w-full bg-brand-gold-accent hover:bg-brand-gold-accent/90 text-brand-dark font-bold min-h-[44px]"
-                  style={{ fontFamily: 'var(--font-heading)' }}
-                >
-                  <LogIn className="w-4 h-4 mr-2" aria-hidden="true" />
-                  {t('common.login')}
-                </Button>
-              )}
-            </div>
+            <SidebarContent {...sidebarProps} onNavClick={closeMenu} />
           </SheetContent>
         </Sheet>
 
@@ -413,26 +434,11 @@ const AppLayoutInner = React.memo(function AppLayoutInner({ children, isOrganize
         <div className="flex-1 relative overflow-hidden pb-20 md:pb-0">
           {children}
         </div>
+        {showFooter && <PublicFooter />}
       </main>
     </div>
   );
 });
-
-// ─── AppLayout — no longer needs SidebarProvider ─────────────────────────────
-const AppLayout = ({ children, isOrganizer, user, location }) => (
-  <AppLayoutInner user={user} isOrganizer={isOrganizer} location={location}>
-    {children}
-  </AppLayoutInner>
-);
-
-// ─── PublicLayout — used for Home / RoleSelection ─────────────────────────────
-const PublicLayout = ({ children }) => (
-  <div className="flex flex-col min-h-screen pb-20 md:pb-0">
-    <PublicHeader />
-    <main className="flex-1">{children}</main>
-    <PublicFooter />
-  </div>
-);
 
 // ─── Layout — top-level export ────────────────────────────────────────────────
 export default function Layout({ children, currentPageName, user: propUser, isOrganizer: propIsOrganizer, location: propLocation }) {
@@ -443,22 +449,14 @@ export default function Layout({ children, currentPageName, user: propUser, isOr
   const user = propUser || authUser;
   const isOrganizer = propIsOrganizer ?? !!(user?.organizer_code && user.organizer_code.trim().length > 0);
 
-  const publicOnlyPages = ['Home', 'RoleSelection'];
-
-  if (publicOnlyPages.includes(currentPageName)) {
-    return (
-      <>
-        <PublicLayout>{children}</PublicLayout>
-        <BottomNav />
-      </>
-    );
-  }
+  const showFooter = ['Home', 'RoleSelection'].includes(currentPageName);
+  const isHomePage = currentPageName === 'Home';
 
   return (
     <>
-      <AppLayout user={user} isOrganizer={isOrganizer} location={location}>
+      <AppLayoutInner user={user} isOrganizer={isOrganizer} location={location} showFooter={showFooter} isHomePage={isHomePage} currentPageName={currentPageName}>
         {children}
-      </AppLayout>
+      </AppLayoutInner>
       <BottomNav />
     </>
   );

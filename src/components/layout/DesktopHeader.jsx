@@ -22,7 +22,7 @@ const NAV_LINKS = [
   { key: 'navigation.refuges',    page: 'GreekRefuges' },
 ];
 
-export default function DesktopHeader() {
+export default function DesktopHeader({ isHomePage = false }) {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation(language);
   const { user, logout } = useAuth();
@@ -72,59 +72,47 @@ export default function DesktopHeader() {
         </span>
       </Link>
 
-      {/* Nav Links */}
+      {/* Nav Links — shown only on Home (without Dashboard); sidebar handles nav on other pages */}
       <nav className="flex items-center gap-6 flex-1" aria-label="Primary navigation">
-        {NAV_LINKS.map(({ key, page, prefetch }) => {
-          const url = createPageUrl(page);
-          const active = isActive(page);
-          return (
+        {isHomePage && (
+          <>
+            {NAV_LINKS.map(({ key, page, prefetch }) => {
+              const url = createPageUrl(page);
+              const active = isActive(page);
+              return (
+                <Link
+                  key={page}
+                  to={url}
+                  onClick={handleNavClick(url)}
+                  onPointerEnter={prefetch}
+                  className={`text-sm font-medium transition-colors min-h-[44px] flex items-center pb-0.5 ${
+                    active
+                      ? 'text-brand-gold border-b-2 border-brand-gold-accent'
+                      : 'text-brand-gold/75 hover:text-brand-gold'
+                  }`}
+                  style={{ fontFamily: 'var(--font-heading)' }}
+                  aria-label={t(key)}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  {t(key)}
+                </Link>
+              );
+            })}
             <Link
-              key={page}
-              to={url}
-              onClick={handleNavClick(url)}
-              onPointerEnter={prefetch}
+              to="/about"
+              onClick={handleNavClick('/about')}
               className={`text-sm font-medium transition-colors min-h-[44px] flex items-center pb-0.5 ${
-                active
+                location.pathname === '/about'
                   ? 'text-brand-gold border-b-2 border-brand-gold-accent'
                   : 'text-brand-gold/75 hover:text-brand-gold'
               }`}
               style={{ fontFamily: 'var(--font-heading)' }}
-              aria-label={t(key)}
-              aria-current={active ? 'page' : undefined}
+              aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
+              aria-current={location.pathname === '/about' ? 'page' : undefined}
             >
-              {t(key)}
+              {language === 'el' ? 'Σχετικά' : 'About'}
             </Link>
-          );
-        })}
-        <Link
-          to="/about"
-          onClick={handleNavClick('/about')}
-          className={`text-sm font-medium transition-colors min-h-[44px] flex items-center pb-0.5 ${
-            location.pathname === '/about'
-              ? 'text-brand-gold border-b-2 border-brand-gold-accent'
-              : 'text-brand-gold/75 hover:text-brand-gold'
-          }`}
-          style={{ fontFamily: 'var(--font-heading)' }}
-          aria-label={language === 'el' ? 'Σχετικά με εμάς' : 'About us'}
-          aria-current={location.pathname === '/about' ? 'page' : undefined}
-        >
-          {language === 'el' ? 'Σχετικά' : 'About'}
-        </Link>
-        {isOrganizer && (
-          <Link
-            to={createPageUrl('MyTrips')}
-            onClick={handleNavClick(createPageUrl('MyTrips'))}
-            className={`text-sm font-medium transition-colors min-h-[44px] flex items-center pb-0.5 ${
-              isActive('MyTrips')
-                ? 'text-brand-gold border-b-2 border-brand-gold-accent'
-                : 'text-brand-gold/75 hover:text-brand-gold'
-            }`}
-            style={{ fontFamily: 'var(--font-heading)' }}
-            aria-label="Dashboard"
-            aria-current={isActive('MyTrips') ? 'page' : undefined}
-          >
-            Dashboard
-          </Link>
+          </>
         )}
       </nav>
 

@@ -149,10 +149,6 @@ function LayoutContent({ children, currentPageName }) {
     );
   }
 
-  if (currentPageName === 'Home') {
-    return <PublicLayout>{children}</PublicLayout>;
-  }
-
   return (
     <>
       {showWelcome && user && (
