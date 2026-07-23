@@ -1,0 +1,8 @@
+{
+  "name": "@nature/api",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/client.ts",
+  "types": "./src/client.ts",
+  "dependencies": { "@supabase/supabase-js": "^2.45.0", "@supabase/ssr": "^0.5.0" }
+}
